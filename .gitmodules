@@ -1,0 +1,6 @@
+[submodule "hyperncd"]
+	path = hyperncd
+	url = https://github.com/2490o/HyperNCD.git
+[submodule "sonata"]
+	path = sonata
+	url = https://github.com/facebookresearch/sonata.git
