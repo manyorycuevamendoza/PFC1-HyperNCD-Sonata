@@ -1,0 +1,153 @@
++ REPO=/home/renzo.felix/PFC1-HyperNCD-Sonata
++ module purge
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load miniconda/3.0
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
+++ conda info --base
+++ local cmd=info
+++ case "$cmd" in
+++ __conda_exe info --base
+++ '[' -n '' ']'
+++ /opt/ohpc/pub/apps/miniconda-3/bin/conda info --base
++ source /opt/ohpc/pub/apps/miniconda-3/etc/profile.d/conda.sh
+++ export CONDA_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/conda
+++ CONDA_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/python
+++ CONDA_PYTHON_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/python
+++ '[' -z x ']'
++ conda activate sonata-env
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate sonata-env
++ '[' -n '' ']'
++ local ask_conda
+++ PS1=
+++ __conda_exe shell.posix activate sonata-env
+++ '[' -n '' ']'
+++ /opt/ohpc/pub/apps/miniconda-3/bin/conda shell.posix activate sonata-env
++ ask_conda='. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/proj4-deactivate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libglib_deactivate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libblas_mkl_deactivate.sh"
+unset _CE_M
+unset _CE_CONDA
+PS1='\''(sonata-env) '\''
+export PATH='\''/home/renzo.felix/.conda/envs/sonata-env/bin:/home/renzo.felix/miniconda3/condabin:/home/renzo.felix/.local/bin:/home/renzo.felix/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/sbin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_PROMPT_MODIFIER='\''(sonata-env) '\''
+export CONDA_EXE='\''/opt/ohpc/pub/apps/miniconda-3/bin/conda'\''
+export CONDA_PYTHON_EXE='\''/opt/ohpc/pub/apps/miniconda-3/bin/python'\''
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libblas_mkl_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libglib_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libxml2-split_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/proj4-activate.sh"'
++ eval '. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/proj4-deactivate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libglib_deactivate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libblas_mkl_deactivate.sh"
+unset _CE_M
+unset _CE_CONDA
+PS1='\''(sonata-env) '\''
+export PATH='\''/home/renzo.felix/.conda/envs/sonata-env/bin:/home/renzo.felix/miniconda3/condabin:/home/renzo.felix/.local/bin:/home/renzo.felix/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/sbin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_PROMPT_MODIFIER='\''(sonata-env) '\''
+export CONDA_EXE='\''/opt/ohpc/pub/apps/miniconda-3/bin/conda'\''
+export CONDA_PYTHON_EXE='\''/opt/ohpc/pub/apps/miniconda-3/bin/python'\''
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libblas_mkl_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libglib_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libxml2-split_activate.sh"
+. "/home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/proj4-activate.sh"'
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/proj4-deactivate.sh
++++ unset PROJ_DATA
++++ unset PROJ_NETWORK
++++ '[' -n '' ']'
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libglib_deactivate.sh
++++ export GSETTINGS_SCHEMA_DIR=
++++ GSETTINGS_SCHEMA_DIR=
++++ unset GSETTINGS_SCHEMA_DIR_CONDA_BACKUP
++++ '[' -z ']'
++++ unset GSETTINGS_SCHEMA_DIR
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/deactivate.d/libblas_mkl_deactivate.sh
++++ '[' '' = '' ']'
++++ unset MKL_INTERFACE_LAYER
++++ unset CONDA_MKL_INTERFACE_LAYER_BACKUP
+++ unset _CE_M
+++ unset _CE_CONDA
+++ PS1='(sonata-env) '
+++ export PATH=/home/renzo.felix/.conda/envs/sonata-env/bin:/home/renzo.felix/miniconda3/condabin:/home/renzo.felix/.local/bin:/home/renzo.felix/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/sbin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+++ PATH=/home/renzo.felix/.conda/envs/sonata-env/bin:/home/renzo.felix/miniconda3/condabin:/home/renzo.felix/.local/bin:/home/renzo.felix/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/bin:/opt/ohpc/pub/utils/slurm/25.11.5.1/sbin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+++ export CONDA_SHLVL=1
+++ CONDA_SHLVL=1
+++ export 'CONDA_PROMPT_MODIFIER=(sonata-env) '
+++ CONDA_PROMPT_MODIFIER='(sonata-env) '
+++ export CONDA_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/conda
+++ CONDA_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/conda
+++ export CONDA_PYTHON_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/python
+++ CONDA_PYTHON_EXE=/opt/ohpc/pub/apps/miniconda-3/bin/python
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libblas_mkl_activate.sh
++++ export CONDA_MKL_INTERFACE_LAYER_BACKUP=
++++ CONDA_MKL_INTERFACE_LAYER_BACKUP=
++++ export MKL_INTERFACE_LAYER=LP64,GNU
++++ MKL_INTERFACE_LAYER=LP64,GNU
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libglib_activate.sh
++++ export GSETTINGS_SCHEMA_DIR_CONDA_BACKUP=
++++ GSETTINGS_SCHEMA_DIR_CONDA_BACKUP=
++++ export GSETTINGS_SCHEMA_DIR=/home/renzo.felix/.conda/envs/sonata-env/share/glib-2.0/schemas
++++ GSETTINGS_SCHEMA_DIR=/home/renzo.felix/.conda/envs/sonata-env/share/glib-2.0/schemas
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/libxml2-split_activate.sh
++++ test -n 'file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog'
++++ xml_catalog_files_libxml2='file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog'
++++ XML_CATALOG_FILES='file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog '
++++ conda_catalog_files=
++++ ifs_libxml2=' 	
+'
++++ IFS=' '
++++ rem=/home/renzo.felix/.conda/envs/sonata-env
++++ for pre in ${rem}
++++ test '' = /home/renzo.felix/.conda/envs/sonata-env
++++ conda_catalog_files=/home/renzo.felix/.conda/envs/sonata-env
++++ rem=
++++ IFS=' 	
+'
++++ conda_catalog_files='file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog'
++++ export 'XML_CATALOG_FILES=file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog'
++++ XML_CATALOG_FILES='file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog file:///home/renzo.felix/.conda/envs/sonata-env/etc/xml/catalog file:///etc/xml/catalog'
++++ unset conda_catalog_files ifs_libxml2 rem
+++ . /home/renzo.felix/.conda/envs/sonata-env/etc/conda/activate.d/proj4-activate.sh
++++ '[' -n '' ']'
++++ '[' -d /home/renzo.felix/.conda/envs/sonata-env/share/proj ']'
++++ export PROJ_DATA=/home/renzo.felix/.conda/envs/sonata-env/share/proj
++++ PROJ_DATA=/home/renzo.felix/.conda/envs/sonata-env/share/proj
++++ '[' -f /home/renzo.felix/.conda/envs/sonata-env/share/proj/copyright_and_licenses.csv ']'
++++ export PROJ_NETWORK=ON
++++ PROJ_NETWORK=ON
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ nvidia-smi
++ cd /home/renzo.felix/PFC1-HyperNCD-Sonata/sonata
++ export PYTHONPATH=/home/renzo.felix/PFC1-HyperNCD-Sonata/sonata
++ PYTHONPATH=/home/renzo.felix/PFC1-HyperNCD-Sonata/sonata
++ python demo/2_sem_seg.py
+Couldn't access the Hub to check for update but local file already exists. Defaulting to existing file. (error: [Errno -2] Name or service not known)
+Couldn't access the Hub to check for update but local file already exists. Defaulting to existing file. (error: [Errno -2] Name or service not known)
+Couldn't access the Hub to check for update but local file already exists. Defaulting to existing file. (error: [Errno -2] Name or service not known)
