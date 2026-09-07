@@ -1,0 +1,123 @@
+\chapter{RESULTADOS}
+\label{cap:resultados}
+
+\section{Experimentos y Resultados}
+
+Los resultados se organizan según los objetivos específicos: \textbf{dos
+resultados computacionales} (OE1 y OE2) y una \textbf{salida analítica} (OE3) que
+los integra. El punto de partida contra el que se comparan es la línea base
+reproducida en la Sección~\ref{sec:linea-base}.
+
+\subsection{Resultado de OE1: modelo híbrido funcional}
+
+Un modelo híbrido verificado de extremo a extremo sobre una sección de control:
+la sustitución de $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ opera dentro del
+módulo de prototipos sin romper el razonamiento por hipergrafo y sin degradar el
+mIoU \emph{known} respecto de la línea base de la Tabla~\ref{tab:base}. El
+entregable incluye la \emph{prueba de funcionamiento} y no solo el código:
+inferencia completa, dimensiones documentadas de ambas ramas y verificación de la
+compatibilidad de resolución entre el \emph{encoder} PTv3 y la rejilla de
+Minkowski.
+
+\subsection{Resultado de OE2: configuración calibrada}
+
+Curvas de sensibilidad de $\alpha$, $M$ y $\epsilon$ sobre la sección de
+referencia y una configuración fijada que se aplica sin reajuste al resto de
+secciones (Tabla~\ref{tab:sensibilidad}). La lectura esperada es identificar cuál
+de los tres parámetros domina el comportamiento del híbrido; en particular, el
+valor de $\alpha$ que maximiza el mIoU \emph{novel} indica cuánto peso conserva
+la componente geométrica una vez que el descriptor manual ha sido reemplazado.
+
+\begin{table}[H]
+\centering
+\caption{Sensibilidad de la configuración del híbrido sobre la sección de
+referencia.}
+\label{tab:sensibilidad}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Rango explorado} & \textbf{Valor fijado} & \textbf{mIoU \emph{novel}} \\
+\midrule
+$\alpha$   & $[0,\,1]$            & --- & --- \\
+$M$        & $\{4,\,8,\,16\}$     & --- & --- \\
+$\epsilon$ & \emph{[por definir]} & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Salida analítica de OE3: comparación y ablación}
+
+El resultado central es un incremento medible del mIoU sobre las clases novedosas
+respecto de HyperNCD sin modificar, sin degradación de las clases conocidas. La
+Tabla~\ref{tab:comparativa} organiza la comparación y la ablación de las tres
+variantes del descriptor, aislando la contribución del \emph{encoder}.
+
+\begin{table}[H]
+\centering
+\caption{Comparación y ablación de las tres variantes del descriptor. Cada fila
+reporta además el vector completo de IoU por clase, no solo el agregado
+(Sección~\ref{sec:metricas}).}
+\label{tab:comparativa}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Variante del descriptor} & \textbf{mIoU \emph{novel}} & \textbf{mIoU \emph{known}} & $\Delta$\textbf{mIoU} & $G$ \\
+\midrule
+$[f_{\mathrm{sem}};f_{\mathrm{geo}}]$ (línea base) & --- & --- & --- & 0 \\
+$[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ (propuesto) & --- & --- & --- & --- \\
+$[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ (Plan~B) & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Entregables}
+
+\begin{enumerate}
+\item Línea base reproducida con desviación estándar reportada y análisis de sus
+causas, junto con el resultado negativo del Módulo~1
+(Sección~\ref{sec:linea-base}).
+\item Implementación del modelo híbrido, con prueba de funcionamiento y
+repositorio público (OE1).
+\item Curvas de sensibilidad de $\alpha$, $M$ y $\epsilon$ y configuración fijada
+(OE2).
+\item Tablas comparativas, ablación de tres variantes, valores de $G$ y frontera
+de operación declarada (OE3).
+\end{enumerate}
+
+\section{Discusión}
+
+\paragraph*{Lectura de la métrica.} Un valor de $G$ (Ec.~\eqref{eq:G}) no se
+reporta solo. Se acompaña de los tres términos que lo componen y del análisis de
+dominancia de la Ec.~\eqref{eq:dominante}: qué clase concreta explica el agregado
+y si la ganancia es homogénea entre secciones o está concentrada en una tipología
+de elemento. Una mejora que provenga de una sola clase abundante no es el mismo
+resultado que una mejora repartida, aunque el mIoU coincida.
+
+\paragraph*{Atribución.} La comparación del \emph{linear probing}
+(Ec.~\eqref{eq:probe}) antes de la formación de prototipos con el mIoU final
+determina si la ganancia se origina en la representación o en el razonamiento por
+hipergrafo. Esa separación es posible porque el \emph{pipeline} es secuencial; si
+el sistema fuese unificado, habría que discutir la adecuación misma de la métrica
+elegida antes de interpretar el resultado.
+
+\paragraph*{Frontera de operación.} Barriendo densidad de puntos, tamaño de
+sección y número de clases novedosas se determina empíricamente la frontera entre
+el rango favorable y el desfavorable declarados en el alcance, y se contrasta con
+el comportamiento observado en la línea base.
+
+\paragraph*{Realimentación.} Si el análisis muestra que la mejora no se sostiene,
+el ajuste se realiza sobre OE1 (esquema de fusión) y OE2 (calibración), no sobre
+este capítulo: OE3 es salida analítica y no trabajo computacional independiente.
+
+\paragraph*{Valor para el usuario.} Cada punto de mIoU adicional sobre clases
+novedosas es trabajo manual de corrección que deja de realizarse. Los usuarios
+están conformes con la precisión que obtienen hoy por vía manual, de modo que la
+propuesta de valor no es igualarla sino automatizarla a una precisión suficiente;
+sin mejora demostrada sobre el estado del arte, la herramienta no tiene caso.
+
+\paragraph*{Contribución esperada al estado del arte.} La contribución no es una
+arquitectura nueva, sino establecer si un hallazgo demostrado en régimen
+supervisado ---la nocividad del \emph{geometric shortcut}--- se transfiere al
+régimen de descubrimiento de clases novedosas, donde la calidad de la
+representación es más crítica porque no hay supervisión sobre las clases
+objetivo. Bajo el Plan~B descrito en la Sección~\ref{sec:riesgos}, incluso un
+resultado nulo o negativo, documentado con ablación, constituye un hallazgo
+reportable.

@@ -1,0 +1,213 @@
+\chapter{MARCO TEÓRICO}
+\label{cap:teorico}
+
+Este capítulo define los elementos teóricos que sostienen el diseño propuesto y
+fija las \emph{fórmulas} de todas las métricas empleadas. El criterio es
+explícito: una métrica no se reporta como un número aislado, sino junto a la
+expresión que la define, al número de variables que la componen y a la
+identificación de cuál de ellas domina el valor agregado.
+
+\section{Segmentación semántica de nubes de puntos}
+
+Los métodos supervisados actuales resuelven bien la tarea en dominios cerrados
+---PTv3~\cite{ptv3} alcanza 77,5 mIoU y Sonata~\cite{sonata} 79,4 mIoU sobre
+ScanNet--- pero comparten una restricción estructural: \emph{el conjunto de
+clases se fija durante el entrenamiento}. Un elemento no previsto no se marca
+como desconocido, sino que se fuerza hacia la clase conocida más parecida. En
+patrimonio arquitectónico esa restricción es fatal, porque cada edificio
+incorpora elementos singulares ---soluciones propias de su época, su taller o su
+reconstrucción tras un sismo--- que no aparecen en ningún catálogo previo. Un
+modelo de conjunto cerrado no puede señalar su propia ignorancia, y el
+especialista pierde justamente la información que necesitaba: qué partes del
+levantamiento requieren su atención.
+
+\section{Descubrimiento de clases novedosas (NCD)}
+
+Sea $P$ una nube de puntos y $\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$ el
+conjunto de clases, con $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$. Durante el
+entrenamiento se dispone de etiquetas únicamente para los puntos de
+$\mathcal{C}_k$. El modelo debe producir una asignación
+$\hat{y}:P\rightarrow\mathcal{C}$ correcta sobre $\mathcal{C}_k$ y consistente
+sobre $\mathcal{C}_n$. Es, en esencia, la capacidad de detectar formas nuevas sin
+haberlas visto etiquetadas.
+
+\section{Prototipos e hipergrafo (HyperNCD)}
+
+HyperNCD~\cite{hyperncd} representa cada punto mediante un descriptor compuesto
+\begin{equation}
+F_i=\left[f_{\mathrm{sem}}(x^i);\,f_{\mathrm{geo}}(x^i)\right],
+\label{eq:hyperncd3}
+\end{equation}
+correspondiente a la Ec.~3 de~\cite{hyperncd}, donde $f_{\mathrm{sem}}$ proviene
+de una red MinkowskiUNet-34C y $f_{\mathrm{geo}}$ se calcula analíticamente sobre
+los $k$ vecinos más cercanos ($k=15$): linealidad, planaridad y \emph{scattering}.
+Aguas abajo, la afinidad entre prototipos combina una componente geométrica y una
+semántica,
+\begin{equation}
+S_b=\alpha\,S_g+(1-\alpha)\,S_s,\qquad \alpha\in[0,1],
+\label{eq:afinidad}
+\end{equation}
+y cada prototipo conserva sus $M=8$ vecinos más afines al construir el
+hipergrafo, sobre el que se propaga la información de alto orden que permite
+agrupar las clases novedosas.
+
+\section{Representación auto-supervisada y \emph{geometric shortcut}}
+
+Sonata~\cite{sonata} provee un \emph{encoder} PTv3 preentrenado de forma
+auto-supervisada que produce $f_{\mathrm{ssl}}(x^i)$ con pesos congelados y uso
+exclusivo en inferencia. Su aportación conceptual es el diagnóstico del
+\emph{geometric shortcut}: la representación colapsa sobre pistas geométricas
+fácilmente accesibles ---normales, altura, curvatura local--- en lugar de
+aprender semántica. La calidad de un descriptor congelado se mide por
+\emph{linear probing}, entrenando únicamente un clasificador lineal $W$ sobre él,
+\begin{equation}
+\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right),
+\label{eq:probe}
+\end{equation}
+de modo que el desempeño resultante es atribuible a la representación y no al
+clasificador. Esa propiedad es la que permite, más adelante, separar la
+contribución de la representación de la del razonamiento por hipergrafo.
+
+\section{Modelo híbrido propuesto}
+
+La propuesta de este trabajo consiste en conservar íntegro el razonamiento por
+hipergrafo de HyperNCD y sustituir su rama geométrica manual por las
+representaciones aprendidas del \emph{encoder} congelado de Sonata, de modo que
+\begin{equation}
+F_i=\left[f_{\mathrm{sem}}(x^i);\,f_{\mathrm{ssl}}(x^i)\right].
+\label{eq:hibrido}
+\end{equation}
+La mejora esperada es de métrica: un mIoU más alto sobre las clases novedosas se
+traduce directamente en menos corrección manual por parte del ingeniero, que es
+la condición para que la herramienta tenga valor práctico.
+
+\section{Métricas de segmentación y su formulación}
+\label{sec:metricas}
+
+\subsection{IoU y mIoU}
+
+Para una clase $c$, la intersección sobre unión es
+\begin{equation}
+\mathrm{IoU}_c=\frac{TP_c}{TP_c+FP_c+FN_c},
+\label{eq:iou}
+\end{equation}
+donde $TP_c$, $FP_c$ y $FN_c$ son los puntos verdaderos positivos, falsos
+positivos y falsos negativos de esa clase. La métrica agregada es
+\begin{equation}
+\mathrm{mIoU}(\mathcal{S})=\frac{1}{|\mathcal{S}|}\sum_{c\in\mathcal{S}}\mathrm{IoU}_c,
+\qquad
+\mathcal{S}\in\{\mathcal{C}_k,\;\mathcal{C}_n,\;\mathcal{C}\},
+\label{eq:miou}
+\end{equation}
+que se reporta por separado como mIoU \emph{known}, mIoU \emph{novel} y mIoU
+\emph{all}.
+
+\subsection{Análisis de dominancia}
+
+La Ec.~\eqref{eq:miou} es una media aritmética no ponderada, de modo que
+\begin{equation}
+\frac{\partial\,\mathrm{mIoU}}{\partial\,\mathrm{IoU}_c}=\frac{1}{|\mathcal{S}|}
+\qquad \forall\, c\in\mathcal{S}:
+\label{eq:dominancia}
+\end{equation}
+cada clase pesa igual con independencia de su número de puntos. Por ello un valor
+agregado alto nunca se reporta solo: se acompaña del vector
+$(\mathrm{IoU}_c)_{c\in\mathcal{S}}$, de su desviación estándar y de la
+identificación de la clase dominante
+\begin{equation}
+c^{*}=\arg\max_{c\in\mathcal{S}}\bigl|\mathrm{IoU}_c-\mathrm{mIoU}(\mathcal{S})\bigr|,
+\label{eq:dominante}
+\end{equation}
+para saber qué variable explica el resultado. Un mIoU de 0,99 no es informativo
+por sí mismo; lo es solo cuando se conoce cuántas clases promedia y cuál de ellas
+lo gobierna.
+
+\subsection{Emparejamiento de clases novedosas}
+
+Como las clases de $\mathcal{C}_n$ se descubren sin etiqueta, la correspondencia
+entre agrupaciones predichas y clases reales se resuelve por asignación húngara:
+\begin{equation}
+\sigma^{*}=\arg\max_{\sigma\in\mathfrak{S}_{|\mathcal{C}_n|}}
+\sum_{c\in\mathcal{C}_n}\mathrm{IoU}\bigl(\hat{y}=\sigma(c),\;y=c\bigr).
+\label{eq:hungaro}
+\end{equation}
+
+\subsection{Métricas de calidad de agrupamiento}
+
+Para evaluar la estructura descubierta con independencia del emparejamiento se
+emplean el índice de Rand ajustado y la información mutua normalizada:
+\begin{equation}
+\mathrm{ARI}=
+\frac{\sum_{ij}\binom{n_{ij}}{2}
+-\Bigl[\sum_i\binom{a_i}{2}\sum_j\binom{b_j}{2}\Bigr]\big/\binom{n}{2}}
+{\tfrac{1}{2}\Bigl[\sum_i\binom{a_i}{2}+\sum_j\binom{b_j}{2}\Bigr]
+-\Bigl[\sum_i\binom{a_i}{2}\sum_j\binom{b_j}{2}\Bigr]\big/\binom{n}{2}},
+\label{eq:ari}
+\end{equation}
+\begin{equation}
+\mathrm{NMI}(U,V)=\frac{2\,I(U;V)}{H(U)+H(V)},
+\label{eq:nmi}
+\end{equation}
+donde $n_{ij}$ es el número de puntos comunes entre la agrupación $i$ y la clase
+$j$, $a_i$ y $b_j$ sus marginales, $I$ la información mutua y $H$ la entropía.
+
+\section{Métricas propias del modelo híbrido}
+\label{sec:metricas-hibrido}
+
+Medir la métrica del híbrido no equivale a medir la de Sonata ni la de HyperNCD
+por separado. Al combinar dos métodos, las ventajas y los modos de falla de cada
+uno se transfieren al modelo resultante, y las métricas estándar pueden no
+reflejar la mejora atribuible a la integración. Se definen por ello dos
+indicadores adicionales y un protocolo de atribución.
+
+\subsection{Ganancia absoluta}
+
+\begin{equation}
+\Delta\mathrm{mIoU}^{\mathrm{novel}}=
+\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}.
+\label{eq:delta}
+\end{equation}
+
+\subsection{Brecha cerrada $G$ (métrica propuesta)}
+
+La ganancia absoluta no es interpretable por sí sola, porque el techo alcanzable
+depende de la sección. Se propone normalizarla por la brecha que separa a la
+línea base de su propio desempeño sobre las clases que sí vio etiquetadas:
+\begin{equation}
+G=\frac{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}
+{\mathrm{mIoU}^{\mathrm{known}}_{\mathrm{base}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}.
+\label{eq:G}
+\end{equation}
+$G$ es adimensional y evalúa tres variables: $G=0$ indica que la sustitución no
+aporta; $G=1$ indica que las clases novedosas alcanzan la calidad con que el
+modelo segmenta las conocidas; $G<0$ indica degradación. Los tres términos se
+reportan siempre por separado, de modo que un valor de $G$ nunca se lea sin
+conocer cuál de ellos lo domina.
+
+\subsection{Atribución por etapas}
+
+El \emph{pipeline} propuesto es separable ---inferencia congelada de Sonata
+primero, razonamiento por hipergrafo después---, por lo que la métrica se reporta
+también en el punto intermedio: calidad del descriptor por \emph{linear probing}
+(Ec.~\eqref{eq:probe}) antes de la formación de prototipos, y mIoU
+(Ec.~\eqref{eq:miou}) después. Esa separación es la que permite atribuir una
+mejora a la representación o al razonamiento, y no al sistema tratado como caja
+negra. Si el \emph{pipeline} fuese unificado, habría que discutir primero la
+adecuación misma de la métrica elegida.
+
+\section{Módulos del proyecto}
+
+El marco anterior se traduce en cuatro módulos, que son las columnas del diseño
+desarrollado en el Capítulo~\ref{cap:metodo}:
+
+\begin{enumerate}
+\item \textbf{Módulo~1 --- Preparación de datos.} Teselado en cinco secciones,
+voxelización a 5\,cm y normalización de la nube TLS.
+\item \textbf{Módulo~2 --- Rama semántica.} MinkowskiUNet-34C de HyperNCD, que
+produce $f_{\mathrm{sem}}$.
+\item \textbf{Módulo~3 --- \emph{Encoder} auto-supervisado.} PTv3 preentrenado de
+Sonata, congelado y usado solo en inferencia, que produce $f_{\mathrm{ssl}}$.
+\item \textbf{Módulo~4 --- Fusión y razonamiento.} Punto donde reside el aporte:
+la Ec.~\eqref{eq:hibrido} reemplaza a la Ec.~\eqref{eq:hyperncd3} antes de la
+formación de prototipos; el hipergrafo permanece intacto.
+\end{enumerate}
