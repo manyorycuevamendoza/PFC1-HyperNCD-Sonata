@@ -1,0 +1,7 @@
+logs/
+cache/
+data/
+*.npz
+*.npy
+*.ply
+__pycache__/
