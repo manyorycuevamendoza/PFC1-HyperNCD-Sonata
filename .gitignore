@@ -1,3 +1,4 @@
+# Datos y salidas del pipeline
 logs/
 cache/
 data/
@@ -5,3 +6,17 @@ data/
 *.npy
 *.ply
 __pycache__/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.synctex.gz
+LATEX/**/main.pdf

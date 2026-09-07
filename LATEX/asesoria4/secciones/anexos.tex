@@ -1,0 +1,26 @@
+\appendix
+\customchapter{ANEXOS}
+
+\section*{Anexo A. Configuración de \emph{software}}
+
+Python 3.10, PyTorch, MinkowskiEngine, \texttt{spconv}, Pointcept, código oficial
+de HyperNCD y pesos públicos de Sonata. Seguimiento de experimentos con
+Weights~\&~Biases.
+
+\section*{Anexo B. Nomenclatura}
+
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Símbolo} & \textbf{Significado} \\
+\midrule
+$P$ & Nube de puntos del levantamiento \\
+$\mathcal{C}_k$ & Conjunto de clases conocidas (etiquetadas) \\
+$\mathcal{C}_n$ & Conjunto de clases novedosas (sin etiqueta) \\
+$f_{\mathrm{sem}}$ & Descriptor semántico (MinkowskiUNet-34C) \\
+$f_{\mathrm{geo}}$ & Descriptor geométrico calculado a mano \\
+$f_{\mathrm{ssl}}$ & Descriptor auto-supervisado (Sonata, congelado) \\
+$\alpha$ & Balance geométrico-semántico en la afinidad $S_b$ \\
+$M$ & Vecinos por hiperarista \\
+$\epsilon$ & Suavizado de etiquetas \\
+\bottomrule
+\end{tabular}

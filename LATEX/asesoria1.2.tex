@@ -1,0 +1,553 @@
+% =====================================================================
+% PROPUESTA DE PROYECTO FINAL DE CARRERA
+% Formato paper, dos columnas, lista para compilar con pdfLaTeX
+% =====================================================================
+\documentclass[9pt,twocolumn,a4paper]{extarticle}
+% ------------------------- Idioma y tipografía -------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{times}
+\usepackage{microtype}
+% ------------------------- Página y columnas ---------------------------
+\usepackage[
+  a4paper,
+  top=1.35cm,
+  bottom=1.35cm,
+  left=1.35cm,
+  right=1.35cm,
+  columnsep=0.55cm
+]{geometry}
+% ------------------------- Matemática y texto --------------------------
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[font=small,labelfont=bf,skip=2pt]{caption}
+% ------------------------- TikZ ----------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows.meta,
+  positioning,
+  fit,
+  calc,
+  backgrounds
+}
+% ------------------------- Compactación --------------------------------
+\setlist{nosep,leftmargin=1.1em}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\intextsep}{4pt}
+\setlength{\textfloatsep}{5pt}
+\setlength{\dbltextfloatsep}{5pt}
+\setlength{\floatsep}{4pt}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\setcounter{dbltopnumber}{4}
+\renewcommand{\topfraction}{0.98}
+\renewcommand{\textfraction}{0.02}
+\renewcommand{\floatpagefraction}{0.90}
+\renewcommand{\dbltopfraction}{0.98}
+\renewcommand{\dblfloatpagefraction}{0.90}
+\titlespacing*{\section}{0pt}{5pt}{2pt}
+\titleformat{\section}{\normalfont\bfseries}{\thesection}{0.5em}{}
+% =====================================================================
+% PALETA DEL DIAGRAMA
+% =====================================================================
+\definecolor{ddBlue}{HTML}{2563EB}
+\definecolor{ddCyan}{HTML}{0891B2}
+\definecolor{ddGreen}{HTML}{3A8D24}
+\definecolor{ddOrange}{HTML}{EA7A12}
+\definecolor{ddPurple}{HTML}{8B5CF6}
+\definecolor{ddRed}{HTML}{DC2626}
+\definecolor{ddDark}{HTML}{172033}
+\definecolor{ddGray}{HTML}{64748B}
+\tikzset{
+  module/.style={
+    rectangle,
+    rounded corners=7pt,
+    fill=white,
+    line width=1.1pt,
+    minimum width=3.25cm,
+    minimum height=6.25cm
+  },
+  groupblue/.style={
+    rectangle,
+    rounded corners=11pt,
+    draw=ddBlue,
+    fill=ddBlue!2,
+    dash pattern=on 4pt off 3pt,
+    line width=1pt
+  },
+  groupcyan/.style={
+    rectangle,
+    rounded corners=11pt,
+    draw=ddCyan,
+    fill=ddCyan!2,
+    dash pattern=on 4pt off 3pt,
+    line width=1pt
+  },
+  groupgreen/.style={
+    rectangle,
+    rounded corners=11pt,
+    draw=ddGreen,
+    fill=ddGreen!2,
+    dash pattern=on 4pt off 3pt,
+    line width=1pt
+  },
+  grouporange/.style={
+    rectangle,
+    rounded corners=11pt,
+    draw=ddOrange,
+    fill=ddOrange!2,
+    dash pattern=on 4pt off 3pt,
+    line width=1pt
+  },
+  header/.style={
+    rectangle,
+    rounded corners=4pt,
+    text=white,
+    font=\bfseries\footnotesize,
+    inner xsep=9pt,
+    inner ysep=5pt
+  },
+  cardtitle/.style={
+    font=\bfseries\small,
+    align=center,
+    text width=2.85cm,
+    text=ddDark
+  },
+  cardsubtitle/.style={
+    font=\scriptsize,
+    align=center,
+    text width=2.75cm,
+    text=ddDark
+  },
+  infobox/.style={
+    rectangle,
+    rounded corners=5pt,
+    align=left,
+    text width=2.72cm,
+    inner sep=7pt,
+    font=\tiny,
+    line width=0.8pt
+  },
+  flow/.style={
+    -{Latex[length=3mm,width=2mm]},
+    draw=ddDark,
+    line width=1.4pt
+  }
+}
+% =====================================================================
+% DOCUMENTO
+% =====================================================================
+\begin{document}
+\pagestyle{empty}
+\twocolumn[
+\begin{center}
+{\Large\bfseries
+Representaciones auto-supervisadas para el descubrimiento de clases novedosas
+en segmentación semántica de nubes de puntos 3D\par}
+\vspace{4pt}
+{\normalsize Renzo [Apellido] \quad Manyory Cueva Mendoza\par}
+\vspace{2pt}
+{\small Escuela Profesional de Ingeniería de Sistemas / Ciencia de la Computación\par}
+\vspace{1pt}
+{\small\itshape Propuesta de Proyecto Final de Carrera --- \today\par}
+\end{center}
+\vspace{3pt}
+\begin{quotation}
+\noindent\small\textbf{Resumen.}
+La segmentación semántica de nubes de puntos opera bajo un supuesto de
+conjunto cerrado: todo punto se asigna forzosamente a una clase conocida. El
+paradigma \emph{Novel Class Discovery} (NCD) levanta ese supuesto, pero su
+estado del arte en 3D ---HyperNCD~\cite{hyperncd}, 2026--- alcanza apenas
+11.8--47.5 mIoU en clases novedosas frente a 49.8 del modelo supervisado en
+SemanticKITTI. Identificamos una causa plausible: HyperNCD construye sus
+prototipos con descriptores geométricos manuales (linealidad, planaridad y
+\emph{scattering}). Sonata~\cite{sonata} demostró que apoyarse en señales
+geométricas de bajo nivel induce el \emph{geometric shortcut}, un colapso
+representacional que impide aprender semántica, y que corregirlo eleva el
+\emph{linear probing} de 21.8\,\% a 72.5\,\% mIoU en ScanNet. Proponemos
+sustituir el bloque geométrico manual de HyperNCD por el \emph{encoder}
+auto-supervisado de Sonata, congelado, y medir su efecto en SemanticKITTI y
+SemanticPOSS.
+\vspace{2pt}
+\noindent\small\textbf{Palabras clave:}
+nubes de puntos, segmentación semántica 3D, \emph{novel class discovery},
+aprendizaje auto-supervisado, hipergrafos.
+\end{quotation}
+\vspace{4pt}
+]
+% ---------------------------------------------------------------------
+\section{Problema computacional y alcance}
+% ---------------------------------------------------------------------
+Partimos de nubes de puntos 3D ya capturadas y etiquetadas,
+$P=\{(x_i,f_i)\}_{i=1}^{N}$, provistas por los conjuntos de datos
+SemanticKITTI y SemanticPOSS. No se procesa señal cruda de sensor alguno,
+sino únicamente los \emph{datasets} públicos. La segmentación semántica
+asigna una etiqueta $y_i$ a cada punto. Los métodos actuales resuelven bien
+la tarea ---PTv3~\cite{ptv3}: 77.5 mIoU; Sonata: 79.4 mIoU en ScanNet---,
+pero comparten una restricción: \emph{el conjunto de clases está cerrado
+durante el entrenamiento}. Un objeto no previsto no se marca como
+``desconocido'', sino que se fuerza a la clase conocida más cercana, lo cual
+constituye un modo de falla silencioso en conducción autónoma o robótica
+móvil.
+
+\emph{Novel Class Discovery} (NCD), introducido a nubes de puntos por Riz
+\emph{et al.}~\cite{nops}, formaliza el problema: dado $\mathcal{C}_k$
+(clases conocidas, etiquetadas) y $\mathcal{C}_n$ (clases novedosas, sin
+etiqueta), el modelo debe segmentar ambas. El estado del arte,
+HyperNCD~\cite{hyperncd}, modela asociaciones de alto orden mediante un
+hipergrafo de \emph{prototipos geométrico-conscientes}. Cada punto se
+representa como
+$F_i=[f_{\mathrm{sem}}(x^i);f_{\mathrm{geo}}(x^i)]$, donde
+$f_{\mathrm{geo}}$ se calcula analíticamente mediante linealidad,
+planaridad y \emph{scattering} sobre $k$NN, con $k=15$.
+
+Sonata~\cite{sonata} identifica el \emph{geometric shortcut}: el modelo
+colapsa sobre pistas geométricas accesibles, como normales o altura, en lugar
+de aprender semántica. Con \emph{linear probing}, PointContrast obtiene
+5.6\,\%, MSC 21.8\,\% y Sonata 72.5\,\% mIoU en ScanNet. HyperNCD es posterior
+a Sonata, pero emplea en su módulo central descriptores geométricos manuales.
+A partir de esta relación se plantea la siguiente hipótesis:
+
+\begin{quotation}
+\noindent\footnotesize\itshape
+Si $f_{\mathrm{geo}}$ se reemplaza por \emph{embeddings} de un
+\emph{encoder} auto-supervisado congelado, los prototipos serán más
+discriminativos y mejorará el mIoU de las clases novedosas.
+\end{quotation}
+
+\textbf{Incluye:} SemanticKITTI (secuencia 08), SemanticPOSS (secuencia 03),
+cuatro \emph{splits} oficiales~\cite{nops,dasl}, \emph{encoder} congelado,
+comparación contra NOPS, DASL e HyperNCD, y estudio de ablación.
+\textbf{Excluye:} preentrenamiento SSL propio, detección de instancias,
+vocabulario abierto basado en modelos de lenguaje y ejecución en tiempo real
+sobre hardware embebido.
+
+% ---------------------------------------------------------------------
+\section{Diseño de proyecto}
+% ---------------------------------------------------------------------
+La Fig.~\ref{fig:diseno} presenta el flujo general del sistema:
+\textbf{entrada $\rightarrow$ procesamiento $\rightarrow$ modelo
+$\rightarrow$ salida}. El punto de intervención se encuentra en el módulo de
+modelo: el \emph{encoder} congelado de Sonata reemplaza la rama geométrica
+manual de HyperNCD antes de la concatenación de características. Todo lo
+posterior ---formación de prototipos, construcción del hipergrafo dinámico y
+generación de pseudo-etiquetas--- se mantiene para que la comparación sea
+interpretable.
+
+Los descriptores por punto se definen como
+$f_{\mathrm{sem}}$ para la rama semántica de MinkowskiUNet-34C y
+$f_{\mathrm{ssl}}$ para el \emph{encoder} auto-supervisado de Sonata. Ambos se
+integran mediante
+$F_i=[f_{\mathrm{sem}}(x^i);f_{\mathrm{ssl}}(x^i)]$.
+La afinidad entre prototipos combina similitud geométrica y semántica:
+$S_b=\alpha S_g+(1-\alpha)S_s$, donde $\alpha\in[0,1]$. Para cada prototipo
+se seleccionan $M=8$ vecinos para formar las hiperaristas.
+
+
+% =====================================================================
+% DIAGRAMA DE DISEÑO DEL SISTEMA
+% =====================================================================
+\begin{figure*}[t]
+\centering
+\vspace{-3pt}
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[font=\sffamily]
+
+% Título del diagrama
+\node[font=\bfseries\Large,text=ddDark] at (6.45,4.25)
+{Diagrama de diseño del sistema propuesto};
+
+% Tarjetas principales
+\node[module,draw=ddBlue]   (entrada) at (0,0) {};
+\node[module,draw=ddCyan]   (proceso) at (4.30,0) {};
+\node[module,draw=ddGreen]  (modelo)  at (8.60,0) {};
+\node[module,draw=ddOrange] (salida)  at (12.90,0) {};
+
+% Contenedores externos
+\begin{pgfonlayer}{background}
+\node[groupblue,fit=(entrada),inner xsep=7pt,inner ysep=9pt] (gentrada) {};
+\node[groupcyan,fit=(proceso),inner xsep=7pt,inner ysep=9pt] (gproceso) {};
+\node[groupgreen,fit=(modelo),inner xsep=7pt,inner ysep=9pt] (gmodelo) {};
+\node[grouporange,fit=(salida),inner xsep=7pt,inner ysep=9pt] (gsalida) {};
+\end{pgfonlayer}
+
+% Encabezados
+\node[header,fill=ddBlue] at (gentrada.north) {MÓDULO 1: ENTRADA};
+\node[header,fill=ddCyan] at (gproceso.north) {MÓDULO 2: PROCESAMIENTO};
+\node[header,fill=ddGreen] at (gmodelo.north) {MÓDULO 3: MODELO};
+\node[header,fill=ddOrange] at (gsalida.north) {MÓDULO 4: SALIDA};
+
+% ---------------------------------------------------------------------
+% MÓDULO 1: nube de puntos
+% ---------------------------------------------------------------------
+\begin{scope}[shift={($(entrada.north)+(0,-1.20)$)},scale=0.54]
+\draw[ddBlue,line width=0.8pt]
+(-1.35,-0.50)--(0,-1.25)--(1.35,-0.50)--(1.35,0.65)--
+(0,1.40)--(-1.35,0.65)--cycle;
+\draw[ddBlue!55,line width=0.6pt] (0,-1.25)--(0,0.05)--(1.35,0.65);
+\draw[ddBlue!55,line width=0.6pt] (0,0.05)--(-1.35,0.65);
+\draw[ddBlue!55,line width=0.6pt] (0,0.05)--(0,1.40);
+\foreach \x/\y in {
+-1.15/-0.30,-0.95/-0.42,-0.72/-0.55,-0.48/-0.70,-0.23/-0.86,
+0.23/-0.86,0.48/-0.70,0.72/-0.55,0.95/-0.42,1.15/-0.30,
+-1.02/0.08,-0.76/0.22,-0.50/0.36,-0.24/0.50,0/0.64,
+0.24/0.50,0.50/0.36,0.76/0.22,1.02/0.08,
+-0.70/0.68,-0.45/0.83,-0.20/0.98,0/1.10,0.20/0.98,0.45/0.83,0.70/0.68}
+{\fill[ddBlue] (\x,\y) circle (1.6pt);}
+\foreach \x/\h in {-0.75/0.70,-0.30/0.95,0.20/0.72,0.68/0.90}
+{\draw[ddBlue,densely dotted,line width=1pt] (\x,-0.15)--(\x,\h);}
+\end{scope}
+\node[cardtitle] at ($(entrada.center)+(0,0.72)$) {Datos de entrada};
+\node[cardsubtitle] at ($(entrada.center)+(0,0.08)$)
+{Nubes de puntos 3D\\SemanticKITTI y SemanticPOSS};
+\node[infobox,draw=ddBlue!65,fill=ddBlue!5]
+at ($(entrada.center)+(0,-1.65)$)
+{
+\textbullet\ Coordenadas $(x,y,z)$\\[4pt]
+\textbullet\ Intensidad o reflectancia\\[4pt]
+\textbullet\ Clases conocidas etiquetadas\\[4pt]
+\textbullet\ Clases novedosas sin etiqueta\\[4pt]
+\textbullet\ Cuatro \emph{splits} oficiales
+};
+
+% ---------------------------------------------------------------------
+% MÓDULO 2: preprocesamiento
+% ---------------------------------------------------------------------
+\begin{scope}[shift={($(proceso.north)+(0,-1.18)$)},scale=0.57]
+\foreach \x/\y in {-0.70/1.10,0/1.10,0.70/1.10,-0.43/0.68,0.18/0.68,0.76/0.68}
+{\fill[ddCyan] (\x,\y) circle (4pt);}
+\filldraw[fill=ddCyan!80,draw=ddCyan,line width=0.8pt]
+(-1.15,0.28)--(1.15,0.28)--(0.45,-0.48)--(0.45,-1.02)--
+(0.14,-1.30)--(-0.14,-1.30)--(-0.45,-1.02)--(-0.45,-0.48)--cycle;
+\fill[ddCyan] (-0.25,-1.62) circle (3.4pt);
+\fill[ddCyan] (0.25,-1.62) circle (3.4pt);
+\end{scope}
+\node[cardtitle] at ($(proceso.center)+(0,0.72)$) {Preparación del \emph{input}};
+\node[cardsubtitle] at ($(proceso.center)+(0,0.08)$)
+{Transformación de la nube para\\el procesamiento computacional};
+\node[infobox,draw=ddCyan!75,fill=ddCyan!5]
+at ($(proceso.center)+(0,-1.65)$)
+{
+\textbullet\ Voxelización\\[4pt]
+\textbullet\ Normalización\\[4pt]
+\textbullet\ Muestreo y organización\\[4pt]
+\textbullet\ MinkowskiEngine\\[4pt]
+\textbullet\ Separación \emph{known}/\emph{novel}
+};
+
+% ---------------------------------------------------------------------
+% MÓDULO 3: modelo
+% ---------------------------------------------------------------------
+\begin{scope}[shift={($(modelo.north)+(0,-1.16)$)},scale=0.55]
+\foreach \ya in {0.85,0,-0.85}{
+  \foreach \yb in {1.10,0.36,-0.36,-1.10}{
+    \draw[ddGreen!65,line width=0.55pt] (-1.25,\ya)--(0,\yb);
+  }
+}
+\foreach \yb in {1.10,0.36,-0.36,-1.10}{
+  \draw[ddGreen!65,line width=0.55pt] (0,\yb)--(1.35,0);
+}
+\foreach \y in {0.85,0,-0.85}{
+  \filldraw[fill=white,draw=ddGreen,line width=1.1pt]
+  (-1.25,\y) circle (0.17);
+}
+\foreach \y in {1.10,0.36,-0.36,-1.10}{
+  \filldraw[fill=white,draw=ddGreen,line width=1.1pt]
+  (0,\y) circle (0.17);
+}
+\filldraw[fill=white,draw=ddGreen,line width=1.1pt]
+(1.35,0) circle (0.17);
+\end{scope}
+\node[cardtitle] at ($(modelo.center)+(0,0.92)$)
+{Segmentación y descubrimiento};
+\node[cardsubtitle] at ($(modelo.center)+(0,0.16)$)
+{Extracción de características y\\razonamiento entre clases};
+\node[
+  rectangle,
+  rounded corners=3pt,
+  draw=ddGreen,
+  fill=ddGreen!10,
+  text=ddGreen!55!black,
+  font=\bfseries\tiny,
+  inner xsep=5pt,
+  inner ysep=3pt
+] at ($(modelo.center)+(0,-0.32)$)
+{APORTE: ENCODER SONATA};
+\node[infobox,draw=ddGreen!75,fill=ddGreen!5]
+at ($(modelo.center)+(0,-1.92)$)
+{
+\textbullet\ MinkowskiUNet-34C: $f_{\mathrm{sem}}$\\[4pt]
+\textbullet\ Sonata/PTv3 congelado: $f_{\mathrm{ssl}}$\\[4pt]
+\textbullet\ Integración: $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$\\[4pt]
+\textbullet\ Prototipos por clase\\[4pt]
+\textbullet\ Hipergrafo dinámico y pseudo-etiquetas
+};
+
+% ---------------------------------------------------------------------
+% MÓDULO 4: salida segmentada
+% ---------------------------------------------------------------------
+\begin{scope}[shift={($(salida.north)+(0,-1.18)$)},scale=0.57]
+\filldraw[fill=ddBlue!65,draw=black!70,line width=0.6pt]
+(-1.35,-0.85) rectangle (-0.45,0.05);
+\filldraw[fill=ddGreen!65,draw=black!70,line width=0.6pt]
+(-0.40,-0.85) rectangle (0.45,0.20);
+\filldraw[fill=ddOrange!75,draw=black!70,line width=0.6pt]
+(0.50,-0.85) rectangle (1.35,0.15);
+\filldraw[fill=ddPurple!65,draw=black!70,line width=0.6pt]
+(-1.35,0.10) rectangle (-0.45,1.00);
+\filldraw[fill=ddCyan!65,draw=black!70,line width=0.6pt]
+(-0.40,0.25) rectangle (0.45,1.00);
+\filldraw[fill=ddRed!65,draw=black!70,line width=0.6pt]
+(0.50,0.20) rectangle (1.35,1.00);
+\draw[black!80,line width=1pt] (-1.40,-0.90) rectangle (1.40,1.05);
+\end{scope}
+\node[cardtitle] at ($(salida.center)+(0,0.72)$) {Resultados del sistema};
+\node[cardsubtitle] at ($(salida.center)+(0,0.08)$)
+{Segmentación por punto de clases\\conocidas y novedosas};
+\node[infobox,draw=ddOrange!80,fill=ddOrange!6]
+at ($(salida.center)+(0,-1.65)$)
+{
+\textbullet\ Etiqueta semántica por punto\\[4pt]
+\textbullet\ Clases conocidas y novedosas\\[4pt]
+\textbullet\ Nube segmentada en 3D\\[4pt]
+\textbullet\ mIoU \emph{novel}, \emph{known} y \emph{all}\\[4pt]
+\textbullet\ Comparación con NOPS, DASL e HyperNCD
+};
+
+% Flechas y etiquetas
+\draw[flow] (gentrada.east)--(gproceso.west);
+\draw[flow] (gproceso.east)--(gmodelo.west);
+\draw[flow] (gmodelo.east)--(gsalida.west);
+\node[font=\tiny\itshape,fill=white,text=ddGray,inner sep=1pt]
+at ($(gentrada.east)!0.5!(gproceso.west)+(0,0.24)$) {datos};
+\node[font=\tiny\itshape,fill=white,text=ddGray,inner sep=1pt]
+at ($(gproceso.east)!0.5!(gmodelo.west)+(0,0.24)$) {características};
+\node[font=\tiny\itshape,fill=white,text=ddGray,inner sep=1pt]
+at ($(gmodelo.east)!0.5!(gsalida.west)+(0,0.24)$) {predicciones};
+
+\end{tikzpicture}%
+}
+\vspace{-2pt}
+\caption{\textbf{Diagrama de diseño del sistema propuesto.}
+Las nubes de puntos de SemanticKITTI y SemanticPOSS son voxelizadas y
+normalizadas antes de ingresar al modelo. MinkowskiUNet-34C obtiene las
+características semánticas $f_{\mathrm{sem}}$, mientras que el \emph{encoder}
+auto-supervisado congelado de Sonata produce $f_{\mathrm{ssl}}$. Ambas
+representaciones se integran para construir prototipos y un hipergrafo
+dinámico que permite segmentar clases conocidas y descubrir clases novedosas.}
+\label{fig:diseno}
+\vspace{-7pt}
+\end{figure*}
+
+El criterio de éxito se fija sobre el \textbf{mIoU de clases novedosas} tras
+emparejamiento húngaro: mejorar a HyperNCD en al menos dos de los cuatro
+\emph{splits}, sin degradar el rendimiento de las clases conocidas.
+
+\textbf{Riesgo y mitigación.}
+Sonata se preentrenó mayoritariamente con interiores densos. En exteriores,
+su \emph{linear probing} en SemanticKITTI puede quedar por debajo de un PTv3
+entrenado desde cero. Como Plan B, se evaluará la concatenación
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ en lugar del
+reemplazo directo, permitiendo que el módulo de prototipos combine las tres
+fuentes de información.
+
+% ---------------------------------------------------------------------
+\section{Objetivos del proyecto}
+% ---------------------------------------------------------------------
+\textbf{Objetivo general.}
+Diseñar y evaluar un método de descubrimiento de clases novedosas para
+segmentación 3D que sustituya los descriptores geométricos manuales por
+representaciones auto-supervisadas preentrenadas, midiendo su impacto en
+SemanticKITTI y SemanticPOSS.
+
+\textbf{OE1: Reproducir el estado del arte.}
+Replicar HyperNCD en ambos conjuntos de datos y en los cuatro \emph{splits}
+oficiales, reportando la desviación sobre tres corridas.
+\emph{Herramientas:} Python 3.10, PyTorch, MinkowskiEngine, código oficial de
+HyperNCD y MinkowskiUNet-34C.
+\emph{Alcance:} desviación máxima de $\pm1.0$ mIoU respecto de lo publicado.
+
+\textbf{OE2: Integrar el \emph{encoder} SSL.}
+Incorporar el \emph{encoder} de Sonata, con pesos congelados y
+\emph{up-casting}, dentro del módulo de prototipos, en reemplazo del bloque
+geométrico analítico.
+\emph{Herramientas:} pesos públicos de Sonata, Pointcept, PTv3 y
+\texttt{spconv}.
+\emph{Alcance:} solo inferencia, sin retropropagación a través del
+\emph{encoder}.
+
+\textbf{OE3: Reajustar la configuración.}
+Recalibrar $\alpha$ (balance geométrico-semántico), $M$ (vecinos por
+hiperarista) y $\epsilon$ (suavizado de etiquetas).
+\emph{Herramientas:} Optuna o búsqueda por grilla, AdamW y Weights\&Biases.
+\emph{Alcance:} búsqueda en el \emph{split} 0 y aplicación sin reajuste a los
+otros tres.
+
+\textbf{OE4: Evaluar y realizar ablaciones.}
+Comparar contra NOPS~\cite{nops}, DASL~\cite{dasl} e HyperNCD en mIoU
+\emph{novel}, \emph{known} y \emph{all}; además, aislar la contribución del
+\emph{encoder} mediante las variantes manual, auto-supervisada y concatenada.
+\emph{Herramientas:} mIoU con emparejamiento húngaro y visualizaciones PCA.
+\emph{Alcance:} cuatro \emph{splits} por conjunto de datos.
+
+\textbf{Recursos.}
+GPU con al menos 12 GB de VRAM. El \emph{encoder} congelado añade únicamente
+costo de inferencia y permite almacenar en caché las características por
+escena. Como respaldo se utilizará Colab Pro o Kaggle.
+
+% ---------------------------------------------------------------------
+\section{Resultados esperados}
+% ---------------------------------------------------------------------
+Se espera mejorar el mIoU de las clases novedosas respecto de HyperNCD en al
+menos dos de los cuatro \emph{splits} de SemanticKITTI y SemanticPOSS, sin
+degradar las clases conocidas. Los entregables serán: (i) tabla de
+reproducción de HyperNCD con desviación reportada; (ii) implementación del
+\emph{encoder} SSL dentro del módulo de prototipos; (iii) curvas de
+sensibilidad de $\alpha$, $M$ y $\epsilon$; y (iv) tablas comparativas y un
+estudio de ablación que aísle la contribución del \emph{encoder} congelado.
+
+La contribución no consiste en crear una arquitectura completamente nueva,
+sino en establecer empíricamente si el problema del \emph{geometric
+shortcut}, demostrado en aprendizaje auto-supervisado 3D, también afecta el
+descubrimiento de clases novedosas. Incluso un resultado nulo o negativo,
+respaldado por ablaciones, constituirá un hallazgo reportable.
+
+% ---------------------------------------------------------------------
+% BIBLIOGRAFÍA
+% ---------------------------------------------------------------------
+{\small
+\begin{thebibliography}{9}
+\bibitem{nops}
+L. Riz, C. Saltori, E. Ricci y F. Poiesi,
+``Novel Class Discovery for 3D Point Cloud Semantic Segmentation'',
+\emph{CVPR}, 2023.
+\bibitem{ptv3}
+X. Wu \emph{et al.},
+``Point Transformer V3: Simpler, Faster, Stronger'',
+\emph{CVPR}, 2024.
+\bibitem{dasl}
+R. Xu, C. Zhang, H. Ren y X. He,
+``Dual-Level Adaptive Self-Labeling for Novel Class Discovery in Point Cloud
+Segmentation'',
+\emph{ECCV}, 2024.
+\bibitem{sonata}
+X. Wu \emph{et al.},
+``Sonata: Self-Supervised Learning of Reliable Point Representations'',
+\emph{arXiv:2503.16429}, 2025.
+\bibitem{hyperncd}
+Z. Zhang, A. Wu, Y. Li, Y. Han y J. Shen,
+``Geometric-Aware Hypergraph Reasoning for Novel Class Discovery in Point
+Cloud Segmentation'',
+\emph{arXiv:2606.07280}, 2026.
+\end{thebibliography}
+}
+
+\end{document}

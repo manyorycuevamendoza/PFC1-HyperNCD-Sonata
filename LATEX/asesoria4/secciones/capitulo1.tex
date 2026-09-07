@@ -1,0 +1,305 @@
+% =====================================================================
+%  CAPITULO I - REVISION CRITICA DE LA LITERATURA
+%  Todas las cifras citadas provienen de las tablas de los articulos
+%  originales. La procedencia exacta de cada numero se indica en una
+%  nota al pie, de modo que el jurado pueda verificarla directamente.
+% =====================================================================
+
+\chapter{REVISIÓN CRÍTICA DE LA LITERATURA}
+\label{cap:revision}
+
+\section[HyperNCD]{Zhang, Wu, Li, Han y Shen (2026): HyperNCD, razonamiento por
+hipergrafo}
+\label{sec:hyperncd}
+
+\textbf{Estudio relevante.} \emph{Geometric-Aware Hypergraph Reasoning for Novel
+Class Discovery in Point Cloud Segmentation}, CVPR 2026 \cite{zhang2026hyperncd}.
+Es el estado del arte del problema y el método sobre el que esta tesis construye.
+Su idea central es representar las relaciones entre clases con un
+\textbf{hipergrafo}. En un grafo común, una arista une exactamente dos nodos; en
+un hipergrafo, una hiperarista puede unir tres, cinco o quince nodos a la vez. Eso
+permite expresar afirmaciones del tipo ``estas cinco clases comparten una misma
+estructura geométrica'', que un grafo de pares no puede representar. Los nodos de
+ese hipergrafo son los prototipos de clase, y esos prototipos se construyen sobre
+un descriptor compuesto: por un lado un descriptor semántico que produce la red
+supervisada, y por otro un descriptor geométrico $f_{\text{geo}}$ calculado con
+una fórmula fija.
+
+\textbf{Resultados que reporta.} Sobre SemanticKITTI obtiene entre 11,8 y 47,5 de
+mIoU en clases novedosas según la partición, frente a 49,8 del equivalente
+supervisado. Sobre SemanticPOSS obtiene entre 22,3 y 47,2, frente a 50,6 del
+supervisado.\footnote{Tablas~1 y~2 de \cite{zhang2026hyperncd}. La fila \emph{Full}
+de cada tabla es el modelo supervisado y su valor se lee en la columna \emph{All}.}
+Más importante que el agregado es su estudio de ablación, que consiste en apagar
+una pieza a la vez para ver cuánto aporta cada una. Sobre la partición~0 de
+SemanticPOSS, partiendo de una red base MinkowskiUNet-34C modificada que rinde
+23,2 de mIoU promedio, el prototipo consciente de la geometría aporta $+4{,}2$
+puntos y lleva el resultado a 27,4; la construcción del hipergrafo aporta $+9{,}6$
+puntos sobre la misma base y lleva a 32,8; ambas piezas juntas dan 34,2; y el
+ajuste dinámico de hiperaristas eleva el resultado final a 36,5.\footnote{Tabla~3
+de \cite{zhang2026hyperncd}, columna \emph{Overall Avg}.} Estos valores se
+resumen en la Tabla~\ref{tab:ablacion-hyperncd}.
+
+\begin{table}[htbp]
+\centering
+\caption{Estudio de ablación de HyperNCD sobre la partición~0 de SemanticPOSS,
+según la Tabla~3 de \cite{zhang2026hyperncd}. La columna de ganancia mide la
+diferencia respecto de la red base. Es la evidencia cuantitativa que sostiene la
+hipótesis de esta tesis.}
+\label{tab:ablacion-hyperncd}
+\begin{tabular}{lcc}
+\hline
+Configuración & mIoU promedio & Ganancia sobre la base \\
+\hline
+Red base (MinkowskiUNet-34C modificada) & 23,2 & referencia \\
+Solo prototipo consciente de la geometría & 27,4 & $+4{,}2$ \\
+Solo hipergrafo & 32,8 & $+9{,}6$ \\
+Prototipo geométrico e hipergrafo & 34,2 & $+11{,}0$ \\
+Método completo, con hiperaristas dinámicas & 36,5 & $+13{,}3$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Lectura crítica.} El razonamiento de alto orden entre prototipos
+funciona, y la ablación lo cuantifica sin ambigüedad. Pero la misma tabla deja al
+descubierto un desequilibrio que los autores no comentan: la pieza geométrica
+aporta $+4{,}2$ puntos y la pieza de razonamiento aporta $+9{,}6$, es decir, el
+descriptor geométrico contribuye menos de la mitad que el mecanismo que lo
+consume. Conviene ser preciso con esta lectura, porque de su honestidad depende la
+validez de la hipótesis de esta tesis: la ablación \textbf{no} demuestra que el
+descriptor geométrico sea inútil. Demuestra que aporta poco en relación con el
+lugar central que ocupa dentro del método. La hipótesis que se defiende aquí no es
+que $f_{\text{geo}}$ no sirva, sino que una representación aprendida puesta en su
+lugar debería aportar más.
+
+La limitación de fondo es la naturaleza de ese descriptor. $f_{\text{geo}}$ se
+calcula de forma analítica: se toman los $K=15$ vecinos más cercanos de cada
+punto, se arma la matriz de covarianza de sus distancias euclidianas, se obtienen
+sus autovalores y de ellos se derivan tres cantidades llamadas linealidad,
+planaridad y dispersión \cite{zhang2026hyperncd}. Ese cálculo es siempre el mismo,
+no depende de los datos y no aprende nada del dominio en el que se aplica. Además,
+es exactamente el tipo de señal que la literatura de aprendizaje auto-supervisado
+caracteriza como un atajo perjudicial, como se detalla en la
+Sección~\ref{sec:sonata}. Una segunda limitación es la dispersión entre
+particiones, entre 11,8 y 47,5: los propios autores identifican el desbalance de
+clases como el problema que motiva tanto el ajuste dinámico de hiperaristas como
+el suavizado de etiquetas con $\epsilon = 0{,}15$.
+
+\textbf{Aporte al proyecto.} Tres cosas concretas. Primero, la arquitectura
+completa sobre la que se trabaja, con su código público. Segundo, los
+hiperparámetros publicados, que fijan el punto de partida de la calibración:
+$K=15$ vecinos, $M=8$ prototipos vecinos por hiperarista, $\alpha$ inicializado en
+$0{,}5$ y $\epsilon = 0{,}15$. Tercero, y sobre todo, la vara contra la cual se
+mide el aporte principal: cualquier reemplazo de $f_{\text{geo}}$ debe compararse
+contra los $+4{,}2$ puntos que aporta el descriptor original.
+
+\textbf{Aporte del proyecto.} Sustituir $f_{\text{geo}}$ por un descriptor
+auto-supervisado congelado, dejando intacto el resto del método, de modo que
+cualquier variación en la métrica sea atribuible únicamente a ese reemplazo. Este
+es el aporte central y corresponde a OE1.
+
+% =====================================================================
+\section[Sonata]{Wu et al. (2025): Sonata y el atajo geométrico}
+\label{sec:sonata}
+
+\textbf{Estudio relevante.} \emph{Sonata: Self-Supervised Learning of Reliable
+Point Representations}, CVPR 2025 \cite{wu2025sonata}. Aprendizaje
+auto-supervisado quiere decir que el modelo aprende sin etiquetas humanas,
+resolviendo tareas que se inventa a partir de los propios datos. El hallazgo
+central del trabajo es lo que llaman \textbf{atajo geométrico}: cuando se entrena
+así sobre nubes de puntos, la representación tiende a colapsar sobre pistas
+geométricas de bajo nivel muy fáciles de leer, como la dirección de la normal de
+la superficie o la altura del punto, en lugar de aprender semántica. Los autores
+argumentan que es un problema propio del 3D y no de la imagen: en una imagen toda
+la información está en el contenido de los píxeles, mientras que en una nube de
+puntos la geometría entra por las coordenadas mismas, que los operadores usan de
+forma directa, y por eso el atajo es difícil de tapar. Sonata lo ataca oscureciendo
+la información espacial y poniendo el énfasis en las características de entrada,
+dentro de un esquema de auto-destilación entrenado sobre 140 mil escenas.
+
+\textbf{Resultados que reporta.} La evidencia es directa y se mide por
+\emph{linear probing}, un procedimiento en el que se congelan todos los pesos del
+codificador y se entrena encima únicamente un clasificador lineal, con menos del
+$0{,}2$\% de los parámetros. Como el codificador no puede cambiar, lo que se mide
+es la calidad de la representación y nada más. Sobre ScanNet el desempeño pasa de
+5,6 a 72,5 de mIoU, una mejora que los propios autores describen como $3{,}3$ veces
+sobre el estado del arte previo. En S3DIS Área~5 alcanza 72,3 de mIoU con
+clasificador lineal, prácticamente a la par de una red supervisada completa, que
+obtiene 72,4.\footnote{Tabla~5 de \cite{wu2025sonata}, sobre eficiencia de
+parámetros.} La Tabla~\ref{tab:linprobe} recoge la comparación.
+
+\begin{table}[htbp]
+\centering
+\caption{\emph{Linear probing} sobre ScanNet, conjunto de validación, según la
+Tabla~5 de \cite{wu2025sonata}. Todos los métodos congelan el codificador y
+entrenan una única capa lineal, con menos del $0{,}2$\% de los parámetros. La
+columna mide, por tanto, calidad de la representación y no capacidad del
+clasificador.}
+\label{tab:linprobe}
+\begin{tabular}{lc}
+\hline
+Método & mIoU (\%) \\
+\hline
+PointContrast & 5,6 \\
+CSC & 12,6 \\
+MSC & 21,8 \\
+DINOv2, agregado de 2D a 3D & 63,1 \\
+\textbf{Sonata} & \textbf{72,5} \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Lectura crítica.} Este es el resultado que hace posible la tesis, y su
+lectura debe ser precisa. Lo que Sonata demuestra es que la señal geométrica de
+bajo nivel, medida en igualdad de condiciones, es un mal descriptor, y que existe
+un codificador público, ya entrenado y congelable, que la reemplaza sin exigir un
+preentrenamiento propio. Ahora bien, el trabajo declara tres limitaciones que
+acotan el riesgo de esta tesis y que deben enunciarse con la misma precisión:
+
+\begin{enumerate}
+\item \textit{Dominio de preentrenamiento.} El modelo principal se preentrena
+sobre escenas interiores densas, entre ellas ScanNet, ScanNet++, S3DIS,
+ArkitScenes, HM3D, Structured3D y ASE \cite{wu2025sonata}. El levantamiento de una
+catedral cae del lado favorable de esa frontera, porque es un interior denso, pero
+el cambio de dominio sigue siendo el principal riesgo declarado del proyecto.
+
+\item \textit{Régimen congelado en exteriores.} En escaneo láser urbano, el
+\emph{linear probing} de Sonata queda por debajo de una PTv3 supervisada, con 62,0
+frente a 69,1 de mIoU en SemanticKITTI. Hay que registrar, sin embargo, que con
+ajuste fino completo Sonata alcanza 72,6 en el mismo conjunto y supera al
+supervisado.\footnote{Tabla~8 de \cite{wu2025sonata}.} Es decir, la desventaja es
+del régimen congelado y no de la representación en general, y el régimen congelado
+es exactamente el que adopta este proyecto, por lo que la limitación aplica en su
+forma más restrictiva.
+
+\item \textit{Vocabularios grandes.} Con 200 clases la discriminación cae a 29,3
+de mIoU en ScanNet200, frente a 72,5 con 20 clases en ScanNet. Los propios autores
+lo señalan como una limitación de la representación aprendida para distinguir un
+número grande de categorías. Esto fija de forma directa el límite superior de
+clases novedosas simultáneas que el proyecto puede declarar como rango favorable.
+\end{enumerate}
+
+\textbf{Aporte al proyecto.} El codificador congelado que sustituye a
+$f_{\text{geo}}$, disponible públicamente y sin costo de preentrenamiento, más la
+metodología de \emph{linear probing} como forma de medir calidad de representación
+de manera aislada. Esa metodología es la que permite el protocolo de atribución
+por etapas del Capítulo~\ref{cap:teorico}.
+
+\textbf{Aporte del proyecto.} Trasladar el hallazgo del atajo geométrico desde el
+régimen en el que fue demostrado, que es supervisado y de vocabulario cerrado,
+hacia el régimen de descubrimiento de clases novedosas, donde la calidad de la
+representación es más crítica porque no hay ninguna supervisión sobre las clases
+objetivo. Este traslado es un resultado incierto, medible y no reportado por
+nadie, y constituye el segundo aporte de la tesis, asociado a OE1 y evaluado en
+OE3.
+
+% =====================================================================
+\section{Síntesis: el vacío identificado}
+
+Las fuentes revisadas convergen en una observación que ninguna formula de manera
+explícita. HyperNCD construye su módulo de prototipos sobre exactamente el tipo de
+descriptor que Sonata demuestra problemático, y no lo cita. La verificación es
+directa sobre las 38 referencias de \cite{zhang2026hyperncd}, entre las cuales no
+figura ningún trabajo de preentrenamiento auto-supervisado de nubes de puntos
+posterior a MSC. La relación inversa no es exigible, dado que Sonata, de marzo de
+2025, precede a HyperNCD, de junio de 2026.
+
+El diagnóstico de Sonata, por su parte, se ha verificado únicamente en régimen
+supervisado y de \emph{linear probing}, sobre tareas de segmentación con
+vocabulario cerrado. Su transferencia al régimen de descubrimiento de clases
+novedosas, donde la calidad de la representación es más crítica porque no existe
+supervisión sobre las clases objetivo, es un resultado incierto, medible y no
+reportado.
+
+Debe explicitarse una diferencia arquitectónica que esta síntesis no puede
+ocultar: HyperNCD opera sobre MinkowskiUNet-34C \cite{zhang2026hyperncd} y Sonata
+sobre Point Transformer V3 con 108 millones de parámetros \cite{wu2025sonata}. La
+sustitución no es un intercambio de tensores entre módulos homogéneos, sino la
+integración de dos redes con rejillas y resoluciones distintas, cada una con su
+propio patrón de muestreo del espacio. Esa compatibilidad de resolución es el
+contenido técnico de OE1 y no un detalle de implementación: Point Transformer V3,
+la red sobre la que está construido Sonata, organiza los puntos por
+serialización, mientras que MinkowskiUNet-34C, la red sobre la que está
+construido HyperNCD, opera sobre una rejilla dispersa de vóxeles
+\cite{wu2024ptv3}. Resolver ese puente mediante un \emph{up-cast} de las
+características de PTv3 hacia la rejilla de Minkowski, con \emph{cache} de esas
+características por sección para que la inferencia del codificador se haga una
+sola vez, es el componente de ingeniería que hace posible OE1.
+
+% =====================================================================
+\section[Conclusión: aporte del proyecto]{Conclusión de la revisión crítica: el aporte del proyecto}
+\label{sec:aporte}
+
+La revisión permite responder las tres preguntas que la evaluación plantea. Los
+estudios previos resuelven el problema solo de forma parcial: existe una
+formulación establecida del descubrimiento de clases novedosas, con un protocolo
+de medición aceptado que se apoya en el emparejamiento húngaro definido en el
+Capítulo~\ref{cap:teorico}; existe un método de razonamiento entre clases que
+funciona (Sección~\ref{sec:hyperncd}); y existe una representación de puntos de
+calidad demostrada (Sección~\ref{sec:sonata}); pero nadie ha juntado las dos
+últimas, y ninguno de esos trabajos se ha evaluado sobre patrimonio construido. El
+análisis de sus resultados es lo que localiza el cuello de botella en el
+descriptor geométrico analítico, y de ahí nace todo lo que sigue.
+
+Sobre esa base, el proyecto declara los siguientes aportes, cada uno anclado en un
+resultado publicado y asociado a un objetivo:
+
+\begin{enumerate}
+\item \textbf{Conexión no establecida entre dos líneas de trabajo.} Sustituir
+$f_{\text{geo}}$ por el codificador auto-supervisado congelado de Sonata dentro
+del módulo de prototipos de HyperNCD, conservando íntegro el razonamiento por
+hipergrafo, de modo que $F_i = [f_{\mathrm{sem}}(x^i);\, f_{\mathrm{ssl}}(x^i)]$.
+Al mover una sola pieza, cualquier variación de la métrica es atribuible al
+reemplazo. Base: Secciones~\ref{sec:hyperncd} y~\ref{sec:sonata}. Objetivo: OE1.
+
+\item \textbf{Puente técnico entre dos organizaciones espaciales distintas.}
+Resolver la diferencia de resolución entre Point Transformer V3, la red sobre la
+que está construido Sonata, y la rejilla dispersa de Minkowski sobre la que opera
+HyperNCD, mediante \emph{up-cast} y \emph{cache} de características por sección,
+y publicar esa solución como parte del repositorio. Base: \cite{wu2024ptv3} y
+Sección~\ref{sec:sonata}. Objetivo: OE1.
+
+\item \textbf{Transferencia de un hallazgo entre regímenes.} Verificar si la
+nocividad del atajo geométrico, demostrada en régimen supervisado y de
+\emph{linear probing}, se mantiene en régimen de descubrimiento de clases
+novedosas, donde la representación es más crítica. Base:
+Sección~\ref{sec:sonata}. Objetivos: OE1 y OE3.
+
+\item \textbf{Métrica propia de evaluación del híbrido.} Formular la brecha
+cerrada $G$ (Ec.~(\ref{eq:G})) y el protocolo de atribución por etapas, dado que
+las métricas estándar no separan la contribución de la representación de la del
+razonamiento. La ablación de \cite{zhang2026hyperncd} da el punto de comparación
+directo: el aporte del descriptor sustituido debe medirse contra los $+4{,}2$
+puntos de mIoU del prototipo geométrico original
+(Tabla~\ref{tab:ablacion-hyperncd}). Base: Sección~\ref{sec:hyperncd}. Objetivo:
+OE3.
+
+\item \textbf{Diagnóstico por clase y no solo por promedio.} Incorporar al
+reporte un análisis de dominancia, de modo que ninguna mejora agregada se
+presente sin identificar qué clase la produce, y calibrar el suavizado de
+etiquetas $\epsilon$ en lugar de heredar su valor publicado. La necesidad de este
+diagnóstico nace de la propia dispersión que HyperNCD reporta entre particiones,
+de 11,8 a 47,5 de mIoU (Sección~\ref{sec:hyperncd}), y se refuerza con evidencia
+externa de que corregir el sesgo hacia las clases mayoritarias puede aportar
+hasta $+15{,}34$ mIoU en clases nuevas \cite{su2025brdl}. Base:
+Sección~\ref{sec:hyperncd} y \cite{su2025brdl}. Objetivos: OE2 y OE3.
+
+\item \textbf{Reporte explícito de costo y evidencia de dominio.} Informar horas
+de GPU, memoria máxima, tiempo de preprocesamiento y parámetros entrenados, una
+práctica que la línea de NCD no sigue y que aquí se adopta siguiendo el criterio
+de \cite{robert2023spt}, aprovechando además que el codificador congelado de
+Sonata permite calcular sus características una sola vez por sección y ejecutar
+el modelo de forma distribuida o compartida. El resultado se evalúa sobre un
+levantamiento patrimonial real, dominio que ninguna de las fuentes
+internacionales cubre, y se compara contra el enfoque supervisado de vocabulario
+cerrado aplicado previamente al mismo tipo de edificio \cite{tesisutec2024}.
+Objetivo: OE3.
+\end{enumerate}
+
+La contribución al estado del arte no es, por tanto, una arquitectura nueva. Es
+establecer si un hallazgo demostrado en un régimen se transfiere a otro donde
+resulta más crítico, y hacerlo sobre un objeto de estudio en el que el costo del
+trabajo manual es real y medible. Cada punto de mIoU que se gana en las clases
+novedosas es trabajo de corrección que el especialista deja de hacer, y por eso el
+valor del proyecto no está en igualar la precisión del trabajo manual sino en
+automatizarlo hasta un nivel que resulte útil.

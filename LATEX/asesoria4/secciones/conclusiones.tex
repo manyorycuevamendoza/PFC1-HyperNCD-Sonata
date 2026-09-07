@@ -1,0 +1,51 @@
+\customchapter{CONCLUSIONES}
+
+Las conclusiones se enuncian en correspondencia con los dos objetivos específicos
+que incorporan trabajo computacional, precedidas del diagnóstico que fundamenta
+el proyecto y seguidas de la lectura analítica que los integra.
+
+\begin{enumerate}
+\item \textbf{Diagnóstico.} La clasificación de elementos estructurales sobre
+levantamientos TLS de patrimonio arquitectónico carece hoy de solución
+automatizada. La segmentación semántica 3D de conjunto cerrado no puede cubrirla
+porque fuerza todo elemento no previsto hacia una clase conocida, y el marco que
+sí levanta ese supuesto ---NCD--- rinde entre 11,8 y 47,5 mIoU en clases
+novedosas, por debajo del umbral de utilidad práctica. La revisión crítica
+localiza la causa plausible en el descriptor geométrico calculado a mano del
+módulo de prototipos, y la reproducción de la línea base
+(Sección~\ref{sec:linea-base}) fija el punto de partida sobre datos reales, con
+el resultado negativo del cambio de normalización descartando una explicación
+alternativa.
+
+\item \textbf{Conclusión asociada a OE1 (integración).} La sustitución de
+$f_{\mathrm{geo}}$ por la representación auto-supervisada congelada
+$f_{\mathrm{ssl}}$ es \emph{[viable / viable bajo condiciones / no viable]}
+dentro del módulo de prototipos de HyperNCD, conservando intacto el razonamiento
+por hipergrafo. La compatibilidad de resolución entre el \emph{encoder} PTv3 y la
+rejilla de Minkowski se resuelve mediante \emph{up-cast} y \emph{cache} por
+sección, y la prueba de funcionamiento sobre la sección de control confirma que
+el mIoU \emph{known} no se degrada respecto de la línea base.
+
+\item \textbf{Conclusión asociada a OE2 (calibración del híbrido).} El parámetro
+que domina el comportamiento del modelo combinado es \emph{[por determinar]}; el
+valor de $\alpha$ que maximiza el mIoU \emph{novel} indica cuánto peso conserva
+la componente geométrica una vez reemplazado el descriptor manual. La atribución
+por etapas muestra que la ganancia se origina principalmente en \emph{[la
+representación / el razonamiento por hipergrafo]}, resultado que no sería
+observable si el híbrido se evaluara como caja negra.
+
+\item \textbf{Lectura integrada (OE3).} La mejora se cuantifica mediante
+$\Delta$mIoU \emph{novel} y la brecha cerrada $G$, reportando siempre los tres
+términos que componen esa métrica y la clase que domina el agregado. El diseño
+aísla el reemplazo en un único punto de fusión, lo que hace que cualquier
+variación de la métrica sea atribuible al cambio y convierte el estudio de
+ablación en la evidencia central del trabajo.
+
+\item \textbf{Alcance y límites.} El estudio se realiza sobre un edificio
+nombrado y un levantamiento de $\sim$1--2\,GB organizado en cinco secciones, con
+rangos de operación declarados por adelantado y verificados empíricamente. El
+proyecto está limitado por cómputo y su ejecución depende del hardware
+efectivamente asignado en el clúster Khipu, cuya configuración se verifica y no
+se estima, lo que hace el proyecto ejecutable con los recursos disponibles y
+verificable en sus límites.
+\end{enumerate}
