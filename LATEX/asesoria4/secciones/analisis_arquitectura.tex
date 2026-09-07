@@ -1,0 +1,594 @@
+% =====================================================================
+% Capítulo de análisis arquitectónico y computacional de los componentes.
+% =====================================================================
+
+
+% =====================================================================
+\chapter{ANÁLISIS DE LA ARQUITECTURA}
+\label{sec:analisis-componentes}
+
+Las secciones anteriores describen los dos componentes en términos de su
+formulación. Esta los examina en términos de su realización: qué tipo de capa
+emplea cada uno, cuántos parámetros concentra, cuánta memoria exige, en qué
+régimen opera y hasta dónde admite distribución. El propósito no es documental.
+De este análisis se derivan tres elementos que el resto del trabajo utiliza: el
+punto exacto en el que se inserta la sustitución propuesta, la justificación de
+la estrategia de cacheo frente a una integración en un único proceso, y los
+límites cuantificables de la paralelización del experimento.
+
+El examen se apoya en la inspección directa del código liberado por ambos
+grupos, en continuidad con la revisión de la
+Sec.~\ref{sec:rev-implementaciones}, y no únicamente en las descripciones
+publicadas. Cuando una cifra se deriva de forma analítica se indica el
+procedimiento; cuando depende de una ejecución todavía no realizada se declara
+como estimación sujeta a verificación.
+
+\section{Análisis de la arquitectura de Sonata}
+\label{sec:arq-sonata}
+
+Antes de integrar el \emph{encoder} conviene caracterizarlo, porque de su
+estructura se derivan tanto el costo computacional del método como el margen de
+optimización disponible. Sonata es un Point Transformer~V3 (PTv3) en
+configuración \emph{encoder-only}: cinco etapas jerárquicas, sin decodificador,
+con $108{,}46$~M de parámetros. La ausencia de decodificador es deliberada, ya
+que el objetivo no es predecir etiquetas sino producir una representación
+$f_{\mathrm{ssl}}$, y obliga a reconstruir la escala original mediante la
+propagación inversa del submuestreo.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  trf/.style={draw, rounded corners, minimum width=6.8cm, minimum height=0.9cm,
+              align=center, fill=orange!20},
+  cnn/.style={draw, rounded corners, minimum width=6.8cm, minimum height=0.62cm,
+              align=center, fill=green!16},
+  lin/.style={draw, rounded corners, minimum width=6.8cm, minimum height=0.62cm,
+              align=center, fill=blue!14},
+  dat/.style={draw, rounded corners, minimum width=6.8cm, minimum height=0.58cm,
+              align=center, fill=black!6},
+  fl/.style={-{Latex[length=1.8mm]}, thick}
+]
+\node[dat] (in) {\textbf{Datos} --- $N$ puntos $\times$ 9 canales};
+\node[cnn, below=2mm of in] (ser) {\textbf{Serialización} (orden Z / Hilbert) --- sin parámetros};
+\node[lin, below=2mm of ser] (emb) {\textbf{Capa lineal} --- \emph{embedding} $9\rightarrow48$};
+\node[trf, below=2mm of emb] (e1) {\textbf{Etapa 1: 3 bloques \emph{Transformer}} --- 48 can., 3 cabezas};
+\node[lin, below=1.6mm of e1] (d1) {\emph{Pooling} serializado + lineal $48\rightarrow96$};
+\node[trf, below=1.6mm of d1] (e2) {\textbf{Etapa 2: 3 bloques \emph{Transformer}} --- 96 can., 6 cabezas};
+\node[lin, below=1.6mm of e2] (d2) {\emph{Pooling} serializado + lineal $96\rightarrow192$};
+\node[trf, below=1.6mm of d2] (e3) {\textbf{Etapa 3: 3 bloques \emph{Transformer}} --- 192 can., 12 cabezas};
+\node[lin, below=1.6mm of e3] (d3) {\emph{Pooling} serializado + lineal $192\rightarrow384$};
+\node[trf, below=1.6mm of d3, fill=orange!34] (e4) {\textbf{Etapa 4: 12 bloques \emph{Transformer}} --- 384 can., 24 cabezas\\ \emph{65{,}3\% de los parámetros}};
+\node[lin, below=1.6mm of e4] (d4) {\emph{Pooling} serializado + lineal $384\rightarrow512$};
+\node[trf, below=1.6mm of d4] (e5) {\textbf{Etapa 5: 3 bloques \emph{Transformer}} --- 512 can., 32 cabezas};
+\node[dat, below=2mm of e5] (out) {\textbf{Salida} --- $N/16$ puntos $\times$ 512 canales};
+
+\foreach \a/\b in {in/ser, ser/emb, emb/e1, e1/d1, d1/e2, e2/d2, d2/e3, e3/d3,
+                   d3/e4, e4/d4, d4/e5, e5/out}
+  \draw[fl] (\a) -- (\b);
+
+\node[right=1.5mm of e1.east, rotate=90, anchor=south, font=\tiny, text=black!65]
+  {SECUENCIAL};
+\draw[{Latex[length=1.4mm]}-{Latex[length=1.4mm]}, black!45]
+  ($(e1.east)+(0.35,0.3)$) -- ($(e5.east)+(0.35,-0.3)$);
+
+\node[below=2mm of out, font=\scriptsize] (leg)
+  {\tikz\node[draw,rounded corners,fill=orange!20,minimum height=2.6mm,minimum width=3.5mm]{};\ \emph{Transformer}\quad
+   \tikz\node[draw,rounded corners,fill=green!16,minimum height=2.6mm,minimum width=3.5mm]{};\ Ordenamiento\quad
+   \tikz\node[draw,rounded corners,fill=blue!14,minimum height=2.6mm,minimum width=3.5mm]{};\ Lineal\quad
+   \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ Datos};
+\end{tikzpicture}
+\caption{Estructura general del \emph{encoder} de Sonata. La profundidad es
+estrictamente secuencial: cada etapa consume la salida de la anterior. No hay
+convoluciones densas ni capas recurrentes; el único componente convolucional es
+la codificación posicional dispersa interna a cada bloque (Fig.~\ref{fig:bloque-sonata}).}
+\label{fig:arq-sonata}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  op/.style={draw, rounded corners, minimum width=4.6cm, minimum height=0.6cm,
+             align=center, fill=orange!18},
+  cv/.style={draw, rounded corners, minimum width=4.6cm, minimum height=0.6cm,
+             align=center, fill=green!16},
+  nm/.style={draw, rounded corners, minimum width=4.6cm, minimum height=0.5cm,
+             align=center, fill=yellow!22},
+  par/.style={draw, rounded corners, minimum width=1.05cm, minimum height=0.75cm,
+              align=center, fill=orange!30},
+  fl/.style={-{Latex[length=1.8mm]}, thick}
+]
+\node[cv] (cpe) {Conv.\ dispersa \emph{submanifold} $3\times3\times3$\\\emph{(codificación posicional)}};
+\node[nm, below=2.2mm of cpe] (n1) {Normalización};
+\node[op, below=2.2mm of n1] (at) {\textbf{Atención serializada multi-cabeza}};
+\node[nm, below=2.2mm of at] (n2) {Normalización};
+\node[op, below=2.2mm of n2, fill=blue!14] (mlp) {MLP: $C\rightarrow4C\rightarrow C$};
+\foreach \a/\b in {cpe/n1, n1/at, at/n2, n2/mlp} \draw[fl] (\a) -- (\b);
+
+\draw[fl, black!55] ($(cpe.north)+(0,0.35)$) -- (cpe);
+\draw[fl, black!55] (mlp) -- ++(0,-0.45);
+\draw[black!55, rounded corners]
+  ($(cpe.north)+(0,0.2)$) -- ++(-2.75,0) |- ($(at.south)+(0,-0.11)$);
+\draw[black!55, rounded corners]
+  ($(n2.north)+(0,0.14)$) -- ++(2.75,0) |- ($(mlp.south)+(0,-0.11)$);
+\node[left=2.9cm of n1, font=\tiny, text=black!55, align=center, rotate=90, anchor=south]
+  {residual};
+
+\node[right=1.4cm of at, par] (p1) {$P_1$};
+\node[right=1.5mm of p1, par] (p2) {$P_2$};
+\node[right=1.5mm of p2, font=\scriptsize] (pd) {$\cdots$};
+\node[right=1.5mm of pd, par] (pm) {$P_m$};
+\node[above=1.5mm of p2, font=\tiny, align=center, text=black!70, xshift=6mm]
+  {$m=N/K$ parches de $K=1024$ puntos\\\textbf{procesados en paralelo}};
+\draw[fl, dashed, black!55] (at.east) -- (p1.west);
+\node[below=1.5mm of p2, font=\tiny, align=center, text=black!70, xshift=6mm]
+  {cada parche: $H$ cabezas en paralelo};
+\end{tikzpicture}
+\caption{Bloque elemental, repetido 24 veces. Dentro de cada bloque, la atención
+se calcula de forma independiente sobre $m=N/K$ parches contiguos de la secuencia
+serializada, y dentro de cada parche sobre $H$ cabezas; ambos niveles se resuelven
+en paralelo como una única operación densa por lotes. El paralelismo del modelo
+reside en esta anchura, no en la profundidad.}
+\label{fig:bloque-sonata}
+\end{figure}
+
+\paragraph*{Bloque elemental}
+Cada uno de los 24 bloques está compuesto por una codificación posicional
+condicional implementada como convolución dispersa submanifold de núcleo
+$3\times3\times3$, un módulo de atención serializada y un perceptrón multicapa
+con razón de expansión 4. Para una anchura $C$, el número de parámetros por
+bloque es
+\begin{equation}
+\begin{aligned}
+P(C)&=\underbrace{27C^{2}+C^{2}}_{\text{cod. posicional}}
+     +\underbrace{3C^{2}+C^{2}}_{\text{atención}}
+     +\underbrace{8C^{2}}_{\text{MLP}}+17C\\[2pt]
+    &=40C^{2}+17C .
+\end{aligned}
+\label{eq:params-bloque}
+\end{equation}
+La Ec.~\eqref{eq:params-bloque} reproduce exactamente el total de
+$108\,461\,328$ parámetros que declara la implementación, lo que valida el
+desglose de la Tabla~\ref{tab:params-sonata}.
+
+\begin{table}[H]
+\centering
+\caption{Distribución de parámetros del \emph{encoder} de Sonata por etapa.}
+\label{tab:params-sonata}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Etapa} & \textbf{Canales} & \textbf{Bloques} & \textbf{Parámetros} & \textbf{\%} \\
+\midrule
+1 & 48 & 3 & $278\,928$ & 0{,}3 \\
+2 & 96 & 3 & $1\,110\,816$ & 1{,}0 \\
+3 & 192 & 3 & $4\,433\,472$ & 4{,}1 \\
+4 & 384 & 12 & $70\,857\,216$ & \textbf{65{,}3} \\
+5 & 512 & 3 & $31\,483\,392$ & 29{,}0 \\
+\emph{Embedding} y submuestreo & --- & --- & $297\,504$ & 0{,}3 \\
+\midrule
+\textbf{Total} & & & $\mathbf{108\,461\,328}$ & 100{,}0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El $94{,}3$\,\% de la capacidad se concentra en las etapas 4 y 5, donde la
+resolución espacial es menor y la representación más abstracta. Los pesos ocupan
+$0{,}40$~GB en precisión simple, cifra despreciable frente a la memoria de
+activaciones que se analiza a continuación.
+
+\paragraph*{Atención serializada y complejidad}
+La propiedad que hace viable el modelo sobre nubes de gran tamaño es que la
+atención no se calcula sobre vecindarios geométricos. Los puntos se ordenan
+mediante una curva de llenado de espacio ---orden Z o Hilbert---, de modo que la
+proximidad en $\mathbb{R}^{3}$ se traduce en proximidad dentro de una secuencia
+unidimensional; esa secuencia se divide en parches contiguos de $K=1024$ puntos y
+la atención se calcula únicamente dentro de cada parche. El costo pasa así de
+$O(N^{2})$ a
+\begin{equation}
+O(N\cdot K),\qquad K=1024\ \text{constante},
+\label{eq:complejidad}
+\end{equation}
+es decir, lineal en el número de puntos. Esta es la diferencia estructural
+respecto de arquitecturas basadas en grafos $k$-NN dinámicos, cuyo costo de
+construcción de vecindarios crece de forma superlineal y constituye su principal
+limitación de escalabilidad.
+
+\paragraph*{Memoria requerida}
+Cuando FlashAttention no está disponible, la matriz de atención se materializa de
+forma explícita. Su tamaño para una etapa con $N_{s}$ puntos y $H_{s}$ cabezas es
+\begin{equation}
+M_{s}=N_{s}\cdot H_{s}\cdot K\cdot b ,
+\label{eq:memoria}
+\end{equation}
+con $b$ el tamaño en \emph{bytes} del tipo de dato. Puesto que cada etapa reduce
+$N_{s}$ a la mitad mientras duplica $H_{s}$, el producto $N_{s}H_{s}$ permanece
+aproximadamente constante y la memoria se distribuye de manera uniforme entre
+etapas, como muestra la Tabla~\ref{tab:vram-sonata}.
+
+\begin{table}[H]
+\centering
+\caption{Estimación de memoria de vídeo por etapa para una sección de
+$3\times10^{5}$ puntos tras voxelización, en precisión simple y sin
+FlashAttention.}
+\label{tab:vram-sonata}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Etapa} & \textbf{Puntos} & \textbf{Cabezas} & \textbf{Atención (GB)} & \textbf{QKV (GB)} \\
+\midrule
+1 & $300\,000$ & 3 & 3{,}43 & 0{,}16 \\
+2 & $150\,000$ & 6 & 3{,}43 & 0{,}16 \\
+3 & $75\,000$ & 12 & 3{,}43 & 0{,}16 \\
+4 & $37\,500$ & 24 & 3{,}43 & 0{,}16 \\
+5 & $18\,750$ & 32 & 2{,}29 & 0{,}11 \\
+\midrule
+Pico por bloque & & & 3{,}59 & \\
+Características persistentes & & & 0{,}25 & \\
+Pesos del modelo & & & 0{,}40 & \\
+\midrule
+\textbf{Total estimado} & & & $\mathbf{\approx 4{,}2}$ & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La estimación de $4{,}2$~GB se sitúa muy por debajo de los 48~GB disponibles en
+la GPU asignada, lo que confirma que la inferencia del \emph{encoder} no es el
+factor limitante del proyecto. Se trata de una cota derivada analíticamente a
+partir de la Ec.~\eqref{eq:memoria} y del número de puntos supuesto; el
+procedimiento de cacheo registra el consumo real mediante
+\texttt{max\_memory\_allocated}, de modo que estas cifras serán sustituidas por
+mediciones directas.
+
+\paragraph*{Paralelismo y optimización}
+Los parches resultantes de la serialización son independientes entre sí, por lo
+que se procesan simultáneamente como una dimensión de lote y la carga se resuelve
+en operaciones densas de multiplicación de matrices, favorables a la arquitectura
+de la GPU. A ese paralelismo interno se añade uno externo: dado que el
+\emph{encoder} opera congelado y cada sección de la catedral se procesa de forma
+independiente, no existe sincronización de gradientes y el cacheo admite
+distribución directa entre nodos mediante arreglos de trabajos del gestor de
+colas; la Fig.~
+ef{fig:paralelismo} contrasta ambos esquemas de
+ejecución.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  sec/.style={draw, minimum height=0.55cm, align=center, fill=orange!22},
+  gpu/.style={font=\scriptsize, anchor=east},
+  eje/.style={-{Latex[length=1.6mm]}, black!70}
+]
+
+%% ---------- (a) Ejecucion actual ----------
+\node[font=\bfseries\scriptsize, anchor=west] at (0,1.35) {(a) Ejecución actual: secuencial};
+
+\node[gpu] at (-0.15,0.55) {GPU 1};
+\node[sec, minimum width=1.5cm] (a1) at (0.75,0.55) {$S_1$};
+\node[sec, minimum width=1.5cm, right=0mm of a1] (a2) {$S_2$};
+\node[sec, minimum width=1.5cm, right=0mm of a2] (a3) {$S_3$};
+\node[sec, minimum width=1.5cm, right=0mm of a3] (a4) {$S_4$};
+
+\draw[eje] (0,0.1) -- (7.4,0.1) node[below left=0.5mm and 0mm, font=\tiny] {tiempo};
+\draw[black!55] (0,0.2) -- (0,0.0);
+\draw[black!55] (6.0,0.2) -- (6.0,0.0);
+\node[font=\tiny, below] at (6.0,0.05) {$4t$};
+\node[font=\tiny, right=1mm of a4, text=black!70] {3 GPU ociosas};
+
+%% ---------- (b) Ejecucion paralela ----------
+\node[font=\bfseries\scriptsize, anchor=west] at (0,-0.75) {(b) Con arreglo de trabajos: secciones en paralelo};
+
+\node[gpu] at (-0.15,-1.55) {GPU 1};
+\node[sec, minimum width=1.5cm] at (0.75,-1.55) {$S_1$};
+\node[gpu] at (-0.15,-2.2) {GPU 2};
+\node[sec, minimum width=1.5cm] at (0.75,-2.2) {$S_2$};
+\node[gpu] at (-0.15,-2.85) {GPU 3};
+\node[sec, minimum width=1.5cm] at (0.75,-2.85) {$S_3$};
+\node[gpu] at (-0.15,-3.5) {GPU 4};
+\node[sec, minimum width=1.5cm] at (0.75,-3.5) {$S_4$};
+
+\draw[eje] (0,-3.95) -- (7.4,-3.95) node[below left=0.5mm and 0mm, font=\tiny] {tiempo};
+\draw[black!55] (0,-3.85) -- (0,-4.05);
+\draw[black!55] (1.5,-3.85) -- (1.5,-4.05);
+\node[font=\tiny, below] at (1.5,-4.0) {$t$};
+
+\draw[{Latex[length=1.6mm]}-{Latex[length=1.6mm]}, black!60]
+  (1.6,-2.5) -- (5.9,-2.5)
+  node[midway, above, font=\tiny, text=black!70]
+  {aceleración $\approx 4\times$ en tiempo de reloj};
+
+\node[align=left, font=\tiny, text=black!70, anchor=north west] at (0,-4.45)
+  {El costo por sección no cambia; lo que se reduce es el tiempo total.\\
+   El paralelismo es perfecto: el \emph{encoder} está congelado y no hay
+   sincronización de gradientes entre secciones.};
+\end{tikzpicture}
+\caption{Esquema de ejecución del cacheo de características. En (a) las secciones
+se procesan uno tras otra sobre una sola unidad; en (b) se distribuyen mediante un
+arreglo de trabajos del gestor de colas. La independencia entre secciones,
+consecuencia de mantener el \emph{encoder} congelado, hace que la aceleración sea
+proporcional al número de unidades asignadas.}
+\label{fig:paralelismo}
+\end{figure}
+
+Las vías de optimización disponibles, ordenadas por impacto sobre la
+Ec.~\eqref{eq:memoria}, son la habilitación de FlashAttention, que evita
+materializar la matriz de atención; la reducción del tamaño de parche $K$, que
+disminuye la memoria de forma proporcional a costa de contexto por parche; y el
+uso de precisión reducida, que actúa sobre el factor $b$. La reducción del tamaño
+de vóxel actúa sobre $N_{s}$, pero compromete la detección de elementos finos y
+está acotada por los rangos de operación declarados.
+
+\section{Análisis de la arquitectura de HyperNCD}
+\label{sec:arq-hyperncd}
+
+El segundo componente del modelo híbrido presenta una naturaleza opuesta a la del
+\emph{encoder} auto-supervisado: se entrena, opera sobre convoluciones dispersas
+en lugar de atención, y su costo se paga en cada época. Esta subsección
+caracteriza su estructura a partir de la implementación de referencia, ya que de
+ella dependen tanto el punto exacto de inserción del aporte como las
+restricciones de paralelización del experimento.
+
+\paragraph*{Red troncal}
+La red troncal es una MinkowskiUNet-34C, arquitectura codificador--decodificador
+sobre tensores dispersos con conexiones de salto entre niveles simétricos. A
+diferencia de PTv3, el mecanismo de agregación es una convolución dispersa de
+núcleo $3\times3\times3$ sobre vecindarios geométricos explícitos, no una
+atención sobre secuencias serializadas. La configuración declarada en la
+implementación es de cuatro niveles descendentes con profundidades
+$(2,3,4,6)$ y anchuras $(32,64,128,256)$, y cuatro ascendentes con
+profundidades $(2,2,2,2)$ y anchuras $(256,128,96,96)$, sobre una dimensión
+inicial de 32 canales.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  cnv/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.5cm,
+              align=center, fill=green!16},
+  hd/.style={draw, rounded corners, minimum width=2.9cm, minimum height=0.5cm,
+             align=center, fill=blue!14},
+  hg/.style={draw, rounded corners, minimum width=3.4cm, minimum height=0.62cm,
+             align=center, fill=purple!16},
+  dat/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.45cm,
+              align=center, fill=black!6},
+  fl/.style={-{Latex[length=1.7mm]}, thick}
+]
+\node[dat] (in) {Nube voxelizada};
+\node[cnv, below=2mm of in] (d1) {Nivel 1 --- 32 can.};
+\node[cnv, below=1.6mm of d1] (d2) {Nivel 2 --- 64 can.};
+\node[cnv, below=1.6mm of d2] (d3) {Nivel 3 --- 128 can.};
+\node[cnv, below=1.6mm of d3, fill=green!30] (d4) {Nivel 4 --- 256 can.};
+\node[cnv, right=1.6cm of d3] (u3) {Nivel 5 --- 256 can.};
+\node[cnv, above=1.6mm of u3] (u2) {Nivel 6 --- 128 can.};
+\node[cnv, above=1.6mm of u2] (u1) {Nivel 7 --- 96 can.};
+\node[cnv, above=1.6mm of u1] (u0) {Nivel 8 --- 96 can.};
+\node[dat, above=2mm of u0] (fs) {$f_{\mathrm{sem}}$ por punto};
+
+\foreach \a/\b in {in/d1, d1/d2, d2/d3, d3/d4} \draw[fl] (\a) -- (\b);
+\draw[fl] (d4.east) -- ++(0.55,0) |- (u3.west);
+\foreach \a/\b in {u3/u2, u2/u1, u1/u0, u0/fs} \draw[fl] (\a) -- (\b);
+\foreach \a/\b in {d3/u3, d2/u2, d1/u1}
+  \draw[dashed, black!45] (\a.east) -- (\b.west);
+\node[font=\tiny, text=black!55] at ($(d2.east)!0.5!(u2.west)+(0,0.22)$) {saltos};
+
+\node[hg, right=1.5cm of fs, yshift=-0.1cm] (reg) {Agrupamiento en regiones\\(superpuntos)};
+\node[hg, below=2.2mm of reg] (geo) {$f_{\mathrm{geo}}$: linealidad, planaridad,\\dispersión y centroide (6\,dim)};
+\node[hg, below=2.2mm of geo, fill=purple!30] (hyp) {Hipergrafo: $S_b=\alpha S_g+(1-\alpha)S_s$\\top-$M$, $M=8$ --- sin parámetros};
+\node[hd, below=2.2mm of hyp] (pro) {Cabezas de prototipos};
+\node[dat, below=2.2mm of pro, minimum width=3.4cm] (sk) {Sinkhorn--Knopp\\(pseudo-etiquetas)};
+
+\draw[fl] (fs.east) -- (reg.west);
+\foreach \a/\b in {reg/geo, geo/hyp, hyp/pro, pro/sk} \draw[fl] (\a) -- (\b);
+\draw[fl, red!65, thick] ($(geo.west)+(-0.8,0)$) -- (geo.west)
+  node[midway, above, font=\tiny, text=red!70, align=center] {aporte:\\$f_{\mathrm{ssl}}$};
+\end{tikzpicture}
+\caption{Estructura de HyperNCD. La red troncal dispersa produce
+$f_{\mathrm{sem}}$ por punto; el agrupamiento en regiones y el descriptor
+geométrico analítico alimentan el hipergrafo, cuya salida se convierte en
+pseudo-etiquetas mediante Sinkhorn--Knopp. La flecha roja indica el punto donde
+el presente trabajo sustituye el descriptor analítico.}
+\label{fig:arq-hyperncd}
+\end{figure}
+
+\paragraph*{Razonamiento por hipergrafo}
+El hipergrafo no opera sobre puntos individuales sino sobre regiones obtenidas
+por agrupamiento previo, lo que reduce el número de nodos en varios órdenes de
+magnitud. Para cada par de regiones se calcula una similitud semántica $S_s$ por
+coseno entre las características agregadas y una similitud geométrica $S_g$ como
+núcleo gaussiano sobre el descriptor $f_{\mathrm{geo}}$,
+\begin{equation}
+S_g^{(ij)}=\exp\!\left(-\frac{\lVert f_{\mathrm{geo}}^{(i)}-f_{\mathrm{geo}}^{(j)}\rVert^{2}}{\tau}\right),
+\qquad
+S_b=\alpha S_g+(1-\alpha)S_s ,
+\label{eq:sb}
+\end{equation}
+y las hiperaristas se forman reteniendo los $M=8$ vecinos de mayor similitud. La
+agregación resultante es una única propagación normalizada, sin pesos
+entrenables. El descriptor $f_{\mathrm{geo}}$ está compuesto por los tres
+índices de forma derivados de los autovalores de la matriz de covarianza local
+---linealidad, planaridad y dispersión--- concatenados con el centroide de la
+región, de modo que su dimensión total es 6. Es precisamente esta representación
+de baja dimensionalidad y construcción manual la que la Ec.~\eqref{eq:hibrido}
+sustituye por $f_{\mathrm{ssl}}$.
+
+\paragraph*{Observación sobre la implementación de referencia}
+El repositorio publicado contiene dos realizaciones distintas del razonamiento
+por hipergrafo. La primera, ubicada en el módulo de modelos, corresponde a la
+descripción del artículo e incluye convolución de hipergrafo con matriz de
+incidencia y actualización dinámica de hiperaristas; su inspección revela que no
+es invocada desde ninguna ruta de ejecución, que las matrices de peso de sus
+capas se instancian dentro de la propia función en cada llamada ---por lo que no
+figuran entre los parámetros del modelo ni reciben gradiente--- y que el
+procedimiento de actualización dinámica reproduce exactamente el de construcción
+inicial. La segunda, la efectivamente ejecutada, está definida dentro del paso de
+entrenamiento y corresponde a la Ec.~\eqref{eq:sb}. Esta discrepancia se
+documenta por transparencia y porque condiciona la interpretación de las
+comparaciones: el presente trabajo toma como referencia la implementación que se
+ejecuta, no la descrita en el artículo.
+
+\paragraph*{Costo de entrenamiento}
+A diferencia del \emph{encoder} congelado, esta rama requiere almacenar
+gradientes y estados del optimizador. Con AdamW, cada parámetro ocupa cuatro
+palabras en precisión simple ---peso, gradiente y dos momentos--- de modo que la
+memoria de estado asciende a $16$~bytes por parámetro, frente a los $4$~bytes que
+consume el \emph{encoder} en inferencia. A ello se añaden las activaciones
+intermedias de la red troncal, que deben conservarse para la retropropagación y
+que dominan el consumo total; la implementación mitiga ese costo mediante
+submuestreo a $6\times10^{4}$ puntos por nube y lotes de tamaño reducido. La
+pérdida total combina el término por puntos y el término por regiones,
+\begin{equation}
+\mathcal{L}=\mathcal{L}_{\mathrm{cluster}}+\alpha\,\mathcal{L}_{\mathrm{region}} ,
+\label{eq:perdida}
+\end{equation}
+ambos calculados sobre las asignaciones producidas por Sinkhorn--Knopp.
+
+\paragraph*{Restricciones de paralelización}
+La configuración de referencia fija una única unidad de cómputo, y tanto la
+precisión mixta como el entrenamiento distribuido aparecen desactivados. Esta
+limitación no es incidental. El procedimiento de asignación de pseudo-etiquetas
+opera por normalización iterativa sobre el lote completo, de modo que fragmentar
+el lote entre unidades altera el significado de la asignación salvo que se
+introduzca una sincronización explícita del paso de normalización. En
+consecuencia, y a diferencia del cacheo de características descrito en la
+Fig.~\ref{fig:paralelismo}, el entrenamiento de esta rama no admite distribución
+inmediata. El paralelismo disponible se sitúa en un nivel superior: las
+particiones experimentales son independientes entre sí y pueden ejecutarse de
+forma simultánea, lo que permite aprovechar varias unidades sin modificar el
+procedimiento de optimización.
+
+\begin{table}[H]
+\centering
+\caption{Contraste entre las dos ramas del modelo híbrido.}
+\label{tab:contraste-ramas}
+\begin{tabular}{@{}p{3.4cm}p{4.4cm}p{4.4cm}@{}}
+\toprule
+ & \textbf{Sonata (PTv3)} & \textbf{HyperNCD (MinkUNet-34C)} \\
+\midrule
+Agregación & Atención sobre secuencia serializada & Convolución dispersa $3\times3\times3$ \\
+Estructura & Solo codificador, 5 etapas & Codificador--decodificador con saltos \\
+Régimen & Congelado, solo inferencia & Entrenado \\
+Memoria por parámetro & 4\,bytes & 16\,bytes (AdamW) \\
+Frecuencia del costo & Una vez por sección & En cada época \\
+Paralelismo entre unidades & Perfecto, sin sincronización & Acoplado por el lote; solo entre particiones \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Esta asimetría justifica la estrategia de cacheo adoptada: al desplazar el
+\emph{encoder} fuera del bucle de optimización, su costo deja de multiplicarse
+por el número de épocas y su paralelismo, que es el favorable de los dos, puede
+explotarse por completo.
+
+\section{Escenarios de ejecución y límites del paralelismo}
+\label{sec:escenarios}
+
+La viabilidad del método no depende de una única configuración de cómputo, sino
+de un conjunto de escenarios cuyo comportamiento conviene anticipar. La
+Tabla~\ref{tab:escenarios} los enumera junto con el factor que limita a cada uno.
+
+\begin{table}[H]
+\centering
+\caption{Escenarios de ejecución considerados para el cacheo de características.}
+\label{tab:escenarios}
+\begin{tabular}{@{}p{3.5cm}p{2.2cm}p{5.6cm}@{}}
+\toprule
+\textbf{Escenario} & \textbf{Viable} & \textbf{Factor limitante} \\
+\midrule
+Portátil, CPU en un hilo & Sí, inviable en la práctica & Las operaciones densas se serializan; sin paralelismo de datos \\
+Portátil, CPU multihilo & Marginal & Ancho de banda de memoria, no cómputo \\
+GPU de consumo, 16\,GB & Sí & Holgado frente a la cota estimada \\
+Partición MIG de 5\,GB & Al límite & Cercano a la cota de $4{,}2$\,GB; sensible al tamaño de sección \\
+Una GPU de 48\,GB & Sí, referencia & Ninguno; margen amplio \\
+Varias GPU, una sección & Sin beneficio & La profundidad del modelo es secuencial \\
+Varias GPU, arreglo de secciones & Sí, recomendado & Número de secciones disponibles \\
+Entrenamiento distribuido & No inmediato & Acoplamiento del lote en la asignación \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dos filas de la tabla merecen desarrollo porque delimitan expectativas que
+suelen formularse de manera imprecisa.
+
+\paragraph*{Por qué añadir unidades no acelera una sección}
+Las cinco etapas del \emph{encoder} se ejecutan en orden estricto, ya que cada
+una consume la salida de la anterior, y lo mismo ocurre con los bloques dentro de
+cada etapa. Distribuir una misma sección entre varias unidades exigiría partir
+esa cadena e introducir comunicación entre etapas, cuyo costo excede al del
+cómputo que se pretende repartir. El paralelismo aprovechable del modelo es
+interno a cada capa ---parches y cabezas--- y ya se agota dentro de una sola
+unidad. En consecuencia, la latencia de una sección es una constante del método
+y no un parámetro ajustable mediante hardware adicional.
+
+\paragraph*{Por qué el número útil de unidades está acotado}
+El beneficio de añadir unidades se manifiesta únicamente en el tiempo total de
+procesamiento del conjunto de secciones. Si $S$ es el número de secciones y $G$
+el de unidades disponibles, la aceleración respecto de la ejecución secuencial es
+\begin{equation}
+A(G)=\min(G,\,S),
+\label{eq:aceleracion}
+\end{equation}
+de modo que asignar más unidades que secciones no produce ninguna mejora
+adicional. Este límite no proviene de una ineficiencia del método sino de su
+granularidad: la sección es la unidad indivisible de trabajo. La consecuencia
+práctica es que la partición de la catedral en secciones, adoptada inicialmente
+por motivos de memoria, determina también el grado máximo de paralelismo
+alcanzable.
+
+\paragraph*{Sobre la naturaleza del aporte en materia de cómputo}
+Debe distinguirse con cuidado qué es atribuible a esta tesis y qué se hereda de
+las arquitecturas empleadas. El paralelismo interno del \emph{encoder} es una
+propiedad de PTv3, no un resultado del presente trabajo, y presentarlo como
+aporte sería incorrecto. Lo que sí constituye una decisión propia es el
+desacoplamiento del \emph{pipeline}: al ejecutar el \emph{encoder} una sola vez
+por sección y persistir su salida, el costo deja de multiplicarse por el número
+de épocas, las dos pilas de dependencias incompatibles dejan de necesitar
+coexistir en un mismo proceso, y el procesamiento se vuelve distribuible sin
+sincronización. Esa reorganización es el aporte en materia de cómputo, y se
+formula de manera verificable mediante la Ec.~\eqref{eq:aceleracion}.
+
+\section{Síntesis del análisis: punto de intervención y atribución}
+\label{sec:sintesis-analisis}
+
+El análisis precedente permite fijar con precisión qué se modifica, qué se
+conserva y qué es atribuible a este trabajo, distinción necesaria para que la
+evaluación posterior no incurra en atribuciones indebidas.
+
+\begin{table}[H]
+\centering
+\caption{Delimitación del aporte a partir del análisis de los componentes.}
+\label{tab:atribucion}
+\begin{tabular}{@{}p{4.3cm}p{4.1cm}p{4.1cm}@{}}
+\toprule
+\textbf{Elemento} & \textbf{Origen} & \textbf{Estado en este trabajo} \\
+\midrule
+Codificador PTv3 y sus pesos & Sonata & Se emplea sin modificación \\
+Paralelismo interno por parches y cabezas & PTv3 & Propiedad heredada, no aporte \\
+Red troncal dispersa y cabezas de prototipos & HyperNCD & Se emplean sin modificación \\
+Razonamiento por hipergrafo & HyperNCD & Se conserva íntegro \\
+Descriptor geométrico de 6 dimensiones & HyperNCD & \textbf{Sustituido por $f_{\mathrm{ssl}}$} \\
+Desacoplamiento del \emph{pipeline} y cacheo & --- & \textbf{Decisión propia} \\
+Cota de aceleración, Ec.~\eqref{eq:aceleracion} & --- & \textbf{Formulación propia} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La intervención se concentra en una sola fila de la tabla. El descriptor
+geométrico que alimenta la similitud $S_g$ de la Ec.~\eqref{eq:sb} es un vector
+de seis componentes construido de forma analítica a partir de los autovalores de
+la covarianza local y del centroide de cada región. La Ec.~\eqref{eq:hibrido}
+reemplaza esa representación por la que produce el \emph{encoder}
+auto-supervisado, dejando inalterados tanto la construcción de hiperaristas como
+la agregación posterior y el procedimiento de asignación. Esta delimitación es
+deliberada: al mantener constante todo lo demás, cualquier variación observada en
+las métricas resulta atribuible al cambio de representación y no a diferencias de
+optimización, de partición o de arquitectura.
+
+El segundo aporte es de naturaleza distinta y no afecta a la métrica sino a la
+viabilidad. Las dos ramas exigen pilas de dependencias mutuamente excluyentes, de
+modo que su integración en un único proceso no es posible sin renunciar a alguna
+de las dos implementaciones de referencia. Ejecutar el \emph{encoder} una sola
+vez por sección y persistir su salida resuelve simultáneamente esa incompatibilidad,
+elimina la repetición del costo en cada época y habilita la distribución sin
+sincronización descrita por la Ec.~\eqref{eq:aceleracion}. Es una decisión de
+ingeniería antes que de método, pero condiciona por completo qué experimentos son
+ejecutables con los recursos disponibles.

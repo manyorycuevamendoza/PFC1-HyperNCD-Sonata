@@ -47,7 +47,7 @@ según la Tabla~3 de \cite{zhang2026hyperncd}. La columna de ganancia mide la
 diferencia respecto de la red base. Es la evidencia cuantitativa que sostiene la
 hipótesis de esta tesis.}
 \label{tab:ablacion-hyperncd}
-\begin{tabular}{lcc}
+\begin{tabular}{@{}p{6.3cm}cc@{}}
 \hline
 Configuración & mIoU promedio & Ganancia sobre la base \\
 \hline
@@ -192,6 +192,78 @@ representación es más crítica porque no hay ninguna supervisión sobre las cl
 objetivo. Este traslado es un resultado incierto, medible y no reportado por
 nadie, y constituye el segundo aporte de la tesis, asociado a OE1 y evaluado en
 OE3.
+
+% =====================================================================
+\section{Revisión crítica de las implementaciones de referencia}
+\label{sec:rev-implementaciones}
+
+La revisión de la literatura quedaría incompleta si se limitara a los artículos
+publicados. Dado que el presente trabajo se construye sobre el código liberado
+por ambos grupos, la inspección de esas implementaciones forma parte del examen
+crítico y condiciona qué comparaciones son legítimas.
+
+\subsection{Sonata: correspondencia entre artículo e implementación}
+
+El repositorio de Sonata se distribuye explícitamente como material de
+inferencia y visualización, no de preentrenamiento, y esa delimitación se
+corresponde con lo que contiene. La arquitectura instanciada reproduce la
+configuración descrita: cinco etapas de profundidades $(3,3,3,12,3)$ y anchuras
+$(48,96,192,384,512)$. El recuento analítico de parámetros derivado de esa
+configuración coincide exactamente con el total que declara el modelo al
+cargarse, $108\,461\,328$, lo que permite verificar la correspondencia entre
+descripción e implementación sin ambigüedad. La dependencia de FlashAttention es
+opcional y el código provee una ruta alternativa explícita, de modo que la
+ausencia de esa biblioteca no compromete la reproducibilidad.
+
+\subsection{HyperNCD: discrepancia entre la descripción y el código ejecutado}
+
+La situación del segundo repositorio es distinta y debe consignarse con
+precisión, porque afecta a la base de comparación de esta tesis.
+
+El código contiene dos realizaciones del razonamiento por hipergrafo. La primera
+reside en el módulo de modelos y reproduce la formulación del artículo: incluye
+construcción de hiperaristas, actualización dinámica, matriz de incidencia,
+matrices de grado y convolución de hipergrafo. Su inspección revela tres
+propiedades relevantes. No es invocada desde ninguna ruta de ejecución del
+entrenamiento ni de la evaluación. Las matrices de peso de sus capas se
+instancian dentro del cuerpo de la propia función en cada llamada, por lo que no
+se registran entre los parámetros del modelo, no reciben gradiente y se
+reinicializan de forma aleatoria en cada invocación. Y el procedimiento
+denominado de actualización dinámica reproduce término por término el de
+construcción inicial, sobre la misma matriz de similitud, por lo que no
+introduce ninguna actualización.
+
+La segunda realización, que es la efectivamente ejecutada, está definida como
+función local dentro del paso de entrenamiento. Opera sobre regiones en lugar de
+puntos, combina una similitud semántica por coseno con una similitud geométrica
+gaussiana, retiene los ocho vecinos de mayor similitud y aplica una única
+agregación normalizada. No contiene pesos entrenables ni convolución de
+hipergrafo en el sentido del artículo.
+
+Adicionalmente, el repositorio no incluye el directorio de configuraciones al que
+su propia documentación remite para declarar la ruta de los datos, ni los
+archivos de dependencias; estos últimos se delegan al proyecto NOPS.
+
+\subsection{Consecuencias para el diseño experimental}
+
+Estas observaciones no invalidan el trabajo de referencia, pero sí determinan
+tres decisiones metodológicas que esta tesis adopta de manera explícita.
+
+La primera es que la línea base de comparación se establece sobre la
+implementación que se ejecuta, y no sobre la descrita en el artículo. Comparar
+contra una formulación que el código publicado no realiza produciría una
+atribución incorrecta de la mejora.
+
+La segunda es que las cifras publicadas de HyperNCD se citan como referencia
+bibliográfica, pero la comparación cuantitativa de esta tesis se realiza contra
+ejecuciones propias del código liberado, bajo condiciones idénticas de datos,
+partición y semilla.
+
+La tercera es que la sustitución propuesta en la Ec.~\eqref{eq:hibrido} se
+aplica sobre el descriptor geométrico de la implementación ejecutada, cuya
+dimensión es 6, y no sobre la formulación teórica del artículo. Esto acota el
+aporte a un punto de intervención verificable y hace que la atribución de
+cualquier variación en la métrica sea inequívoca.
 
 % =====================================================================
 \section[Conclusión: aporte del proyecto]{Conclusión de la revisión crítica: el aporte del proyecto}
