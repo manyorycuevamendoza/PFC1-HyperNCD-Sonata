@@ -389,68 +389,6 @@ OE2 y se mide en OE3, de modo que es el módulo que los tres objetivos comparten
 \end{enumerate}
 
 % =====================================================================
-\section{Punto de partida: reproducción de la línea base}
-\label{sec:linea-base}
-
-La reproducción de HyperNCD sin modificaciones no constituye un objetivo del
-proyecto. Es el insumo que permite saber desde dónde se parte, y por eso se
-reporta aquí, dentro de la revisión crítica, como antesala de la definición del
-aporte. Sin esta referencia ninguna mejora posterior sería interpretable, porque
-no habría contra qué compararla.
-
-\textbf{Configuración.} Python 3.10, PyTorch, MinkowskiEngine y el código oficial
-de HyperNCD, sobre las secciones anotadas de la Catedral de Lima. Se hacen tres
-corridas independientes con semillas distintas, sobre el hardware especificado en
-la Tabla~B. Se conservan los hiperparámetros publicados: $K=15$ vecinos para
-$f_{\text{geo}}$, $M=8$ prototipos vecinos por hiperarista, $\alpha$ inicializado
-en $0{,}5$ y $\epsilon = 0{,}15$ \cite{zhang2026hyperncd}.
-
-\textbf{Qué se reporta y cómo se lee.} La Tabla~\ref{tab:baseline} recoge el mIoU
-de clases novedosas, conocidas y del total por sección, con su desviación estándar
-entre corridas. La lectura correcta no es ``se logró reproducir el artículo'', sino
-determinar qué produce el valor observado. Se analiza si la distancia respecto de
-los números publicados se explica por el volumen y la densidad de los datos
-disponibles, por el cambio de dominio desde escaneo urbano hacia geometría
-arquitectónica, o por el modelo mismo. Ese análisis, y no el número agregado, es lo
-que fija el punto de partida y lo que permite saber de antemano en qué rango de
-métricas y de cantidades se va a trabajar.
-
-\begin{table}[htbp]
-\centering
-\caption{Línea base reproducida sobre las secciones de la Catedral de Lima, con
-tres corridas independientes. Es el punto de partida del proyecto y la referencia
-contra la cual se mide todo aporte posterior.}
-\label{tab:baseline}
-\begin{tabular}{lccc}
-\hline
-Sección & mIoU \emph{novel} & mIoU \emph{known} & mIoU \emph{all} \\
-\hline
-Nave    & por completar & por completar & por completar \\
-Coro    & por completar & por completar & por completar \\
-Ábside  & por completar & por completar & por completar \\
-Torres  & por completar & por completar & por completar \\
-Fachada & por completar & por completar & por completar \\
-\hline
-Media $\pm\ \sigma$ & por completar & por completar & por completar \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Resultado negativo del Módulo~1.} Una primera variante ensayada sobre el
-módulo de preprocesamiento, consistente en cambiar el esquema de normalización de
-entrada, no transforma los datos de manera significativa ni altera el
-comportamiento del módulo de prototipos. Se documenta como resultado negativo
-porque descarta una explicación superficial de la debilidad observada y refuerza
-que la limitación reside en el descriptor $f_{\text{geo}}$ y no en el
-preprocesamiento.
-
-\textbf{Conclusión del punto de partida.} De esta reproducción se obtienen tres
-cosas: el rango de métricas y de cantidades con el que se va a trabajar, la
-verificación empírica de que el hardware disponible en el clúster Khipu sostiene
-el experimento, y la localización del cuello de botella en el descriptor
-geométrico analítico.
-
-% =====================================================================
 \section[Conclusión: aporte del proyecto]{Conclusión de la revisión crítica: el aporte del proyecto}
 \label{sec:aporte}
 
