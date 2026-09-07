@@ -194,39 +194,6 @@ nadie, y constituye el segundo aporte de la tesis, asociado a OE1 y evaluado en
 OE3.
 
 % =====================================================================
-\section{Síntesis: el vacío identificado}
-
-Las fuentes revisadas convergen en una observación que ninguna formula de manera
-explícita. HyperNCD construye su módulo de prototipos sobre exactamente el tipo de
-descriptor que Sonata demuestra problemático, y no lo cita. La verificación es
-directa sobre las 38 referencias de \cite{zhang2026hyperncd}, entre las cuales no
-figura ningún trabajo de preentrenamiento auto-supervisado de nubes de puntos
-posterior a MSC. La relación inversa no es exigible, dado que Sonata, de marzo de
-2025, precede a HyperNCD, de junio de 2026.
-
-El diagnóstico de Sonata, por su parte, se ha verificado únicamente en régimen
-supervisado y de \emph{linear probing}, sobre tareas de segmentación con
-vocabulario cerrado. Su transferencia al régimen de descubrimiento de clases
-novedosas, donde la calidad de la representación es más crítica porque no existe
-supervisión sobre las clases objetivo, es un resultado incierto, medible y no
-reportado.
-
-Debe explicitarse una diferencia arquitectónica que esta síntesis no puede
-ocultar: HyperNCD opera sobre MinkowskiUNet-34C \cite{zhang2026hyperncd} y Sonata
-sobre Point Transformer V3 con 108 millones de parámetros \cite{wu2025sonata}. La
-sustitución no es un intercambio de tensores entre módulos homogéneos, sino la
-integración de dos redes con rejillas y resoluciones distintas, cada una con su
-propio patrón de muestreo del espacio. Esa compatibilidad de resolución es el
-contenido técnico de OE1 y no un detalle de implementación: Point Transformer V3,
-la red sobre la que está construido Sonata, organiza los puntos por
-serialización, mientras que MinkowskiUNet-34C, la red sobre la que está
-construido HyperNCD, opera sobre una rejilla dispersa de vóxeles
-\cite{wu2024ptv3}. Resolver ese puente mediante un \emph{up-cast} de las
-características de PTv3 hacia la rejilla de Minkowski, con \emph{cache} de esas
-características por sección para que la inferencia del codificador se haga una
-sola vez, es el componente de ingeniería que hace posible OE1.
-
-% =====================================================================
 \section[Conclusión: aporte del proyecto]{Conclusión de la revisión crítica: el aporte del proyecto}
 \label{sec:aporte}
 
