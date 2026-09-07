@@ -8,42 +8,6 @@
 \chapter{REVISIÓN CRÍTICA DE LA LITERATURA}
 \label{cap:revision}
 
-\section[Vocabulario mínimo]{Vocabulario mínimo para leer este capítulo}
-
-Antes de entrar a los resultados conviene fijar cinco términos, porque todo el
-capítulo se apoya en ellos.
-
-Una \textbf{nube de puntos} es el archivo que produce un escáner láser. Contiene
-millones de coordenadas $(x,y,z)$, a veces con color, y nada más: dice dónde hay
-materia, no qué elemento es cada cosa. La \textbf{segmentación semántica} es la
-tarea de asignarle a cada uno de esos puntos una etiqueta, por ejemplo columna,
-arco o bóveda.
-
-El \textbf{mIoU}, del inglés \emph{mean intersection over union}, es la métrica
-estándar de esa tarea. Para una clase, el IoU compara el conjunto de puntos que
-el modelo marcó como esa clase contra el conjunto de puntos que realmente lo son,
-y divide la intersección entre la unión. Vale 1 si coinciden exactamente y 0 si no
-se tocan. El mIoU es el promedio del IoU sobre todas las clases, y por eso una
-clase minoritaria que el modelo ignora arrastra el promedio hacia abajo aunque el
-resto esté bien. Su formulación se desarrolla en el Capítulo~\ref{cap:teorico}.
-
-El \textbf{descubrimiento de clases novedosas}, o NCD por sus siglas en inglés, es
-la variante del problema en la que el modelo recibe etiquetas solo para un
-conjunto de clases conocidas y debe, además, descubrir por su cuenta las clases
-que nunca vio etiquetadas. Es la formulación que necesita el patrimonio
-construido, porque cada edificio tiene elementos singulares que no figuran en
-ningún catálogo cerrado.
-
-Un \textbf{descriptor} es el vector de números con el que se representa cada
-punto antes de clasificarlo. Puede calcularse con una fórmula fija, y entonces se
-llama analítico o hecho a mano, o puede aprenderse a partir de datos. La
-diferencia entre esas dos opciones es, literalmente, el tema de esta tesis.
-
-Finalmente, un \textbf{prototipo} es un vector que representa a una clase
-completa, algo así como el punto promedio de esa clase en el espacio de
-descriptores. Un punto se clasifica viendo a qué prototipo se parece más.
-
-% =====================================================================
 \section[HyperNCD]{Zhang, Wu, Li, Han y Shen (2026): HyperNCD, razonamiento por
 hipergrafo}
 \label{sec:hyperncd}
