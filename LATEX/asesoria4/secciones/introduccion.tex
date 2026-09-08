@@ -264,21 +264,43 @@ hay asignación multi-GPU disponible.
 
 \begin{table}[H]
 \centering
-\caption{Especificación del hardware verificado en el clúster Khipu (UTEC).}
+\caption{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
+verificados por los autores sobre los nodos asignados.}
 \label{tab:hardware}
-\begin{tabular}{@{}p{3.6cm}p{4.2cm}p{4.2cm}@{}}
+\begin{tabular}{@{}p{2.9cm}p{4.6cm}p{4.5cm}@{}}
 \toprule
-\textbf{Recurso} & \textbf{Especificación} & \textbf{Uso en el proyecto} \\
+\textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
 \midrule
-Nodo de cómputo & \textit{[completar: modelo]} & Ejecución de entrenamiento \\
-GPU & \textit{[completar: modelo y cantidad]} & Rama semántica y codificador \\
-VRAM por GPU & \textit{[completar]}\,GB & Ventana por paso \\
-RAM del nodo & \textit{[completar]}\,GB & Carga de sección voxelizada \\
-Almacenamiento & \textit{[completar]} & Nube voxelizada y \emph{cache} \\
-Gestor de colas & Slurm & Envío de corridas \\
+GPU & CUDA con capacidad $\geq$ 8.0, una sola unidad; el diseño por secciones evita la necesidad de multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
+VRAM & Por medir en OE3; cota inferior de 0{,}43\,GB solo por los pesos del codificador (108{,}46\,M parámetros) & 48\,GB (49\,140\,MiB) \\
+RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
+Almacenamiento & \emph{Cache} de $f_{ssl}$, persistente y legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres sin cuota; \texttt{/local} por nodo \\
+\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.4 y 12.4 vía módulos; driver 610.57.04 \\
+Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
+Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+El nodo \texttt{ag001} ofrece además una NVIDIA A100 particionada en instancias
+MIG de 5, 10 y 20\,GB, útiles para pruebas cortas con menor espera en cola. Una
+restricción del clúster condiciona el flujo de trabajo y conviene dejarla
+registrada: los nodos de cómputo no tienen salida a internet, de modo que los
+pesos preentrenados y los datos se descargan desde el nodo de acceso y se leen
+después desde el sistema de archivos compartido.
+
+\paragraph*{Costo computacional estimado}
+El codificador de Sonata se ejecuta congelado y una sola vez por sección, por lo
+que su costo es lineal en el número de puntos retenidos tras la voxelización y no
+se repite en cada época de entrenamiento. Para la sección de referencia empleada
+en este trabajo, de $7{,}2\times10^{5}$ puntos con normales y color, se estima un
+tiempo de inferencia del orden de segundos a decenas de segundos por sección en
+la RTX A6000, sin \emph{FlashAttention}. La lectura del archivo ASCII de entrada,
+de unos 45\,MB, representa una fracción no despreciable de ese total, por lo que
+la conversión previa a formato binario es una optimización disponible si el
+cacheo completo de la catedral llegara a ser limitante. Estas cifras son
+estimaciones de diseño y serán sustituidas por mediciones directas, que el
+procedimiento de cacheo registra por sección.
 
 \paragraph*{Rangos de operación}
 El proyecto declara por adelantado dónde se espera que el método funcione y dónde

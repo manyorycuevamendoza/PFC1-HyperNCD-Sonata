@@ -84,8 +84,9 @@ def main():
     print(f"[1/4] leyendo {args.input}")
     t0 = time.time()
     point = cargar_nube(args.input)
+    t_lectura = time.time() - t0
     n_original = point["coord"].shape[0]
-    print(f"      {n_original} puntos ({time.time() - t0:.1f}s)")
+    print(f"      {n_original} puntos ({t_lectura:.1f}s)")
 
     print("[2/4] cargando Sonata preentrenado")
     modelo = cargar_modelo()
@@ -97,6 +98,7 @@ def main():
           f"({100 * n_rejilla / n_original:.1f}% retenido)")
 
     print("[4/4] forward")
+    torch.cuda.reset_peak_memory_stats()
     t0 = time.time()
     with torch.inference_mode():
         for clave in list(point.keys()):
@@ -111,8 +113,15 @@ def main():
     # inverse mapea de la rejilla a los puntos originales: feat[inverse]
     inverse = point.inverse.cpu().numpy().astype(np.int32)
 
-    print(f"      forward en {time.time() - t0:.1f}s")
+    t_forward = time.time() - t0
+    vram_pico = torch.cuda.max_memory_allocated() / 1024 ** 3
+
+    print(f"      forward en {t_forward:.1f}s")
     print(f"\n>>> FEATURES SSL: {feat.shape}   dim f_ssl = {feat.shape[1]}")
+    # Cifras para la tabla de hardware de la tesis (requisitos medidos, no estimados)
+    print(f">>> VRAM PICO:    {vram_pico:.2f} GB")
+    print(f">>> TIEMPO:       lectura {t_lectura:.1f}s | forward {t_forward:.1f}s")
+    print(f">>> RENDIMIENTO:  {n_rejilla / t_forward:,.0f} puntos/s")
 
     np.savez_compressed(
         args.output,
