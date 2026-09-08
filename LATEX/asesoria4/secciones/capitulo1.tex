@@ -212,55 +212,39 @@ Sobre esa base, el proyecto declara los siguientes aportes, cada uno anclado en 
 resultado publicado y asociado a un objetivo:
 
 \begin{enumerate}
-\item \textbf{Conexión no establecida entre dos líneas de trabajo.} Sustituir
-$f_{\text{geo}}$ por el codificador auto-supervisado congelado de Sonata dentro
-del módulo de prototipos de HyperNCD, conservando íntegro el razonamiento por
-hipergrafo, de modo que $F_i = [f_{\mathrm{sem}}(x^i);\, f_{\mathrm{ssl}}(x^i)]$.
-Al mover una sola pieza, cualquier variación de la métrica es atribuible al
-reemplazo. Base: Secciones~\ref{sec:hyperncd} y~\ref{sec:sonata}. Objetivo: OE1.
+\item \textbf{Integración de Sonata en el módulo de prototipos de HyperNCD.}
+Sustituir el descriptor geométrico $f_{\text{geo}}$ por el codificador
+auto-supervisado congelado de Sonata, $f_{\mathrm{ssl}}$, conservando íntegro el
+razonamiento por hipergrafo, de modo que
+$F_i = [f_{\mathrm{sem}}(x^i);\, f_{\mathrm{ssl}}(x^i)]$ y cualquier variación de
+la métrica sea atribuible a ese reemplazo. Incluye resolver el puente técnico
+entre la serialización de Point Transformer V3, la red sobre la que está
+construido Sonata, y la rejilla dispersa de Minkowski sobre la que opera
+HyperNCD, mediante \emph{up-cast} y \emph{cache} de características por sección
+\cite{wu2024ptv3}, y verificar si la nocividad del atajo geométrico, demostrada
+en régimen supervisado y de \emph{linear probing}, se mantiene en régimen de
+descubrimiento de clases novedosas. Base: Secciones~\ref{sec:hyperncd}
+y~\ref{sec:sonata}. Objetivo: OE1.
 
-\item \textbf{Puente técnico entre dos organizaciones espaciales distintas.}
-Resolver la diferencia de resolución entre Point Transformer V3, la red sobre la
-que está construido Sonata, y la rejilla dispersa de Minkowski sobre la que opera
-HyperNCD, mediante \emph{up-cast} y \emph{cache} de características por sección,
-y publicar esa solución como parte del repositorio. Base: \cite{wu2024ptv3} y
-Sección~\ref{sec:sonata}. Objetivo: OE1.
+\item \textbf{Calibración del híbrido.} Determinar, con curvas de sensibilidad
+sobre una sección de referencia, los valores de $\alpha$ y $M$ y del suavizado de
+etiquetas $\epsilon$, que HyperNCD deja fijo en su valor publicado, y verificar
+si la ganancia de representación que aporta Sonata se sostiene una vez calibrado
+el sistema completo. Base: Sección~\ref{sec:hyperncd}. Objetivo: OE2.
 
-\item \textbf{Transferencia de un hallazgo entre regímenes.} Verificar si la
-nocividad del atajo geométrico, demostrada en régimen supervisado y de
-\emph{linear probing}, se mantiene en régimen de descubrimiento de clases
-novedosas, donde la representación es más crítica. Base:
-Sección~\ref{sec:sonata}. Objetivos: OE1 y OE3.
-
-\item \textbf{Métrica propia de evaluación del híbrido.} Formular la brecha
-cerrada $G$ (Ec.~(\ref{eq:G})) y el protocolo de atribución por etapas, dado que
-las métricas estándar no separan la contribución de la representación de la del
-razonamiento. La ablación de \cite{zhang2026hyperncd} da el punto de comparación
-directo: el aporte del descriptor sustituido debe medirse contra los $+4{,}2$
-puntos de mIoU del prototipo geométrico original
-(Tabla~\ref{tab:ablacion-hyperncd}). Base: Sección~\ref{sec:hyperncd}. Objetivo:
-OE3.
-
-\item \textbf{Diagnóstico por clase y no solo por promedio.} Incorporar al
-reporte un análisis de dominancia, de modo que ninguna mejora agregada se
-presente sin identificar qué clase la produce, y calibrar el suavizado de
-etiquetas $\epsilon$ en lugar de heredar su valor publicado. La necesidad de este
-diagnóstico nace de la propia dispersión que HyperNCD reporta entre particiones,
-de 11,8 a 47,5 de mIoU (Sección~\ref{sec:hyperncd}), y se refuerza con evidencia
-externa de que corregir el sesgo hacia las clases mayoritarias puede aportar
-hasta $+15{,}34$ mIoU en clases nuevas \cite{su2025brdl}. Base:
-Sección~\ref{sec:hyperncd} y \cite{su2025brdl}. Objetivos: OE2 y OE3.
-
-\item \textbf{Reporte explícito de costo y evidencia de dominio.} Informar horas
-de GPU, memoria máxima, tiempo de preprocesamiento y parámetros entrenados, una
-práctica que la línea de NCD no sigue y que aquí se adopta siguiendo el criterio
-de \cite{robert2023spt}, aprovechando además que el codificador congelado de
-Sonata permite calcular sus características una sola vez por sección y ejecutar
-el modelo de forma distribuida o compartida. El resultado se evalúa sobre un
-levantamiento patrimonial real, dominio que ninguna de las fuentes
-internacionales cubre, y se compara contra el enfoque supervisado de vocabulario
-cerrado aplicado previamente al mismo tipo de edificio \cite{tesisutec2024}.
-Objetivo: OE3.
+\item \textbf{Cuantificación de la mejora y delimitación del rango de
+operación.} Formular la brecha cerrada $G$ (Ec.~(\ref{eq:G})) y el protocolo de
+atribución por etapas, dado que las métricas estándar no separan la contribución
+de la representación de la del razonamiento (la ablación de
+\cite{zhang2026hyperncd} da el punto de comparación directo, con los $+4{,}2$
+puntos de mIoU del prototipo geométrico original en la
+Tabla~\ref{tab:ablacion-hyperncd}); incorporar un análisis de dominancia que
+identifique qué clase gobierna cada mejora agregada; y reportar de forma
+explícita el costo computacional, horas de GPU, memoria y parámetros
+entrenados, evaluando todo sobre un levantamiento patrimonial real y
+comparándolo contra el enfoque supervisado de vocabulario cerrado aplicado
+previamente al mismo tipo de edificio \cite{tesisutec2024}. Base:
+Sección~\ref{sec:hyperncd}. Objetivo: OE3.
 \end{enumerate}
 
 La contribución al estado del arte no es, por tanto, una arquitectura nueva. Es
