@@ -2,7 +2,7 @@
 %  CAPITULO I - REVISION CRITICA DE LA LITERATURA
 %  Ficha de tres entradas por estudio: Estudio relevante / Aporte al
 %  proyecto / Aporte del proyecto.
-%  Contribuciones numeradas C1..C9, secuenciales en orden de lectura.
+%  Aportes numerados A1..A9, secuenciales en orden de lectura.
 %  Todas las cifras citadas provienen de las tablas de los articulos
 %  originales, con la procedencia indicada en nota al pie.
 % =====================================================================
@@ -11,8 +11,12 @@
 \label{cap:revision}
 
 Las cinco publicaciones revisadas se corresponden con los objetivos específicos
-de la tesis según la Tabla~\ref{tab:mapa-estudios}, y de cada una nace al menos
-una de las nueve contribuciones que el proyecto declara.
+de la tesis según la Tabla~\ref{tab:mapa-estudios}. De ellas nacen los
+\textbf{nueve aportes} que el proyecto declara, tres por cada objetivo
+específico. El número de aportes no coincide con el de publicaciones porque un
+mismo estudio puede dar origen a más de uno, según cuántos de sus resultados se
+estén explotando: de HyperNCD nacen dos, de BRDL tres, de Superpoint Transformer
+dos, y de Sonata y de PTv3 uno cada uno.
 
 \begin{table}[htbp]
 \centering
@@ -22,24 +26,24 @@ objetivo específico con el que se identifican.}
 \label{tab:mapa-estudios}
 \begin{tabular}{@{}p{4.0cm}p{4.5cm}p{1.8cm}p{1.9cm}@{}}
 \hline
-\textbf{Publicación} & \textbf{Qué aporta a la tesis} & \textbf{Contrib.} &
+\textbf{Publicación} & \textbf{Qué aporta a la tesis} & \textbf{Aportes} &
 \textbf{Objetivo} \\
 \hline
 Zhang et al. (2026), HyperNCD \newline (Sección~\ref{sec:hyperncd})
 & El método sobre el que se construye y la vara de comparación
-& C1, C2 & OE1 \\
+& A1, A2 & OE1 \\
 Wu et al. (2025), Sonata \newline (Sección~\ref{sec:sonata})
 & La pieza que sustituye al descriptor y la forma de medir representación
-& C3 & OE1, OE3 \\
+& A3 & OE1, OE3 \\
 Wu et al. (2024), PTv3 \newline (Sección~\ref{sec:ptv3})
 & La estructura espacial que crea el problema de integración
-& C4 & OE1 \\
+& A4 & OE1 \\
 Su et al. (2025), BRDL \newline (Sección~\ref{sec:brdl})
 & El procedimiento de calibración bajo desbalance de clases
-& C5, C6, C7 & OE2 \\
+& A5, A6, A7 & OE2 \\
 Robert et al. (2023), SPT \newline (Sección~\ref{sec:spt})
 & La medición aislada del descriptor manual y el reporte de costo
-& C8, C9 & OE3 \\
+& A8, A9 & OE3 \\
 \hline
 \end{tabular}
 \end{table}
@@ -123,7 +127,7 @@ compararse contra sus $+4{,}2$ puntos.
 \textbf{Aporte del proyecto.}
 
 \begin{enumerate}
-\item[\textbf{C1}] \textbf{Sustitución del descriptor geométrico (OE1).} Reemplazar $f_{\text{geo}}$ por
+\item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico (OE1).} Reemplazar $f_{\text{geo}}$ por
 $f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
 razonamiento por hipergrafo, de modo que
 $F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
@@ -132,7 +136,7 @@ la métrica sea atribuible a ese reemplazo y a nada más.
 sección de control, con las dimensiones de ambas ramas documentadas y sin que el
 mIoU de las clases conocidas baje respecto de la línea base.
 
-\item[\textbf{C2}] \textbf{Auditoría de la implementación de referencia y
+\item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
 corrección de la línea base (OE1).} La inspección del código liberado muestra
 que el módulo que reproduce la formulación publicada del razonamiento por
 hipergrafo no se invoca desde ninguna ruta de entrenamiento ni de evaluación;
@@ -205,7 +209,7 @@ DINOv2, agregado de 2D a 3D & 63,1 \\
 geométrica de bajo nivel, medida en igualdad de condiciones, es un mal
 descriptor, y existe un codificador público, ya entrenado y congelable, que la
 reemplaza sin exigir preentrenamiento propio. Es la pieza que ocupa el lugar de
-$f_{\text{geo}}$ en la contribución C1. La segunda es de método: el \emph{linear
+$f_{\text{geo}}$ en el aporte A1. La segunda es de método: el \emph{linear
 probing} mide calidad de representación de forma aislada, congelando todo lo
 demás, y ese principio es el que permite separar después lo que aporta la
 representación de lo que aporta el razonamiento.
@@ -233,14 +237,14 @@ como rango favorable.
 \end{enumerate}
 
 \textbf{Aporte del proyecto.} Este estudio sostiene, junto con la
-Sección~\ref{sec:hyperncd}, la contribución C1: aporta la pieza que se coloca en
+Sección~\ref{sec:hyperncd}, el aporte A1: aporta la pieza que se coloca en
 lugar de $f_{\text{geo}}$ y la evidencia de que hacerlo tiene sentido. Verificar
 si la nocividad del atajo geométrico, demostrada en régimen supervisado, se
-mantiene en régimen de descubrimiento de clases novedosas es la pregunta que C1
-responde. De su metodología nace además una contribución propia:
+mantiene en régimen de descubrimiento de clases novedosas es la pregunta que A1
+responde. De su metodología nace además un aporte propio:
 
 \begin{enumerate}
-\item[\textbf{C3}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
+\item[\textbf{A3}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
 atribución por etapas (OE3).} Las métricas estándar no separan lo que aporta la
 representación de lo que aporta el razonamiento: el mIoU final es el mismo número
 venga de donde venga la ganancia. Trasladando el principio del \emph{linear
@@ -332,7 +336,7 @@ estado del optimizador, así que puede calcularse una sola vez por sección.
 \textbf{Aporte del proyecto.}
 
 \begin{enumerate}
-\item[\textbf{C4}] \textbf{Puente entre dos estructuras espaciales incompatibles
+\item[\textbf{A4}] \textbf{Puente entre dos estructuras espaciales incompatibles
 (OE1).} Resolver el emparejamiento entre la secuencia serializada de PTv3 y la
 rejilla dispersa de Minkowski mediante \emph{up-cast} de resolución y
 \emph{cache} de características por sección. La misma decisión resuelve tres
@@ -430,7 +434,7 @@ de escenario; lo que se traslada es el procedimiento y el diagnóstico.
 \textbf{Aporte del proyecto.}
 
 \begin{enumerate}
-\item[\textbf{C5}] \textbf{Normalización de escala entre dos ramas heterogéneas
+\item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas heterogéneas
 (OE2).} La afinidad entre prototipos combina una componente geométrica y una
 semántica según $S_b=\alpha\,S_g+(1-\alpha)\,S_s$. Mientras $S_g$ se calcula
 sobre un descriptor de seis componentes acotadas, el valor publicado
@@ -445,7 +449,7 @@ comparten escala, de modo que este caso queda fuera de lo que ese trabajo cubre.
 \emph{Resultado verificable:} el procedimiento de normalización adoptado y su
 efecto medido sobre la distribución de $S_b$ antes y después.
 
-\item[\textbf{C6}] \textbf{Calibración conjunta y verificación de
+\item[\textbf{A6}] \textbf{Calibración conjunta y verificación de
 no-aditividad (OE2).} Determinar los tres valores con una grilla
 conjunta y curvas de sensibilidad sobre una sección de referencia, en lugar de un
 barrido por parámetro, y verificar si la no-aditividad que BRDL documenta entre
@@ -453,7 +457,7 @@ sus dos estrategias aparece también entre la representación y el razonamiento 
 híbrido. \emph{Resultado verificable:} la grilla conjunta, las tres curvas de
 sensibilidad y la configuración fijada.
 
-\item[\textbf{C7}] \textbf{Verificación de que la configuración se sostiene fuera
+\item[\textbf{A7}] \textbf{Verificación de que la configuración se sostiene fuera
 de donde se calibró (OE2).} La configuración se fija sobre una única sección de
 referencia y se aplica \textbf{sin reajuste} a las cuatro restantes, reportando
 la degradación observada. Es lo que separa haber calibrado de haber ajustado
@@ -550,7 +554,7 @@ el estado del arte del problema no publica ninguna cifra de cómputo
 \textbf{Aporte del proyecto.}
 
 \begin{enumerate}
-\item[\textbf{C8}] \textbf{Medición del canal geométrico en la combinación de
+\item[\textbf{A8}] \textbf{Medición del canal geométrico en la combinación de
 dominio y régimen que nadie ha reportado (OE3).} Llenar la celda final de la
 Tabla~\ref{tab:canal-geo}: interior denso patrimonial bajo descubrimiento de
 clases novedosas, que es exactamente el objeto de estudio de esta tesis. Medirla
@@ -560,7 +564,7 @@ Tabla~\ref{tab:canal-geo} completa, con su última fila medida, y el estudio de
 ablación de las tres variantes del descriptor, que son la geométrica manual, la
 auto-supervisada y la concatenación de ambas.
 
-\item[\textbf{C9}] \textbf{Reporte desagregado del costo, que la literatura de
+\item[\textbf{A9}] \textbf{Reporte desagregado del costo, que la literatura de
 descubrimiento de clases novedosas no publica (OE3).} Reportar preproceso, horas
 de GPU, memoria y parámetros entrenados por separado, sobre hardware declarado y
 verificado, y comparar contra el enfoque supervisado de vocabulario cerrado
@@ -587,79 +591,78 @@ medición aislada de cuánto vale el descriptor manual, pero en tres dominios qu
 no incluyen el de esta tesis (Sección~\ref{sec:spt}). Ninguno de esos trabajos se
 ha evaluado sobre patrimonio construido, y nadie ha juntado las piezas.
 
-Sobre esa base el proyecto declara \textbf{tres aportes principales, uno por
-objetivo específico}, descompuestos en las nueve contribuciones que ya se
-enunciaron en la sección de la que nace cada una y que la
-Tabla~\ref{tab:obj-vs-revision} resume.
+Sobre esa base el proyecto declara \textbf{nueve aportes, tres por cada objetivo
+específico}. Cada uno se enunció ya en la sección de la que nace, y la
+Tabla~\ref{tab:obj-vs-revision} los reúne.
 
 \medskip
-\noindent\textbf{Aporte 1 --- Integración de Sonata en el módulo de prototipos
-(OE1).} Sustituir el descriptor geométrico analítico por el codificador
-auto-supervisado congelado (C1), corregir la base de comparación a partir de la
-auditoría del código liberado (C2) y resolver el puente entre las dos estructuras
-espaciales que hace viable esa sustitución (C4).
+\noindent\textbf{OE1 --- Integración de Sonata en el módulo de prototipos.}
+Tres aportes: Sustituir el descriptor geométrico analítico por el codificador
+auto-supervisado congelado (A1), corregir la base de comparación a partir de la
+auditoría del código liberado (A2) y resolver el puente entre las dos estructuras
+espaciales que hace viable esa sustitución (A4).
 
 \medskip
-\noindent\textbf{Aporte 2 --- Calibración del híbrido (OE2).} Hacer comparables
-dos ramas de escalas distintas (C5), calibrar de forma conjunta los tres
-parámetros que gobiernan la afinidad entre prototipos (C6) y verificar que la
-configuración elegida se sostiene fuera de la sección donde se calibró (C7).
+\noindent\textbf{OE2 --- Calibración del híbrido.} Tres aportes: Hacer comparables
+dos ramas de escalas distintas (A5), calibrar de forma conjunta los tres
+parámetros que gobiernan la afinidad entre prototipos (A6) y verificar que la
+configuración elegida se sostiene fuera de la sección donde se calibró (A7).
 
 \medskip
-\noindent\textbf{Aporte 3 --- Cuantificación de la mejora y delimitación del
-rango de operación (OE3).} Formular una métrica que separe la contribución de la
-representación de la del razonamiento (C3), medir el valor del canal geométrico
-en la única combinación de dominio y régimen que ningún trabajo ha reportado (C8)
-y reportar el costo de forma desagregada sobre hardware verificado (C9).
+\noindent\textbf{OE3 --- Cuantificación de la mejora y delimitación del rango de
+operación.} Tres aportes: Formular una métrica que separe la contribución de la
+representación de la del razonamiento (A3), medir el valor del canal geométrico
+en la única combinación de dominio y régimen que ningún trabajo ha reportado (A8)
+y reportar el costo de forma desagregada sobre hardware verificado (A9).
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Inventario de aportes. Tres aportes principales, uno por objetivo
-específico, descompuestos en nueve contribuciones. Cada una nace de un estudio
-revisado y termina en un resultado propio que se puede verificar.}
+\caption{Inventario de los nueve aportes del proyecto, tres por cada objetivo
+específico. Cada uno nace de un estudio revisado y termina en un resultado propio
+que se puede verificar. La numeración sigue el orden de lectura del capítulo.}
 \label{tab:obj-vs-revision}
 \begin{tabular}{@{}p{0.7cm}p{4.3cm}p{2.8cm}p{4.7cm}@{}}
 \hline
- & \textbf{Contribución} & \textbf{Nace de} & \textbf{Resultado verificable} \\
+ & \textbf{Aporte} & \textbf{Nace de} & \textbf{Resultado verificable} \\
 \hline
-\multicolumn{4}{@{}l}{\textbf{Aporte 1 --- Integración de Sonata en los prototipos (OE1)}}\\
-C1 & Sustitución de $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
+\multicolumn{4}{@{}l}{\textbf{OE1 --- Integración de Sonata en el módulo de prototipos}}\\
+A1 & Sustitución de $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
    & HyperNCD (\S\ref{sec:hyperncd}), Sonata (\S\ref{sec:sonata})
    & Híbrido de extremo a extremo sin caída en clases conocidas \\
-C2 & Auditoría del código y corrección de la línea base
+A2 & Auditoría del código y corrección de la línea base
    & HyperNCD (\S\ref{sec:hyperncd}) y su repositorio
    & Tabla artículo\,--\,implementación y tres decisiones metodológicas \\
-C4 & Puente entre serialización y rejilla dispersa
+A4 & Puente entre serialización y rejilla dispersa
    & PTv3 (\S\ref{sec:ptv3})
    & \emph{Cache} por sección y cota de aceleración propia \\
 \hline
-\multicolumn{4}{@{}l}{\textbf{Aporte 2 --- Calibración del híbrido (OE2)}}\\
-C5 & Normalización de escala entre ramas heterogéneas
+\multicolumn{4}{@{}l}{\textbf{OE2 --- Calibración del híbrido}}\\
+A5 & Normalización de escala entre ramas heterogéneas
    & BRDL (\S\ref{sec:brdl})
    & Distribución de $S_b$ antes y después \\
-C6 & Calibración conjunta de $(\alpha,M,\epsilon)$ y no-aditividad
+A6 & Calibración conjunta de $(\alpha,M,\epsilon)$ y no-aditividad
    & BRDL (\S\ref{sec:brdl})
    & Grilla conjunta, curvas de sensibilidad, configuración fijada \\
-C7 & Robustez de la configuración entre secciones
+A7 & Robustez de la configuración entre secciones
    & BRDL (\S\ref{sec:brdl})
    & Métrica por sección sin reajuste \\
 \hline
-\multicolumn{4}{@{}l}{\textbf{Aporte 3 --- Cuantificación y rango de operación (OE3)}}\\
-C3 & Brecha cerrada $G$ y atribución por etapas
+\multicolumn{4}{@{}l}{\textbf{OE3 --- Cuantificación de la mejora y rango de operación}}\\
+A3 & Brecha cerrada $G$ y atribución por etapas
    & Sonata (\S\ref{sec:sonata})
    & $G$ formulada, medición intermedia, PCA \\
-C8 & Valor del canal geométrico en interior denso bajo NCD
+A8 & Valor del canal geométrico en interior denso bajo NCD
    & SPT (\S\ref{sec:spt}), HyperNCD (\S\ref{sec:hyperncd})
    & Tabla~\ref{tab:canal-geo} completa y ablación de tres variantes \\
-C9 & Reporte desagregado del costo
+A9 & Reporte desagregado del costo
    & SPT (\S\ref{sec:spt}) y el vacío de HyperNCD
    & Tabla de costo por etapa, con mediciones directas \\
 \hline
 \end{tabular}
 \end{table}
 
-La contribución al estado del arte no es una arquitectura nueva. Es establecer si
+El aporte al estado del arte no es una arquitectura nueva. Es establecer si
 un hallazgo demostrado en un régimen se transfiere a otro donde resulta más
 crítico, hacerlo sobre un objeto de estudio en el que el costo del trabajo manual
 es real y medible, y dejar documentado con qué base de comparación y a qué costo
