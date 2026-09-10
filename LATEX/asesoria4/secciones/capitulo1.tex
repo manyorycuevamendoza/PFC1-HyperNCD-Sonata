@@ -197,6 +197,100 @@ se coloca en ese lugar y la evidencia publicada de que hacerlo tiene sentido.
 Ninguna de las dos secciones basta por separado para sostenerlo.
 
 % =====================================================================
+\section[Point Transformer V3]{Wu et al. (2024): Point Transformer V3 y la
+serialización que crea el problema de integración}
+\label{sec:ptv3}
+
+\textbf{Estudio relevante.} \emph{Point Transformer V3: Simpler, Faster,
+Stronger}, publicado en CVPR 2024 \cite{wu2024ptv3}. Es la red sobre la que está construido
+Sonata, y se revisa aquí no por su desempeño sino porque su decisión de diseño
+central es la que hace que las dos ramas del modelo propuesto no encajen sin
+trabajo adicional. Esa decisión consiste en abandonar la vecindad geométrica
+calculada por vecinos más cercanos y sustituirla por una vecindad
+\emph{serializada}: los puntos se ordenan siguiendo una curva de llenado de
+espacio, que es una curva que recorre el volumen visitando cada celda una sola
+vez y manteniendo juntos los puntos cercanos, la secuencia resultante se corta en
+parches contiguos, y la atención se calcula únicamente dentro de cada parche. El
+trabajo emplea cuatro patrones de recorrido, orden Z, orden de Hilbert y sus dos
+variantes transpuestas, y alterna entre ellos para que el campo receptivo no
+quede sesgado por la dirección de la curva.
+
+\textbf{Resultados que reporta.} La serialización le permite ampliar el campo
+receptivo de 16 a 1024 puntos. La justificación de eficiencia es directa: la
+consulta de vecinos más cercanos y la codificación posicional relativa ocupaban
+en conjunto el 54\,\% del tiempo de paso hacia adelante de la versión anterior, y
+PTv3 elimina ambas. Su tabla de eficiencia, medida sobre nuScenes con lote de
+tamaño 1 en una sola RTX 4090, da los valores de la
+Tabla~\ref{tab:eficiencia-ptv3}.\footnote{Tabla~1 de \cite{wu2024ptv3}.}
+
+\begin{table}[htbp]
+\centering
+\caption{Eficiencia de PTv3 frente a la red dispersa con la que tendrá que
+convivir en el modelo híbrido, según la Tabla~1 de \cite{wu2024ptv3}. Medido
+sobre nuScenes, lote de tamaño 1, una sola RTX 4090.}
+\label{tab:eficiencia-ptv3}
+\begin{tabular}{@{}p{4.2cm}rrrrr@{}}
+\hline
+ & & \multicolumn{2}{c}{Entrenamiento} & \multicolumn{2}{c}{Inferencia} \\
+Método & Parám. & Latencia & Memoria & Latencia & Memoria \\
+\hline
+MinkUNet, núcleo 3 & 37,9\,M & 163\,ms & 3,3\,G & 48\,ms & 1,7\,G \\
+PTv2, parche 16 & 12,8\,M & 213\,ms & 10,3\,G & 146\,ms & 12,3\,G \\
+\textbf{PTv3, parche 1024} & 46,2\,M & \textbf{119\,ms} & \textbf{3,3\,G} &
+\textbf{44\,ms} & \textbf{1,2\,G} \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Lectura crítica.} Aquí aparece el problema que este proyecto tiene que
+resolver y que ninguno de los dos estudios anteriores plantea, porque ninguno de
+los dos intenta juntar las piezas.
+
+HyperNCD opera sobre una \textbf{rejilla dispersa de Minkowski}: las coordenadas
+se cuantizan a celdas y la vecindad de un punto queda definida por el núcleo
+$3\times3\times3$ de la convolución dispersa. Sonata, a través de PTv3, opera
+sobre una \textbf{secuencia serializada}: la vecindad de un punto queda definida
+por su posición dentro de un parche de 1024 elementos de una curva de llenado de
+espacio. No son dos maneras de decir lo mismo. Dos puntos que son vecinos en una
+estructura pueden no serlo en la otra, y la correspondencia entre los índices de
+una y de la otra no es la identidad. Cualquier intento de tomar la salida de una
+rama y alimentarla a la otra tiene que resolver ese emparejamiento de forma
+explícita.
+
+A la incompatibilidad de estructura se suma una segunda, que no es de
+arquitectura sino de ingeniería, y que la inspección del código liberado por
+ambos grupos deja en evidencia: las dos ramas exigen \textbf{pilas de
+dependencias mutuamente excluyentes}, MinkowskiEngine contra CUDA 11.3 y PTv3
+contra CUDA 12.4. Esto no es una molestia de instalación. Significa que integrar
+las dos implementaciones de referencia dentro de un único proceso no es posible
+sin renunciar a una de las dos, y por lo tanto que el punto de fusión no puede
+ser un objeto en memoria compartido entre los dos modelos.
+
+La Tabla~\ref{tab:eficiencia-ptv3} aporta además un dato que conviene registrar
+porque desactiva una objeción previsible: PTv3 no es la pieza cara del sistema.
+Con 46,2\,M de parámetros consume menos memoria de inferencia que MinkUNet, que
+tiene 37,9\,M, y es más rápido que ella. El costo del híbrido no proviene de
+añadir un transformador, sino de ejecutarlo dentro del bucle de entrenamiento si
+no se toma ninguna precaución.
+
+\textbf{Aporte al proyecto.} La caracterización exacta de la incompatibilidad
+entre las dos estructuras espaciales, que es lo que fija dónde y cómo debe
+construirse el punto de fusión. Y, junto a ella, la propiedad que la hace
+resoluble: como el codificador se emplea congelado y solo en inferencia, su
+salida no depende de la época ni del estado del optimizador, de modo que puede
+calcularse una sola vez por sección y persistirse en disco.
+
+\textbf{Aporte del proyecto.} El puente entre ambas estructuras, resuelto
+mediante \emph{up-cast} de resolución y \emph{cache} de características por
+sección. Esa sola decisión resuelve tres problemas a la vez: el emparejamiento
+entre la serialización y la rejilla dispersa, la incompatibilidad de pilas de
+dependencias, que deja de importar porque las dos ramas nunca coexisten en el
+mismo proceso, y la repetición del costo del codificador en cada época, que
+desaparece. Incluye además la formulación propia de una cota de aceleración que
+delimita hasta dónde vale la pena distribuir el cacheo. Este es el aporte 1.b y
+corresponde a OE1.
+
+% =====================================================================
 \section[BRDL]{Su, Chen y Wang (2025): BRDL, calibración bajo desbalance de
 clases}
 \label{sec:brdl}
@@ -411,7 +505,7 @@ cada mejora agregada, y con el reporte desagregado de costo. Este es el
 \textbf{tercer aporte} de la tesis y corresponde a OE3.
 
 % =====================================================================
-\section[Conclusión: aportes del proyecto]{Conclusión de la revisión crítica: los tres aportes del proyecto}
+\section[Conclusión: aportes del proyecto]{Conclusión de la revisión crítica: los aportes del proyecto}
 \label{sec:aporte}
 
 La revisión permite responder las tres preguntas que la evaluación plantea. Los
@@ -420,115 +514,240 @@ formulación establecida del descubrimiento de clases novedosas, con un protocol
 de medición aceptado que se apoya en el emparejamiento húngaro definido en el
 Capítulo~\ref{cap:teorico}; existe un método de razonamiento entre clases que
 funciona (Sección~\ref{sec:hyperncd}); existe una representación de puntos de
-calidad demostrada (Sección~\ref{sec:sonata}); existe un procedimiento publicado
-para calibrar un sistema de dos mecanismos acoplados bajo desbalance de clases
-(Sección~\ref{sec:brdl}); y existe una medición aislada de cuánto vale el
+calidad demostrada (Sección~\ref{sec:sonata}); existe una caracterización precisa
+de la estructura espacial sobre la que esa representación opera, y que no coincide
+con la del método anterior (Sección~\ref{sec:ptv3}); existe un procedimiento
+publicado para calibrar un sistema de mecanismos acoplados bajo desbalance de
+clases (Sección~\ref{sec:brdl}); y existe una medición aislada de cuánto vale el
 descriptor geométrico manual, hecha por un tercer grupo y sobre tres dominios
 (Sección~\ref{sec:spt}). Lo que no existe es la unión de esas piezas, y ninguno
 de esos trabajos se ha evaluado sobre patrimonio construido. El análisis de sus
 resultados es lo que localiza el cuello de botella en el descriptor geométrico
 analítico, y de ahí nace todo lo que sigue.
 
-El criterio que ordena este cierre es explícito y se puede verificar renglón por
-renglón: \textbf{el proyecto declara tantos aportes como objetivos específicos
-tiene, y cada aporte nace de la lectura crítica de un estudio concreto}. Ningún
-aporte se enuncia sin que antes aparezca, en alguna de las cuatro secciones
-anteriores, el resultado publicado que lo justifica.
+El cierre se ordena con dos criterios explícitos que se pueden verificar renglón
+por renglón. El primero: \textbf{el proyecto declara tantos aportes principales
+como objetivos específicos tiene}, uno por objetivo, sin excepción. El segundo:
+\textbf{cada aporte principal se descompone en contribuciones específicas
+numeradas, y cada una de ellas nace de la lectura crítica de un estudio
+concreto} y termina en un resultado verificable propio. Ninguna contribución se
+enuncia sin que antes aparezca, en alguna de las cinco secciones anteriores, el
+resultado publicado que la justifica. El inventario completo se resume en la
+Tabla~\ref{tab:obj-vs-revision}.
+
+% ---------------------------------------------------------------------
+\medskip
+\noindent\textbf{APORTE 1 --- Integración de Sonata en el módulo de prototipos de
+HyperNCD (OE1).} Es el aporte central y se descompone en tres contribuciones que
+son separables entre sí: una de método, una de ingeniería y una de corrección de
+la base de comparación.
 
 \begin{enumerate}
-\item \textbf{Integración de Sonata en el módulo de prototipos de HyperNCD.}
-Sustituir el descriptor geométrico $f_{\text{geo}}$ por el codificador
-auto-supervisado congelado de Sonata, $f_{\mathrm{ssl}}$, conservando íntegro el
-razonamiento por hipergrafo, de modo que
-$F_i = [f_{\mathrm{sem}}(x^i);\, f_{\mathrm{ssl}}(x^i)]$ y cualquier variación de
-la métrica sea atribuible a ese reemplazo. Incluye resolver el puente técnico
-entre la serialización de Point Transformer V3, la red sobre la que está
-construido Sonata, y la rejilla dispersa de Minkowski sobre la que opera
-HyperNCD, mediante \emph{up-cast} y \emph{cache} de características por sección
-\cite{wu2024ptv3}, y verificar si la nocividad del atajo geométrico, demostrada
-en régimen supervisado y de \emph{linear probing}, se mantiene en régimen de
-descubrimiento de clases novedosas. \textbf{Nace de:}
-Secciones~\ref{sec:hyperncd} y~\ref{sec:sonata}. \textbf{Objetivo:} OE1.
+\item[\textbf{1.a}] \textbf{Bloque de fusión que sustituye el descriptor
+geométrico.} Reemplazar $f_{\text{geo}}$ por el codificador auto-supervisado
+congelado de Sonata, $f_{\mathrm{ssl}}$, conservando íntegro el razonamiento por
+hipergrafo, de modo que $F_i = [f_{\mathrm{sem}}(x^i);\, f_{\mathrm{ssl}}(x^i)]$
+y cualquier variación de la métrica sea atribuible a ese reemplazo y a nada más.
+Incluye verificar si la nocividad del atajo geométrico, demostrada en régimen
+supervisado y de \emph{linear probing}, se mantiene en régimen de descubrimiento
+de clases novedosas, donde no hay etiquetas que corrijan al modelo sobre las
+clases objetivo. \emph{Nace de:} Secciones~\ref{sec:hyperncd} y~\ref{sec:sonata}.
+\emph{Resultado verificable:} el híbrido corriendo de extremo a extremo sobre una
+sección de control, con las dimensiones de ambas ramas documentadas y sin que el
+mIoU de las clases conocidas baje respecto de la línea base.
 
-\item \textbf{Calibración conjunta del híbrido.} Determinar, con una grilla
-conjunta y curvas de sensibilidad sobre una sección de referencia, los valores de
-$\alpha$, $M$ y del suavizado de etiquetas $\epsilon$ que HyperNCD deja fijos en
-sus valores publicados, y verificar si la ganancia de representación que aporta
-Sonata se sostiene una vez calibrado el sistema completo. El aporte propio está
-en el caso híbrido, que el estudio de referencia no cubre: $\alpha$ pasa a
-ponderar dos ramas de escalas distintas, de manera que su valor publicado deja de
-ser interpretable y la calibración conjunta se vuelve una condición y no un
-ajuste opcional. \textbf{Nace de:} Sección~\ref{sec:brdl}. \textbf{Objetivo:}
-OE2.
+\item[\textbf{1.b}] \textbf{Puente entre dos estructuras espaciales
+incompatibles.} Resolver el emparejamiento entre la secuencia serializada sobre
+la que opera PTv3 y la rejilla dispersa de Minkowski sobre la que opera HyperNCD,
+mediante \emph{up-cast} de resolución y \emph{cache} de características por
+sección. La misma decisión resuelve tres problemas a la vez: el emparejamiento de
+vecindades, la incompatibilidad entre pilas de dependencias mutuamente
+excluyentes, que deja de importar porque las dos ramas nunca coexisten en un
+mismo proceso, y la repetición del costo del codificador en cada época, que
+desaparece porque su salida no depende del estado del optimizador.
+\emph{Nace de:} Sección~\ref{sec:ptv3}. \emph{Resultado verificable:} el
+\emph{cache} persistente por sección, legible desde los dos entornos, y la cota
+de aceleración de formulación propia que delimita hasta dónde vale la pena
+distribuirlo.
 
-\item \textbf{Cuantificación de la mejora y delimitación del rango de
-operación.} Formular la brecha cerrada $G$ (Ec.~\eqref{eq:G}) y el protocolo de
-atribución por etapas, dado que las métricas estándar no separan la contribución
-de la representación de la del razonamiento; incorporar un análisis de dominancia
-que identifique qué clase gobierna cada mejora agregada; reportar el costo de
-forma desagregada, en preproceso, horas de GPU, memoria y parámetros entrenados;
-y, sobre todo, medir el valor del canal geométrico en la única combinación de
-dominio y régimen que ningún trabajo ha reportado, que es interior denso
-patrimonial bajo descubrimiento de clases novedosas
-(Tabla~\ref{tab:canal-geo}), comparándolo contra el enfoque supervisado de
-vocabulario cerrado aplicado previamente al mismo tipo de edificio
-\cite{tesisutec2024}. \textbf{Nace de:} Sección~\ref{sec:spt}.
-\textbf{Objetivo:} OE3.
+\item[\textbf{1.c}] \textbf{Auditoría de la implementación de referencia y
+corrección de la línea base.} La inspección del código liberado por el grupo de
+HyperNCD muestra que el módulo que reproduce la formulación publicada del
+razonamiento por hipergrafo no se invoca desde ninguna ruta de entrenamiento ni
+de evaluación; que las matrices de peso de sus capas se instancian dentro del
+cuerpo de la función en cada llamada, de modo que no se registran entre los
+parámetros del modelo, no reciben gradiente y se reinicializan al azar en cada
+invocación; que el procedimiento denominado de actualización dinámica reproduce
+término por término el de construcción inicial sobre la misma matriz de
+similitud, por lo que no actualiza nada; y que el descriptor geométrico
+efectivamente ejecutado tiene dimensión seis, porque incorpora el centroide de la
+región además de las cantidades derivadas de los autovalores, y no tres como
+describe el artículo. Estas observaciones no invalidan el trabajo de referencia,
+pero obligan a tres decisiones que sin ellas se habrían tomado mal: la línea base
+se establece sobre el código que se ejecuta y no sobre la formulación publicada,
+la comparación cuantitativa se hace contra corridas propias bajo condiciones
+idénticas de datos, partición y semilla, y la sustitución se aplica sobre el
+descriptor de dimensión seis. Sin esta corrección, cualquier mejora reportada
+quedaría mal atribuida. \emph{Nace de:} Sección~\ref{sec:hyperncd} y la
+inspección directa del repositorio. \emph{Resultado verificable:} la tabla de
+correspondencia entre artículo e implementación y las tres decisiones
+metodológicas que de ella se derivan.
 \end{enumerate}
 
-La Tabla~\ref{tab:obj-vs-revision} cierra el capítulo en la forma que exige la
-evaluación: cada objetivo específico se enfrenta con el estudio que lo respalda,
-con el resultado concreto que ese estudio publica y con lo que el proyecto agrega
-por encima de él. Ninguna celda de la columna de aporte del proyecto existe sin
-una celda de aporte del estudio que la preceda en la misma fila.
+% ---------------------------------------------------------------------
+\medskip
+\noindent\textbf{APORTE 2 --- Calibración del híbrido (OE2).} El objetivo no se
+agota en un barrido de hiperparámetros. Se descompone en una precondición, la
+calibración propiamente dicha y su verificación de robustez.
 
+\begin{enumerate}
+\item[\textbf{2.a}] \textbf{Normalización de escala entre dos ramas
+heterogéneas.} La afinidad entre prototipos combina una componente geométrica y
+una semántica según $S_b=\alpha\,S_g+(1-\alpha)\,S_s$. Mientras $S_g$ se calcula
+sobre un descriptor de seis componentes acotadas derivadas de autovalores, el
+valor publicado $\alpha=0{,}5$ significa efectivamente mitad y mitad. En cuanto
+$S_g$ pasa a calcularse sobre un vector de cientos de dimensiones producido por
+un codificador congelado, cuyo rango no está normalizado contra el de la rama
+semántica, ese mismo valor deja de significar eso. Decidir cómo se hacen
+comparables las dos similitudes es, por tanto, una precondición de la
+calibración y no un detalle de implementación, y el régimen congelado agrava el
+problema porque impide que la rama aprendida se reescale sola durante el
+entrenamiento. \emph{Nace de:} Sección~\ref{sec:brdl}, cuyos dos parámetros
+pertenecen al mismo método y comparten escala, de modo que el caso heterogéneo
+queda fuera de lo que ese trabajo cubre; y Sección~\ref{sec:sonata}, que declara
+el régimen congelado y sus límites. \emph{Resultado verificable:} el
+procedimiento de normalización adoptado y su efecto medido sobre la distribución
+de $S_b$ antes y después de aplicarlo.
+
+\item[\textbf{2.b}] \textbf{Calibración conjunta de $(\alpha, M, \epsilon)$ y
+verificación de no-aditividad.} Determinar los tres valores con una grilla
+conjunta y curvas de sensibilidad sobre una sección de referencia, en lugar de un
+barrido por parámetro. La justificación es un resultado publicado y no una
+preferencia: en el estudio de referencia, activar una sola de dos piezas
+acopladas deja el mIoU por debajo de no activar ninguna, con 44,90 frente a
+45,19, y solo la combinación gana, con 47,26; y el óptimo de la grilla conjunta
+no coincide con el de los barridos por separado. Este trabajo verifica si la
+misma no-aditividad aparece entre la representación y el razonamiento del
+híbrido. \emph{Nace de:} Sección~\ref{sec:brdl}. \emph{Resultado verificable:}
+la grilla conjunta, las tres curvas de sensibilidad y la configuración fijada.
+
+\item[\textbf{2.c}] \textbf{Verificación de que la configuración se sostiene
+fuera de donde se calibró.} La configuración se fija sobre una única sección de
+referencia y se aplica \textbf{sin reajuste} a las cuatro secciones restantes,
+reportando la degradación que se observe. Es lo que separa haber calibrado de
+haber ajustado sobre aquello que se iba a medir, y el estudio de referencia
+muestra por qué importa: al cambiar únicamente el orden de presentación de las
+clases, los métodos incrementales existentes se degradan de forma significativa,
+mientras que el entrenamiento conjunto apenas se mueve. \emph{Nace de:}
+Sección~\ref{sec:brdl}. \emph{Resultado verificable:} la métrica por sección bajo
+configuración fija y su diferencia respecto de la sección de calibración.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\medskip
+\noindent\textbf{APORTE 3 --- Cuantificación de la mejora y delimitación del
+rango de operación (OE3).} Este objetivo no incorpora trabajo computacional
+nuevo, pero sí tres productos de análisis que ningún trabajo previo entrega para
+este problema.
+
+\begin{enumerate}
+\item[\textbf{3.a}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
+atribución por etapas.} Las métricas estándar no separan lo que aporta la
+representación de lo que aporta el razonamiento: el mIoU final es el mismo número
+venga de donde venga la ganancia. La brecha cerrada $G$ (Ec.~\eqref{eq:G})
+expresa qué parte de la distancia entre clases conocidas y novedosas se logró
+recuperar, y el protocolo mide también en el punto intermedio del proceso
+(Sección~\ref{sec:metricas-hibrido}), lo que permite atribuir la ganancia a una
+etapa concreta. Se incorpora además un análisis de dominancia que identifica qué
+clase gobierna cada mejora agregada, para que un promedio favorable no oculte una
+única clase que arrastra al resto. \emph{Nace de:} Sección~\ref{sec:sonata}, cuya
+metodología de \emph{linear probing} es precisamente la forma de medir calidad de
+representación de manera aislada congelando todo lo demás.
+\emph{Resultado verificable:} $G$ formulada, la medición en el punto intermedio y
+las proyecciones PCA de los descriptores.
+
+\item[\textbf{3.b}] \textbf{Medición del canal geométrico en la combinación de
+dominio y régimen que nadie ha reportado.} Quitar el descriptor manual cuesta
+$-0{,}7$ mIoU en interior denso y $-4{,}1$ en exterior disperso, casi seis veces
+más, y el $+4{,}2$ que declara HyperNCD está medido en exterior disperso. La
+celda que falta en la Tabla~\ref{tab:canal-geo} es interior denso patrimonial
+bajo descubrimiento de clases novedosas, y es exactamente el objeto de estudio de
+esta tesis. Medirla determina de qué lado cae el balance entre tener menos vara
+que superar y tener menos margen disponible. \emph{Nace de:}
+Secciones~\ref{sec:spt} y~\ref{sec:hyperncd}. \emph{Resultado verificable:} la
+Tabla~\ref{tab:canal-geo} completa, con su última fila medida, y el estudio de
+ablación de las tres variantes del descriptor.
+
+\item[\textbf{3.c}] \textbf{Reporte desagregado del costo, que la literatura de
+descubrimiento de clases novedosas no publica.} El estado del arte de este
+problema no reporta ni una sola cifra de cómputo: su sección de detalles de
+implementación declara arquitectura, optimizador y programa de tasa de
+aprendizaje, y nada más, sin GPU, sin memoria y sin tiempo. Al mismo tiempo, un
+trabajo de la misma área demuestra que desagregar el costo cambia la conclusión
+de una comparación, porque un método puede ganar en mIoU y perder por completo
+cuando se mira el preproceso. Este trabajo reporta preproceso, horas de GPU,
+memoria y parámetros entrenados por separado, sobre hardware declarado y
+verificado, y compara además contra el enfoque supervisado de vocabulario cerrado
+aplicado previamente al mismo tipo de edificio \cite{tesisutec2024}.
+\emph{Nace de:} Sección~\ref{sec:spt} y el vacío documentado en
+Sección~\ref{sec:hyperncd}. \emph{Resultado verificable:} la tabla de costo
+desagregado, con las mediciones directas que el procedimiento de cacheo registra
+por sección.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
 \begin{table}[htbp]
 \centering
 \small
-\caption{Objetivos frente a revisión crítica. Cada objetivo específico da lugar a
-exactamente un aporte, y cada aporte nace de un estudio revisado y de un
-resultado publicado y verificable.}
+\caption{Inventario de aportes. Tres aportes principales, uno por objetivo
+específico, descompuestos en nueve contribuciones específicas. Cada una nace de un
+estudio revisado y termina en un resultado propio que se puede verificar.}
 \label{tab:obj-vs-revision}
-\begin{tabular}{@{}p{2.5cm}p{2.9cm}p{3.8cm}p{3.8cm}@{}}
+\begin{tabular}{@{}p{0.7cm}p{4.5cm}p{2.5cm}p{4.8cm}@{}}
 \hline
-\textbf{Objetivo} & \textbf{Estudio de origen} & \textbf{Resultado que lo
-justifica} & \textbf{Aporte del proyecto} \\
+ & \textbf{Contribución} & \textbf{Nace de} & \textbf{Resultado verificable} \\
 \hline
-OE1. Integrar Sonata en los prototipos
-& Zhang et al. (2026) \cite{zhang2026hyperncd}; Wu et al. (2025)
-\cite{wu2025sonata} \newline (Secs.~\ref{sec:hyperncd} y~\ref{sec:sonata})
-& El descriptor geométrico aporta solo $+4{,}2$ mIoU frente a los $+9{,}6$ del
-razonamiento que lo consume; el \emph{linear probing} sube de 5,6 a 72,5 mIoU al
-corregir el atajo geométrico
-& Bloque de fusión que reemplaza $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
-congelado, con \emph{up-cast} de resolución y \emph{cache} por sección, y
-traslado del hallazgo del atajo geométrico al régimen NCD \\
+\multicolumn{4}{@{}l}{\textbf{Aporte 1 --- Integración de Sonata en los prototipos (OE1)}}\\
+1.a & Bloque de fusión que sustituye $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
+    & \S\ref{sec:hyperncd}, \S\ref{sec:sonata}
+    & Híbrido de extremo a extremo sin caída en clases conocidas \\
+1.b & Puente entre serialización y rejilla dispersa
+    & \S\ref{sec:ptv3}
+    & \emph{Cache} por sección y cota de aceleración propia \\
+1.c & Auditoría del código y corrección de la línea base
+    & \S\ref{sec:hyperncd} + repositorio
+    & Tabla artículo\,--\,implementación y tres decisiones metodológicas \\
 \hline
-OE2. Calibrar el híbrido
-& Su et al. (2025) \cite{su2025brdl} \newline (Sec.~\ref{sec:brdl})
-& La grilla conjunta de dos parámetros acoplados mueve 1,48 mIoU y su óptimo no
-coincide con el de los barridos por separado; activar una sola de las dos
-estrategias empeora el resultado respecto de no activar ninguna
-& Calibración conjunta de $\alpha$, $M$ y $\epsilon$ con curvas de sensibilidad
-sobre un sistema híbrido, donde $\alpha$ pondera dos ramas de escalas distintas y
-su valor publicado deja de ser interpretable \\
+\multicolumn{4}{@{}l}{\textbf{Aporte 2 --- Calibración del híbrido (OE2)}}\\
+2.a & Normalización de escala entre ramas heterogéneas
+    & \S\ref{sec:brdl}, \S\ref{sec:sonata}
+    & Distribución de $S_b$ antes y después \\
+2.b & Calibración conjunta de $(\alpha,M,\epsilon)$ y no-aditividad
+    & \S\ref{sec:brdl}
+    & Grilla conjunta, curvas de sensibilidad, configuración fijada \\
+2.c & Robustez de la configuración entre secciones
+    & \S\ref{sec:brdl}
+    & Métrica por sección sin reajuste \\
 \hline
-OE3. Cuantificar y delimitar el rango
-& Robert et al. (2023) \cite{robert2023spt} \newline (Sec.~\ref{sec:spt})
-& Quitar el descriptor manual cuesta $-0{,}7$ mIoU en interior denso y $-4{,}1$
-en exterior disperso, casi seis veces más; el costo desagregado cambia la
-conclusión de la comparación
-& Brecha cerrada $G$, atribución por etapas, análisis de dominancia y reporte
-desagregado de costo, para llenar la celda no reportada de la
-Tabla~\ref{tab:canal-geo}: interior denso patrimonial en régimen NCD \\
+\multicolumn{4}{@{}l}{\textbf{Aporte 3 --- Cuantificación y rango de operación (OE3)}}\\
+3.a & Brecha cerrada $G$ y atribución por etapas
+    & \S\ref{sec:sonata}
+    & $G$ formulada, medición intermedia, PCA \\
+3.b & Valor del canal geométrico en interior denso bajo NCD
+    & \S\ref{sec:spt}, \S\ref{sec:hyperncd}
+    & Tabla~\ref{tab:canal-geo} completa y ablación de tres variantes \\
+3.c & Reporte desagregado del costo
+    & \S\ref{sec:spt} + vacío de \S\ref{sec:hyperncd}
+    & Tabla de costo por etapa, con mediciones directas \\
 \hline
 \end{tabular}
 \end{table}
 
 La contribución al estado del arte no es, por tanto, una arquitectura nueva. Es
 establecer si un hallazgo demostrado en un régimen se transfiere a otro donde
-resulta más crítico, y hacerlo sobre un objeto de estudio en el que el costo del
-trabajo manual es real y medible. Cada punto de mIoU que se gana en las clases
-novedosas es trabajo de corrección que el especialista deja de hacer, y por eso
-el valor del proyecto no está en igualar la precisión del trabajo manual sino en
-automatizarlo hasta un nivel que resulte útil.
+resulta más crítico, hacerlo sobre un objeto de estudio en el que el costo del
+trabajo manual es real y medible, y dejar documentado con qué base de comparación
+y a qué costo se hizo. Cada punto de mIoU que se gana en las clases novedosas es
+trabajo de corrección que el especialista deja de hacer, y por eso el valor del
+proyecto no está en igualar la precisión del trabajo manual sino en automatizarlo
+hasta un nivel que resulte útil.
