@@ -2,7 +2,7 @@
 %  CAPITULO I - REVISION CRITICA DE LA LITERATURA
 %  Ficha de tres entradas por estudio: Estudio relevante / Aporte al
 %  proyecto / Aporte del proyecto.
-%  Aportes numerados A1..A9, secuenciales en orden de lectura.
+%  Aportes numerados A1..A7, secuenciales en orden de lectura.
 %  Todas las cifras citadas provienen de las tablas de los articulos
 %  originales, con la procedencia indicada en nota al pie.
 % =====================================================================
@@ -10,13 +10,12 @@
 \chapter{REVISIÓN CRÍTICA DE LA LITERATURA}
 \label{cap:revision}
 
-Las cinco publicaciones revisadas se corresponden con los objetivos específicos
+Las cuatro publicaciones revisadas se corresponden con los objetivos específicos
 de la tesis según la Tabla~\ref{tab:mapa-estudios}. De ellas nacen los
-\textbf{nueve aportes} que el proyecto declara, tres por cada objetivo
-específico. El número de aportes no coincide con el de publicaciones porque un
-mismo estudio puede dar origen a más de uno, según cuántos de sus resultados se
-estén explotando: de HyperNCD nacen dos, de BRDL tres, de Superpoint Transformer
-dos, y de Sonata y de PTv3 uno cada uno.
+\textbf{siete aportes} que el proyecto declara. El número de aportes no coincide
+con el de publicaciones porque un mismo estudio puede dar origen a más de uno,
+según cuántos de sus resultados se estén explotando. De HyperNCD nacen dos, de
+BRDL tres, y de Sonata y de PTv3 uno cada uno.
 
 \begin{table}[htbp]
 \centering
@@ -41,9 +40,6 @@ Wu et al. (2024), PTv3 \newline (Sección~\ref{sec:ptv3})
 Su et al. (2025), BRDL \newline (Sección~\ref{sec:brdl})
 & El procedimiento de calibración bajo desbalance de clases
 & A5, A6, A7 & OE2 \\
-Robert et al. (2023), SPT \newline (Sección~\ref{sec:spt})
-& La medición aislada del descriptor manual y el reporte de costo
-& A8, A9 & OE3 \\
 \hline
 \end{tabular}
 \end{table}
@@ -470,110 +466,6 @@ calibración.
 \end{enumerate}
 
 % =====================================================================
-\section[Superpoint Transformer]{Robert, Raguet y Landrieu (2023): Superpoint
-Transformer y el valor medido del descriptor manual}
-\label{sec:spt}
-
-\textbf{Estudio relevante.} Robert, Raguet y Landrieu (2023), \emph{Efficient 3D
-Semantic Segmentation with Superpoint Transformer}, publicado en ICCV 2023
-\cite{robert2023spt}. Se identifica con \textbf{OE3}.
-
-\textbf{Aporte al proyecto.}
-
-\emph{Qué hizo.} Es una arquitectura que agrupa la nube en \emph{superpuntos},
-regiones que se comportan como una unidad, y razona sobre las relaciones entre
-esas regiones en lugar de sobre puntos individuales. Se incluye aquí por una
-razón puntual y no por su arquitectura: es el único trabajo revisado que mide de
-forma aislada, y sobre tres conjuntos de datos distintos, exactamente la
-operación que esta tesis ejecuta, que es quitar el descriptor geométrico
-calculado a mano.
-
-\emph{Qué resultado obtuvo.} Alcanza 76,0 de mIoU en S3DIS con validación de seis
-pliegues, 63,5 en KITTI-360 y 79,6 en DALES, con 212 mil parámetros y 1,9 horas
-de entrenamiento en una sola GPU, frente a las 216,4 horas de
-MinkowskiNet.\footnote{Tablas~2 y~3 de \cite{robert2023spt}.} El resultado que
-importa aquí es otro: en su estudio de ablación, la fila \emph{sin descriptores
-manuales} cuesta $-0{,}7$ de mIoU en S3DIS, $-4{,}1$ en KITTI-360 y $-1{,}4$ en
-DALES.\footnote{Tabla~4 de \cite{robert2023spt}, fila a).}
-
-\emph{Por qué sirve.} Ese renglón, puesto junto a la ablación de HyperNCD
-(Tabla~\ref{tab:ablacion-hyperncd}), produce la comparación de la
-Tabla~\ref{tab:canal-geo}, que hasta donde alcanza esta revisión no ha sido
-reunida en ningún trabajo previo.
-
-\begin{table}[htbp]
-\centering
-\caption{Cuánto vale el canal geométrico calculado a mano, según dos grupos
-independientes y tres conjuntos de datos. Las cifras de \cite{robert2023spt} son
-pérdidas al quitar el descriptor y la de \cite{zhang2026hyperncd} es la ganancia
-al agregarlo, de modo que las operaciones son inversas y no idénticas, pero la
-magnitud es comparable. La celda final es la que este proyecto llena.}
-\label{tab:canal-geo}
-\begin{tabular}{@{}p{3.2cm}p{3.8cm}p{2.2cm}c@{}}
-\hline
-Conjunto de datos & Régimen & Trabajo & Efecto (mIoU) \\
-\hline
-S3DIS, 6 pliegues & Interior denso & \cite{robert2023spt} & $-0{,}7$ \\
-DALES & Aéreo & \cite{robert2023spt} & $-1{,}4$ \\
-KITTI-360 & Exterior disperso & \cite{robert2023spt} & $-4{,}1$ \\
-SemanticPOSS, part.~0 & Exterior disperso & \cite{zhang2026hyperncd} & $+4{,}2$ \\
-Catedral de Lima & Interior denso, NCD & Este trabajo & por medir \\
-\hline
-\end{tabular}
-\end{table}
-
-De ahí se desprenden dos observaciones. La primera es la convergencia: dos grupos
-independientes, con arquitecturas que no tienen nada en común, miden el canal
-geométrico manual en alrededor de cuatro puntos de mIoU cuando el escaneo es
-exterior y disperso. La segunda es que en interior denso ese mismo canal vale
-$-0{,}7$, casi seis veces menos, y el objeto de estudio de esta tesis cae del
-lado de S3DIS y no del de KITTI-360. Eso corta en las dos direcciones: la vara de
-$+4{,}2$ puntos que fija la Sección~\ref{sec:hyperncd} está medida en exterior
-disperso, de modo que en este dominio hay menos que superar pero también menos
-margen para que la sustitución muestre una ganancia distinguible del ruido entre
-corridas.
-
-Conviene registrar que los autores de SPT leen su propio resultado en dirección
-contraria a la hipótesis de esta tesis: escriben que coincide con otros trabajos
-que señalan el impacto positivo de descriptores manuales bien diseñados en
-modelos pequeños. SPT no afirma que el descriptor manual sobre, sino que ayuda.
-La hipótesis defendida aquí no lo contradice, porque el proyecto no propone
-eliminar el canal sino sustituirlo por otro más informativo; lo que SPT fija es
-la cota que el reemplazo debe superar, y la fija por dominio en lugar de en
-agregado.
-
-Sirve además por su forma de reportar el costo, en columnas separadas de
-preproceso, entrenamiento, inferencia y número de parámetros, que demuestra que
-la desagregación cambia la conclusión: un método puede ganar en mIoU y perder
-cuando se mira el preproceso, como ocurre con los 89,9 frente a 12,4 minutos de
-su Tabla~3. Un sistema híbrido que ejecuta un codificador congelado adicional es
-exactamente el caso en el que ese reporte no puede omitirse, y más todavía cuando
-el estado del arte del problema no publica ninguna cifra de cómputo
-(Sección~\ref{sec:hyperncd}).
-
-\textbf{Aporte del proyecto.}
-
-\begin{enumerate}
-\item[\textbf{A8}] \textbf{Medición del canal geométrico en la combinación de
-dominio y régimen que nadie ha reportado (OE3).} Llenar la celda final de la
-Tabla~\ref{tab:canal-geo}: interior denso patrimonial bajo descubrimiento de
-clases novedosas, que es exactamente el objeto de estudio de esta tesis. Medirla
-determina de qué lado cae el balance entre tener menos vara que superar y tener
-menos margen disponible. \emph{Resultado verificable:} la
-Tabla~\ref{tab:canal-geo} completa, con su última fila medida, y el estudio de
-ablación de las tres variantes del descriptor, que son la geométrica manual, la
-auto-supervisada y la concatenación de ambas.
-
-\item[\textbf{A9}] \textbf{Reporte desagregado del costo, que la literatura de
-descubrimiento de clases novedosas no publica (OE3).} Reportar preproceso, horas
-de GPU, memoria y parámetros entrenados por separado, sobre hardware declarado y
-verificado, y comparar contra el enfoque supervisado de vocabulario cerrado
-aplicado previamente al mismo tipo de edificio \cite{tesisutec2024}.
-\emph{Resultado verificable:} la tabla de costo desagregado, con las mediciones
-directas que el procedimiento de cacheo registra por sección.
-\end{enumerate}
-
-% =====================================================================
 \section[Conclusión: aportes del proyecto]{Conclusión de la revisión crítica}
 \label{sec:aporte}
 
@@ -586,41 +478,38 @@ demostrada, pero medida en régimen supervisado y de vocabulario cerrado
 espacial sobre la que esa representación opera, y por eso mismo se sabe que no
 coincide con la del método anterior (Sección~\ref{sec:ptv3}). Existe un
 procedimiento publicado para calibrar mecanismos acoplados, pero sobre parámetros
-de un mismo método y de una misma escala (Sección~\ref{sec:brdl}). Y existe una
-medición aislada de cuánto vale el descriptor manual, pero en tres dominios que
-no incluyen el de esta tesis (Sección~\ref{sec:spt}). Ninguno de esos trabajos se
-ha evaluado sobre patrimonio construido, y nadie ha juntado las piezas.
+de un mismo método y de una misma escala (Sección~\ref{sec:brdl}). Ninguno de
+esos trabajos se ha evaluado sobre patrimonio construido, y nadie ha juntado las
+piezas.
 
-Sobre esa base el proyecto declara \textbf{nueve aportes, tres por cada objetivo
-específico}. Cada uno se enunció ya en la sección de la que nace, y la
-Tabla~\ref{tab:obj-vs-revision} los reúne.
+Sobre esa base el proyecto declara \textbf{siete aportes}. Cada uno se enunció ya
+en la sección de la que nace, y la Tabla~\ref{tab:obj-vs-revision} los reúne.
 
 \medskip
 \noindent\textbf{OE1 --- Integración de Sonata en el módulo de prototipos.}
-Tres aportes: Sustituir el descriptor geométrico analítico por el codificador
+Tres aportes. Sustituir el descriptor geométrico analítico por el codificador
 auto-supervisado congelado (A1), corregir la base de comparación a partir de la
 auditoría del código liberado (A2) y resolver el puente entre las dos estructuras
 espaciales que hace viable esa sustitución (A4).
 
 \medskip
-\noindent\textbf{OE2 --- Calibración del híbrido.} Tres aportes: Hacer comparables
+\noindent\textbf{OE2 --- Calibración del híbrido.} Tres aportes. Hacer comparables
 dos ramas de escalas distintas (A5), calibrar de forma conjunta los tres
 parámetros que gobiernan la afinidad entre prototipos (A6) y verificar que la
 configuración elegida se sostiene fuera de la sección donde se calibró (A7).
 
 \medskip
 \noindent\textbf{OE3 --- Cuantificación de la mejora y delimitación del rango de
-operación.} Tres aportes: Formular una métrica que separe la contribución de la
-representación de la del razonamiento (A3), medir el valor del canal geométrico
-en la única combinación de dominio y régimen que ningún trabajo ha reportado (A8)
-y reportar el costo de forma desagregada sobre hardware verificado (A9).
+operación.} Un aporte. Formular una métrica que separe la contribución de la
+representación de la del razonamiento, junto con el protocolo de atribución por
+etapas que la acompaña (A3).
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Inventario de los nueve aportes del proyecto, tres por cada objetivo
-específico. Cada uno nace de un estudio revisado y termina en un resultado propio
-que se puede verificar. La numeración sigue el orden de lectura del capítulo.}
+\caption{Inventario de los siete aportes del proyecto. Cada uno nace de un estudio
+revisado y termina en un resultado propio que se puede verificar. La numeración
+sigue el orden de lectura del capítulo.}
 \label{tab:obj-vs-revision}
 \begin{tabular}{@{}p{0.7cm}p{4.3cm}p{2.8cm}p{4.7cm}@{}}
 \hline
@@ -652,12 +541,6 @@ A7 & Robustez de la configuración entre secciones
 A3 & Brecha cerrada $G$ y atribución por etapas
    & Sonata (\S\ref{sec:sonata})
    & $G$ formulada, medición intermedia, PCA \\
-A8 & Valor del canal geométrico en interior denso bajo NCD
-   & SPT (\S\ref{sec:spt}), HyperNCD (\S\ref{sec:hyperncd})
-   & Tabla~\ref{tab:canal-geo} completa y ablación de tres variantes \\
-A9 & Reporte desagregado del costo
-   & SPT (\S\ref{sec:spt}) y el vacío de HyperNCD
-   & Tabla de costo por etapa, con mediciones directas \\
 \hline
 \end{tabular}
 \end{table}
