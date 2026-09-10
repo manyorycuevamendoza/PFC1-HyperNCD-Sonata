@@ -4,7 +4,7 @@
 
 
 % =====================================================================
-\chapter{ANÁLISIS DE LA ARQUITECTURA}
+\section{Análisis de la arquitectura de los componentes}
 \label{sec:analisis-componentes}
 
 Las secciones anteriores describen los dos componentes en términos de su
@@ -22,7 +22,7 @@ deriva de forma analítica se indica el procedimiento; cuando depende de una
 ejecución todavía no realizada se declara como estimación sujeta a
 verificación.
 
-\section{Revisión crítica de las implementaciones de referencia}
+\subsection{Revisión crítica de las implementaciones de referencia}
 \label{sec:rev-implementaciones}
 
 La revisión de la literatura quedaría incompleta si se limitara a los artículos
@@ -30,7 +30,7 @@ publicados. Dado que el presente trabajo se construye sobre el código liberado
 por ambos grupos, la inspección de esas implementaciones forma parte del examen
 crítico y condiciona qué comparaciones son legítimas.
 
-\subsection{Sonata: correspondencia entre artículo e implementación}
+\subsubsection{Sonata: correspondencia entre artículo e implementación}
 
 El repositorio de Sonata se distribuye explícitamente como material de
 inferencia y visualización, no de preentrenamiento, y esa delimitación se
@@ -43,7 +43,7 @@ descripción e implementación sin ambigüedad. La dependencia de FlashAttention
 opcional y el código provee una ruta alternativa explícita, de modo que la
 ausencia de esa biblioteca no compromete la reproducibilidad.
 
-\subsection{HyperNCD: discrepancia entre la descripción y el código ejecutado}
+\subsubsection{HyperNCD: discrepancia entre la descripción y el código ejecutado}
 
 La situación del segundo repositorio es distinta y debe consignarse con
 precisión, porque afecta a la base de comparación de esta tesis.
@@ -72,7 +72,7 @@ Adicionalmente, el repositorio no incluye el directorio de configuraciones al qu
 su propia documentación remite para declarar la ruta de los datos, ni los
 archivos de dependencias; estos últimos se delegan al proyecto NOPS.
 
-\subsection{Consecuencias para el diseño experimental}
+\subsubsection{Consecuencias para el diseño experimental}
 
 Estas observaciones no invalidan el trabajo de referencia, pero sí determinan
 tres decisiones metodológicas que esta tesis adopta de manera explícita.
@@ -93,7 +93,7 @@ dimensión es 6, y no sobre la formulación teórica del artículo. Esto acota e
 aporte a un punto de intervención verificable y hace que la atribución de
 cualquier variación en la métrica sea inequívoca.
 
-\section{Análisis de la arquitectura de Sonata}
+\subsection{Análisis de la arquitectura de Sonata}
 \label{sec:arq-sonata}
 
 Antes de integrar el \emph{encoder} conviene caracterizarlo, porque de su
@@ -388,7 +388,7 @@ uso de precisión reducida, que actúa sobre el factor $b$. La reducción del ta
 de vóxel actúa sobre $N_{s}$, pero compromete la detección de elementos finos y
 está acotada por los rangos de operación declarados.
 
-\section{Análisis de la arquitectura de HyperNCD}
+\subsection{Análisis de la arquitectura de HyperNCD}
 \label{sec:arq-hyperncd}
 
 El segundo componente del modelo híbrido presenta una naturaleza opuesta a la del
@@ -549,7 +549,7 @@ Esta asimetría justifica la estrategia de cacheo adoptada: al desplazar el
 por el número de épocas y su paralelismo, que es el favorable de los dos, puede
 explotarse por completo.
 
-\section{Escenarios de ejecución y límites del paralelismo}
+\subsection{Escenarios de ejecución y límites del paralelismo}
 \label{sec:escenarios}
 
 La viabilidad del método no depende de una única configuración de cómputo, sino
@@ -616,7 +616,7 @@ coexistir en un mismo proceso, y el procesamiento se vuelve distribuible sin
 sincronización. Esa reorganización es el aporte en materia de cómputo, y se
 formula de manera verificable mediante la Ec.~\eqref{eq:aceleracion}.
 
-\section{Síntesis del análisis: punto de intervención y atribución}
+\subsection{Síntesis del análisis: punto de intervención y atribución}
 \label{sec:sintesis-analisis}
 
 El análisis precedente permite fijar con precisión qué se modifica, qué se
