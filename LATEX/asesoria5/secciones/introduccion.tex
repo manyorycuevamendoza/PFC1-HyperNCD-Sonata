@@ -1,0 +1,263 @@
+\customchapter{INTRODUCCIÓN}
+
+% --- Las tablas de la Introducción se numeran con letras (Tabla A, B, ...)
+% porque aquí el contador de capítulo todavía es cero.
+\renewcommand{\thetable}{\Alph{table}}
+
+Cuando se levanta una edificación patrimonial con un escáner láser terrestre, el
+resultado es una nube de puntos $P=\{(x_i,f_i)\}_{i=1}^{N}$, donde
+$x_i\in\mathbb{R}^3$ es la ubicación del punto y $f_i$ los atributos que registra
+el escáner. En ingeniería civil ya son la fuente primaria para el control geométrico, el
+modelado como construido y la documentación de obra~\cite{wang2019construction}. Lo que no aparece es la etiqueta: el archivo
+sabe dónde hay materia, pero no qué elemento es cada cosa, y esa carencia es la
+que bloquea el paso de la nube al modelo BIM y al informe estructural o de
+conservación~\cite{wang2019construction}. Hoy ese trabajo se hace a mano, y la
+literatura de patrimonio lo documenta como el cuello de botella del proceso: la
+construcción del conjunto de referencia ArCH exigió anotar punto por punto
+diecisiete escenas de edificios históricos~\cite{matrone2020benchmark}. No existe
+un programa que automatice esa tarea sobre clases no catalogadas, y ese vacío es
+el que este proyecto busca cubrir.
+
+La tarea no se resuelve con fotografías, porque un clasificador de imágenes
+depende del ángulo y de la iluminación, mientras que la nube de puntos guarda la
+geometría sin depender del punto de vista~\cite{pierdicca2020dgcnn}. Sobre esa observación se construyeron los trabajos de patrimonio: Pierdicca et
+al.~\cite{pierdicca2020dgcnn} adaptan una red de grafos dinámicos con normales y
+color, con buenos resultados en muros y techos pero caídas en clases minoritarias
+como columnas y arcos, y Matrone et al.~\cite{matrone2020benchmark} confirman ese
+desbalance sobre un mismo conjunto de edificios. El límite aparece con claridad en Grilli y
+Remondino~\cite{grilli2020generalisation}: un modelo entrenado sobre un edificio
+pierde desempeño al aplicarse a otro de tipología distinta, porque los
+descriptores geométricos que usa no son estables entre construcciones. Una tesis
+previa de UTEC sobre este mismo tipo de edificio~\cite{tesisutec2024} llega al
+mismo resultado, ya que su modelo dejó de reconocer columnas y arcos al pasar de
+un patio a una capilla del mismo inmueble, y la única salida fue etiquetar a mano
+y reentrenar.
+
+Los métodos generales de segmentación semántica en tres dimensiones tampoco
+alcanzan. PTv3~\cite{ptv3} llega a 77,5 mIoU y Sonata~\cite{sonata} a 79,4 sobre
+ScanNet (Ec.~\eqref{eq:miou}), y otras arquitecturas como Stratified
+Transformer~\cite{lai2022stratified} o Superpoint
+Transformer~\cite{robert2023spt} compiten en el mismo orden, pero todas trabajan
+con una lista de clases fijada antes de entrenar y asignan todo punto imprevisto
+a la clase conocida más parecida, sin avisar que no saben. En patrimonio eso es
+serio, porque cada edificio tiene elementos propios que no figuran en ningún
+catálogo previo~\cite{grilli2020generalisation}, y el problema se agrava con las
+clases minoritarias, donde el sesgo hacia las mayoritarias llega a costar 15,34
+puntos de mIoU~\cite{su2025brdl}.
+
+El descubrimiento de clases novedosas, o NCD, elimina ese supuesto y permite
+trabajar con clases que el modelo nunca vio etiquetadas. Riz et
+al.~\cite{riz2023nops} lo introdujeron para nubes de puntos y Xu et
+al.~\cite{xu2024dasl} lo refinaron con auto-etiquetado adaptativo. Su mejor
+método actual es HyperNCD~\cite{hyperncd}, que resume la nube en
+\emph{prototipos}, vectores alrededor de los cuales se agrupan los puntos
+parecidos, y los conecta mediante un \emph{hipergrafo}, donde cada arista puede
+unir varios prototipos a la vez. Su problema es que rinde mal justo donde debería
+ser fuerte: entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
+supervisado equivalente~\cite{hyperncd}. Este trabajo señala como causa probable
+el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
+tipo de señal que Sonata~\cite{sonata} considera perjudicial, y propone
+reemplazarlo por su codificador auto-supervisado congelado.
+
+El Capítulo~I presenta la revisión crítica de la literatura; el Capítulo~II, el
+marco teórico y el análisis de arquitectura del que se deriva el punto de la
+sustitución; el Capítulo~III, el marco metodológico; y el Capítulo~IV, los
+resultados esperados.
+
+\introsection{Formulación del problema}
+
+Dado el levantamiento $P$ de una edificación patrimonial, con un subconjunto
+etiquetado de clases conocidas $\mathcal{C}_k$ y otro sin etiquetar de clases
+novedosas $\mathcal{C}_n$, donde $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$, el problema computacional consiste en producir una asignación
+$\hat{y}:P\rightarrow\mathcal{C}_k\cup\mathcal{C}_n$ que clasifique bien los
+puntos conocidos y descubra agrupaciones consistentes para los novedosos. El mejor método disponible
+alcanza solo entre 11,8 y 47,5 mIoU sobre $\mathcal{C}_n$ y construye sus
+prototipos sobre un descriptor geométrico analítico, con linealidad, planaridad y
+dispersión, que la literatura auto-supervisada considera un atajo perjudicial. La
+pregunta de investigación es si reemplazarlo por una representación
+auto-supervisada confiable aumenta de forma medible el mIoU sobre las clases
+novedosas en un levantamiento patrimonial real.
+
+\introsection{Objetivos de investigación}
+
+\paragraph*{Objetivo General}
+\addcontentsline{toc}{paragraph}{Objetivo General}
+
+Construir y medir un modelo híbrido que integre las representaciones
+auto-supervisadas de Sonata en el módulo de prototipos de HyperNCD, y cuantificar
+la mejora del mIoU en la clasificación de elementos estructurales no anotados
+sobre el levantamiento de la Catedral de Lima.
+
+\paragraph*{Objetivos Específicos}
+\addcontentsline{toc}{paragraph}{Objetivos Específicos}
+
+El proyecto declara \textbf{dos objetivos con trabajo computacional propio}, OE1
+y OE2, y \textbf{uno de salida analítica}, OE3.
+
+\medskip
+\noindent\textbf{OE1. Integrar Sonata en el módulo de prototipos.} Es el objetivo central. HyperNCD describe cada punto con un vector $F_i$ que
+junta $f_{\mathrm{sem}}$, el descriptor semántico de su red supervisada, y
+$f_{\mathrm{geo}}$, el geométrico calculado a mano (Ec.~\eqref{eq:hyperncd3}). Se
+implementa el bloque de fusión que sustituye $f_{\mathrm{geo}}$ por
+$f_{\mathrm{ssl}}$, el descriptor del codificador congelado de Sonata, y resuelve
+la diferencia de resolución entre PTv3 y la rejilla de Minkowski con
+\emph{up-cast} y \emph{cache} por sección.
+
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item \textit{Herramientas y trabajo computacional:} pesos públicos de Sonata,
+Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch; módulo de fusión e
+inferencia congelada sobre las cinco secciones.
+\item \textit{Resultado verificable:} repositorio con el híbrido produciendo
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ y una \textbf{prueba de
+funcionamiento} sobre una sección de control donde el mIoU de las clases
+conocidas no baje respecto de la línea base.
+\item \textit{Conclusión asociada:} si la sustitución es viable dentro del
+hipergrafo.
+\end{itemize}
+
+\medskip
+\noindent\textbf{OE2. Calibrar la configuración del híbrido.} Determinar $\alpha$, que balancea la componente geométrica y la semántica, $M$,
+el número de vecinos por hiperarista, y $\epsilon$, que suaviza las etiquetas, con
+los que se maximiza el mIoU de las clases novedosas en una sección de referencia.
+Al combinar dos métodos, las ventajas y los modos de falla de cada uno pasan al
+resultado.
+
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item \textit{Herramientas y trabajo computacional:} búsqueda por grilla acotada,
+AdamW y Weights~\&~Biases; barrido sobre la sección de referencia y fijación de
+la configuración, aplicada sin reajuste al resto.
+\item \textit{Resultado verificable:} curvas de sensibilidad de los tres
+parámetros y la configuración fijada, con la métrica reportada también en el
+punto intermedio del proceso (Sección~\ref{sec:metricas-hibrido}).
+\item \textit{Conclusión asociada:} qué parámetro domina y de qué etapa proviene
+la mejora.
+\end{itemize}
+
+\medskip
+\noindent\textbf{OE3. Cuantificar la mejora y delimitar el rango de operación.}
+\textbf{No incorpora trabajo computacional nuevo}: es la salida de análisis de OE1
+y OE2. Consiste en medir el $\Delta$mIoU de las clases novedosas
+(Ec.~\eqref{eq:delta}) frente a la línea base, identificar qué variable domina
+(Ec.~\eqref{eq:dominante}), comparar las tres variantes del descriptor
+, geométrica, auto-supervisada y concatenación,  y fijar el rango favorable.
+
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item \textit{Herramientas:} el mIoU con emparejamiento húngaro, que decide qué
+grupo descubierto corresponde a qué clase real; los índices ARI y NMI; la brecha
+cerrada $G$ (Ec.~\eqref{eq:G}); y visualizaciones PCA.
+\item \textit{Resultado verificable:} tabla comparativa, estudio de ablación y
+curva de degradación que fija el rango declarado.
+\end{itemize}
+
+\introsection{Justificación}
+
+La clasificación de elementos estructurales se hace hoy a mano porque no hay
+herramienta que cubra la tarea cuando la lista de clases no está cerrada, y cada
+punto de mIoU ganado es corrección que el especialista deja de hacer. Los
+usuarios están conformes con la precisión que obtienen a mano, así que el valor
+está en automatizar la tarea a un nivel suficiente, no en igualar esa precisión.
+
+El aporte no es una arquitectura nueva: se busca establecer si un problema ya
+demostrado con supervisión completa se mantiene cuando no hay etiquetas que
+corrijan al modelo. Es un resultado incierto, medible y que ningún trabajo previo
+ha reportado, y como se mueve una sola pieza, cualquier variación se puede
+atribuir al reemplazo.
+
+\introsection{Alcance y limitaciones}
+
+\paragraph*{Objeto de estudio y generalización}
+Se trabaja sobre un único edificio, la \textbf{Catedral de Lima}, con el
+levantamiento provisto por la Facultad de Ingeniería Civil: el objeto es fijo y
+el modelo se ajusta a él, no al revés. Los resultados se declaran válidos para tipología de catedral o iglesia colonial,
+es decir nave con columnas y arcos, cubierta abovedada y fachada con torres, y no
+se extienden a vivienda ni a obra vial o industrial.
+
+\paragraph*{Volumen de datos}
+El alcance se declara sobre el levantamiento disponible, de \textbf{1 a 2\,GB}
+después de voxelizar, es decir de dividir el espacio en cubos de lado fijo y
+reemplazar por uno solo los puntos que caen en el mismo cubo. Los
+datos quedan en \textbf{cinco secciones espaciales disjuntas}, que son nave,
+coro, ábside, torres y fachada, y funcionan como particiones de entrenamiento y
+evaluación (Tabla~\ref{tab:datos}). El vóxel de 5\,cm es un límite y no una preferencia: por debajo, con muy pocos
+puntos por clase novedosa, la diferencia entre el modelo base y el híbrido
+dejaría de distinguirse del ruido entre corridas.
+
+\begin{table}[!htb]
+\centering
+\small
+\renewcommand{\arraystretch}{0.95}
+\caption{Cadena de reducción de datos sobre el levantamiento real disponible.}
+\label{tab:datos}
+\begin{tabular}{@{}p{5.6cm}p{3.4cm}p{3.0cm}@{}}
+\toprule
+\textbf{Etapa} & \textbf{Volumen} & \textbf{Recurso} \\
+\midrule
+Nube provista (TLS) & 1 a 2\,GB & Almacenamiento \\
+Teselado en secciones & 5 particiones disjuntas & CPU \\
+Vóxel 5\,cm y normalización & $\sim$2$\times$10$^{7}$ pts & 1 GPU \\
+Ventana por paso & $\sim$10$^{5}$ pts & VRAM del nodo \\
+Sonata congelado, una pasada con \emph{cache} & Fija & 1 GPU \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph*{Hardware}
+El proyecto está limitado por cómputo. Se ejecuta sobre el clúster
+\textbf{Khipu} de UTEC, cuya configuración de GPU cambió hace poco, de modo que
+\textbf{no se estiman tiempos de calendario}: se especifica el hardware sobre el
+que las pruebas corrieron realmente (Tabla~\ref{tab:hardware}). La división en
+secciones sostiene esta política, ya que ninguna etapa necesita la nube completa
+en memoria.
+
+\begin{table}[!htb]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.9}
+\caption{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
+verificados por los autores sobre los nodos asignados.}
+\label{tab:hardware}
+\begin{tabular}{@{}p{2.4cm}p{5.2cm}p{4.7cm}@{}}
+\toprule
+\textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
+\midrule
+GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
+VRAM & Por medir en OE3; cota inferior de 0{,}43\,GB por los pesos del codificador (108{,}46\,M parámetros) & 48\,GB (49\,140\,MiB) \\
+RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
+Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
+\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.4 y 12.4 vía módulos; driver 610.57.04 \\
+Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
+Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El nodo \texttt{ag001} ofrece además una A100 con particiones MIG, útiles para
+pruebas cortas. Los nodos de cómputo no tienen salida a internet, así que los
+pesos y los datos se descargan desde el nodo de acceso.
+
+\paragraph*{Costo computacional estimado}
+El codificador de Sonata corre congelado y una sola vez por sección, así que su
+costo no se repite en cada época: para la sección de referencia, de
+$7{,}2\times10^{5}$ puntos, se estiman segundos a decenas de segundos en la RTX
+A6000, cifra que será sustituida por medición directa.
+
+\paragraph*{Rangos de operación}
+El proyecto declara por adelantado dónde se espera que el método funcione, y OE3
+lo verifica. Se espera que funcione con densidad de al menos 1\,pt/cm$^2$, con
+elementos de 20\,cm o más de firma geométrica repetida, como columnas, arcos,
+bóvedas, cornisas y contrafuertes, y hasta seis clases novedosas por sección. No
+se espera buen comportamiento con ornamento fino de menos de 5\,cm, superficies
+muy ocluidas, ni clases novedosas bajo el 0,5\% de los puntos, régimen en el que
+HyperNCD colapsa a 11,8 mIoU~\cite{hyperncd}, ni con muchas clases simultáneas,
+donde Sonata baja a 29,3 mIoU en ScanNet200 frente a 72,5 en
+ScanNet~\cite{sonata}.
+
+\paragraph*{Exclusiones}
+Quedan fuera el preentrenamiento auto-supervisado propio, que en Sonata exigió
+140 mil escenas y 32 GPU, la detección de instancias, el vocabulario abierto y la
+generación del modelo BIM.
+
+% --- Restauración de la numeración de tablas por capítulo.
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\setcounter{table}{0}

@@ -1,0 +1,34 @@
+\customchapter{ABSTRACT}
+
+\begin{center}
+\large \vspace{-1.5cm} \textbf{HyperNCD--Sonata hybrid model for novel class
+discovery in the semantic segmentation of architectural heritage point clouds}
+\end{center}
+
+The digital recording of architectural heritage produces point clouds that show
+where matter is, but not which element each point stands for. Three-dimensional
+semantic segmentation methods work over a closed list of categories and assign
+every unforeseen element to the closest known class. The objective is to
+measurably improve the recognition of elements absent from the training labels.
+
+This is applied, quantitative research with a comparative experimental design. We
+first diagnose the best available method for novel class discovery through its
+ablation study, and then replace its weakest component with a
+self-supervised encoder. The evaluation uses the survey of the Cathedral of Lima,
+two gigabytes in five sections, against a three-run baseline.
+
+The base method reaches between 11.8 and 47.5 points of intersection over union
+on the unseen categories, against 49.8 for the supervised equivalent. Its
+ablation credits the geometric descriptor with only 4.2 points over a base of
+23.2, less than half of the 9.6 of the hypergraph. Removing that dependence on
+low-level signals raises a frozen descriptor from 5.6 to 72.5 points. We also
+define a closed-gap measure, since correcting the bias towards majority classes
+adds up to 15.34 points.
+
+The imbalance is documented by the authors themselves and remains uncorrected,
+but whether it persists without labels for the target categories is still to be
+established. Every point gained is correction work the specialist no longer does.
+
+\noindent \textbf{Keywords:}\\
+\noindent Point clouds; Three-dimensional semantic segmentation; Novel class
+discovery; Self-supervised learning; Hypergraphs; Architectural heritage
