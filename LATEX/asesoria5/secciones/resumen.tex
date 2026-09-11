@@ -1,0 +1,42 @@
+\customchapter{RESUMEN}
+
+La documentación digital del patrimonio construido depende de levantamientos
+láser cuya interpretación sigue siendo manual. Este trabajo propone un modelo
+híbrido que sustituye el descriptor geométrico del mejor método de descubrimiento
+de clases novedosas por un codificador auto-supervisado, y mide la mejora sobre
+el levantamiento de la Catedral de Lima.
+
+\begin{itemize}
+  \item \textbf{Introducción a la Investigación:} Un escáner láser registra dónde
+  hay materia, pero no qué elemento representa cada punto. Los métodos de
+  segmentación semántica tridimensional usan una lista cerrada de categorías y
+  asignan todo elemento imprevisto a la clase más parecida. El objetivo es
+  mejorar de forma medible el reconocimiento de los elementos sin etiqueta.
+
+  \item \textbf{Marco Metodológico:} La investigación es aplicada, cuantitativa y
+  de diseño experimental comparativo. Primero se diagnostica el mejor método de
+  descubrimiento de clases novedosas reanalizando su ablación; luego se sustituye
+  su componente más débil por un codificador auto-supervisado. La evaluación usa
+  el levantamiento de la Catedral de Lima, en cinco secciones, contra una línea
+  base de tres corridas.
+
+  \item \textbf{Resultados:} El método base logra entre 11,8 y 47,5 puntos de
+  intersección sobre unión en las clases no vistas, frente a 49,8 del supervisado.
+  Su ablación da al descriptor geométrico solo 4,2 puntos sobre una base de 23,2,
+  menos de la mitad de los 9,6 del hipergrafo. Eliminar esa dependencia eleva un
+  descriptor congelado de 5,6 a 72,5 puntos. Se define además una medida de
+  brecha cerrada, pues el sesgo hacia las clases mayoritarias cuesta hasta 15,34
+  puntos.
+
+  \item \textbf{Conclusiones:} El desequilibrio del método base lo documentan sus
+  propios autores y sigue sin corregirse, pero queda por establecer si persiste
+  sin etiquetas. Cada punto de mejora es corrección manual que el especialista
+  deja de hacer.
+\end{itemize}
+
+\vspace{1em}
+
+\noindent \textbf{Palabras clave:}\\
+\noindent Nubes de puntos; Segmentación semántica tridimensional; Descubrimiento
+de clases novedosas; Aprendizaje auto-supervisado; Hipergrafos; Patrimonio
+arquitectónico
