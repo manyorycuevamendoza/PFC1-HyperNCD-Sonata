@@ -1,99 +1,50 @@
 % =====================================================================
-% Capítulo de análisis arquitectónico y computacional de los componentes.
+% Anexo D: analisis arquitectonico y computacional de los componentes.
 % =====================================================================
 
-
-% =====================================================================
-\section{Análisis de los Componentes}
+\section*{Anexo D. Análisis arquitectónico y computacional de los componentes}
 \label{sec:analisis-componentes}
 
-Las secciones anteriores describen los dos componentes en términos de su
-formulación. Esta los examina en términos de su realización: qué tipo de capa
-emplea cada uno, cuántos parámetros concentra, cuánta memoria exige, en qué
-régimen opera y hasta dónde admite distribución. El propósito no es documental.
-De este análisis se derivan tres elementos que el resto del trabajo utiliza: el
-punto exacto en el que se inserta la sustitución propuesta, la justificación de
-la estrategia de cacheo frente a una integración en un único proceso, y los
-límites cuantificables de la paralelización del experimento.
+% Numeracion propia del anexo: figuras, tablas y ecuaciones como D.n
+\setcounter{figure}{0}\renewcommand{\thefigure}{D.\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{D.\arabic{table}}
+\setcounter{equation}{0}\renewcommand{\theequation}{D.\arabic{equation}}
 
-El examen se apoya en la inspección directa del código liberado por ambos
-grupos, y no únicamente en las descripciones publicadas. Cuando una cifra se
-deriva de forma analítica se indica el procedimiento; cuando depende de una
-ejecución todavía no realizada se declara como estimación sujeta a
-verificación.
+Este anexo examina los dos componentes del modelo en términos de su realización:
+qué tipo de capa emplea cada uno, cuántos parámetros concentra, cuánta memoria
+exige, en qué régimen opera y hasta dónde admite distribución. Se apoya en la
+inspección directa del código liberado por ambos grupos. Sus tres resultados se
+recogen en la Sección~\ref{sec:analisis-resumen} del marco teórico.
 
-\subsection{Revisión de las Implementaciones de Referencia}
+\subsection*{D.1 Revisión de las implementaciones de referencia}
 \label{sec:rev-implementaciones}
 
-La revisión de la literatura quedaría incompleta si se limitara a los artículos
-publicados. Dado que el presente trabajo se construye sobre el código liberado
-por ambos grupos, la inspección de esas implementaciones forma parte del examen
-crítico y condiciona qué comparaciones son legítimas.
+\paragraph*{Sonata} El repositorio se distribuye como material de inferencia y
+visualización, no de preentrenamiento. La arquitectura instanciada reproduce la
+configuración descrita, cinco etapas de profundidades $(3,3,3,12,3)$ y anchuras
+$(48,96,192,384,512)$, y el recuento analítico de parámetros coincide con el
+total que el modelo declara al cargarse (Tabla~\ref{tab:params-sonata}). La
+dependencia de FlashAttention es opcional y el código provee una ruta
+alternativa explícita.
 
-\subsubsection{Correspondencia en Sonata}
+\paragraph*{HyperNCD} El repositorio contiene dos realizaciones del razonamiento
+por hipergrafo. La primera reproduce la formulación del artículo, con matriz de
+incidencia, convolución de hipergrafo y actualización dinámica de hiperaristas,
+pero su inspección revela que no es invocada desde ninguna ruta de ejecución,
+que las matrices de peso de sus capas se instancian dentro de la propia función
+en cada llamada y por tanto no reciben gradiente, y que el procedimiento de
+actualización dinámica reproduce término por término el de construcción inicial.
+La segunda, definida dentro del paso de entrenamiento, es la efectivamente
+ejecutada: opera sobre regiones, combina las similitudes de las
+Ecs.~\eqref{eq:coseno} y~\eqref{eq:gauss} según la Ec.~\eqref{eq:afinidad},
+retiene $M=8$ vecinos y aplica una única agregación normalizada, sin pesos
+entrenables ni convolución de hipergrafo en el sentido del artículo.
 
-El repositorio de Sonata se distribuye explícitamente como material de
-inferencia y visualización, no de preentrenamiento, y esa delimitación se
-corresponde con lo que contiene. La arquitectura instanciada reproduce la
-configuración descrita: cinco etapas de profundidades $(3,3,3,12,3)$ y anchuras
-$(48,96,192,384,512)$. El recuento analítico de parámetros derivado de esa
-configuración coincide exactamente con el total que declara el modelo al
-cargarse, $108\,461\,328$, lo que permite verificar la correspondencia entre
-descripción e implementación sin ambigüedad. La dependencia de FlashAttention es
-opcional y el código provee una ruta alternativa explícita, de modo que la
-ausencia de esa biblioteca no compromete la reproducibilidad.
+De ahí la decisión que el trabajo adopta: la línea base es la implementación que
+se ejecuta y la sustitución de la Ec.~\eqref{eq:hibrido} se aplica sobre su
+descriptor geométrico de seis dimensiones.
 
-\subsubsection{Discrepancia en HyperNCD}
-
-La situación del segundo repositorio es distinta y debe consignarse con
-precisión, porque afecta a la base de comparación de esta tesis.
-
-El código contiene dos realizaciones del razonamiento por hipergrafo. La primera
-reside en el módulo de modelos y reproduce la formulación del artículo: incluye
-construcción de hiperaristas, actualización dinámica, matriz de incidencia,
-matrices de grado y convolución de hipergrafo. Su inspección revela tres
-propiedades relevantes. No es invocada desde ninguna ruta de ejecución del
-entrenamiento ni de la evaluación. Las matrices de peso de sus capas se
-instancian dentro del cuerpo de la propia función en cada llamada, por lo que no
-se registran entre los parámetros del modelo, no reciben gradiente y se
-reinicializan de forma aleatoria en cada invocación. Y el procedimiento
-denominado de actualización dinámica reproduce término por término el de
-construcción inicial, sobre la misma matriz de similitud, por lo que no
-introduce ninguna actualización.
-
-La segunda realización, que es la efectivamente ejecutada, está definida como
-función local dentro del paso de entrenamiento. Opera sobre regiones en lugar de
-puntos, combina una similitud semántica por coseno con una similitud geométrica
-gaussiana, retiene los ocho vecinos de mayor similitud y aplica una única
-agregación normalizada. No contiene pesos entrenables ni convolución de
-hipergrafo en el sentido del artículo.
-
-Adicionalmente, el repositorio no incluye el directorio de configuraciones al que
-su propia documentación remite para declarar la ruta de los datos, ni los
-archivos de dependencias; estos últimos se delegan al proyecto NOPS.
-
-\subsubsection{Consecuencias Metodológicas}
-
-Estas observaciones no invalidan el trabajo de referencia, pero sí determinan
-tres decisiones metodológicas que esta tesis adopta de manera explícita.
-
-La primera es que la línea base de comparación se establece sobre la
-implementación que se ejecuta, y no sobre la descrita en el artículo. Comparar
-contra una formulación que el código publicado no realiza produciría una
-atribución incorrecta de la mejora.
-
-La segunda es que las cifras publicadas de HyperNCD se citan como referencia
-bibliográfica, pero la comparación cuantitativa de esta tesis se realiza contra
-ejecuciones propias del código liberado, bajo condiciones idénticas de datos,
-partición y semilla.
-
-La tercera es que la sustitución propuesta en la Ec.~\eqref{eq:hibrido} se
-aplica sobre el descriptor geométrico de la implementación ejecutada, cuya
-dimensión es 6, y no sobre la formulación teórica del artículo. Esto acota el
-aporte a un punto de intervención verificable y hace que la atribución de
-cualquier variación en la métrica sea inequívoca.
-
-\subsection{Arquitectura de Sonata}
+\subsection*{D.2 Arquitectura de Sonata}
 \label{sec:arq-sonata}
 
 Antes de integrar el \emph{encoder} conviene caracterizarlo, porque de su
@@ -109,51 +60,82 @@ propagación inversa del submuestreo.
 \centering
 \begin{tikzpicture}[
   font=\scriptsize,
-  trf/.style={draw, rounded corners, minimum width=7.6cm, minimum height=0.9cm,
-              align=center, fill=orange!20},
-  cnn/.style={draw, rounded corners, minimum width=7.6cm, minimum height=0.62cm,
-              align=center, fill=green!16},
-  lin/.style={draw, rounded corners, minimum width=7.6cm, minimum height=0.62cm,
-              align=center, fill=blue!14},
-  dat/.style={draw, rounded corners, minimum width=7.6cm, minimum height=0.58cm,
-              align=center, fill=black!6},
-  fl/.style={-{Latex[length=1.8mm]}, thick}
+  et/.style={draw, rounded corners, align=center, fill=orange!20,
+             minimum height=1.05cm},
+  io/.style={draw, rounded corners, align=center, fill=black!6,
+             minimum width=8.6cm, minimum height=0.55cm},
+  pre/.style={draw, rounded corners, align=center, fill=green!16,
+              minimum width=8.6cm, minimum height=0.55cm},
+  itf/.style={font=\tiny, text=black!65, fill=white, inner sep=1.5pt},
+  anot/.style={font=\tiny, text=black!60},
+  fl/.style={-{Latex[length=1.6mm]}, thick},
+  tap/.style={-{Latex[length=1.4mm]}, dashed, black!55}
 ]
-\node[dat] (in) {\textbf{Datos:} $N$ puntos $\times$ 9 canales};
-\node[cnn, below=2mm of in] (ser) {\textbf{Serialización} (orden Z / Hilbert), sin parámetros};
-\node[lin, below=2mm of ser] (emb) {\textbf{Capa lineal:} \emph{embedding} $9\rightarrow48$};
-\node[trf, below=2mm of emb] (e1) {\textbf{Etapa 1: 3 bloques \emph{Transformer}}, 48 can., 3 cabezas};
-\node[lin, below=1.6mm of e1] (d1) {\emph{Pooling} serializado + lineal $48\rightarrow96$};
-\node[trf, below=1.6mm of d1] (e2) {\textbf{Etapa 2: 3 bloques \emph{Transformer}}, 96 can., 6 cabezas};
-\node[lin, below=1.6mm of e2] (d2) {\emph{Pooling} serializado + lineal $96\rightarrow192$};
-\node[trf, below=1.6mm of d2] (e3) {\textbf{Etapa 3: 3 bloques \emph{Transformer}}, 192 can., 12 cabezas};
-\node[lin, below=1.6mm of e3] (d3) {\emph{Pooling} serializado + lineal $192\rightarrow384$};
-\node[trf, below=1.6mm of d3, fill=orange!34] (e4) {\textbf{Etapa 4: 12 bloques \emph{Transformer}}, 384 can., 24 cabezas\\ \emph{65{,}3\% de los parámetros}};
-\node[lin, below=1.6mm of e4] (d4) {\emph{Pooling} serializado + lineal $384\rightarrow512$};
-\node[trf, below=1.6mm of d4] (e5) {\textbf{Etapa 5: 3 bloques \emph{Transformer}}, 512 can., 32 cabezas};
-\node[dat, below=2mm of e5] (out) {\textbf{Salida:} $N/16$ puntos $\times$ 512 canales};
+\node[io] (in) {\textbf{Interfaz de entrada:} $N$ puntos $\times$ 9 canales (coordenadas, color, normal)};
+\node[pre, below=2.6mm of in] (pre)
+  {\textbf{Preprocesamiento:} serialización (orden Z / Hilbert) $+$ \emph{embedding} lineal $9\rightarrow48$};
 
-\foreach \a/\b in {in/ser, ser/emb, emb/e1, e1/d1, d1/e2, e2/d2, d2/e3, e3/d3,
-                   d3/e4, e4/d4, d4/e5, e5/out}
-  \draw[fl] (\a) -- (\b);
+\node[et, minimum width=8.0cm, below=8mm of pre] (e1)
+  {\textbf{Etapa 1} $\cdot$ 3 bloques\\48 canales $\cdot$ 3 cabezas $\cdot$ resolución $N$\\{\tiny\textcolor{black!60}{0{,}3\,\% de los parámetros}}};
+\node[et, minimum width=7.0cm, below=9mm of e1] (e2)
+  {\textbf{Etapa 2} $\cdot$ 3 bloques\\96 canales $\cdot$ 6 cabezas $\cdot$ resolución $N/2$\\{\tiny\textcolor{black!60}{1{,}0\,\% de los parámetros}}};
+\node[et, minimum width=6.2cm, below=9mm of e2] (e3)
+  {\textbf{Etapa 3} $\cdot$ 3 bloques\\192 canales $\cdot$ 12 cabezas $\cdot$ resolución $N/4$\\{\tiny\textcolor{black!60}{4{,}1\,\% de los parámetros}}};
+\node[et, minimum width=5.4cm, below=9mm of e3, fill=orange!36] (e4)
+  {\textbf{Etapa 4} $\cdot$ 12 bloques\\384 canales $\cdot$ 24 cabezas $\cdot$ resolución $N/8$\\{\tiny\textcolor{black!70}{\textbf{65{,}3\,\% de los parámetros}}}};
+\node[et, minimum width=4.6cm, below=9mm of e4, fill=orange!28] (e5)
+  {\textbf{Etapa 5} $\cdot$ 3 bloques\\512 canales $\cdot$ 32 cabezas $\cdot$ resol.\ $N/16$\\{\tiny\textcolor{black!70}{29{,}0\,\% de los parámetros}}};
 
-\draw[{Latex[length=1.4mm]}-{Latex[length=1.4mm]}, black!45]
-  ($(e1.east)+(0.4,0.3)$) -- ($(e5.east)+(0.4,-0.3)$);
-\node[font=\tiny, text=black!65, rotate=-90]
-  at ($(e1.east)!0.5!(e5.east)+(0.72,0)$) {SECUENCIAL};
+\draw[fl] (pre) -- (e1);
+\draw[fl] (e1) -- node[itf] {\emph{pooling} $\times\tfrac{1}{2}$ $\cdot$ lineal $48\rightarrow96$} (e2);
+\draw[fl] (e2) -- node[itf] {\emph{pooling} $\times\tfrac{1}{2}$ $\cdot$ lineal $96\rightarrow192$} (e3);
+\draw[fl] (e3) -- node[itf] {\emph{pooling} $\times\tfrac{1}{2}$ $\cdot$ lineal $192\rightarrow384$} (e4);
+\draw[fl] (e4) -- node[itf] {\emph{pooling} $\times\tfrac{1}{2}$ $\cdot$ lineal $384\rightarrow512$} (e5);
 
-\node[below=2mm of out, font=\scriptsize] (leg)
-  {\tikz\node[draw,rounded corners,fill=orange!20,minimum height=2.6mm,minimum width=3.5mm]{};\ \emph{Transformer}\quad
-   \tikz\node[draw,rounded corners,fill=green!16,minimum height=2.6mm,minimum width=3.5mm]{};\ Ordenamiento\quad
-   \tikz\node[draw,rounded corners,fill=blue!14,minimum height=2.6mm,minimum width=3.5mm]{};\ Lineal\quad
-   \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ Datos};
+\node[io, below=8mm of e5] (out)
+  {\textbf{Interfaz de salida:} $N/16$ puntos $\times$ 512 canales};
+\node[io, fill=purple!12, below=2.6mm of out] (fssl)
+  {$f_{\mathrm{ssl}}$: \emph{up-cast} de las etapas 3, 4 y 5, $192+384+512=1088$};
+\draw[fl] (e5) -- (out);
+
+\coordinate (bus) at (5.25,0);
+\foreach \e in {e3, e4, e5}
+  \draw[dashed, black!55] (\e.east) -- (\e.east -| bus);
+\draw[dashed, black!55] (e3.east -| bus) -- (fssl.east -| bus);
+\draw[tap] (fssl.east -| bus) -- (fssl.east);
+
+\node[anot, rotate=90, anchor=south] at ($(e1.west)!0.5!(e5.west)+(-4.55,0)$)
+  {anchura $\uparrow$ \quad resolución $\downarrow$};
+\node[anot, align=center, anchor=north] at ($(e1.north west)+(-2.6,0.55)$)
+  {cada etapa repite\\el mismo bloque\\(Fig.~\ref{fig:bloque-sonata})};
+\draw[tap, black!40] ($(e1.north west)+(-1.1,-0.35)$) -- ($(e1.west)+(0,0.1)$);
+
+\node[below=3mm of fssl, font=\scriptsize] (leg)
+  {\tikz\node[draw,rounded corners,fill=orange!20,minimum height=2.6mm,minimum width=3.5mm]{};\ etapa \emph{Transformer}\quad
+   \tikz\node[draw,rounded corners,fill=green!16,minimum height=2.6mm,minimum width=3.5mm]{};\ preprocesamiento\quad
+   \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ interfaz\quad
+   \tikz\node[draw,rounded corners,fill=purple!12,minimum height=2.6mm,minimum width=3.5mm]{};\ salida usada};
 \end{tikzpicture}
-\caption{Estructura general del \emph{encoder} de Sonata. La profundidad es
-estrictamente secuencial: cada etapa consume la salida de la anterior. No hay
-convoluciones densas ni capas recurrentes; el único componente convolucional es
-la codificación posicional dispersa interna a cada bloque (Fig.~\ref{fig:bloque-sonata}).}
+\caption{Arquitectura del \emph{encoder} de Sonata: cinco etapas jerárquicas sin
+decodificador. Cada etapa es un componente del mismo tipo, formado por bloques
+idénticos (Fig.~\ref{fig:bloque-sonata}), y queda caracterizada por tres
+magnitudes: resolución, anchura y capacidad. Al descender la jerarquía, la
+resolución se divide por dos en cada transición mientras la anchura crece de 48
+a 512 canales, de modo que el $94{,}3$\,\% de los parámetros se concentra en las
+dos últimas etapas. Las etiquetas sobre los conectores declaran la interfaz
+entre componentes. Las líneas discontinuas señalan las tres etapas cuyas salidas
+se concatenan durante la propagación inversa del submuestreo para formar
+$f_{\mathrm{ssl}}$. Elaboración propia.}
 \label{fig:arq-sonata}
 \end{figure}
+
+La composición de la Figura~\ref{fig:arq-sonata} impone dos propiedades que se
+usan más adelante. La primera es que la dependencia entre etapas es estricta:
+cada una consume la salida de la anterior, de modo que la profundidad no admite
+reparto entre unidades de cómputo y el paralelismo debe buscarse dentro de cada
+bloque. La segunda es que no hay convoluciones densas ni capas recurrentes; el
+único componente convolucional es la codificación posicional dispersa interna a
+cada bloque, cuya estructura detalla la Figura~\ref{fig:bloque-sonata}.
 
 \begin{figure}[H]
 \centering
@@ -387,7 +369,7 @@ uso de precisión reducida, que actúa sobre el factor $b$. La reducción del ta
 de vóxel actúa sobre $N_{s}$, pero compromete la detección de elementos finos y
 está acotada por los rangos de operación declarados.
 
-\subsection{Arquitectura de HyperNCD}
+\subsection*{D.3 Arquitectura de HyperNCD}
 \label{sec:arq-hyperncd}
 
 El segundo componente del modelo híbrido presenta una naturaleza opuesta a la del
@@ -462,16 +444,11 @@ el presente trabajo sustituye el descriptor analítico.}
 \paragraph*{Razonamiento por hipergrafo}
 El hipergrafo no opera sobre puntos individuales sino sobre regiones obtenidas
 por agrupamiento previo, lo que reduce el número de nodos en varios órdenes de
-magnitud. Para cada par de regiones se calcula una similitud semántica $S_s$ por
-coseno entre las características agregadas y una similitud geométrica $S_g$ como
-núcleo gaussiano sobre el descriptor $f_{\mathrm{geo}}$,
-\begin{equation}
-S_g^{(ij)}=\exp\!\left(-\frac{\lVert f_{\mathrm{geo}}^{(i)}-f_{\mathrm{geo}}^{(j)}\rVert^{2}}{\tau}\right),
-\qquad
-S_b=\alpha S_g+(1-\alpha)S_s ,
-\label{eq:sb}
-\end{equation}
-y las hiperaristas se forman reteniendo los $M=8$ vecinos de mayor similitud. La
+magnitud. Para cada par de regiones se calcula la similitud semántica por coseno
+de la Ec.~\eqref{eq:coseno} y la geométrica por núcleo gaussiano de la
+Ec.~\eqref{eq:gauss}, esta última sobre el descriptor $f_{\mathrm{geo}}$, y
+ambas se combinan según la Ec.~\eqref{eq:afinidad}. Las hiperaristas se forman
+reteniendo los $M=8$ vecinos de mayor similitud. La
 agregación resultante es una única propagación normalizada, sin pesos
 entrenables. El descriptor $f_{\mathrm{geo}}$ está compuesto por los tres
 índices de forma derivados de los autovalores de la matriz de covarianza local,
@@ -479,21 +456,6 @@ es decir linealidad, planaridad y dispersión, concatenados con el centroide de 
 región, de modo que su dimensión total es 6. Es precisamente esta representación
 de baja dimensionalidad y construcción manual la que la Ec.~\eqref{eq:hibrido}
 sustituye por $f_{\mathrm{ssl}}$.
-
-\paragraph*{Observación sobre la implementación de referencia}
-El repositorio publicado contiene dos realizaciones distintas del razonamiento
-por hipergrafo. La primera, ubicada en el módulo de modelos, corresponde a la
-descripción del artículo e incluye convolución de hipergrafo con matriz de
-incidencia y actualización dinámica de hiperaristas; su inspección revela que no
-es invocada desde ninguna ruta de ejecución, que las matrices de peso de sus
-capas se instancian dentro de la propia función en cada llamada, por lo que no
-figuran entre los parámetros del modelo ni reciben gradiente, y que el
-procedimiento de actualización dinámica reproduce exactamente el de construcción
-inicial. La segunda, la efectivamente ejecutada, está definida dentro del paso de
-entrenamiento y corresponde a la Ec.~\eqref{eq:sb}. Esta discrepancia se
-documenta por transparencia y porque condiciona la interpretación de las
-comparaciones: el presente trabajo toma como referencia la implementación que se
-ejecuta, no la descrita en el artículo.
 
 \paragraph*{Costo de entrenamiento}
 A diferencia del \emph{encoder} congelado, esta rama requiere almacenar
@@ -548,7 +510,7 @@ Esta asimetría justifica la estrategia de cacheo adoptada: al desplazar el
 por el número de épocas y su paralelismo, que es el favorable de los dos, puede
 explotarse por completo.
 
-\subsection{Escenarios de Ejecución}
+\subsection*{D.4 Escenarios de ejecución}
 \label{sec:escenarios}
 
 La viabilidad del método no depende de una única configuración de cómputo, sino
@@ -575,21 +537,11 @@ Entrenamiento distribuido & No inmediato & Acoplamiento del lote en la asignaci�
 \end{tabular}
 \end{table}
 
-Dos filas de la tabla merecen desarrollo porque delimitan expectativas que
-suelen formularse de manera imprecisa.
-
-\paragraph*{Por qué añadir unidades no acelera una sección}
-Las cinco etapas del \emph{encoder} se ejecutan en orden estricto, ya que cada
-una consume la salida de la anterior, y lo mismo ocurre con los bloques dentro de
-cada etapa. Distribuir una misma sección entre varias unidades exigiría partir
-esa cadena e introducir comunicación entre etapas, cuyo costo excede al del
-cómputo que se pretende repartir. El paralelismo aprovechable del modelo es
-interno a cada capa, en parches y en cabezas, y ya se agota dentro de una sola
-unidad. En consecuencia, la latencia de una sección es una constante del método
-y no un parámetro ajustable mediante hardware adicional.
-
-\paragraph*{Por qué el número útil de unidades está acotado}
-El beneficio de añadir unidades se manifiesta únicamente en el tiempo total de
+Dos filas requieren precisión. Añadir unidades no acelera una sección, porque
+las etapas se ejecutan en orden estricto y el paralelismo aprovechable es
+interno a cada capa, en parches y en cabezas, de modo que ya se agota dentro de
+una sola unidad: la latencia de una sección es una constante del método. El
+beneficio de añadir unidades se manifiesta únicamente en el tiempo total de
 procesamiento del conjunto de secciones. Si $S$ es el número de secciones y $G$
 el de unidades disponibles, la aceleración respecto de la ejecución secuencial es
 \begin{equation}
@@ -603,24 +555,11 @@ práctica es que la partición de la catedral en secciones, adoptada inicialment
 por motivos de memoria, determina también el grado máximo de paralelismo
 alcanzable.
 
-\paragraph*{Sobre la naturaleza del aporte en materia de cómputo}
-Debe distinguirse con cuidado qué es atribuible a esta tesis y qué se hereda de
-las arquitecturas empleadas. El paralelismo interno del \emph{encoder} es una
-propiedad de PTv3, no un resultado del presente trabajo, y presentarlo como
-aporte sería incorrecto. Lo que sí constituye una decisión propia es el
-desacoplamiento del \emph{pipeline}: al ejecutar el \emph{encoder} una sola vez
-por sección y persistir su salida, el costo deja de multiplicarse por el número
-de épocas, las dos pilas de dependencias incompatibles dejan de necesitar
-coexistir en un mismo proceso, y el procesamiento se vuelve distribuible sin
-sincronización. Esa reorganización es el aporte en materia de cómputo, y se
-formula de manera verificable mediante la Ec.~\eqref{eq:aceleracion}.
-
-\subsection{Síntesis y Delimitación del Aporte}
+\subsection*{D.5 Delimitación del aporte}
 \label{sec:sintesis-analisis}
 
-El análisis precedente permite fijar con precisión qué se modifica, qué se
-conserva y qué es atribuible a este trabajo, distinción necesaria para que la
-evaluación posterior no incurra en atribuciones indebidas.
+La Tabla~\ref{tab:atribucion} fija qué se modifica, qué se conserva y qué es
+atribuible a este trabajo.
 
 \begin{table}[H]
 \centering
@@ -641,23 +580,10 @@ Cota de aceleración, Ec.~\eqref{eq:aceleracion} & Este trabajo & \textbf{Formul
 \end{tabular}
 \end{table}
 
-La intervención se concentra en una sola fila de la tabla. El descriptor
-geométrico que alimenta la similitud $S_g$ de la Ec.~\eqref{eq:sb} es un vector
-de seis componentes construido de forma analítica a partir de los autovalores de
-la covarianza local y del centroide de cada región. La Ec.~\eqref{eq:hibrido}
-reemplaza esa representación por la que produce el \emph{encoder}
-auto-supervisado, dejando inalterados tanto la construcción de hiperaristas como
-la agregación posterior y el procedimiento de asignación. Esta delimitación es
-deliberada: al mantener constante todo lo demás, cualquier variación observada en
-las métricas resulta atribuible al cambio de representación y no a diferencias de
-optimización, de partición o de arquitectura.
-
-El segundo aporte es de naturaleza distinta y no afecta a la métrica sino a la
-viabilidad. Las dos ramas exigen pilas de dependencias mutuamente excluyentes, de
-modo que su integración en un único proceso no es posible sin renunciar a alguna
-de las dos implementaciones de referencia. Ejecutar el \emph{encoder} una sola
-vez por sección y persistir su salida resuelve simultáneamente esa incompatibilidad,
-elimina la repetición del costo en cada época y habilita la distribución sin
-sincronización descrita por la Ec.~\eqref{eq:aceleracion}. Es una decisión de
-ingeniería antes que de método, pero condiciona por completo qué experimentos son
+El desacoplamiento del \emph{pipeline} merece una precisión: las dos ramas
+exigen pilas de dependencias mutuamente excluyentes, de modo que ejecutar el
+\emph{encoder} una sola vez por sección y persistir su salida resuelve esa
+incompatibilidad, elimina la repetición del costo en cada época y habilita la
+distribución sin sincronización de la Ec.~\eqref{eq:aceleracion}. Es una
+decisión de ingeniería antes que de método, pero condiciona qué experimentos son
 ejecutables con los recursos disponibles.
