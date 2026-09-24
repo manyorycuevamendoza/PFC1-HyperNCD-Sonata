@@ -1,88 +1,313 @@
 \chapter{MARCO METODOLÓGICO}
 \label{cap:metodo}
 
-\section{Arquitectura del sistema}
+La metodología se organiza en tres unidades que se ejecutan en secuencia y que
+cubren los objetivos específicos del proyecto: la preparación de la nube de
+puntos, la extracción de descriptores y su fusión, y el entrenamiento,
+calibración y evaluación del modelo. A ellas se añaden la delimitación del
+dominio del objeto de estudio y el tratamiento de los riesgos. A continuación se
+describe el diseño general del sistema y, después, cada una de las unidades.
 
-La Figura~\ref{fig:diseno} organiza el sistema en dos bloques metodológicos y un
-punto de fusión.
+% =====================================================================
+\section{Diseño General del Sistema}
+\label{sec:diseno}
+
+El diseño del sistema y el significado de cada módulo, de cada fórmula y de
+cada parámetro se describen en la Sección~\ref{sec:diseno-teorico} y se resumen
+en la Figura~\ref{fig:diseno} y en la Tabla~\ref{tab:parametros}. Esta sección
+no repite esa descripción: fija las propiedades de ejecución que el diagrama no
+expresa, es decir, qué corre en paralelo, con qué frecuencia y con qué formato
+de intercambio.
+
+Las dos ramas están en paralelo porque ninguna consume la salida de la otra:
+parten de la misma nube preparada y solo se encuentran en el Módulo~4. Esa
+independencia permite ejecutar el Módulo~3 una sola vez, guardar su salida y
+reutilizarla en todas las épocas del Módulo~2.
+
+\subsection{Estructura y Contrato de los Módulos}
+\label{sec:contrato}
+
+Cada conexión entre módulos transporta un objeto con una forma determinada. La
+Tabla~\ref{tab:contrato} declara ese contrato, de modo que cualquier
+incompatibilidad de dimensión o de resolución aparezca antes de implementar.
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption{Entrada, salida y régimen de cada módulo. Elaboración propia.}
+\label{tab:contrato}
+\begin{tabular}{@{}p{1.5cm}p{3.1cm}p{3.1cm}p{1.9cm}p{2.3cm}@{}}
+\toprule
+\textbf{Módulo} & \textbf{Entrada} & \textbf{Salida} & \textbf{Régimen} & \textbf{Frecuencia} \\
+\midrule
+1 & Nube TLS cruda, $N$ puntos & 5 secciones voxelizadas: coord., color, normal & Sin modelo & Una vez \\
+2 & Sección voxelizada & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa & Entrenado & Cada época \\
+3 & Sección voxelizada, 9 canales & $f_{\mathrm{ssl}}$, 1088 dim.\ por punto, rejilla serializada & Congelado & Una vez por sección \\
+4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Prototipos, hipergrafo y pseudo-etiquetas & Entrenado & Cada época \\
+5 & Pseudo-etiquetas y verdad de terreno & Etiqueta por punto y mIoU por clase & Evaluación & Por corrida \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Las salidas de los Módulos~2 y~3 no viven en la misma estructura espacial. El
+Módulo~2 trabaja sobre la rejilla dispersa de Minkowski y el Módulo~3 sobre su
+propia rejilla serializada. Conciliarlas exige la propagación inversa del
+submuestreo y un mapeo por índice inverso, ambos almacenados junto con las
+características para que el Módulo~4 reciba los dos descriptores alineados punto
+a punto.
+
+% =====================================================================
+\section{Unidad 1: Preparación de la Nube de Puntos}
+\label{sec:unidad1}
+
+La primera unidad corresponde al Módulo~1 y parte de la nube TLS cruda de la
+Catedral de Lima entregada por la Facultad de Ingeniería Civil. Su propósito es
+dejar los datos en una forma que las dos ramas de extracción puedan consumir sin
+que ninguna etapa posterior requiera la nube completa en memoria.
+
+La nube se recibe con al menos cuatro clases base anotadas en la sección de
+referencia, requisito mínimo de la tarea NCD. Sobre ella se aplican tres
+operaciones: el teselado en cinco secciones espaciales disjuntas (nave, coro,
+ábside, torres y fachada), la voxelización a 5\,cm, que reduce el número de
+puntos y homogeniza la densidad, y la normalización de coordenadas y atributos.
+La salida de la unidad son las cinco secciones $S_1\ldots S_5$, cada una con
+coordenadas, color y normal, que constituyen la unidad indivisible de trabajo
+del proyecto: ninguna sección depende de otra, de modo que todas pueden
+procesarse de forma independiente.
+
+% =====================================================================
+\section{Unidad 2: Extracción de Descriptores y Fusión}
+\label{sec:unidad2}
+
+La segunda unidad abarca los Módulos~2, 3 y~4. Las dos ramas de extracción
+producen, sobre la misma sección preparada, los dos descriptores que el punto de
+fusión concatena.
+
+\subsection{Rama Semántica}
+
+La rama semántica es la red troncal supervisada de HyperNCD, una
+MinkowskiUNet-34C que opera sobre la rejilla dispersa y entrega
+$f_{\mathrm{sem}}$, de 96 canales por punto. Es un módulo entrenado, de modo que
+se ejecuta en cada época.
+
+\subsection{Rama Auto-supervisada Congelada}
+\label{sec:rama-ssl}
+
+La rama auto-supervisada es el codificador PTv3 preentrenado de Sonata, usado
+con pesos congelados y solo en inferencia. Entrega $f_{\mathrm{ssl}}$, de 1088
+dimensiones por punto, y se ejecuta una sola vez por sección: su salida se
+escribe en disco y se reutiliza en todas las épocas del entrenamiento.
+
+La ejecución de esta rama produce un conjunto acotado de observables que el
+diseño declara por adelantado y que la corrida debe confirmar
+(Tabla~\ref{tab:salidas-p2}). Todos se registran en la misma corrida que genera
+el almacenamiento intermedio, de modo que no exigen una ejecución adicional.
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\caption{Observables de la inferencia congelada del codificador. Elaboración
+propia.}
+\label{tab:salidas-p2}
+\begin{tabular}{@{}p{3.9cm}p{4.3cm}p{4.3cm}@{}}
+\toprule
+\textbf{Observable} & \textbf{Para qué sirve} & \textbf{Valor esperado} \\
+\midrule
+Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 \\
+Puntos retenidos tras voxelizar & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir \\
+VRAM pico & Verifica la cota analítica de memoria & Cota estimada de 4{,}2\,GB \\
+Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir \\
+Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir \\
+Tamaño del archivo de \emph{cache} & Dimensiona el almacenamiento del proyecto & Por medir \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dos de estos observables condicionan decisiones de diseño. El tamaño de vóxel
+efectivo del codificador no coincide necesariamente con el declarado para la
+rejilla dispersa, porque la rutina de preparación de Sonata aplica su propio
+submuestreo; verificar cuál es el valor aplicado determina el número de puntos
+retenidos, la memoria y la resolución de salida. La disponibilidad de
+FlashAttention determina si la matriz de atención se materializa de forma
+explícita y, con ello, si el pico de memoria aparece o no.
+
+\subsection{Punto de Fusión}
+\label{sec:fusion}
+
+El aporte consiste en conservar íntegro el razonamiento por hipergrafo y
+sustituir la rama geométrica manual por la representación auto-supervisada,
+según la Ec.~\eqref{eq:hibrido} del marco teórico. Esa ecuación sustituye a la
+Ec.~\eqref{eq:hyperncd3} y es la única
+diferencia entre la línea base y el modelo propuesto. Al mover una sola pieza,
+cualquier variación de la métrica es atribuible al cambio de representación y no
+a diferencias de optimización, de partición o de arquitectura, lo que hace la
+ablación interpretable sin ambigüedad.
+
+Aguas abajo de la fusión nada cambia: la afinidad entre prototipos sigue
+combinando componente geométrica y semántica según la Ec.~\eqref{eq:afinidad}, y
+cada prototipo conserva sus $M=8$ vecinos al construir el hipergrafo.
+
+% =====================================================================
+\section{Unidad 3: Entrenamiento, Calibración y Evaluación}
+\label{sec:unidad3}
+
+La tercera unidad describe cómo se ejecuta el sistema en el tiempo, con qué
+procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
+
+\subsection{Flujo de Ejecución}
+\label{sec:diagrama-flujo}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{imagenes/grafico.png}
-\caption{Diagrama de diseño del sistema propuesto. La nube TLS de la Catedral de
-Lima (Módulo~1) alimenta en paralelo dos ramas de extracción: la rama semántica
-MinkowskiUNet-34C de HyperNCD (Módulo~2), que produce $f_{\mathrm{sem}}$, y el
-\emph{encoder} PTv3 preentrenado de Sonata (Módulo~3), congelado y usado solo en
-inferencia, que produce $f_{\mathrm{ssl}}$. Ambos descriptores entran al
-Módulo~4, donde reside el aporte de la tesis: la concatenación
-$F_i=[f_{\mathrm{sem}}(x^i);f_{\mathrm{ssl}}(x^i)]$ reemplaza al descriptor
-geométrico manual $f_{\mathrm{geo}}$ antes de la formación de prototipos y del
-razonamiento por hipergrafo, que permanecen intactos, de modo que la variación de
-la métrica sea atribuible al reemplazo.}
-\label{fig:diseno}
+\begin{tikzpicture}[
+  font=\scriptsize,
+  paso/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.62cm,
+               align=center, fill=blue!12},
+  cong/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.62cm,
+               align=center, fill=purple!14},
+  disco/.style={draw, minimum width=5.6cm, minimum height=0.55cm,
+                align=center, fill=black!8},
+  dec/.style={draw, diamond, aspect=2.8, inner sep=1pt, align=center,
+              fill=yellow!22},
+  dat/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.5cm,
+              align=center, fill=orange!18},
+  fl/.style={-{Latex[length=1.8mm]}, thick},
+  ret/.style={-{Latex[length=1.8mm]}, thick, black!60, rounded corners=2mm}
+]
+\node[dat] (p0) {\textbf{P0.} Nube TLS de la Catedral de Lima};
+\node[paso, below=2.2mm of p0] (p1)
+  {\textbf{P1.} Teselado, voxelización y normalización\\\emph{salida:} 5 secciones $S_1\ldots S_5$};
+\node[cong, below=2.2mm of p1] (p2)
+  {\textbf{P2.} Inferencia congelada de Sonata sobre $S_j$\\\emph{entorno CUDA 12.4}, una vez por sección};
+\node[disco, below=2.2mm of p2] (cache)
+  {\textbf{Frontera de disco:} \emph{cache} de $f_{\mathrm{ssl}}$ en \texttt{.npz}};
+\node[paso, below=2.2mm of cache] (p3)
+  {\textbf{P3.} Fusión y entrenamiento de HyperNCD sobre $S_j$\\\emph{entorno CUDA 11.4}, en cada época};
+\node[dec, below=3.4mm of p3] (d1) {¿3 repeticiones\\completas?};
+\node[dec, below=3.4mm of d1] (d2) {¿quedan\\secciones?};
+\node[paso, below=3.4mm of d2] (p4)
+  {\textbf{P4.} Agregación de métricas y análisis de dominancia};
+\node[dat, below=2.2mm of p4] (p5)
+  {\textbf{P5.} $\Delta$mIoU, brecha cerrada $G$ y ablación};
+
+\foreach \a/\b in {p0/p1, p1/p2, p2/cache, cache/p3, p3/d1}
+  \draw[fl] (\a) -- (\b);
+\draw[fl] (d1) -- node[left=0.6mm, font=\tiny] {sí} (d2);
+\draw[fl] (d2) -- node[left=0.6mm, font=\tiny] {no} (p4);
+\draw[fl] (p4) -- (p5);
+
+\coordinate (car) at ($(p2.east)+(0.8,0)$);
+\coordinate (ciz) at ($(p1.west)+(-0.8,0)$);
+
+\draw[ret] (d1.east) -- node[above, pos=0.7, font=\tiny, text=black!70] {no}
+  (d1.east -| car) -- (car) -- (p2.east);
+\node[font=\tiny, text=black!70, rotate=-90]
+  at ($(car)!0.5!(d1.east -| car)+(0.3,0)$) {bucle interno};
+
+\draw[ret] (d2.west) -- node[above, pos=0.7, font=\tiny, text=black!70] {sí}
+  (d2.west -| ciz) -- (ciz) -- (p1.west);
+\node[font=\tiny, text=black!70, rotate=90]
+  at ($(ciz)!0.5!(d2.west -| ciz)+(-0.3,0)$) {bucle externo};
+
+\node[below=3mm of p5, align=center, font=\tiny, text=black!70]
+  {\tikz\node[draw,rounded corners,fill=purple!14,minimum height=2.4mm,minimum width=3.4mm]{};\ etapa congelada\quad
+   \tikz\node[draw,rounded corners,fill=blue!12,minimum height=2.4mm,minimum width=3.4mm]{};\ etapa entrenable\quad
+   \tikz\node[draw,fill=black!8,minimum height=2.4mm,minimum width=3.4mm]{};\ persistencia en disco\quad
+   \tikz\node[draw,diamond,aspect=1.6,fill=yellow!22,minimum height=2.4mm,minimum width=3.4mm,inner sep=0.3pt]{};\ decisión};
+\end{tikzpicture}
+\caption{Flujo de ejecución del sistema. Elaboración propia.}
+\label{fig:flujo}
 \end{figure}
 
-El \textbf{Bloque~1} es HyperNCD: aporta la rama semántica (MinkowskiUNet-34C) y
-toda la maquinaria de prototipos, hipergrafo dinámico y pseudo-etiquetas que
-permite descubrir clases nuevas. El \textbf{Bloque~2} es Sonata: un
-\emph{encoder} PTv3 preentrenado de forma auto-supervisada, usado con pesos
-congelados y solo en inferencia. El \textbf{nodo de fusión} es el aporte de la
-tesis: allí, y solo allí, se sustituye $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$
-antes de la formación de prototipos.
+El flujo muestra tres elementos que la arquitectura no representa. El primero es
+la frontera de disco: PTv3 requiere CUDA 12.4 y MinkowskiEngine la versión 11.x,
+que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
+un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
+asimetría de frecuencia: P2 se ejecuta una vez por sección y P3 en cada época,
+lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
+de repeticiones y el de recorrido de secciones.
 
-\section{Punto de fusión y trazabilidad de la métrica}
+La diferencia con la Figura~\ref{fig:diseno} es de naturaleza. La
+Figura~\ref{fig:flujo} es un diagrama de flujo porque describe una secuencia
+temporal con decisiones y bucles; el diagrama de diseño describe componentes y
+dependencias sin comprometerse con el orden de ejecución.
+Si todo fuera secuencial bastaría el primero, pero los Módulos~2 y~3 son ramas
+concurrentes, y esa concurrencia es una propiedad estructural que el flujo no
+expresa.
 
-Al mover una sola pieza, cualquier variación de la métrica es atribuible al
-reemplazo, lo que hace la ablación interpretable sin ambigüedad. Aguas abajo de
-la fusión, la afinidad entre prototipos sigue combinando componente geométrica y
-semántica según la Ec.~\eqref{eq:afinidad}, y cada prototipo conserva sus $M=8$
-vecinos al construir el hipergrafo.
+\subsection{Procedimiento Experimental}
+\label{sec:procedimiento}
 
-Como el \emph{pipeline} es separable en dos etapas ---inferencia congelada de
-Sonata y luego razonamiento de HyperNCD---, la métrica se reporta también en el
-punto intermedio y no solo al final: \emph{linear probing} sobre el descriptor
-antes de la formación de prototipos (Ec.~\eqref{eq:probe}) y mIoU después
-(Ec.~\eqref{eq:miou}). Esa separación es la que permite atribuir una mejora a la
-representación o al razonamiento (Sección~\ref{sec:metricas-hibrido}).
+El procedimiento se ejecuta en seis pasos reproducibles, correspondientes a los
+rótulos P0 a P5 de la Figura~\ref{fig:flujo}. Los dos primeros son insumo de la
+revisión crítica y fijan la línea base; los restantes corresponden a los
+objetivos específicos:
 
-\section{Procedimiento experimental}
-
-El procedimiento se ejecuta en cuatro pasos reproducibles. El primero es insumo
-de la revisión crítica; los tres restantes corresponden a los objetivos
-específicos.
-
-\begin{enumerate}
-\item \textbf{Preparación y línea base (Módulo~1).} Teselado de la nube en cinco
-secciones disjuntas, voxelización a 5\,cm y normalización; ejecución de HyperNCD
-sin modificaciones con tres semillas distintas para fijar el punto de partida de
-la Tabla~\ref{tab:base}. El cambio de esquema de normalización fue ensayado y
-descartado como resultado negativo (Sección~\ref{sec:linea-base}).
-\item \textbf{Fusión (OE1).} Inferencia congelada de Sonata sobre cada sección,
-con \emph{cache} de características y \emph{up-cast} para conciliar la resolución
-del \emph{encoder} PTv3 con la rejilla de Minkowski; sustitución del descriptor
+\begin{enumerate}\setlength{\itemsep}{2pt}
+\item \textbf{P0. Recepción.} Nube TLS con al menos cuatro clases base anotadas
+en la sección de referencia, requisito mínimo de la tarea NCD.
+\item \textbf{P1. Preparación y línea base.} Teselado en cinco secciones
+disjuntas, voxelización a 5\,cm y normalización; ejecución de HyperNCD sin
+modificaciones con tres semillas distintas para fijar el punto de partida contra
+el que se compara el híbrido. El cambio de esquema de normalización fue ensayado
+y descartado como resultado negativo.
+\item \textbf{P2. Inferencia congelada (OE1).} Ejecución del codificador sobre
+cada sección, con \emph{cache} de características y \emph{up-cast} para
+conciliar la resolución del \emph{encoder} PTv3 con la rejilla de Minkowski, y
+escritura de $f_{\mathrm{ssl}}$ en disco.
+\item \textbf{P3. Fusión y entrenamiento (OE1).} Sustitución del descriptor
 según la Ec.~\eqref{eq:hibrido} y verificación de funcionamiento de extremo a
-extremo sobre una sección de control.
-\item \textbf{Calibración (OE2).} Búsqueda por grilla acotada sobre $\alpha$, $M$
-y $\epsilon$ en la sección de referencia; la configuración ganadora se congela y
-se aplica sin reajuste al resto de secciones.
-\item \textbf{Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
+extremo sobre una sección de control. Se comprueba que el mIoU de las clases
+conocidas no caiga respecto de la línea base.
+\item \textbf{P4. Calibración (OE2).} Búsqueda por grilla acotada sobre
+$\alpha$, $M$ y $\epsilon$ en la sección de referencia; la configuración
+ganadora se congela y se aplica sin reajuste al resto de secciones.
+\item \textbf{P5. Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
 (Ec.~\eqref{eq:delta}), de la brecha cerrada $G$ (Ec.~\eqref{eq:G}) y del
 análisis de dominancia (Ec.~\eqref{eq:dominante}), más la ablación de las tres
 variantes del descriptor.
 \end{enumerate}
 
-\section{Ventaja de dominio del objeto de estudio}
+\subsection{Protocolo de Repetición}
+\label{sec:repeticiones}
+
+Las secciones son independientes: ninguna necesita información de otra, de modo
+que cada una constituye una medición separada y todas pueden ejecutarse de forma
+simultánea.
+
+Cada configuración se ejecuta tres veces sobre cada sección y se reporta la
+media y la desviación entre repeticiones. La razón no es solo la variabilidad
+del entrenamiento: el submuestreo que precede al codificador elige al azar el
+punto representante de cada vóxel, por lo que dos ejecuciones sobre la misma
+sección no producen la misma $f_{\mathrm{ssl}}$. Las tres repeticiones abarcan
+por ello el procedimiento completo, P2 y P3, y no solo el entrenamiento.
+
+\subsection{Trazabilidad de la Métrica}
+\label{sec:trazabilidad}
+
+Como el \emph{pipeline} es separable en dos etapas, la inferencia congelada de
+Sonata y luego el razonamiento de HyperNCD, la métrica se reporta también en el
+punto intermedio y no solo al final: \emph{linear probing} sobre el descriptor
+antes de la formación de prototipos (Ec.~\eqref{eq:probe}) y mIoU después
+(Ec.~\eqref{eq:miou}). Esa separación es la que permite atribuir una mejora a la
+representación o al razonamiento, y no al sistema tratado como caja negra
+(Sección~\ref{sec:metricas-hibrido}).
+
+% =====================================================================
+\section{Ventaja de Dominio del Objeto de Estudio}
 
 Sonata se preentrenó sobre escenas interiores densas (ScanNet, S3DIS,
 Structured3D, HM3D). En LiDAR urbano exterior su \emph{linear probing} queda por
 debajo de PTv3 entrenado desde cero (62,0 frente a 69,1 mIoU en SemanticKITTI),
 pero en interiores arquitectónicos densos alcanza 72,5 mIoU en ScanNet y 72,3 en
 S3DIS Área~5, a la par de modelos supervisados completos. El levantamiento de una
-catedral ---estático, denso, de geometría arquitectónica--- cae del lado
+catedral, estático, denso y de geometría arquitectónica, cae del lado
 favorable de esa frontera, lo que reduce sustancialmente el principal riesgo de
 transferencia de dominio.
 
-\section{Riesgos y mitigación}
+% =====================================================================
+\section{Riesgos y Mitigación}
 \label{sec:riesgos}
 
 \paragraph*{(i) Disponibilidad de la nube anotada.} NCD exige al menos las clases
@@ -101,5 +326,18 @@ memoria.
 \paragraph*{(iii) Sustitución frente a concatenación (Plan~B).} Si el reemplazo
 directo degrada el rendimiento, la variante es concatenar
 $F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$, dejando que el módulo
-de prototipos pondere las tres fuentes. Cualquier resultado ---mejora, paridad o
-degradación--- documentado con ablación es reportable.
+de prototipos pondere las tres fuentes. Cualquier resultado, sea mejora, paridad o
+degradación, documentado con ablación es reportable.
+
+% =====================================================================
+\section{Conclusión del Marco Metodológico}
+
+Las tres unidades encadenan la preparación de la nube, la extracción de los dos
+descriptores y su evaluación en un procedimiento que aísla una sola variable: el
+descriptor que entra al módulo de prototipos. El contrato de la
+Tabla~\ref{tab:contrato} fija las formas que cada módulo entrega, el flujo de la
+Figura~\ref{fig:flujo} ordena las etapas en el tiempo y el protocolo de
+repetición acota la variabilidad de las mediciones. De este modo, cualquier
+diferencia observada en las métricas del Capítulo siguiente queda atribuida al
+reemplazo de $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ y no a la configuración
+experimental.

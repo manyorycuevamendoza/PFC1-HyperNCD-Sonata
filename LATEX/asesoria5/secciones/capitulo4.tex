@@ -37,9 +37,9 @@ referencia.}
 \toprule
 \textbf{Parámetro} & \textbf{Rango explorado} & \textbf{Valor fijado} & \textbf{mIoU \emph{novel}} \\
 \midrule
-$\alpha$   & $[0,\,1]$            & --- & --- \\
-$M$        & $\{4,\,8,\,16\}$     & --- & --- \\
-$\epsilon$ & \emph{[por definir]} & --- & --- \\
+$\alpha$   & $[0,\,1]$            & & \\
+$M$        & $\{4,\,8,\,16\}$     & & \\
+$\epsilon$ & \emph{[por definir]} & & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -61,9 +61,9 @@ reporta además el vector completo de IoU por clase, no solo el agregado
 \toprule
 \textbf{Variante del descriptor} & \textbf{mIoU \emph{novel}} & \textbf{mIoU \emph{known}} & $\Delta$\textbf{mIoU} & $G$ \\
 \midrule
-$[f_{\mathrm{sem}};f_{\mathrm{geo}}]$ (línea base) & --- & --- & --- & 0 \\
-$[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ (propuesto) & --- & --- & --- & --- \\
-$[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ (Plan~B) & --- & --- & --- & --- \\
+$[f_{\mathrm{sem}};f_{\mathrm{geo}}]$ (línea base) & & & & 0 \\
+$[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ (propuesto) & & & & \\
+$[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ (Plan~B) & & & & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -115,7 +115,7 @@ sin mejora demostrada sobre el estado del arte, la herramienta no tiene caso.
 
 \paragraph*{Contribución esperada al estado del arte.} La contribución no es una
 arquitectura nueva, sino establecer si un hallazgo demostrado en régimen
-supervisado ---la nocividad del \emph{geometric shortcut}--- se transfiere al
+supervisado, la nocividad del \emph{geometric shortcut}, se transfiere al
 régimen de descubrimiento de clases novedosas, donde la calidad de la
 representación es más crítica porque no hay supervisión sobre las clases
 objetivo. Bajo el Plan~B descrito en la Sección~\ref{sec:riesgos}, incluso un
