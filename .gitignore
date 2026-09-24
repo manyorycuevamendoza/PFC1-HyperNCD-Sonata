@@ -20,3 +20,4 @@ __pycache__/
 *.toc
 *.synctex.gz
 LATEX/**/main.pdf
+region_save/
