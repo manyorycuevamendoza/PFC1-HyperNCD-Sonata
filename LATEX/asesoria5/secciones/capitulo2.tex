@@ -198,10 +198,7 @@ caigan en una sola.
 \section{Métricas de Evaluación de Modelos}
 \label{sec:metricas}
 
-Para evaluar la efectividad del modelo se utilizan las métricas siguientes. El
-criterio de reporte es explícito: una métrica no se presenta como un número
-aislado, sino junto a la expresión que la define, al número de variables que
-promedia y a la identificación de cuál de ellas domina el valor agregado.
+Para evaluar la efectividad del modelo se utilizan las métricas siguientes.
 
 \subsection{Intersection over Union (IoU)}
 
@@ -557,7 +554,7 @@ con su valor y con el efecto que tiene modificarlos.
 \caption{Parámetros del diseño, su significado y el efecto de modificarlos.
 Elaboración propia.}
 \label{tab:parametros}
-\begin{tabular}{@{}p{1.5cm}p{4.4cm}p{1.9cm}p{4.6cm}@{}}
+\begin{tabular}{@{}p{1.9cm}p{4.2cm}p{1.8cm}p{4.5cm}@{}}
 \toprule
 \textbf{Símbolo} & \textbf{Qué representa} & \textbf{Valor} & \textbf{Efecto de modificarlo} \\
 \midrule
@@ -572,3 +569,38 @@ $\epsilon$ & Suavizado de las pseudo-etiquetas & 0{,}15 & Mayor: menos confianza
 \bottomrule
 \end{tabular}
 \end{table}
+
+% =====================================================================
+\section{Resultados del Análisis de los Componentes}
+\label{sec:analisis-resumen}
+
+El diseño anterior se apoya en el examen de la realización de ambos
+componentes: qué capas emplean, cuántos parámetros concentran, cuánta memoria
+exigen y hasta dónde admiten distribución. Ese examen se desarrolla en el
+Anexo~D y aquí se recogen únicamente sus tres resultados, que son los que el
+resto del trabajo utiliza.
+
+\paragraph*{Punto de inserción} La implementación de HyperNCD que efectivamente
+se ejecuta no es la descrita en el artículo: razona sobre regiones combinando
+las similitudes de las Ecs.~\eqref{eq:coseno} y~\eqref{eq:gauss} sin pesos
+entrenables, y su componente geométrica es el descriptor manual de seis
+dimensiones. La sustitución de la Ec.~\eqref{eq:hibrido} se aplica sobre ese
+descriptor, y la línea base es esa implementación y no la formulación publicada
+(Anexo~D, Sección~D.1).
+
+\paragraph*{Costo del codificador} El \emph{encoder} de Sonata concentra el
+$94{,}3$\,\% de sus $108{,}46$~M de parámetros en las dos últimas etapas, donde
+la resolución es menor. Su atención se calcula dentro de parches de tamaño fijo,
+de modo que el costo crece de forma lineal con el número de puntos, y la cota
+analítica de memoria para una sección es de $4{,}2$~GB, muy por debajo de los
+48~GB de la unidad asignada (Anexo~D, Sección~D.2). La inferencia del
+codificador no es, por tanto, el factor limitante del proyecto.
+
+\paragraph*{Régimen y paralelismo} Las dos ramas son asimétricas: una opera
+congelada, una vez por sección y sin sincronización entre unidades; la otra se
+entrena, paga su costo en cada época y acopla el lote en la asignación de
+pseudo-etiquetas. Esa asimetría es la que justifica ejecutar el codificador
+fuera del bucle de optimización y persistir su salida. El paralelismo
+resultante queda acotado por el número de secciones disponibles (Anexo~D,
+Secciones~D.3 y~D.4), y la delimitación de lo que es aporte propio y lo que se
+hereda de las arquitecturas empleadas se resume en la tabla de la Sección~D.5.
