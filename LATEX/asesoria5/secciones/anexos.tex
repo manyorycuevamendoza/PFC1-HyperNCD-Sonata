@@ -9,18 +9,73 @@ Weights~\&~Biases.
 
 \section*{Anexo B. Nomenclatura}
 
-\begin{tabular}{@{}ll@{}}
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\begin{tabular}{@{}p{2.2cm}p{7.3cm}p{3.2cm}@{}}
 \toprule
-\textbf{Símbolo} & \textbf{Significado} \\
+\textbf{Símbolo} & \textbf{Significado} & \textbf{Valor} \\
 \midrule
-$P$ & Nube de puntos del levantamiento \\
-$\mathcal{C}_k$ & Conjunto de clases conocidas (etiquetadas) \\
-$\mathcal{C}_n$ & Conjunto de clases novedosas (sin etiqueta) \\
-$f_{\mathrm{sem}}$ & Descriptor semántico (MinkowskiUNet-34C) \\
-$f_{\mathrm{geo}}$ & Descriptor geométrico calculado a mano \\
-$f_{\mathrm{ssl}}$ & Descriptor auto-supervisado (Sonata, congelado) \\
-$\alpha$ & Balance geométrico-semántico en la afinidad $S_b$ \\
-$M$ & Vecinos por hiperarista \\
-$\epsilon$ & Suavizado de etiquetas \\
+$P$ & Nube de puntos del levantamiento & Catedral de Lima, TLS \\
+$N$ & Número de puntos & $\sim$2$\times$10$^{7}$ tras voxelizar \\
+$\mathcal{C}_k$ & Conjunto de clases conocidas (etiquetadas) & Por sección \\
+$\mathcal{C}_n$ & Conjunto de clases novedosas (sin etiqueta) & Hasta 6 por sección \\
+$f_{\mathrm{sem}}$ & Descriptor semántico (MinkowskiUNet-34C) & 96 dimensiones \\
+$f_{\mathrm{geo}}$ & Descriptor geométrico calculado a mano & 6 dimensiones \\
+$f_{\mathrm{ssl}}$ & Descriptor auto-supervisado (Sonata, congelado) & 1088 dimensiones \\
+$F_i$ & Descriptor compuesto del punto $i$ & Concatenación \\
+$K$ & Número de prototipos & Igual al de clases \\
+$S_p$ & Matriz de asignación suave & $N\!\cdot\!P\times K$ \\
+$S_g$ & Afinidad geométrica entre prototipos & Núcleo gaussiano \\
+$S_s$ & Afinidad semántica entre prototipos & Coseno \\
+$S_b$ & Afinidad combinada & Ec.~\eqref{eq:afinidad} \\
+$\alpha$ & Balance geométrico-semántico en $S_b$ & Inicia en 0{,}5 \\
+$M$ & Vecinos por hiperarista & 8 \\
+$\tau$ & Temperatura del núcleo gaussiano & 0{,}1 \\
+$\epsilon$ & Suavizado de etiquetas & 0{,}15 \\
+$G$ & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \bottomrule
 \end{tabular}
+\end{table}
+
+\section*{Anexo C. Glosario de términos}
+
+\begin{center}
+\setstretch{1}\small
+\begin{longtable}{@{}p{4.0cm}p{8.7cm}@{}}
+\toprule
+\textbf{Término} & \textbf{Definición} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Término} & \textbf{Definición} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Afinidad & Semejanza entre dos prototipos; combina una componente geométrica y una semántica. \\
+Aprendizaje auto-supervisado & Entrenamiento cuya señal de supervisión procede de los propios datos y no de etiquetas humanas. \\
+Atajo geométrico & Colapso de la representación sobre pistas geométricas simples en lugar de aprender semántica. \\
+Clase conocida & Clase con puntos etiquetados durante el entrenamiento. \\
+Clase novedosa & Clase presente en la nube pero sin ninguna etiqueta. \\
+Codificador congelado & Red usada solo en inferencia, cuyos pesos no se actualizan. \\
+Descriptor & Vector numérico que resume el contenido de un punto o de una región. \\
+Emparejamiento húngaro & Asignación óptima entre agrupaciones descubiertas y clases reales. \\
+Hiperarista & Conjunto formado por un prototipo y sus $M$ vecinos más afines. \\
+Hipergrafo & Estructura en la que una arista puede conectar más de dos nodos a la vez. \\
+\emph{Linear probing} & Evaluación de un descriptor congelado mediante un clasificador lineal. \\
+Nube de puntos & Conjunto de posiciones tridimensionales medidas con sus atributos. \\
+NCD & Descubrimiento de clases novedosas. \\
+Prototipo & Vector representante de un grupo de puntos o regiones semejantes. \\
+Pseudo-etiqueta & Etiqueta asignada por el propio modelo, sin supervisión humana. \\
+Región o superpunto & Agrupación de puntos vecinos tratada como una sola unidad. \\
+Rejilla dispersa & Indexación por coordenada entera de vóxel que almacena solo los ocupados. \\
+Sección & Partición espacial disjunta del levantamiento. \\
+Segmentación semántica & Asignación de una etiqueta de clase a cada punto. \\
+Serialización & Ordenamiento de los puntos mediante una curva de llenado de espacio. \\
+Sinkhorn-Knopp & Normalización iterativa que equilibra el reparto de pseudo-etiquetas. \\
+TLS & Escaneo láser terrestre desde posiciones fijas. \\
+\emph{Up-cast} & Propagación inversa del submuestreo hasta la resolución de entrada. \\
+Voxelización & Sustitución por un representante único de los puntos de un mismo cubo. \\
+\end{longtable}
+\end{center}
