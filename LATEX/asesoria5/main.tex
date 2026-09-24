@@ -1,6 +1,6 @@
-%% --------------------------------------------------------------------
+%% =====
 %% Template  UTEC Tesis - Escuela de Computación
-%% --------------------------------------------------------------------
+%% =====
 \documentclass[a4paper,12pt,oneside]{tesisutec}
 
 \selectlanguage{spanish}
@@ -19,9 +19,11 @@
 \usepackage{hyperref}
 % Librería necesaria para arreglar el orden de referencias en overleaf.com
 \usepackage{notoccite}
+% Tablas largas que se dividen entre paginas (glosario de anexos)
+\usepackage{longtable}
 % Diagramas de arquitectura
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows.meta,fit,calc}
+\usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
 \usepackage{comment}
 
 % Ubicación de los imágenes.
@@ -30,6 +32,10 @@
 \makeatletter
 % Reinsert missing \algbackskip
 \def\algbackskip{\hskip-\ALG@thistlm}
+% Ancho del numero en el indice, para que no se pegue al titulo con dos digitos.
+\renewcommand*\l@section{\@dottedtocline{1}{0em}{2.2em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{0em}{2.8em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{4.3em}{3.8em}}
 \makeatother
 
 \hypersetup{urlcolor=blue, colorlinks=true}
@@ -42,7 +48,7 @@
 \degree{Bachiller}
 \major{Ciencia de la Computación}
 
-\title{Modelo híbrido HyperNCD--Sonata para el descubrimiento de clases
+\title{Modelo híbrido HyperNCD-Sonata para el descubrimiento de clases
 novedosas en la segmentación semántica de nubes de puntos de patrimonio
 arquitectónico}
 
@@ -82,7 +88,7 @@ arquitectónico}
 \input{secciones/capitulo2}
 % El analisis de la arquitectura entra como seccion final del marco teorico.
 \input{secciones/analisis_arquitectura}
-%%\input{secciones/capitulo3}
+\input{secciones/capitulo3}
 %%\input{secciones/capitulo4}
 %%\input{secciones/conclusiones}
 %%\input{secciones/trabajosFuturos} % sección opcional
