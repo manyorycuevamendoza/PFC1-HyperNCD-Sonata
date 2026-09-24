@@ -1,6 +1,6 @@
 \customchapter{INTRODUCCIÓN}
 
-% --- Las tablas de la Introducción se numeran con letras (Tabla A, B, ...)
+% Las tablas de la Introducción se numeran con letras (Tabla A, B, ...)
 % porque aquí el contador de capítulo todavía es cero.
 \renewcommand{\thetable}{\Alph{table}}
 
@@ -34,7 +34,7 @@ un patio a una capilla del mismo inmueble, y la única salida fue etiquetar a ma
 y reentrenar.
 
 Los métodos generales de segmentación semántica en tres dimensiones tampoco
-alcanzan. PTv3~\cite{ptv3} llega a 77,5 mIoU y Sonata~\cite{sonata} a 79,4 sobre
+alcanzan. PTv3~\cite{wu2024ptv3} llega a 77,5 mIoU y Sonata~\cite{wu2025sonata} a 79,4 sobre
 ScanNet (Ec.~\eqref{eq:miou}), y otras arquitecturas como Stratified
 Transformer~\cite{lai2022stratified} o Superpoint
 Transformer~\cite{robert2023spt} compiten en el mismo orden, pero todas trabajan
@@ -49,14 +49,14 @@ El descubrimiento de clases novedosas, o NCD, elimina ese supuesto y permite
 trabajar con clases que el modelo nunca vio etiquetadas. Riz et
 al.~\cite{riz2023nops} lo introdujeron para nubes de puntos y Xu et
 al.~\cite{xu2024dasl} lo refinaron con auto-etiquetado adaptativo. Su mejor
-método actual es HyperNCD~\cite{hyperncd}, que resume la nube en
+método actual es HyperNCD~\cite{zhang2026hyperncd}, que resume la nube en
 \emph{prototipos}, vectores alrededor de los cuales se agrupan los puntos
 parecidos, y los conecta mediante un \emph{hipergrafo}, donde cada arista puede
 unir varios prototipos a la vez. Su problema es que rinde mal justo donde debería
 ser fuerte: entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
-supervisado equivalente~\cite{hyperncd}. Este trabajo señala como causa probable
+supervisado equivalente~\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
 el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
-tipo de señal que Sonata~\cite{sonata} considera perjudicial, y propone
+tipo de señal que Sonata~\cite{wu2025sonata} considera perjudicial, y propone
 reemplazarlo por su codificador auto-supervisado congelado.
 
 El Capítulo~I presenta la revisión crítica de la literatura; el Capítulo~II, el
@@ -249,15 +249,15 @@ elementos de 20\,cm o más de firma geométrica repetida, como columnas, arcos,
 bóvedas, cornisas y contrafuertes, y hasta seis clases novedosas por sección. No
 se espera buen comportamiento con ornamento fino de menos de 5\,cm, superficies
 muy ocluidas, ni clases novedosas bajo el 0,5\% de los puntos, régimen en el que
-HyperNCD colapsa a 11,8 mIoU~\cite{hyperncd}, ni con muchas clases simultáneas,
+HyperNCD colapsa a 11,8 mIoU~\cite{zhang2026hyperncd}, ni con muchas clases simultáneas,
 donde Sonata baja a 29,3 mIoU en ScanNet200 frente a 72,5 en
-ScanNet~\cite{sonata}.
+ScanNet~\cite{wu2025sonata}.
 
 \paragraph*{Exclusiones}
 Quedan fuera el preentrenamiento auto-supervisado propio, que en Sonata exigió
 140 mil escenas y 32 GPU, la detección de instancias, el vocabulario abierto y la
 generación del modelo BIM.
 
-% --- Restauración de la numeración de tablas por capítulo.
+% Restauración de la numeración de tablas por capítulo.
 \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
 \setcounter{table}{0}
