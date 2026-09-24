@@ -17,6 +17,8 @@ module load miniconda/3.0
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate hyperncd-env
 
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+
 nvidia-smi
 
 cd "$REPO/hyperncd"
