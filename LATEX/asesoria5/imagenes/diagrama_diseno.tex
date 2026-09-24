@@ -111,9 +111,10 @@
     \node[font=\tiny, text=black!60, anchor=west] at (0.64,-0.93) {línea base: 96+6};}\\[6pt]
   \centering$F_i=\left[\,f_{\mathrm{sem}};\;f_{\mathrm{ssl}}\,\right]$\\[6pt]
   \raggedright
-  El corchete significa pegar una lista de números detrás de la otra: la ficha
-  del punto $i$ pasa a tener $96+1088=1184$ valores. Antes esa segunda parte
-  eran 6 números calculados a mano, y \textbf{cambiarlos es el aporte}.};
+  $F_i$ es la descripción completa del punto $i$: las dos anteriores guardadas
+  juntas, sin mezclarse ni promediarse. Pasa de 102 a 1184 valores, porque los
+  6 números de forma hechos a mano se reemplazan por los 1088 aprendidos.
+  \textbf{Ese reemplazo es el aporte}.};
 
 \node[tarj] (T2) at ($(pc)+(0,-1.15)$)
  {\textbf{\textcircled{\scriptsize 2} Cada punto se reparte entre los grupos}\\[4pt]
@@ -130,9 +131,10 @@
     \node[font=\tiny, text=black!60] at (1.22,0.20) {30\,\%};}\\[6pt]
   \centering$s_{i,k}=\dfrac{e^{z_{i,k}}}{\sum_{j}e^{z_{i,j}}}$\\[6pt]
   \raggedright
-  $s_{i,k}$ dice cuánto pertenece el punto $i$ al grupo $k$. Los valores de un
-  punto suman 1, como repartir un porcentaje. $z_{i,k}$ es la puntuación que da
-  la red y la exponencial solo sirve para convertirla en porcentaje.};
+  $s_{i,k}$ mide cuánto pertenece el punto $i$ al grupo $k$, y lo que reparte
+  entre todos los grupos suma 1. Al no obligarlo a elegir uno solo, un punto en
+  el borde entre dos piezas puede pertenecer en parte a cada una. Con esos
+  repartos se calcula el representante de cada grupo.};
 
 \node[tarj] (T3) at ($(pc)+(5.45,-1.15)$)
  {\textbf{\textcircled{\scriptsize 3} Los grupos se relacionan entre sí}\\[4pt]
@@ -145,11 +147,11 @@
     \node[font=\tiny, text=black!60] at (1.05,-0.18) {cada mancha es una hiperarista};}\\[6pt]
   \centering$S_b=\alpha\,S_g+(1-\alpha)\,S_s$\\[6pt]
   \raggedright
-  Dos grupos se parecen por su forma ($S_g$) y por su significado ($S_s$).
-  $\alpha$ reparte el peso: con $\alpha=1$ solo cuenta la forma y con
+  Dos grupos se parecen por su forma ($S_g$) y por su significado ($S_s$);
+  $\alpha$ decide cuánto pesa cada uno: con $\alpha=1$ solo la forma, con
   $\alpha=0$ solo el significado. Cada grupo se enlaza con los $M=8$ más
-  parecidos, y ese enlace de varios a la vez permite explicar una pieza nueva
-  con varias conocidas.};
+  parecidos, y como el enlace une varios a la vez, una pieza nunca vista queda
+  descrita como combinación de varias conocidas.};
 
 \draw[dashed, cFus!70, -{Latex[length=1.6mm]}]
   (M4.south) |- ($(T1.north)+(0,0.33)$) -- (T1.north);
