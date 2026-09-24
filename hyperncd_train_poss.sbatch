@@ -13,6 +13,7 @@ set -x
 REPO=/home/renzo.felix/PFC1-HyperNCD-Sonata
 
 module purge
+module load cuda/11.8
 source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate hyperncd-env
 
