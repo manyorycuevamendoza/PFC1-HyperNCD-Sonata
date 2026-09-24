@@ -13,18 +13,23 @@ set -x
 REPO=/home/renzo.felix/PFC1-HyperNCD-Sonata
 
 module purge
-module load miniconda/3.0
-source "$(conda info --base)/etc/profile.d/conda.sh"
+source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate hyperncd-env
 
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+export SETUPTOOLS_USE_DISTUTILS=stdlib
 
 nvidia-smi
 
 cd "$REPO/hyperncd"
 
-# Descarga el dataset una sola vez (se salta si data/SemanticPOSS ya existe).
-python scripts/download_semanticposs.py
+# El dataset debe descargarse antes, desde el login node (los nodos GPU no
+# tienen salida a internet). Aquí solo se verifica que ya exista.
+if [ ! -d data/SemanticPOSS ]; then
+  echo "ERROR: data/SemanticPOSS no existe. Descárgalo antes desde el login node con:"
+  echo "  python scripts/download_semanticposs.py"
+  exit 1
+fi
 
 python train.py -s 00 --dataset SemanticPOSS --offline --epoch 10 --use_scheduler \
   --lam 1 --lam_region 1 --gamma 1 --alpha 1 --gamma_decrease 0.5 \

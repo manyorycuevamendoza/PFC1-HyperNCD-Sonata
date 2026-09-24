@@ -1,4 +1,5 @@
 import os
+import distutils.version  # noqa: F401 -- carga el submódulo que torch/tensorboard usa sin importarlo
 from argparse import ArgumentParser
 from datetime import datetime
 
