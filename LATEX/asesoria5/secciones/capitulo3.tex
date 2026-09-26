@@ -289,6 +289,75 @@ antes de la formación de prototipos (Ec.~\eqref{eq:probe}) y mIoU después
 representación o al razonamiento, y no al sistema tratado como caja negra
 (Sección~\ref{sec:metricas-hibrido}).
 
+\subsection{Verificación Empírica del Entorno de Cómputo}
+\label{sec:entorno-computo}
+
+Antes de poder ejecutar el procedimiento de la Sección~\ref{sec:procedimiento}
+fue necesario dejar operativo el entorno de HyperNCD en el clúster Khipu, tarea
+que no se limitó a instalar un conjunto declarado de dependencias porque el
+repositorio original no las declara de forma exhaustiva. El esfuerzo se
+concentró en tres frentes: la configuración del conjunto de datos, la
+resolución del entorno de ejecución de Python, y la compilación del respaldo
+disperso de la rama semántica.
+
+El repositorio de HyperNCD remite, para su instalación, al esquema del trabajo
+antecedente NOPS, del cual heredó también el formato de los archivos que
+declaran la ubicación del conjunto de datos y el mapeo de clases, pero no
+incluyó esos archivos. Fue necesario localizarlos en el repositorio de NOPS y
+adaptar en ellos la ruta del conjunto de datos al proyecto. El conjunto de
+datos en sí, SemanticPOSS, tampoco estaba disponible, y su adquisición se
+automatizó en un programa que lo descarga y lo ordena en la estructura de
+carpetas exigida por esos archivos de configuración, de modo que el paso quede
+reproducible para cualquier corrida futura o para otro integrante del
+proyecto.
+
+La resolución del entorno de Python avanzó por descubrimiento sucesivo,
+guiada por el rastro de excepciones que cada intento de ejecución producía.
+Una primera instalación de PyTorch quedó incompleta sin señal de error visible
+en el registro, condición que solo se hizo evidente al fallar la importación
+de una dependencia posterior, por lo que se verificó explícitamente la
+presencia del paquete antes de continuar. A esa instalación le siguió la de
+las bibliotecas de entrenamiento declaradas en la propuesta, además de un
+número de dependencias menores que la propuesta no anticipaba y que la
+ejecución fue revelando una por una.
+
+La ejecución del Módulo~2 depende además de MinkowskiEngine, el respaldo
+disperso de la rama semántica, que no se distribuye como paquete binario sino
+que exige compilación contra el compilador de CUDA disponible en el clúster.
+Esa compilación reveló una restricción no documentada en la propuesta
+original: el compilador GNU por defecto del nodo de acceso excede la versión
+máxima admitida por el compilador de CUDA 11.8, de modo que fue necesario
+fijar explícitamente un compilador GNU anterior para completar el proceso.
+
+Se determinó además que la compilación no requiere una unidad de
+procesamiento gráfico físicamente presente, condición que solo aplica a la
+ejecución del modelo ya compilado. Esa distinción permitió trasladar el paso
+de compilación al nodo de acceso, con salida a internet, en lugar de un nodo
+de cómputo, que carece de ella por política del clúster, y evitó así una
+dependencia circular entre disponibilidad de red y disponibilidad de unidad
+de procesamiento gráfico. Como la asignación de nodo por parte del gestor de
+colas no se conoce por adelantado y el clúster combina tres arquitecturas de
+unidad de procesamiento gráfico distintas, la compilación se dirigió a un
+rango de arquitecturas de cómputo compatible con las tres, de modo que el
+mismo binario sirve sin importar cuál asigne el gestor. Se verificó también
+que la biblioteca de enlace dinámico del compilador empleado en la
+compilación debe estar disponible igualmente en el nodo de cómputo donde
+corre el entrenamiento, y no solo en el nodo donde se compiló, porque el
+símbolo de versión que exige la extensión compilada excede el que trae el
+sistema por defecto.
+
+Completado el entorno, se alcanzó una corrida de entrenamiento hasta la carga
+del primer lote de datos, con el modelo construido según la arquitectura
+MinkUnet declarada en el diseño y la unidad de procesamiento gráfico
+correctamente reconocida por el gestor de colas, lo que confirma el
+funcionamiento de extremo a extremo del entorno de ejecución antes de iniciar
+las mediciones del protocolo experimental de la
+Sección~\ref{sec:procedimiento}. Cabe precisar que todos los ajustes descritos
+en esta sección corrigen incompatibilidades de herramientas de compilación y
+de enlazado, no del cómputo que realiza la unidad de procesamiento gráfico, de
+modo que ninguno de ellos incide en la validez de las métricas reportadas en
+el capítulo siguiente.
+
 % =====================================================================
 \section{Ventaja de Dominio del Objeto de Estudio}
 
@@ -316,7 +385,8 @@ estima tiempos de calendario: verifica empíricamente el hardware asignado
 (Tabla~\ref{tab:hardware}) y fija a partir de esa verificación el tamaño de
 ventana y el esquema de \emph{cache}. El seccionamiento de la catedral es el
 mecanismo que sostiene el respaldo: ninguna etapa requiere la nube completa en
-memoria.
+memoria. La Sección~\ref{sec:entorno-computo} documenta esa verificación,
+extendida además al entorno de compilación del Módulo~2.
 
 \paragraph*{(iii) Sustitución frente a concatenación (Plan~B).} Si el reemplazo
 directo degrada el rendimiento, la variante es concatenar
