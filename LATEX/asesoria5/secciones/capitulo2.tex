@@ -1,53 +1,110 @@
 \chapter{MARCO TEÓRICO}
 \label{cap:teorico}
 
-El descubrimiento de clases novedosas en nubes de puntos de patrimonio
-arquitectónico es un tema interdisciplinario que abarca diversas áreas. Este
-marco teórico se organiza en tres secciones: conceptos de ingeniería civil
-aplicados a la documentación del patrimonio, computación y algoritmos empleados
-para el procesamiento de nubes de puntos y métricas de evaluación del modelo.
+Este capítulo define los conceptos que emplea el trabajo, en cinco secciones: los
+de ingeniería civil sobre el objeto de estudio (Sección~\ref{sec:civil}), los de
+computación (Sección~\ref{sec:computacion}), los algoritmos
+(Sección~\ref{sec:algoritmos}), las métricas de evaluación
+(Sección~\ref{sec:metricas}) y el diseño de la tesis, que los integra
+(Sección~\ref{sec:diseno-teorico}).
 
 % =====================================================================
 \section{Ingeniería Civil y Conservación del Patrimonio}
+\label{sec:civil}
 
 La ingeniería civil aporta el objeto de estudio y los criterios de
-documentación. A continuación se presentan los conceptos de esta disciplina que
-son relevantes para este trabajo.
+documentación.
 
 \subsection{Nube de Puntos}
+\label{sec:nube}
 
 Una nube de puntos es un conjunto $P=\{(x_i,f_i)\}_{i=1}^{N}$ donde
 $x_i\in\mathbb{R}^3$ es la posición medida de un punto de la superficie y $f_i$
-los atributos que registra el sensor, en este caso color y normal. No tiene
-conectividad ni orden: es una lista de mediciones, no una malla.
+sus atributos: el color, que registra el sensor, y la normal, que se estima a
+partir de los vecinos (Sección~\ref{sec:normales}). No tiene conectividad ni
+orden: es una lista de mediciones, no una malla.
 
 \subsection{Levantamiento Láser Terrestre (TLS)}
+\label{sec:tls}
 
 El levantamiento láser terrestre es el registro de una edificación mediante un
-escáner estacionado en posiciones fijas. Es el formato en que la Facultad de
-Ingeniería Civil entrega el levantamiento de la Catedral de Lima y la fuente de
-datos de este trabajo.
+escáner estacionado en posiciones fijas. Es la técnica con la que se levantó la
+Catedral de Lima y, por tanto, la fuente de datos de este trabajo.
+
+\subsection{Formato LAS}
+\label{sec:las}
+
+El LAS es el formato binario estándar de la ASPRS para intercambiar nubes de
+puntos láser. Un archivo contiene una cabecera, con el número de puntos y la
+escala y el desplazamiento que convierten en metros las coordenadas almacenadas
+como enteros, y un registro por punto con sus coordenadas $(x,y,z)$ y atributos
+como la intensidad del retorno, el número de retorno y, según el formato de
+registro, el color RGB. Es el formato en que se recibe el levantamiento en bruto.
+La normal no forma parte del formato.
+
+\subsection{Filtrado Estadístico de Valores Atípicos (SOR)}
+\label{sec:sor}
+
+Un levantamiento en bruto contiene puntos que no pertenecen a ninguna
+superficie: reflejos en vidrios, personas u objetos que cruzaron durante el
+escaneo y mediciones aisladas en el límite del alcance del sensor. Se reconocen
+porque quedan lejos de sus vecinos, y el filtrado estadístico de valores
+atípicos (SOR, \emph{Statistical Outlier Removal}) los elimina con ese criterio.
+Para cada punto se calcula la distancia media a sus $q$ vecinos más cercanos,
+\begin{equation}
+\bar d_i=\frac{1}{q}\sum_{j\in\mathcal{N}_q(i)}\lVert x_i-x_j\rVert ,
+\label{eq:sor-dist}
+\end{equation}
+y el punto se conserva solo si
+\begin{equation}
+\bar d_i\le\mu+\lambda\,\sigma ,
+\label{eq:sor}
+\end{equation}
+donde $\mathcal{N}_q(i)$ son los $q$ vecinos del punto $i$, $\mu$ y $\sigma$ la
+media y la desviación estándar de $\bar d_i$ sobre toda la sección, y $\lambda$
+el número de desviaciones que se toleran. Un $\lambda$ menor limpia más, pero
+puede borrar detalle fino; un $q$ mayor hace la estimación más estable.
 
 \subsection{Voxelización}
+\label{sec:voxel}
 
 La voxelización divide el espacio en cubos de lado fijo y sustituye por un único
 representante todos los puntos que caen en un mismo cubo. Reduce el número de
 puntos y homogeniza la densidad. El lado del cubo se denomina tamaño de vóxel.
 
+\subsection{Estimación de Normales}
+\label{sec:normales}
+
+La normal de un punto es el vector perpendicular a la superficie en ese punto.
+El escáner no la mide, de modo que se estima a partir de los mismos $q$ vecinos:
+con ellos se forma la matriz de covarianza local
+\begin{equation}
+C_i=\frac{1}{q}\sum_{j\in\mathcal{N}_q(i)}\left(x_j-\bar{x}_i\right)\left(x_j-\bar{x}_i\right)^{\top},
+\label{eq:normal}
+\end{equation}
+donde $\bar{x}_i$ es el centroide de esos vecinos, y la normal es el autovector
+de $C_i$ asociado a su menor autovalor: la dirección en la que los vecinos menos
+se dispersan, que sobre una superficie es la perpendicular.
+
 \subsection{Sección Espacial}
+\label{sec:seccion}
 
 Una sección es una partición espacial disjunta del levantamiento: nave, coro,
-ábside, torres y fachada. Es la unidad indivisible de trabajo del proyecto, ya
-que ninguna etapa requiere la nube completa en memoria y ninguna sección depende
-de otra.
+ábside, torres y fachada. Es la unidad indivisible de trabajo, ya que ninguna
+etapa requiere la nube completa en memoria y ninguna sección depende de otra.
+Tras el preprocesamiento, la sección $j$ se denota $S_j$: una nube limpia y
+voxelizada en la que cada punto lleva 9 canales, la posición $(x,y,z)$, el color
+RGB y la normal.
 
 \subsection{Segmentación Semántica}
+\label{sec:segsem}
 
 La segmentación semántica asigna una etiqueta de clase a cada punto de $P$. Se
 distingue de la segmentación de instancias, que además separa objetos distintos
 de una misma clase y que queda fuera del alcance de este trabajo.
 
 \subsection{Clase Conocida y Clase Novedosa}
+\label{sec:clases}
 
 $\mathcal{C}_k$ es el subconjunto de clases con puntos etiquetados durante el
 entrenamiento y $\mathcal{C}_n$ el de clases presentes en la nube pero sin
@@ -57,45 +114,62 @@ recoge los elementos singulares de cada edificio, que no figuran en ningún
 catálogo previo.
 
 % =====================================================================
-\section{Computación y Algoritmos}
+\section{Computación}
+\label{sec:computacion}
 
-La computación y los algoritmos son las herramientas para procesar y analizar
-las nubes de puntos. Aquí se presentan los conceptos y técnicas que intervienen
-en el modelo propuesto.
-
-\subsection{Descubrimiento de Clases Novedosas (NCD)}
-
-El NCD consiste en producir una asignación $\hat{y}:P\rightarrow\mathcal{C}$
-correcta sobre $\mathcal{C}_k$ y consistente sobre $\mathcal{C}_n$, entendiendo
-por consistente que los puntos de una misma clase novedosa reciban la misma
-etiqueta, aunque esa etiqueta no tenga nombre. Es la capacidad de detectar
-formas nuevas sin haberlas visto etiquetadas.
+Esta sección reúne las representaciones y estructuras de datos con que se
+procesa la nube de puntos.
 
 \subsection{Descriptor de Punto}
+\label{sec:descriptor}
+\label{sec:concat}
 
 Un descriptor es el vector numérico asociado a un punto o a una región que
 resume su contenido. HyperNCD~\cite{zhang2026hyperncd} describe cada punto
-mediante la concatenación de dos componentes:
+concatenando dos componentes:
 \begin{equation}
 F_i=\left[f_{\mathrm{sem}}(x^i);\,f_{\mathrm{geo}}(x^i)\right].
 \label{eq:hyperncd3}
 \end{equation}
+Este trabajo sustituye el segundo componente por el descriptor
+auto-supervisado:
+\begin{equation}
+F_i=\left[f_{\mathrm{sem}}(x^i);\,f_{\mathrm{ssl}}(x^i)\right].
+\label{eq:hibrido}
+\end{equation}
+Donde:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item $F_i$: descriptor compuesto del punto $i$.
+\item $f_{\mathrm{sem}}(x^i)$: descriptor semántico, 96 dimensiones.
+\item $f_{\mathrm{geo}}(x^i)$: descriptor geométrico analítico, 6 dimensiones.
+\item $f_{\mathrm{ssl}}(x^i)$: descriptor auto-supervisado, 1088 dimensiones.
+\item $[\;;\;]$: concatenación, es decir, colocar un vector a continuación del
+otro sin mezclarlos.
+\end{itemize}
+La línea base describe así cada punto con $96+6=102$ números, y el modelo
+propuesto, con $96+1088=1184$.
 
 \subsubsection{Descriptor Semántico}
+\label{sec:fsem}
 
 Salida por punto de la red troncal supervisada de HyperNCD, una
 MinkowskiUNet-34C de 96 canales. Codifica a qué se parece un punto en términos
-de las clases que la red vio etiquetadas. Se denota $f_{\mathrm{sem}}$.
+de las clases que la red vio etiquetadas: no son medidas físicas sino
+coordenadas aprendidas, próximas entre puntos de una misma clase. Como la red se
+entrena, su salida cambia en cada época y debe recalcularse. Se denota
+$f_{\mathrm{sem}}$.
 
 \subsubsection{Descriptor Geométrico Analítico}
+\label{sec:fgeo}
 
 Vector calculado con una fórmula cerrada, sin aprendizaje, a partir de los
-autovalores de la matriz de covarianza de un vecindario local de $k=15$ vecinos:
+autovalores de la matriz de covarianza de un vecindario de 15 puntos:
 linealidad, planaridad y dispersión, concatenados en la implementación con el
 centroide de la región, lo que da una dimensión total de 6. Se denota
 $f_{\mathrm{geo}}$ y es el componente que este trabajo sustituye.
 
 \subsubsection{Descriptor Auto-supervisado}
+\label{sec:fssl}
 
 Salida del codificador PTv3 preentrenado de Sonata~\cite{wu2025sonata}, usado
 con pesos congelados. Su dimensión es 1088, resultado de concatenar las anchuras
@@ -104,26 +178,31 @@ submuestreo. Se denota $f_{\mathrm{ssl}}$ y codifica estructura aprendida sobre
 140 mil escenas, sin haber visto las clases de este proyecto.
 
 \subsection{Aprendizaje Auto-supervisado}
+\label{sec:ssl}
 
 Régimen de entrenamiento en el que la señal de supervisión se construye a partir
 de los propios datos, por ejemplo vistas distintas de una misma escena que deben
 producir representaciones parecidas, y no de etiquetas humanas.
 
 \subsection{Codificador Congelado}
+\label{sec:congelado}
 
 Red cuyos pesos no se actualizan y que se usa exclusivamente en inferencia. Su
 costo se paga una sola vez y no en cada época, lo que permite calcular su salida
-por adelantado y almacenarla en disco.
+por adelantado y almacenarla en disco. El codificador de Sonata tiene
+$108{,}46$~M de parámetros, es decir, de pesos aprendidos, y necesita unos
+$4{,}2$~GB de memoria de vídeo (GPU) por sección (Anexo~D).
 
 \subsection{Atajo Geométrico}
+\label{sec:atajo}
 
 Modo de falla del preentrenamiento auto-supervisado en tres dimensiones,
 diagnosticado por Sonata: la representación colapsa sobre pistas geométricas
 fácilmente accesibles, como la normal, la altura o la curvatura local, en lugar
-de aprender semántica. Es la razón por la que $f_{\mathrm{geo}}$ resulta
-cuestionable como base de un razonamiento semántico.
+de aprender semántica.
 
 \subsection{Serialización}
+\label{sec:serializacion}
 
 Ordenamiento de los puntos mediante una curva de llenado de espacio, de tipo Z o
 Hilbert, de modo que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad
@@ -131,33 +210,92 @@ dentro de una secuencia unidimensional. Es el mecanismo que permite a PTv3
 aplicar atención con costo lineal.
 
 \subsection{Rejilla Dispersa}
+\label{sec:rejilla}
 
 Estructura de datos de MinkowskiEngine en la que los puntos se indexan por
 coordenada entera de vóxel y solo se almacenan los vóxeles ocupados. Es la
-estructura sobre la que opera $f_{\mathrm{sem}}$.
+estructura sobre la que opera la red que produce $f_{\mathrm{sem}}$.
 
 \subsection{Propagación Inversa del Submuestreo}
+\label{sec:upcast}
 
 También llamada \emph{up-cast}, devuelve las características del codificador a
 la resolución de entrada reutilizando los índices de agrupamiento que el propio
 submuestreo registró. Es necesaria porque el codificador entrega su salida
 submuestreada varias veces.
 
-\subsection{Prototipo}
+\subsection{Caja de Sección y Corte}
+\label{sec:caja}
 
-Vector $P_k\in\mathbb{R}^{C}$ que actúa como representante de un grupo de puntos
-o regiones semejantes. El número de prototipos $K$ se fija igual al número de
-clases del conjunto. La pertenencia de cada punto se expresa mediante una matriz
-de asignación suave $S_p$, cuyo elemento $s_{i,k}$ indica con qué peso el punto
-$i$ pertenece al prototipo $k$.
+La caja de sección (\emph{section box}) es un paralelepípedo que se ajusta sobre
+la nube para mostrar solo los puntos que quedan dentro; el corte es un plano que
+oculta todo lo que queda a un lado. Ambos permiten inspeccionar el interior de
+un edificio sin que el resto lo tape.
+
+\subsection{Reconstrucción de Superficie de Poisson}
+\label{sec:poisson}
+
+Método que convierte una nube de puntos con normales en una malla cerrada:
+busca la superficie cuya orientación mejor coincide con las normales de los
+puntos. La malla resultante puede exportarse como sólido en formatos de
+modelado 3D como OBJ, PLY o STL.
+
+% =====================================================================
+\section{Algoritmos}
+\label{sec:algoritmos}
+
+Esta sección reúne los procedimientos con que se descubren las clases
+novedosas y las arquitecturas de los dos métodos que el trabajo combina.
+
+\subsection{Descubrimiento de Clases Novedosas (NCD)}
+\label{sec:ncd}
+
+El NCD consiste en producir una asignación $\hat{y}:P\rightarrow\mathcal{C}$
+correcta sobre $\mathcal{C}_k$ y consistente sobre $\mathcal{C}_n$, entendiendo
+por consistente que los puntos de una misma clase novedosa reciban la misma
+etiqueta, aunque esa etiqueta no tenga nombre. La etiqueta que recibe el punto
+$i$ se denota $\hat{y}_i$.
 
 \subsection{Región o Superpunto}
+\label{sec:region}
 
 Agrupación de puntos vecinos y semejantes que el método trata como una sola
-unidad. El razonamiento de HyperNCD opera sobre regiones y no sobre puntos, lo
-que reduce el número de nodos en varios órdenes de magnitud.
+unidad: los descriptores $F_i$ de sus puntos se agregan en uno solo. Razonar
+sobre regiones y no sobre puntos reduce el número de nodos en varios órdenes de
+magnitud.
+
+\subsection{Prototipo}
+\label{sec:prototipo}
+\label{sec:formproto}
+
+Vector $P_k$ que representa a un grupo de puntos o regiones semejantes. Hay $K$
+prototipos, tantos como clases. Una cabeza convolucional asigna a cada punto una
+puntuación $z_{i,k}$ por prototipo y una función \emph{softmax} la convierte en
+pesos de pertenencia:
+\begin{equation}
+s_{i,k}=\frac{\exp\left(z_{i,k}\right)}{\sum_{j=1}^{K}\exp\left(z_{i,j}\right)},
+\qquad \sum_{k=1}^{K}s_{i,k}=1 .
+\label{eq:softmax}
+\end{equation}
+Donde:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item $z_{i,k}$: puntuación del punto $i$ para el prototipo $k$; puede ser
+cualquier número real.
+\item $s_{i,k}$: peso, entre 0 y 1, con que el punto $i$ pertenece al prototipo
+$k$. Los pesos de un punto suman 1, de modo que se leen como un reparto.
+\item $K$: número de prototipos.
+\end{itemize}
+La matriz $S_p$ de todos los $s_{i,k}$ es la \emph{asignación suave}: un punto
+puede pertenecer en parte a varios prototipos, lo que ocurre en las transiciones
+entre elementos arquitectónicos. Cada prototipo es el promedio de los
+descriptores, ponderado por esa pertenencia:
+\begin{equation}
+P_k=\frac{\sum_{i}s_{i,k}\,F_i}{\sum_{i}s_{i,k}} .
+\label{eq:prototipo}
+\end{equation}
 
 \subsection{Hipergrafo}
+\label{sec:hipergrafo}
 
 Estructura $\mathcal{H}=(\mathcal{V},\mathcal{E})$ en la que una arista puede
 conectar más de dos nodos a la vez. Frente a un grafo ordinario, restringido a
@@ -165,34 +303,140 @@ relaciones binarias, permite expresar que varias clases conocidas concurren
 simultáneamente en la explicación de una novedosa.
 
 \subsubsection{Hiperarista}
+\label{sec:hiperarista}
 
 Elemento $e_i\in\mathcal{E}$ formado por un prototipo $P_i$ y sus $M$ prototipos
-más afines. El valor $M=8$ es el reportado como óptimo por los autores de
-HyperNCD.
+más afines según la afinidad $S_b$. Los autores de HyperNCD reportan $M=8$ como
+valor óptimo.
 
 \subsubsection{Afinidad entre Prototipos}
+\label{sec:afinidad}
+\label{sec:afinhiper}
 
-Medida de semejanza entre dos prototipos, combinación convexa de una componente
-geométrica $S_g$ y una semántica $S_s$:
+Medida de semejanza entre dos prototipos que combina un criterio semántico y uno
+geométrico. El semántico es la similitud por coseno,
 \begin{equation}
-S_b=\alpha\,S_g+(1-\alpha)\,S_s,\qquad \alpha\in[0,1].
+S_s^{(ij)}=\frac{\left\langle P_i,\;P_j\right\rangle}{\lVert P_i\rVert\;\lVert P_j\rVert},
+\label{eq:coseno}
+\end{equation}
+que vale 1 cuando ambos vectores apuntan en la misma dirección. El geométrico es
+un núcleo gaussiano,
+\begin{equation}
+S_g^{(ij)}=\exp\left(-\frac{\lVert f^{(i)}-f^{(j)}\rVert^{2}}{\tau}\right),
+\label{eq:gauss}
+\end{equation}
+que vale 1 cuando los descriptores coinciden y cae hacia 0 al alejarse. Donde:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item $\lVert f^{(i)}-f^{(j)}\rVert^{2}$: distancia al cuadrado entre los
+descriptores de las regiones $i$ y $j$; en la línea base es $f_{\mathrm{geo}}$
+y en el modelo propuesto, $f_{\mathrm{ssl}}$.
+\item $\tau$: temperatura, fijada en 0{,}1. Un valor pequeño hace exigente al
+criterio, porque solo considera afines a los prototipos muy próximos; uno grande
+lo hace permisivo.
+\end{itemize}
+Ambos se combinan en
+\begin{equation}
+S_b=\alpha\,S_g+(1-\alpha)\,S_s,\qquad \alpha\in[0,1],
 \label{eq:afinidad}
 \end{equation}
-$S_g$ es un núcleo gaussiano de temperatura $\tau=0{,}1$ sobre el descriptor
-geométrico y $S_s$ una similitud por coseno sobre el semántico.
+donde $\alpha$ reparte el peso: con $\alpha=1$ la afinidad depende solo de la
+forma y con $\alpha=0$, solo del significado.
 
 \subsection{Pseudo-etiqueta}
+\label{sec:pseudo}
+\label{sec:pseudoetq}
 
 Etiqueta que el propio modelo asigna a un punto sin supervisión humana y que
-después usa como si fuera verdadera para continuar entrenando. Un suavizado de
-parámetro $\epsilon=0{,}15$ reduce el sobreajuste durante su generación.
+después usa como si fuera verdadera para continuar entrenando. Se suaviza con
+$\epsilon=0{,}15$: en lugar de certeza total, la clase ganadora recibe
+$1-\epsilon$ y $\epsilon$ se reparte entre las demás, lo que reduce el
+sobreajuste a los propios errores.
 
 \subsection{Normalización de Sinkhorn-Knopp}
+\label{sec:sinkhorn}
 
 Procedimiento de normalización iterativa de una matriz que fuerza a que sus
-filas y columnas sumen valores prefijados. HyperNCD lo emplea para repartir las
-pseudo-etiquetas de forma equilibrada entre clases y evitar que todos los puntos
-caigan en una sola.
+filas y columnas sumen valores prefijados. Aplicado a la asignación de
+pseudo-etiquetas, las reparte de forma equilibrada entre clases y evita el
+colapso, es decir, que casi todos los puntos caigan en la clase más frecuente.
+
+\subsection{Arquitectura de HyperNCD}
+\label{sec:arq-hyperncd-paper}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{imagenes/arq_hyperncd_paper.png}
+\caption{Arquitectura de HyperNCD. Fuente: Zhang et al.~\cite{zhang2026hyperncd},
+Fig.~2.}
+\label{fig:arq-hyperncd-paper}
+\end{figure}
+
+HyperNCD~\cite{zhang2026hyperncd} resuelve el NCD en cuatro etapas, que la
+Figura~\ref{fig:arq-hyperncd-paper} presenta de izquierda a derecha:
+
+\begin{enumerate}\setlength{\itemsep}{2pt}
+\item \textbf{Codificador de características} (\emph{Feature Encoder}). La nube,
+con puntos de clases conocidas y novedosas mezclados, entra a una red troncal que
+asigna a cada punto un vector de características (\emph{point-level feature}).
+En la implementación es la MinkowskiUNet-34C que produce $f_{\mathrm{sem}}$.
+\item \textbf{Agrupamiento en prototipos} (\emph{Prototype cluster}). Una
+convolución unidimensional seguida de \emph{softmax} reparte los puntos entre $K$
+prototipos (Sección~\ref{sec:prototipo}); cada prototipo pasa a ser un nodo del
+hipergrafo (\emph{hypernode}).
+\item \textbf{Generación de hiperaristas} (\emph{Hyperedge generation}). Cada
+prototipo se une a sus $M$ más afines según la afinidad $S_b$ de la
+Ec.~\eqref{eq:afinidad}, que combina parecido geométrico y semántico. En cada
+lote se forma un grupo de hiperaristas.
+\item \textbf{Hipergrafo de prototipos y pseudo-etiquetas}
+(\emph{Prototype-based hypergraph}). Las hiperaristas se reajustan a medida que
+llegan lotes nuevos. Un prototipo cuya afinidad con uno conocido supera un umbral
+recibe la etiqueta de esa clase; si no, se considera novedoso y recibe una
+etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
+\end{enumerate}
+
+La figura corresponde a la formulación del artículo. La implementación publicada
+que este trabajo ejecuta realiza las tres primeras etapas, pero no el reajuste
+dinámico de la cuarta, y asigna las pseudo-etiquetas con Sinkhorn-Knopp en lugar
+del umbral (Anexo~D).
+
+\subsection{Arquitectura de Sonata}
+\label{sec:arq-sonata-paper}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\linewidth]{imagenes/arq_sonata_paper.png}
+\caption{Marco de auto-destilación de Sonata. Fuente: Wu et
+al.~\cite{wu2025sonata}, Fig.~5.}
+\label{fig:arq-sonata-paper}
+\end{figure}
+
+Sonata~\cite{wu2025sonata} no es un clasificador, sino un método para preentrenar
+un codificador sin etiquetas. La Figura~\ref{fig:arq-sonata-paper} muestra cómo se
+entrenó; este trabajo usa únicamente el codificador resultante, congelado. El
+entrenamiento es una auto-destilación entre dos copias de la misma red:
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Tres tipos de vista.} De cada escena se generan vistas globales,
+amplias y completas (derecha); vistas locales, recortes pequeños (abajo a la
+izquierda); y vistas enmascaradas, en las que se ocultan parches de una rejilla
+(arriba a la izquierda).
+\item \textbf{Estudiante y maestro} (\emph{student}, \emph{teacher}). El
+estudiante procesa las vistas locales y enmascaradas; el maestro, las globales.
+El maestro no se entrena directamente: sus pesos son una media móvil
+exponencial (EMA) de los del estudiante, lo que lo hace más estable.
+\item \textbf{Destilación.} Cada punto de una vista local o enmascarada se
+empareja con el punto de la vista global que ocupa la misma posición, y el
+estudiante aprende a reproducir lo que el maestro dice de ese punto. La pérdida
+$-p_2\log p_1$ es una entropía cruzada que toma la distribución del maestro
+($p_2$) como objetivo para la del estudiante ($p_1$). Como el estudiante ve menos
+contexto que el maestro, para acertar tiene que aprender qué es el punto y no
+solo su geometría local.
+\item \textbf{Codificador sin decodificador y \emph{up-cast}.} La red es un PTv3
+al que se le quitó el decodificador, porque este favorecía el atajo geométrico
+(Sección~\ref{sec:atajo}); para conservar información de varias escalas, las
+características se devuelven a la resolución de las etapas anteriores mediante
+el \emph{up-cast} (Sección~\ref{sec:upcast}).
+\end{itemize}
 
 % =====================================================================
 \section{Métricas de Evaluación de Modelos}
@@ -201,6 +445,7 @@ caigan en una sola.
 Para evaluar la efectividad del modelo se utilizan las métricas siguientes.
 
 \subsection{Intersection over Union (IoU)}
+\label{sec:iou}
 
 Para una clase $c$, la intersección sobre unión se define como:
 \begin{equation}
@@ -211,6 +456,7 @@ donde $TP_c$, $FP_c$ y $FN_c$ son los puntos verdaderos positivos, falsos
 positivos y falsos negativos de esa clase.
 
 \subsection{IoU Media (mIoU)}
+\label{sec:miou}
 
 La métrica agregada es el promedio de la anterior sobre un conjunto de clases:
 \begin{equation}
@@ -223,6 +469,7 @@ Se reporta por separado como mIoU \emph{known}, mIoU \emph{novel} y mIoU
 \emph{all}.
 
 \subsection{Análisis de Dominancia}
+\label{sec:dominancia}
 
 La Ec.~\eqref{eq:miou} es una media aritmética no ponderada, de modo que
 \begin{equation}
@@ -238,6 +485,7 @@ c^{*}=\arg\max_{c\in\mathcal{S}}\bigl|\mathrm{IoU}_c-\mathrm{mIoU}(\mathcal{S})\
 \end{equation}
 
 \subsection{Emparejamiento Húngaro}
+\label{sec:hungaro}
 
 Como las clases de $\mathcal{C}_n$ se descubren sin etiqueta, la correspondencia
 entre agrupaciones predichas y clases reales se resuelve por asignación óptima:
@@ -248,6 +496,7 @@ entre agrupaciones predichas y clases reales se resuelve por asignación óptima
 \end{equation}
 
 \subsection{Índice de Rand Ajustado (ARI)}
+\label{sec:ari}
 
 Mide la coincidencia entre la agrupación descubierta y la real con independencia
 del emparejamiento:
@@ -263,6 +512,7 @@ donde $n_{ij}$ es el número de puntos comunes entre la agrupación $i$ y la cla
 $j$, y $a_i$ y $b_j$ sus marginales.
 
 \subsection{Información Mutua Normalizada (NMI)}
+\label{sec:nmi}
 
 Complementa al ARI midiendo la información que una agrupación aporta sobre la
 otra:
@@ -273,6 +523,7 @@ otra:
 donde $I$ es la información mutua y $H$ la entropía.
 
 \subsection{Linear Probing}
+\label{sec:probing}
 
 Protocolo de evaluación de un descriptor congelado: se entrena únicamente un
 clasificador lineal $W$ sobre él,
@@ -284,6 +535,7 @@ de modo que el desempeño resultante queda atribuido a la representación y no a
 clasificador.
 
 \subsection{Ganancia Absoluta}
+\label{sec:ganancia}
 
 Diferencia de mIoU sobre las clases novedosas entre el modelo híbrido y la línea
 base:
@@ -294,6 +546,7 @@ base:
 \end{equation}
 
 \subsection{Brecha Cerrada}
+\label{sec:brecha}
 
 La ganancia absoluta no es interpretable por sí sola, porque el techo alcanzable
 depende de la sección. Esta métrica, propuesta en el presente trabajo, la
@@ -321,296 +574,115 @@ representación o al razonamiento, y no al sistema tratado como caja negra.
 \section{Diseño de la Tesis}
 \label{sec:diseno-teorico}
 
-\begin{figure}[p]
+La Figura~\ref{fig:diseno} organiza el sistema en cinco módulos, de izquierda a
+derecha; sobre cada flecha se indica lo que pasa de un módulo al siguiente. Cada
+paso remite al concepto que lo define en las secciones anteriores.
+
+\begin{landscape}
+\begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{imagenes/diagrama_diseno.pdf}
-\caption{Diseño del modelo híbrido propuesto. Arriba, el recorrido
-completo: la nube de puntos del levantamiento (Módulo~1) se entrega a dos
-descripciones independientes que se calculan en paralelo, la semántica
-entrenada con clases etiquetadas (Módulo~2) y la auto-supervisada aprendida sin
-etiquetas y usada con pesos congelados (Módulo~3); ambas confluyen en el
-Módulo~4 y el Módulo~5 entrega la etiqueta por punto. Los Módulos~2 y~4
-provienen de HyperNCD y el Módulo~3 del codificador preentrenado de Sonata. Abajo, el detalle del
-Módulo~4 con las tres operaciones que lo componen, su expresión y su lectura:
-la concatenación de la Ec.~\eqref{eq:hibrido}, la asignación suave de la
-Ec.~\eqref{eq:softmax} y la afinidad entre prototipos de la
-Ec.~\eqref{eq:afinidad}. Elaboración propia.}
+{\hypersetup{linkcolor=blue!55!black}\fuentediagrama
+\adjustbox{max width=\linewidth, max totalheight=12.9cm}{\input{imagenes/diagrama_diseno_tikz}}}
+\caption{Diseño del modelo híbrido propuesto. Los Módulos~2 y~4 provienen de
+HyperNCD y el Módulo~3 de Sonata; el Módulo~4 contiene sus cuatro operaciones.
+Cada término y cada fórmula enlazan con la sección o ecuación donde se definen.
+Elaboración propia.}
 \label{fig:diseno}
 \end{figure}
+\end{landscape}
 
-La Figura~\ref{fig:diseno} resume el sistema en cinco módulos y se lee de
-izquierda a derecha. El Módulo~1 prepara los datos; los Módulos~2 y~3 describen
-cada punto de dos maneras distintas e independientes; el Módulo~4 une ambas
-descripciones y razona sobre ellas; el Módulo~5 entrega el resultado. Las
-flechas indican qué objeto viaja entre módulos: la nube preparada, los
-descriptores $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$, y las predicciones. Esta
-sección recorre el diagrama módulo por módulo y explica cada fórmula y cada
-parámetro que aparece en él.
+\subsection{Módulo 1: Preprocesamiento}
+\label{sec:modulo1}
 
-\subsection{Módulo 1: Datos de Entrada}
+Recibe el levantamiento en bruto en formato LAS, de hasta 1\,TB, y entrega las
+secciones $S_j$ (Sección~\ref{sec:seccion}).
+\begin{enumerate}\setlength{\itemsep}{1pt}
+\item Carga del archivo LAS: coordenadas $(x,y,z)$ y color
+(Sección~\ref{sec:las}).
+\item Corte en cinco secciones $S_j$ (Sección~\ref{sec:seccion}).
+\item Limpieza de ruido por SOR, con $q=20$ y $\lambda=2$
+(Ec.~\eqref{eq:sor}).
+\item Voxelización a 5\,cm (Sección~\ref{sec:voxel}).
+\item Normales por vecindad (Ec.~\eqref{eq:normal}).
+\end{enumerate}
+La limpieza precede a la voxelización para que los puntos espurios no se
+promedien con los válidos.
 
-El punto de partida es el levantamiento láser terrestre de la Catedral de Lima,
-una nube que puede superar el terabyte y en la que cada punto guarda sus
-coordenadas $(x,y,z)$ junto con los atributos que registró el sensor. Sobre esa
-nube se aplican dos operaciones antes de entregarla a las dos ramas:
+\subsection{Módulo 2: Semántica}
+\label{sec:modulo2}
 
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{Voxelización a 5\,cm.} El espacio se divide en cubos de 5\,cm de
-arista y de cada cubo ocupado se conserva un único punto representante. Su
-efecto es doble: reduce el número de puntos y homogeniza la densidad, que en un
-levantamiento TLS es muy desigual porque las zonas cercanas al escáner reciben
-muchas más mediciones que las lejanas. Un vóxel más pequeño conserva más detalle
-pero aumenta el número de puntos y, con él, la memoria y el tiempo de cómputo.
-\item \textbf{Normalización.} Las coordenadas y los atributos se llevan a rangos
-comparables, de modo que ninguna magnitud domine el cálculo por el simple hecho
-de estar expresada en una escala mayor.
-\end{itemize}
+Recibe $S_j$ voxelizada y entrega $f_{\mathrm{sem}}(x^i)$, 96 números por punto
+(Sección~\ref{sec:fsem}).
+\begin{enumerate}\setlength{\itemsep}{1pt}
+\item Indexa la sección en una rejilla dispersa
+(Sección~\ref{sec:rejilla}).
+\item Aplica la red MinkowskiUNet-34C (Sección~\ref{sec:fsem}).
+\item Entrena con las clases conocidas (Sección~\ref{sec:clases}).
+\item Se reentrena en cada época (Sección~\ref{sec:fsem}).
+\end{enumerate}
 
-La salida del módulo es la nube preparada que ambas ramas reciben como entrada
-común.
+\subsection{Módulo 3: \emph{Encoder}}
+\label{sec:modulo3}
 
-\subsection{Módulo 2: Rama Semántica}
+Recibe $S_j$ con sus 9 canales y entrega $f_{\mathrm{ssl}}(x^i)$, 1088 números
+por punto (Sección~\ref{sec:fssl}).
+\begin{enumerate}\setlength{\itemsep}{1pt}
+\item Ordena los puntos por serialización
+(Sección~\ref{sec:serializacion}).
+\item Aplica el PTv3 de Sonata, preentrenado de forma auto-supervisada
+(Secciones~\ref{sec:ssl} y~\ref{sec:arq-sonata-paper}).
+\item Prescinde del decodificador para evitar el atajo geométrico
+(Sección~\ref{sec:atajo}).
+\item Se usa congelado: una vez por sección, con la salida guardada en disco
+(Sección~\ref{sec:congelado}).
+\item Devuelve la salida a la resolución original mediante \emph{up-cast}
+(Sección~\ref{sec:upcast}).
+\item Su calidad se mide con \emph{linear probing}
+(Sección~\ref{sec:probing}).
+\end{enumerate}
 
-La rama semántica es una MinkowskiUNet-34C, una red convolucional que opera
-sobre la rejilla dispersa y que se entrena con las clases conocidas
-$\mathcal{C}_k$. Para cada punto $x^i$ entrega el descriptor
-$f_{\mathrm{sem}}(x^i)$, un vector de 96 números.
+\subsection{Módulo 4: Fusión}
+\label{sec:modulo4}
 
-Esos 96 números no son medidas físicas del edificio sino coordenadas aprendidas:
-la red las ajusta durante el entrenamiento de manera que dos puntos que
-pertenecen a la misma clase reciban vectores próximos entre sí y dos puntos de
-clases distintas reciban vectores alejados. Esa es la razón por la que el
-descriptor semántico se considera una descripción de \emph{a qué se parece} un
-punto. Al tratarse de una red entrenada, su salida cambia en cada época y debe
-recalcularse.
-
-\subsection{Módulo 3: Codificador Auto-supervisado Congelado}
-
-La segunda rama es el codificador PTv3 preentrenado por Sonata sobre unas 140
-mil escenas sin etiquetas humanas. Se usa \emph{congelado}: sus pesos no se
-modifican y la red se ejecuta solo en inferencia, igual que se usaría una regla
-ya calibrada. Para cada punto entrega $f_{\mathrm{ssl}}(x^i)$, un vector de 1088
-números, resultado de concatenar las anchuras $512+384+192$ de las tres últimas
-etapas durante la propagación inversa del submuestreo (\emph{up-cast}), que
-devuelve las características a la resolución de entrada.
-
-Que el codificador esté congelado tiene dos consecuencias directas. La primera
-es que su salida no depende del entrenamiento y basta calcularla una vez por
-sección. La segunda es que lo que aporta al modelo es exclusivamente la
-estructura aprendida durante el preentrenamiento, sin adaptarse a las clases de
-este proyecto, que nunca ha visto.
-
-\subsection{Módulo 4: Fusión Híbrida y Razonamiento}
-
-Es el módulo donde reside el aporte de la tesis y el único que se modifica. En
-él ocurren cuatro operaciones encadenadas: la concatenación de los dos
-descriptores, la formación de prototipos, la construcción del hipergrafo y la
-generación de pseudo-etiquetas.
-
-\subsubsection{Concatenación de los Descriptores}
-
-Cada punto pasa a describirse con un solo vector que reúne las dos
-descripciones:
-\begin{equation}
-F_i=\left[f_{\mathrm{sem}}(x^i);\,f_{\mathrm{ssl}}(x^i)\right].
-\label{eq:hibrido}
-\end{equation}
-Donde:
-\begin{itemize}\setlength{\itemsep}{1pt}
-\item $F_i$: descriptor compuesto del punto $i$, el vector que entra al
-razonamiento.
-\item $f_{\mathrm{sem}}(x^i)$: descriptor semántico del Módulo~2, 96
-dimensiones.
-\item $f_{\mathrm{ssl}}(x^i)$: descriptor auto-supervisado del Módulo~3, 1088
-dimensiones.
-\item $[\;;\;]$: concatenación, es decir, colocar un vector a continuación del
-otro.
-\end{itemize}
-
-La concatenación no promedia ni mezcla los dos vectores: los deja disponibles a
-la vez para el módulo siguiente. La Ec.~\eqref{eq:hibrido} sustituye a la
-Ec.~\eqref{eq:hyperncd3}, que es la que emplea HyperNCD en su formulación
-original. La diferencia entre ambas es el segundo componente y, con él, el
-tamaño del descriptor: la línea base describe cada punto con $96+6=102$ números,
-de los cuales solo 6 provienen de la forma local, mientras que el modelo
-propuesto lo describe con $96+1088=1184$. Esta sustitución es la única
-diferencia entre la línea base y el modelo propuesto; todo lo que viene después
-permanece intacto.
-
-\subsubsection{Formación de Prototipos}
-
-El razonamiento no se hace punto por punto, sino sobre $K$ representantes
-llamados prototipos, con $K$ igual al número de clases del conjunto. Una cabeza
-convolucional unidimensional asigna a cada punto una puntuación $z_{i,k}$ por
-prototipo, y una función \emph{softmax} convierte esas puntuaciones en pesos de
-pertenencia:
-\begin{equation}
-s_{i,k}=\frac{\exp\left(z_{i,k}\right)}{\sum_{j=1}^{K}\exp\left(z_{i,j}\right)},
-\qquad \sum_{k=1}^{K}s_{i,k}=1 .
-\label{eq:softmax}
-\end{equation}
-Donde:
-\begin{itemize}\setlength{\itemsep}{1pt}
-\item $z_{i,k}$: puntuación que la cabeza otorga al punto $i$ para el prototipo
-$k$; puede ser cualquier número real.
-\item $s_{i,k}$: peso con el que el punto $i$ pertenece al prototipo $k$. Es un
-valor entre 0 y 1 y el conjunto de pesos de un punto suma 1, de modo que se lee
-como un reparto de pertenencia.
-\item $K$: número de prototipos.
-\end{itemize}
-
-La matriz $S_p$ formada por todos los $s_{i,k}$ es la \emph{asignación suave}:
-suave porque un punto no se adjudica en bloque a un único prototipo, sino que
-puede pertenecer en parte a varios, lo que resulta necesario en las zonas de
-transición entre elementos arquitectónicos. Cada prototipo se obtiene entonces
-como el promedio de los descriptores de los puntos, ponderado por esa
-pertenencia:
-\begin{equation}
-P_k=\frac{\sum_{i}s_{i,k}\,F_i}{\sum_{i}s_{i,k}} .
-\label{eq:prototipo}
-\end{equation}
-El prototipo $P_k$ es, por tanto, el descriptor típico del grupo $k$. Como
-$P_k$ se calcula a partir de $F_i$, la sustitución de la
-Ec.~\eqref{eq:hibrido} se propaga a todo lo que sigue.
-
-\subsubsection{Afinidad entre Prototipos e Hiperaristas}
-
-Para relacionar los prototipos entre sí se mide su afinidad con dos criterios
-complementarios. El semántico compara la dirección de los descriptores mediante
-la similitud por coseno:
-\begin{equation}
-S_s^{(ij)}=\frac{\left\langle P_i,\;P_j\right\rangle}{\lVert P_i\rVert\;\lVert P_j\rVert},
-\label{eq:coseno}
-\end{equation}
-que vale 1 cuando ambos vectores apuntan en la misma dirección y disminuye a
-medida que se separan; compara el perfil de la descripción y no su magnitud. El
-criterio geométrico compara la distancia entre descriptores mediante un núcleo
-gaussiano:
-\begin{equation}
-S_g^{(ij)}=\exp\left(-\frac{\lVert f^{(i)}-f^{(j)}\rVert^{2}}{\tau}\right),
-\label{eq:gauss}
-\end{equation}
-que vale 1 cuando los dos descriptores coinciden y cae hacia 0 conforme se
-alejan. Donde:
-\begin{itemize}\setlength{\itemsep}{1pt}
-\item $\lVert f^{(i)}-f^{(j)}\rVert^{2}$: distancia al cuadrado entre los
-descriptores de las regiones $i$ y $j$. En la línea base ese descriptor es
-$f_{\mathrm{geo}}$, de 6 dimensiones; en el modelo propuesto es
-$f_{\mathrm{ssl}}$.
-\item $\tau$: temperatura, fijada en 0{,}1. Controla a qué velocidad decae la
-semejanza con la distancia: un valor pequeño hace al criterio exigente, porque
-solo considera afines a los prototipos muy próximos; un valor grande lo hace
-permisivo.
-\end{itemize}
-
-Ambos criterios se combinan en una única medida, ya presentada en la
-Ec.~\eqref{eq:afinidad}, $S_b=\alpha\,S_g+(1-\alpha)\,S_s$. El parámetro
-$\alpha\in[0,1]$ reparte el peso entre los dos criterios: con $\alpha=1$ la
-afinidad depende solo de la forma, con $\alpha=0$ solo de la semántica, y los
-valores intermedios los mezclan. Como los dos sumandos se multiplican por pesos
-que suman 1, $S_b$ permanece en el mismo rango que $S_g$ y $S_s$, lo que hace
-comparables los valores obtenidos con distintos $\alpha$.
-
-Con esa medida se construye el hipergrafo: cada prototipo se conecta con los
-$M=8$ prototipos de mayor $S_b$, y ese conjunto de nueve nodos forma una
-hiperarista. La diferencia con un grafo ordinario está en el número de nodos que
-una relación puede abarcar. Una arista corriente une exactamente dos nodos, de
-modo que para expresar que una clase novedosa se parece a la vez a varias clases
-conocidas haría falta descomponer esa relación en varias comparaciones por
-pares. Una hiperarista la expresa de una sola vez, y es esa concurrencia la que
-permite explicar un elemento no visto en términos de los que sí se vieron. Un
-valor de $M$ mayor produce hiperaristas más grandes y relaciones más difusas;
-uno menor, relaciones más estrictas pero con menos contexto.
-
-\subsubsection{Pseudo-etiquetas}
-
-El resultado del razonamiento se convierte en pseudo-etiquetas, es decir,
-etiquetas que el propio modelo asigna y que después usa como si fueran
-verdaderas para seguir entrenando. Dos mecanismos las regulan:
-
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{Normalización de Sinkhorn-Knopp.} Ajusta iterativamente la matriz
-de asignación hasta que sus filas y columnas sumen los valores prefijados. Su
-propósito es repartir las pseudo-etiquetas de forma equilibrada entre clases y
-evitar el colapso, es decir, que el modelo asigne casi todos los puntos a una
-sola clase por ser la más frecuente.
-\item \textbf{Suavizado de etiquetas $\epsilon=0{,}15$.} En lugar de afirmar que
-un punto pertenece con certeza total a la clase ganadora, se le asigna
-$1-\epsilon$ a esa clase y se reparte $\epsilon$ entre las demás. El modelo
-aprende así a no confiar por completo en una etiqueta que él mismo ha generado,
-lo que reduce el sobreajuste a sus propios errores.
-\end{itemize}
+Recibe $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ y entrega la etiqueta
+$\hat{y}_i$ de cada punto (Sección~\ref{sec:ncd}). Es el único módulo que este
+trabajo modifica; la figura muestra sus operaciones como cuatro recuadros.
+\begin{enumerate}\setlength{\itemsep}{1pt}
+\item Concatenación de los descriptores en $F_i$ (Ec.~\eqref{eq:hibrido}).
+\item Agrupamiento en regiones (Sección~\ref{sec:region}).
+\item Formación de prototipos (Ecs.~\eqref{eq:softmax}
+y~\eqref{eq:prototipo}).
+\item Construcción del hipergrafo por afinidad
+(Ec.~\eqref{eq:afinidad} y Sección~\ref{sec:hiperarista}).
+\item Asignación de pseudo-etiquetas equilibradas
+(Secciones~\ref{sec:pseudo} y~\ref{sec:sinkhorn}).
+\end{enumerate}
 
 \subsection{Módulo 5: Salida}
+\label{sec:modulo5}
 
-El sistema entrega una etiqueta semántica por punto, que puede corresponder a
-una clase conocida o a una novedosa, y las métricas de la
-Sección~\ref{sec:metricas}: el mIoU de la Ec.~\eqref{eq:miou} reportado por
-separado sobre las clases conocidas, las novedosas y el total. Como las clases
-novedosas se descubren sin nombre, antes de calcular su mIoU es necesario
-decidir qué agrupación descubierta corresponde a qué clase real, lo que se
-resuelve con el emparejamiento húngaro de la Ec.~\eqref{eq:hungaro}.
+Recibe $\hat{y}_i$, mide su calidad y la pone a disposición del ingeniero en una
+plataforma.
 
-\subsection{Resumen de los Parámetros del Diseño}
-\label{sec:parametros}
+\paragraph*{Evaluación}
+\begin{enumerate}\setlength{\itemsep}{1pt}
+\item Segmentación semántica por punto (Sección~\ref{sec:segsem}).
+\item Emparejamiento húngaro de los grupos nuevos
+(Sección~\ref{sec:hungaro}).
+\item IoU y mIoU sobre clases conocidas, novedosas y total
+(Secciones~\ref{sec:iou} y~\ref{sec:miou}).
+\item Clase dominante del mIoU (Sección~\ref{sec:dominancia}).
+\item ARI y NMI (Secciones~\ref{sec:ari} y~\ref{sec:nmi}).
+\item $\Delta$mIoU frente a la línea base (Sección~\ref{sec:ganancia}).
+\item Brecha cerrada $G$ (Sección~\ref{sec:brecha}).
+\item Atribución por etapas (Sección~\ref{sec:metricas-hibrido}).
+\end{enumerate}
 
-La Tabla~\ref{tab:parametros} reúne los parámetros que aparecen en el diagrama,
-con su valor y con el efecto que tiene modificarlos.
-
-\begin{table}[H]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption{Parámetros del diseño, su significado y el efecto de modificarlos.
-Elaboración propia.}
-\label{tab:parametros}
-\begin{tabular}{@{}p{1.9cm}p{4.2cm}p{1.8cm}p{4.5cm}@{}}
-\toprule
-\textbf{Símbolo} & \textbf{Qué representa} & \textbf{Valor} & \textbf{Efecto de modificarlo} \\
-\midrule
-Vóxel & Arista del cubo con el que se submuestrea la nube & 5\,cm & Menor: más detalle y más memoria; mayor: menos puntos y pérdida de elementos finos \\
-$f_{\mathrm{sem}}$ & Descriptor semántico por punto & 96 dim. & Fijado por la arquitectura de la red troncal \\
-$f_{\mathrm{ssl}}$ & Descriptor auto-supervisado por punto & 1088 dim. & Fijado por las tres últimas etapas del \emph{encoder} \\
-$K$ & Número de prototipos & Igual al de clases & Menor: clases distintas se mezclan; mayor: una misma clase se fragmenta \\
-$\alpha$ & Peso de la componente geométrica frente a la semántica en $S_b$ & $[0,1]$, se calibra & Hacia 1 decide la forma; hacia 0 decide la semántica \\
-$\tau$ & Temperatura del núcleo gaussiano & 0{,}1 & Menor: solo los prototipos muy próximos resultan afines; mayor: criterio permisivo \\
-$M$ & Vecinos que forman cada hiperarista & 8 & Mayor: relaciones más amplias y difusas; menor: más estrictas y con menos contexto \\
-$\epsilon$ & Suavizado de las pseudo-etiquetas & 0{,}15 & Mayor: menos confianza en la propia etiqueta; menor: riesgo de reforzar errores \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-% =====================================================================
-\section{Resultados del Análisis de los Componentes}
-\label{sec:analisis-resumen}
-
-El diseño anterior se apoya en el examen de la realización de ambos
-componentes: qué capas emplean, cuántos parámetros concentran, cuánta memoria
-exigen y hasta dónde admiten distribución. Ese examen se desarrolla en el
-Anexo~D y aquí se recogen únicamente sus tres resultados, que son los que el
-resto del trabajo utiliza.
-
-\paragraph*{Punto de inserción} La implementación de HyperNCD que efectivamente
-se ejecuta no es la descrita en el artículo: razona sobre regiones combinando
-las similitudes de las Ecs.~\eqref{eq:coseno} y~\eqref{eq:gauss} sin pesos
-entrenables, y su componente geométrica es el descriptor manual de seis
-dimensiones. La sustitución de la Ec.~\eqref{eq:hibrido} se aplica sobre ese
-descriptor, y la línea base es esa implementación y no la formulación publicada
-(Anexo~D, Sección~D.1).
-
-\paragraph*{Costo del codificador} El \emph{encoder} de Sonata concentra el
-$94{,}3$\,\% de sus $108{,}46$~M de parámetros en las dos últimas etapas, donde
-la resolución es menor. Su atención se calcula dentro de parches de tamaño fijo,
-de modo que el costo crece de forma lineal con el número de puntos, y la cota
-analítica de memoria para una sección es de $4{,}2$~GB, muy por debajo de los
-48~GB de la unidad asignada (Anexo~D, Sección~D.2). La inferencia del
-codificador no es, por tanto, el factor limitante del proyecto.
-
-\paragraph*{Régimen y paralelismo} Las dos ramas son asimétricas: una opera
-congelada, una vez por sección y sin sincronización entre unidades; la otra se
-entrena, paga su costo en cada época y acopla el lote en la asignación de
-pseudo-etiquetas. Esa asimetría es la que justifica ejecutar el codificador
-fuera del bucle de optimización y persistir su salida. El paralelismo
-resultante queda acotado por el número de secciones disponibles (Anexo~D,
-Secciones~D.3 y~D.4), y la delimitación de lo que es aporte propio y lo que se
-hereda de las arquitecturas empleadas se resume en la tabla de la Sección~D.5.
+\paragraph*{Plataforma}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setcounter{enumi}{8}
+\item Caja de sección y cortes (Sección~\ref{sec:caja}).
+\item Lista desplegable de elementos: columnas, vigas, techos y las clases
+novedosas.
+\item Al hacer clic en un elemento, sus puntos se resaltan en la vista.
+\item Exportación del elemento como sólido 3D (Sección~\ref{sec:poisson}).
+\end{enumerate}

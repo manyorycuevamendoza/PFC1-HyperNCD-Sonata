@@ -3,8 +3,8 @@
 
 \section*{Anexo A. Configuración de \emph{software}}
 
-Python 3.10, PyTorch, MinkowskiEngine, \texttt{spconv}, Pointcept, código oficial
-de HyperNCD y pesos públicos de Sonata. Seguimiento de experimentos con
+Python 3.10, \texttt{laspy}, Open3D, NumPy, PyTorch, MinkowskiEngine,
+\texttt{spconv}, Pointcept, código oficial de HyperNCD y pesos públicos de Sonata. Seguimiento de experimentos con
 Weights~\&~Biases.
 
 \section*{Anexo B. Nomenclatura}
@@ -18,21 +18,30 @@ Weights~\&~Biases.
 \midrule
 $P$ & Nube de puntos del levantamiento & Catedral de Lima, TLS \\
 $N$ & Número de puntos & $\sim$2$\times$10$^{7}$ tras voxelizar \\
+$S_j$ & Sección preprocesada: posición, color y normal & 9 canales por punto \\
+-- & Tamaño de vóxel & 5\,cm \\
+$q$ & Vecinos para SOR y normales & 20 \\
+$\lambda$ & Desviaciones toleradas en SOR & 2 \\
 $\mathcal{C}_k$ & Conjunto de clases conocidas (etiquetadas) & Por sección \\
 $\mathcal{C}_n$ & Conjunto de clases novedosas (sin etiqueta) & Hasta 6 por sección \\
 $f_{\mathrm{sem}}$ & Descriptor semántico (MinkowskiUNet-34C) & 96 dimensiones \\
 $f_{\mathrm{geo}}$ & Descriptor geométrico calculado a mano & 6 dimensiones \\
 $f_{\mathrm{ssl}}$ & Descriptor auto-supervisado (Sonata, congelado) & 1088 dimensiones \\
-$F_i$ & Descriptor compuesto del punto $i$ & Concatenación \\
+$F_i$ & Descriptor compuesto del punto $i$ & 1184 dimensiones \\
 $K$ & Número de prototipos & Igual al de clases \\
-$S_p$ & Matriz de asignación suave & $N\!\cdot\!P\times K$ \\
+$z_{i,k}$ & Puntuación del punto $i$ para el prototipo $k$ & Número real \\
+$s_{i,k}$ & Peso de pertenencia del punto $i$ al prototipo $k$ & Entre 0 y 1 \\
+$S_p$ & Matriz de asignación suave, formada por los $s_{i,k}$ & -- \\
+$P_k$ & Prototipo $k$ & Ec.~\eqref{eq:prototipo} \\
+$\mathcal{H}$ & Hipergrafo de prototipos & -- \\
 $S_g$ & Afinidad geométrica entre prototipos & Núcleo gaussiano \\
 $S_s$ & Afinidad semántica entre prototipos & Coseno \\
 $S_b$ & Afinidad combinada & Ec.~\eqref{eq:afinidad} \\
-$\alpha$ & Balance geométrico-semántico en $S_b$ & Inicia en 0{,}5 \\
-$M$ & Vecinos por hiperarista & 8 \\
+$\alpha$ & Balance geométrico-semántico en $S_b$ & $[0,1]$; se calibra \\
 $\tau$ & Temperatura del núcleo gaussiano & 0{,}1 \\
-$\epsilon$ & Suavizado de etiquetas & 0{,}15 \\
+$M$ & Vecinos por hiperarista & 8 \\
+$\epsilon$ & Suavizado de pseudo-etiquetas & 0{,}15 \\
+$\hat{y}_i$ & Etiqueta asignada al punto $i$ & Clase conocida o novedosa \\
 $G$ & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \bottomrule
 \end{tabular}
@@ -54,26 +63,43 @@ $G$ & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \bottomrule
 \endlastfoot
 Afinidad & Semejanza entre dos prototipos; combina una componente geométrica y una semántica. \\
+Análisis de dominancia & Identificación de la clase que más se aparta del mIoU y explica su valor. \\
 Aprendizaje auto-supervisado & Entrenamiento cuya señal de supervisión procede de los propios datos y no de etiquetas humanas. \\
+ARI & Índice de Rand ajustado: coincidencia entre la agrupación descubierta y la real. \\
 Atajo geométrico & Colapso de la representación sobre pistas geométricas simples en lugar de aprender semántica. \\
+Atribución por etapas & Medición intermedia y final que separa el aporte de la representación del del razonamiento. \\
+Brecha cerrada & Ganancia en clases novedosas normalizada por la distancia a las conocidas. \\
+Caja de sección & Paralelepípedo que muestra solo los puntos de la nube que quedan dentro. \\
 Clase conocida & Clase con puntos etiquetados durante el entrenamiento. \\
 Clase novedosa & Clase presente en la nube pero sin ninguna etiqueta. \\
 Codificador congelado & Red usada solo en inferencia, cuyos pesos no se actualizan. \\
+Corte & Plano que oculta la parte de la nube que queda a un lado. \\
 Descriptor & Vector numérico que resume el contenido de un punto o de una región. \\
+Descriptor auto-supervisado & Descriptor de Sonata aprendido sin etiquetas; 1088 dimensiones. \\
+Descriptor geométrico analítico & Descriptor de forma calculado con una fórmula cerrada; 6 dimensiones. \\
+Descriptor semántico & Descriptor de la red supervisada de HyperNCD; 96 dimensiones. \\
 Emparejamiento húngaro & Asignación óptima entre agrupaciones descubiertas y clases reales. \\
+Formato LAS & Formato binario estándar de la ASPRS para nubes de puntos láser. \\
+Ganancia absoluta & Diferencia de mIoU en clases novedosas entre el modelo híbrido y la línea base. \\
 Hiperarista & Conjunto formado por un prototipo y sus $M$ vecinos más afines. \\
 Hipergrafo & Estructura en la que una arista puede conectar más de dos nodos a la vez. \\
+IoU & Intersección sobre unión de una clase: aciertos entre la suma de aciertos y errores. \\
 \emph{Linear probing} & Evaluación de un descriptor congelado mediante un clasificador lineal. \\
-Nube de puntos & Conjunto de posiciones tridimensionales medidas con sus atributos. \\
+mIoU & Promedio del IoU sobre un conjunto de clases. \\
 NCD & Descubrimiento de clases novedosas. \\
+NMI & Información mutua normalizada entre la agrupación descubierta y la real. \\
+Normal & Vector perpendicular a la superficie en un punto, estimado a partir de sus vecinos. \\
+Nube de puntos & Conjunto de posiciones tridimensionales medidas con sus atributos. \\
 Prototipo & Vector representante de un grupo de puntos o regiones semejantes. \\
 Pseudo-etiqueta & Etiqueta asignada por el propio modelo, sin supervisión humana. \\
+Reconstrucción de Poisson & Conversión de una nube con normales en una malla cerrada. \\
 Región o superpunto & Agrupación de puntos vecinos tratada como una sola unidad. \\
 Rejilla dispersa & Indexación por coordenada entera de vóxel que almacena solo los ocupados. \\
 Sección & Partición espacial disjunta del levantamiento. \\
 Segmentación semántica & Asignación de una etiqueta de clase a cada punto. \\
 Serialización & Ordenamiento de los puntos mediante una curva de llenado de espacio. \\
 Sinkhorn-Knopp & Normalización iterativa que equilibra el reparto de pseudo-etiquetas. \\
+SOR & Filtrado estadístico que elimina los puntos alejados de sus vecinos. \\
 TLS & Escaneo láser terrestre desde posiciones fijas. \\
 \emph{Up-cast} & Propagación inversa del submuestreo hasta la resolución de entrada. \\
 Voxelización & Sustitución por un representante único de los puntos de un mismo cubo. \\

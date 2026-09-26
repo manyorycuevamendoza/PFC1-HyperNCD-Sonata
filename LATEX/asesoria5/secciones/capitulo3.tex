@@ -14,7 +14,7 @@ describe el diseño general del sistema y, después, cada una de las unidades.
 
 El diseño del sistema y el significado de cada módulo, de cada fórmula y de
 cada parámetro se describen en la Sección~\ref{sec:diseno-teorico} y se resumen
-en la Figura~\ref{fig:diseno} y en la Tabla~\ref{tab:parametros}. Esta sección
+en la Figura~\ref{fig:diseno}. Esta sección
 no repite esa descripción: fija las propiedades de ejecución que el diagrama no
 expresa, es decir, qué corre en paralelo, con qué frecuencia y con qué formato
 de intercambio.
@@ -41,11 +41,11 @@ incompatibilidad de dimensión o de resolución aparezca antes de implementar.
 \toprule
 \textbf{Módulo} & \textbf{Entrada} & \textbf{Salida} & \textbf{Régimen} & \textbf{Frecuencia} \\
 \midrule
-1 & Nube TLS cruda, $N$ puntos & 5 secciones voxelizadas: coord., color, normal & Sin modelo & Una vez \\
+1 & Archivo LAS en bruto, $N$ puntos & 5 secciones limpias y voxelizadas: coord., color, normal & Sin modelo & Una vez \\
 2 & Sección voxelizada & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa & Entrenado & Cada época \\
 3 & Sección voxelizada, 9 canales & $f_{\mathrm{ssl}}$, 1088 dim.\ por punto, rejilla serializada & Congelado & Una vez por sección \\
 4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Prototipos, hipergrafo y pseudo-etiquetas & Entrenado & Cada época \\
-5 & Pseudo-etiquetas y verdad de terreno & Etiqueta por punto y mIoU por clase & Evaluación & Por corrida \\
+5 & Pseudo-etiquetas y verdad de terreno & Etiqueta por punto, mIoU por clase e interfaz de consulta & Evaluación y consulta & Por corrida \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -57,21 +57,46 @@ submuestreo y un mapeo por índice inverso, ambos almacenados junto con las
 características para que el Módulo~4 reciba los dos descriptores alineados punto
 a punto.
 
+\subsection{Herramientas por Módulo}
+\label{sec:herramientas}
+
+La Tabla~\ref{tab:herramientas} indica qué herramienta se usa, para qué y en qué
+módulo. Las versiones exactas se recogen en el Anexo~A.
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\caption{Herramientas empleadas y módulo en que interviene cada una.
+Elaboración propia.}
+\label{tab:herramientas}
+\begin{tabular}{@{}p{3.3cm}p{7.2cm}p{1.8cm}@{}}
+\toprule
+\textbf{Herramienta} & \textbf{Uso} & \textbf{Módulo} \\
+\midrule
+\texttt{laspy} & Lectura del archivo LAS & 1 \\
+Open3D & Filtrado SOR, voxelización y estimación de normales; reconstrucción de Poisson para exportar el sólido & 1, 5 \\
+NumPy & Teselado en secciones y almacenamiento de $f_{\mathrm{ssl}}$ en disco & 1, 3 \\
+PyTorch & Entrenamiento de la rama semántica y del módulo de prototipos & 2, 4 \\
+MinkowskiEngine & Rejilla dispersa y convoluciones de la MinkowskiUNet-34C & 2 \\
+Pointcept, \texttt{spconv} & Codificador PTv3 de Sonata con sus pesos públicos & 3 \\
+Código oficial de HyperNCD & Prototipos, hipergrafo y pseudo-etiquetas & 2, 4 \\
+Weights \& Biases & Registro de métricas por corrida & 5 \\
+Clúster Khipu (Slurm) & Ejecución en GPU de los Módulos~2 a~4 & 2--4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % =====================================================================
 \section{Unidad 1: Preparación de la Nube de Puntos}
 \label{sec:unidad1}
 
-La primera unidad corresponde al Módulo~1 y parte de la nube TLS cruda de la
-Catedral de Lima entregada por la Facultad de Ingeniería Civil. Su propósito es
-dejar los datos en una forma que las dos ramas de extracción puedan consumir sin
-que ninguna etapa posterior requiera la nube completa en memoria.
-
-La nube se recibe con al menos cuatro clases base anotadas en la sección de
-referencia, requisito mínimo de la tarea NCD. Sobre ella se aplican tres
-operaciones: el teselado en cinco secciones espaciales disjuntas (nave, coro,
-ábside, torres y fachada), la voxelización a 5\,cm, que reduce el número de
-puntos y homogeniza la densidad, y la normalización de coordenadas y atributos.
-La salida de la unidad son las cinco secciones $S_1\ldots S_5$, cada una con
+La primera unidad ejecuta el Módulo~1 descrito en la Sección~\ref{sec:modulo1}.
+Parte del archivo LAS en bruto de la Catedral de Lima, entregado por la Facultad
+de Ingeniería Civil con al menos cuatro clases base anotadas en la sección de
+referencia, requisito mínimo de la tarea NCD. Sobre él aplica, en este orden, la
+carga con \texttt{laspy}, el teselado en cinco secciones disjuntas, la limpieza
+por SOR (Ec.~\eqref{eq:sor}), la voxelización a 5\,cm y la estimación de
+normales (Ec.~\eqref{eq:normal}), estas tres últimas con Open3D. La salida de la unidad son las cinco secciones $S_1\ldots S_5$, cada una con
 coordenadas, color y normal, que constituyen la unidad indivisible de trabajo
 del proyecto: ninguna sección depende de otra, de modo que todas pueden
 procesarse de forma independiente.
