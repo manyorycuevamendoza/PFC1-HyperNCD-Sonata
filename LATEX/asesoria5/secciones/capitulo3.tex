@@ -15,7 +15,7 @@ describe el diseño general del sistema y, después, cada una de las unidades.
 El diseño del sistema y el significado de cada módulo, de cada fórmula y de
 cada parámetro se describen en la Sección~\ref{sec:diseno-teorico} y se resumen
 en la Figura~\ref{fig:diseno}. Esta sección
-no repite esa descripción: fija las propiedades de ejecución que el diagrama no
+no repite esa descripción. Fija las propiedades de ejecución que el diagrama no
 expresa, es decir, qué corre en paralelo, con qué frecuencia y con qué formato
 de intercambio.
 
@@ -28,7 +28,7 @@ reutilizarla en todas las épocas del Módulo~2.
 \label{sec:contrato}
 
 Cada conexión entre módulos transporta un objeto con una forma determinada. La
-Tabla~\ref{tab:contrato} declara ese contrato, de modo que cualquier
+Tabla~\ref{tab:contrato} declara ese contrato para que cualquier
 incompatibilidad de dimensión o de resolución aparezca antes de implementar.
 
 \begin{table}[H]
@@ -98,7 +98,7 @@ carga con \texttt{laspy}, el teselado en cinco secciones disjuntas, la limpieza
 por SOR (Ec.~\eqref{eq:sor}), la voxelización a 5\,cm y la estimación de
 normales (Ec.~\eqref{eq:normal}), estas tres últimas con Open3D. La salida de la unidad son las cinco secciones $S_1\ldots S_5$, cada una con
 coordenadas, color y normal, que constituyen la unidad indivisible de trabajo
-del proyecto: ninguna sección depende de otra, de modo que todas pueden
+del proyecto. Ninguna sección depende de otra y todas pueden
 procesarse de forma independiente.
 
 % =====================================================================
@@ -113,7 +113,7 @@ fusión concatena.
 
 La rama semántica es la red troncal supervisada de HyperNCD, una
 MinkowskiUNet-34C que opera sobre la rejilla dispersa y entrega
-$f_{\mathrm{sem}}$, de 96 canales por punto. Es un módulo entrenado, de modo que
+$f_{\mathrm{sem}}$, de 96 canales por punto. Es un módulo entrenado, por lo que
 se ejecuta en cada época.
 
 \subsection{Rama Auto-supervisada Congelada}
@@ -121,13 +121,13 @@ se ejecuta en cada época.
 
 La rama auto-supervisada es el codificador PTv3 preentrenado de Sonata, usado
 con pesos congelados y solo en inferencia. Entrega $f_{\mathrm{ssl}}$, de 1088
-dimensiones por punto, y se ejecuta una sola vez por sección: su salida se
+dimensiones por punto, y se ejecuta una sola vez por sección. Su salida se
 escribe en disco y se reutiliza en todas las épocas del entrenamiento.
 
 La ejecución de esta rama produce un conjunto acotado de observables que el
 diseño declara por adelantado y que la corrida debe confirmar
 (Tabla~\ref{tab:salidas-p2}). Todos se registran en la misma corrida que genera
-el almacenamiento intermedio, de modo que no exigen una ejecución adicional.
+el almacenamiento intermedio y no exigen una ejecución adicional.
 
 \begin{table}[H]
 \centering
@@ -163,7 +163,7 @@ explícita y, con ello, si el pico de memoria aparece o no.
 El aporte consiste en conservar íntegro el razonamiento por hipergrafo y
 sustituir la rama geométrica manual por la representación auto-supervisada,
 según la Ec.~\eqref{eq:hibrido} del marco teórico. Aguas abajo de la fusión nada
-cambia: la afinidad entre prototipos sigue combinando componente geométrica y
+cambia. La afinidad entre prototipos sigue combinando componente geométrica y
 semántica según la Ec.~\eqref{eq:afinidad}, y cada prototipo conserva sus $M=8$
 vecinos al construir el hipergrafo. Esa es la condición que hace interpretable
 la ablación.
@@ -241,10 +241,10 @@ procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
 \end{figure}
 
 El flujo muestra tres elementos que la arquitectura no representa. El primero es
-la frontera de disco: PTv3 requiere CUDA 12.4 y MinkowskiEngine la versión 11.x,
+la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine la versión 11.x,
 que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
 un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
-asimetría de frecuencia: P2 se ejecuta una vez por sección y P3 en cada época,
+asimetría de frecuencia, porque P2 se ejecuta una vez por sección y P3 en cada época,
 lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
 de repeticiones y el de recorrido de secciones.
 
@@ -297,13 +297,13 @@ se calcula igual, de modo que la única diferencia entre ellas es el descriptor.
 \subsection{Protocolo de Repetición}
 \label{sec:repeticiones}
 
-Las secciones son independientes: ninguna necesita información de otra, de modo
+Las secciones son independientes. Ninguna necesita información de otra, de modo
 que cada una constituye una medición separada y todas pueden ejecutarse de forma
 simultánea.
 
 Cada configuración se ejecuta tres veces sobre cada sección y se reporta la
 media y la desviación entre repeticiones. La razón no es solo la variabilidad
-del entrenamiento: el submuestreo que precede al codificador elige al azar el
+del entrenamiento. El submuestreo que precede al codificador elige al azar el
 punto representante de cada vóxel, por lo que dos ejecuciones sobre la misma
 sección no producen la misma $f_{\mathrm{ssl}}$. Las tres repeticiones abarcan
 por ello el procedimiento completo, P2 y P3, y no solo el entrenamiento.
@@ -313,7 +313,7 @@ por ello el procedimiento completo, P2 y P3, y no solo el entrenamiento.
 
 Como el \emph{pipeline} es separable en dos etapas, la inferencia congelada de
 Sonata y luego el razonamiento de HyperNCD, la métrica se reporta también en el
-punto intermedio y no solo al final: \emph{linear probing} sobre el descriptor
+punto intermedio y no solo al final, con \emph{linear probing} sobre el descriptor
 antes de la formación de prototipos (Ec.~\eqref{eq:probe}) y mIoU después
 (Ec.~\eqref{eq:miou}). Esa separación es la que permite atribuir una mejora a la
 representación o al razonamiento, y no al sistema tratado como caja negra
@@ -325,8 +325,7 @@ representación o al razonamiento, y no al sistema tratado como caja negra
 Antes de poder ejecutar el procedimiento de la Sección~\ref{sec:procedimiento}
 fue necesario dejar operativo el entorno de HyperNCD en el clúster Khipu, tarea
 que no se limitó a instalar un conjunto declarado de dependencias porque el
-repositorio original no las declara de forma exhaustiva. El esfuerzo se
-concentró en tres frentes: la configuración del conjunto de datos, la
+repositorio original no las declara de forma exhaustiva. El trabajo abarcó la configuración del conjunto de datos, la
 resolución del entorno de ejecución de Python, y la compilación del respaldo
 disperso de la rama semántica.
 
@@ -337,7 +336,7 @@ incluyó esos archivos. Fue necesario localizarlos en el repositorio de NOPS y
 adaptar en ellos la ruta del conjunto de datos al proyecto. El conjunto de
 datos en sí, SemanticPOSS, tampoco estaba disponible, y su adquisición se
 automatizó en un programa que lo descarga y lo ordena en la estructura de
-carpetas exigida por esos archivos de configuración, de modo que el paso quede
+carpetas exigida por esos archivos de configuración, para que el paso quede
 reproducible para cualquier corrida futura o para otro integrante del
 proyecto.
 
@@ -355,20 +354,20 @@ La ejecución del Módulo~2 depende además de MinkowskiEngine, el respaldo
 disperso de la rama semántica, que no se distribuye como paquete binario sino
 que exige compilación contra el compilador de CUDA disponible en el clúster.
 Esa compilación reveló una restricción no documentada en la propuesta
-original: el compilador GNU por defecto del nodo de acceso excede la versión
-máxima admitida por el compilador de CUDA 11.8, de modo que fue necesario
+original. El compilador GNU por defecto del nodo de acceso excede la versión
+máxima admitida por el compilador de CUDA 11.8, y fue necesario
 fijar explícitamente un compilador GNU anterior para completar el proceso.
 
 Se determinó además que la compilación no requiere una unidad de
 procesamiento gráfico físicamente presente, condición que solo aplica a la
-ejecución del modelo ya compilado. Esa distinción permitió trasladar el paso
+ejecución del modelo ya compilado. Por eso fue posible trasladar el paso
 de compilación al nodo de acceso, con salida a internet, en lugar de un nodo
 de cómputo, que carece de ella por política del clúster, y evitó así una
 dependencia circular entre disponibilidad de red y disponibilidad de unidad
 de procesamiento gráfico. Como la asignación de nodo por parte del gestor de
 colas no se conoce por adelantado y el clúster combina tres arquitecturas de
 unidad de procesamiento gráfico distintas, la compilación se dirigió a un
-rango de arquitecturas de cómputo compatible con las tres, de modo que el
+rango de arquitecturas de cómputo compatible con las tres, así el
 mismo binario sirve sin importar cuál asigne el gestor. Se verificó también
 que la biblioteca de enlace dinámico del compilador empleado en la
 compilación debe estar disponible igualmente en el nodo de cómputo donde
@@ -382,7 +381,7 @@ MinkUnet declarada en el diseño y la unidad de procesamiento gráfico
 correctamente reconocida por el gestor de colas, lo que confirma el
 funcionamiento de extremo a extremo del entorno de ejecución antes de iniciar
 las mediciones del protocolo experimental de la
-Sección~\ref{sec:procedimiento}. Cabe precisar que todos los ajustes descritos
+Sección~\ref{sec:procedimiento}. Todos los ajustes descritos
 en esta sección corrigen incompatibilidades de herramientas de compilación y
 de enlazado, no del cómputo que realiza la unidad de procesamiento gráfico, de
 modo que ninguno de ellos incide en la validez de las métricas reportadas en
@@ -411,10 +410,10 @@ se vuelve tarea previa del cronograma y condiciona el inicio de OE1.
 
 \paragraph*{(ii) Acceso y configuración del clúster.} La configuración de GPU de
 Khipu ha cambiado respecto de la documentada previamente. Por ello el proyecto no
-estima tiempos de calendario: verifica empíricamente el hardware asignado
+estima tiempos de calendario. Verifica empíricamente el hardware asignado
 (Tabla~\ref{tab:hardware}) y fija a partir de esa verificación el tamaño de
 ventana y el esquema de \emph{cache}. El seccionamiento de la catedral es el
-mecanismo que sostiene el respaldo: ninguna etapa requiere la nube completa en
+mecanismo que sostiene el respaldo, ya que ninguna etapa requiere la nube completa en
 memoria. La Sección~\ref{sec:entorno-computo} documenta esa verificación,
 extendida además al entorno de compilación del Módulo~2.
 
@@ -428,7 +427,7 @@ degradación, documentado con ablación es reportable.
 \section{Conclusión del Marco Metodológico}
 
 Las tres unidades encadenan la preparación de la nube, la extracción de los dos
-descriptores y su evaluación en un procedimiento que aísla una sola variable: el
+descriptores y su evaluación en un procedimiento que aísla una sola variable, el
 descriptor que entra al módulo de prototipos. El contrato de la
 Tabla~\ref{tab:contrato} fija las formas que cada módulo entrega, el flujo de la
 Figura~\ref{fig:flujo} ordena las etapas en el tiempo y el protocolo de

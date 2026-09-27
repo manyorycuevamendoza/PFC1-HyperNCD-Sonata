@@ -8,11 +8,11 @@ Cuando se levanta una edificación patrimonial con un escáner láser terrestre,
 resultado es una nube de puntos $P=\{(x_i,f_i)\}_{i=1}^{N}$, donde
 $x_i\in\mathbb{R}^3$ es la ubicación del punto y $f_i$ los atributos que registra
 el escáner. En ingeniería civil ya son la fuente primaria para el control geométrico, el
-modelado como construido y la documentación de obra~\cite{wang2019construction}. Lo que no aparece es la etiqueta: el archivo
+modelado como construido y la documentación de obra~\cite{wang2019construction}. Lo que no aparece es la etiqueta. El archivo
 sabe dónde hay materia, pero no qué elemento es cada cosa, y esa carencia es la
 que bloquea el paso de la nube al modelo BIM y al informe estructural o de
 conservación~\cite{wang2019construction}. Hoy ese trabajo se hace a mano, y la
-literatura de patrimonio lo documenta como el cuello de botella del proceso: la
+literatura de patrimonio lo documenta como el cuello de botella del proceso. La
 construcción del conjunto de referencia ArCH exigió anotar punto por punto
 diecisiete escenas de edificios históricos~\cite{matrone2020benchmark}. No existe
 un programa que automatice esa tarea sobre clases no catalogadas, y ese vacío es
@@ -20,12 +20,12 @@ el que este proyecto busca cubrir.
 
 La tarea no se resuelve con fotografías, porque un clasificador de imágenes
 depende del ángulo y de la iluminación, mientras que la nube de puntos guarda la
-geometría sin depender del punto de vista~\cite{pierdicca2020dgcnn}. Sobre esa observación se construyeron los trabajos de patrimonio: Pierdicca et
+geometría sin depender del punto de vista~\cite{pierdicca2020dgcnn}. Sobre esa observación se construyeron los trabajos de patrimonio. Pierdicca et
 al.~\cite{pierdicca2020dgcnn} adaptan una red de grafos dinámicos con normales y
 color, con buenos resultados en muros y techos pero caídas en clases minoritarias
 como columnas y arcos, y Matrone et al.~\cite{matrone2020benchmark} confirman ese
 desbalance sobre un mismo conjunto de edificios. El límite aparece con claridad en Grilli y
-Remondino~\cite{grilli2020generalisation}: un modelo entrenado sobre un edificio
+Remondino~\cite{grilli2020generalisation}. Un modelo entrenado sobre un edificio
 pierde desempeño al aplicarse a otro de tipología distinta, porque los
 descriptores geométricos que usa no son estables entre construcciones. Una tesis
 previa de UTEC sobre este mismo tipo de edificio~\cite{tesisutec2024} llega al
@@ -53,7 +53,7 @@ método actual es HyperNCD~\cite{zhang2026hyperncd}, que resume la nube en
 \emph{prototipos}, vectores alrededor de los cuales se agrupan los puntos
 parecidos, y los conecta mediante un \emph{hipergrafo}, donde cada arista puede
 unir varios prototipos a la vez. Su problema es que rinde mal justo donde debería
-ser fuerte: entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
+ser fuerte, entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
 supervisado equivalente~\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
 el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
 tipo de señal que Sonata~\cite{wu2025sonata} considera perjudicial, y propone
@@ -135,7 +135,7 @@ la mejora.
 
 \medskip
 \noindent\textbf{OE3. Cuantificar la mejora y delimitar el rango de operación.}
-\textbf{No incorpora trabajo computacional nuevo}: es la salida de análisis de OE1
+\textbf{No incorpora trabajo computacional nuevo}. Es la salida de análisis de OE1
 y OE2. Consiste en medir el $\Delta$mIoU de las clases novedosas
 (Ec.~\eqref{eq:delta}) frente a la línea base, identificar qué variable domina
 (Ec.~\eqref{eq:dominante}), comparar las tres variantes del descriptor
@@ -157,7 +157,7 @@ punto de mIoU ganado es corrección que el especialista deja de hacer. Los
 usuarios están conformes con la precisión que obtienen a mano, así que el valor
 está en automatizar la tarea a un nivel suficiente, no en igualar esa precisión.
 
-El aporte no es una arquitectura nueva: se busca establecer si un problema ya
+El aporte no es una arquitectura nueva. Lo que se busca es establecer si un problema ya
 demostrado con supervisión completa se mantiene cuando no hay etiquetas que
 corrijan al modelo. Es un resultado incierto, medible y que ningún trabajo previo
 ha reportado, y como se mueve una sola pieza, cualquier variación se puede
@@ -167,7 +167,7 @@ atribuir al reemplazo.
 
 \paragraph*{Objeto de estudio y generalización}
 Se trabaja sobre un único edificio, la \textbf{Catedral de Lima}, con el
-levantamiento provisto por la Facultad de Ingeniería Civil: el objeto es fijo y
+levantamiento provisto por la Facultad de Ingeniería Civil. El objeto es fijo y
 el modelo se ajusta a él, no al revés. Los resultados se declaran válidos para tipología de catedral o iglesia colonial,
 es decir nave con columnas y arcos, cubierta abovedada y fachada con torres, y no
 se extienden a vivienda ni a obra vial o industrial.
@@ -178,7 +178,7 @@ después de voxelizar, es decir de dividir el espacio en cubos de lado fijo y
 reemplazar por uno solo los puntos que caen en el mismo cubo. Los
 datos quedan en \textbf{cinco secciones espaciales disjuntas}, que son nave,
 coro, ábside, torres y fachada, y funcionan como particiones de entrenamiento y
-evaluación (Tabla~\ref{tab:datos}). El vóxel de 5\,cm es un límite y no una preferencia: por debajo, con muy pocos
+evaluación (Tabla~\ref{tab:datos}). El vóxel de 5\,cm es un límite, no una preferencia. Por debajo, con muy pocos
 puntos por clase novedosa, la diferencia entre el modelo base y el híbrido
 dejaría de distinguirse del ruido entre corridas.
 
@@ -204,7 +204,7 @@ Sonata congelado, una pasada con \emph{cache} & Fija & 1 GPU \\
 \paragraph*{Hardware}
 El proyecto está limitado por cómputo. Se ejecuta sobre el clúster
 \textbf{Khipu} de UTEC, cuya configuración de GPU cambió hace poco, de modo que
-\textbf{no se estiman tiempos de calendario}: se especifica el hardware sobre el
+\textbf{no se estiman tiempos de calendario}. Se especifica el hardware sobre el
 que las pruebas corrieron realmente (Tabla~\ref{tab:hardware}). La división en
 secciones sostiene esta política, ya que ninguna etapa necesita la nube completa
 en memoria.
@@ -238,7 +238,7 @@ pesos y los datos se descargan desde el nodo de acceso.
 
 \paragraph*{Costo computacional estimado}
 El codificador de Sonata corre congelado y una sola vez por sección, así que su
-costo no se repite en cada época: para la sección de referencia, de
+costo no se repite en cada época. Para la sección de referencia, de
 $7{,}2\times10^{5}$ puntos, se estiman segundos a decenas de segundos en la RTX
 A6000, cifra que será sustituida por medición directa.
 

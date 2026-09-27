@@ -71,7 +71,7 @@ supervisado; sobre SemanticPOSS, entre 22,3 y 47,2 frente a
 50,6.\footnote{Tablas~1 y~2 de \cite{zhang2026hyperncd}. La fila \emph{Full} de
 cada tabla es el modelo supervisado y su valor se lee en la columna \emph{All}.}
 Más importante que el agregado es su estudio de ablación, que apaga una pieza a
-la vez para ver cuánto aporta cada una: sobre la partición~0 de SemanticPOSS,
+la vez para ver cuánto aporta cada una. Sobre la partición~0 de SemanticPOSS,
 partiendo de una red base que rinde 23,2 de mIoU, el prototipo geométrico aporta
 $+4{,}2$ puntos y el hipergrafo $+9{,}6$ sobre esa misma base
 (Tabla~\ref{tab:ablacion-hyperncd}).\footnote{Tabla~3 de
@@ -97,21 +97,21 @@ Método completo, con hiperaristas dinámicas & 36,5 & $+13{,}3$ \\
 \end{table}
 
 \emph{Por qué sirve.} La ablación deja al descubierto un desequilibrio que los
-autores no comentan: el descriptor geométrico aporta menos de la mitad que el
-mecanismo que lo consume. La lectura correcta no es que $f_{\text{geo}}$ sea
-inútil, sino que aporta poco en relación con el lugar central que ocupa dentro
+autores no comentan. El descriptor geométrico aporta menos de la mitad que el
+mecanismo que lo consume. Esto no significa que $f_{\text{geo}}$ sea
+inútil. Significa que aporta poco en relación con el lugar central que ocupa dentro
 del método, y por tanto que una representación aprendida puesta en su lugar
 debería aportar más.
 
 La limitación de fondo es la naturaleza de ese descriptor. $f_{\text{geo}}$ se
-calcula de forma analítica: se toman los 15 vecinos más cercanos, se arma la
+calcula de forma analítica. Se toman los 15 vecinos más cercanos, se arma la
 matriz de covarianza de sus distancias, se obtienen sus autovalores y de ellos se
 derivan la linealidad, la planaridad y la dispersión \cite{zhang2026hyperncd}.
 Ese cálculo es siempre el mismo y no aprende nada del dominio en el que se
 aplica; es, además, el tipo de señal que la Sección~\ref{sec:sonata} caracteriza
 como un atajo perjudicial. Una segunda limitación es la dispersión entre
 particiones, entre 11,8 y 47,5, que los propios autores atribuyen al desbalance
-de clases. Una tercera no está en el artículo sino en lo que omite: \textbf{no
+de clases. Una tercera no está en el artículo sino en lo que omite, porque \textbf{no
 reporta ninguna cifra de cómputo}, ni GPU, ni memoria, ni tiempo.
 
 De aquí el proyecto toma la arquitectura y su código público; los
@@ -125,9 +125,9 @@ compararse contra sus $+4{,}2$ puntos.
 \begin{enumerate}
 \item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico (OE1).} Reemplazar $f_{\text{geo}}$ por
 $f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
-razonamiento por hipergrafo, de modo que
+razonamiento por hipergrafo. Así,
 $F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
-la métrica sea atribuible a ese reemplazo y a nada más.
+la métrica es atribuible a ese reemplazo y a nada más.
 \emph{Resultado verificable:} el híbrido corriendo de extremo a extremo sobre una
 sección de control, con las dimensiones de ambas ramas documentadas y sin que el
 mIoU de las clases conocidas baje respecto de la línea base.
@@ -140,10 +140,10 @@ que las matrices de peso de sus capas se instancian dentro del cuerpo de la
 función en cada llamada, por lo que no se registran entre los parámetros del
 modelo, no reciben gradiente y se reinicializan al azar en cada invocación; que
 el procedimiento llamado de actualización dinámica reproduce término por término
-el de construcción inicial sobre la misma matriz de similitud, de modo que no
+el de construcción inicial sobre la misma matriz de similitud y, en la práctica, no
 actualiza nada; y que el descriptor geométrico ejecutado tiene dimensión seis,
 porque incorpora el centroide de la región, y no tres como describe el artículo.
-Esto obliga a tres decisiones: la línea base se establece sobre el código que se
+Esto obliga a tres decisiones. La línea base se establece sobre el código que se
 ejecuta y no sobre la formulación publicada, la comparación se hace contra
 corridas propias bajo condiciones idénticas de datos, partición y semilla, y la
 sustitución se aplica sobre el descriptor de dimensión seis. Sin esta corrección,
@@ -163,7 +163,7 @@ Representations}, publicado en CVPR 2025 \cite{wu2025sonata}. Se identifica con
 
 \textbf{Aporte al proyecto.}
 
-\emph{Qué hizo.} Identifica y ataca el \textbf{atajo geométrico}: cuando un
+\emph{Qué hizo.} Identifica y ataca el \textbf{atajo geométrico}. Cuando un
 modelo se entrena sin etiquetas sobre nubes de puntos, la representación tiende a
 colapsar sobre pistas geométricas de bajo nivel muy fáciles de leer, como la
 normal de la superficie o la altura del punto, en lugar de aprender semántica. Es
@@ -172,7 +172,7 @@ los operadores la usan de forma directa. Sonata lo ataca oscureciendo la
 información espacial dentro de un esquema de auto-destilación entrenado sobre 140
 mil escenas.
 
-\emph{Qué resultado obtuvo.} La evidencia se mide por \emph{linear probing}: se
+\emph{Qué resultado obtuvo.} La evidencia se mide por \emph{linear probing}, que consiste en que se
 congelan todos los pesos del codificador y se entrena encima únicamente un
 clasificador lineal, con menos del $0{,}2$\% de los parámetros. Como el
 codificador no puede cambiar, lo que se mide es la calidad de la representación y
@@ -185,7 +185,7 @@ prácticamente a la par de una red supervisada completa, que obtiene
 \centering
 \caption{\emph{Linear probing} sobre ScanNet, conjunto de validación, según la
 Tabla~5 de \cite{wu2025sonata}. Todos los métodos congelan el codificador y
-entrenan una única capa lineal, de modo que la columna mide calidad de la
+entrenan una única capa lineal, así que la columna mide calidad de la
 representación y no capacidad del clasificador.}
 \label{tab:linprobe}
 \begin{tabular}{lc}
@@ -201,11 +201,11 @@ DINOv2, agregado de 2D a 3D & 63,1 \\
 \end{tabular}
 \end{table}
 
-\emph{Por qué sirve.} Por dos razones. La primera es el resultado: la señal
+\emph{Por qué sirve.} Por dos razones. La primera es el resultado. La señal
 geométrica de bajo nivel, medida en igualdad de condiciones, es un mal
 descriptor, y existe un codificador público, ya entrenado y congelable, que la
 reemplaza sin exigir preentrenamiento propio. Es la pieza que ocupa el lugar de
-$f_{\text{geo}}$ en el aporte A1. La segunda es de método: el \emph{linear
+$f_{\text{geo}}$ en el aporte A1. La segunda es de método. El \emph{linear
 probing} mide calidad de representación de forma aislada, congelando todo lo
 demás, y ese principio es el que permite separar después lo que aporta la
 representación de lo que aporta el razonamiento.
@@ -233,7 +233,7 @@ como rango favorable.
 \end{enumerate}
 
 \textbf{Aporte del proyecto.} Este estudio sostiene, junto con la
-Sección~\ref{sec:hyperncd}, el aporte A1: aporta la pieza que se coloca en
+Sección~\ref{sec:hyperncd}, el aporte A1, porque aporta la pieza que se coloca en
 lugar de $f_{\text{geo}}$ y la evidencia de que hacerlo tiene sentido. Verificar
 si la nocividad del atajo geométrico, demostrada en régimen supervisado, se
 mantiene en régimen de descubrimiento de clases novedosas es la pregunta que A1
@@ -242,7 +242,7 @@ responde. De su metodología nace además un aporte propio:
 \begin{enumerate}
 \item[\textbf{A3}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
 atribución por etapas (OE3).} Las métricas estándar no separan lo que aporta la
-representación de lo que aporta el razonamiento: el mIoU final es el mismo número
+representación de lo que aporta el razonamiento. El mIoU final es el mismo número
 venga de donde venga la ganancia. Trasladando el principio del \emph{linear
 probing}, este trabajo formula la brecha cerrada $G$ (Ec.~\eqref{eq:G}), que
 expresa qué parte de la distancia entre clases conocidas y novedosas se logró
@@ -261,7 +261,7 @@ problema de integración}
 
 \textbf{Estudio relevante.} Wu, Jiang, Wang, Liu, Liu, Qiao, Ouyang, He y Zhao
 (2024), \emph{Point Transformer V3: Simpler, Faster, Stronger}, publicado en
-CVPR 2024 \cite{wu2024ptv3}. Es la red sobre la que está construido Sonata: el
+CVPR 2024 \cite{wu2024ptv3}. Es la red sobre la que está construido Sonata, y el
 codificador que este proyecto emplea congelado es una PTv3 con pesos
 auto-supervisados. Se identifica con \textbf{OE1}.
 
@@ -306,27 +306,27 @@ resolver y que ninguno de los dos estudios anteriores plantea, ya que ninguno
 intenta juntar las piezas. Las dos ramas del híbrido parten de las mismas
 coordenadas pero definen la vecindad de maneras distintas. HyperNCD opera sobre
 una \textbf{rejilla dispersa de Minkowski}, donde el vecino de un punto son los
-que caen dentro del núcleo de la convolución: adyacencia métrica en el volumen.
+que caen dentro del núcleo de la convolución, o sea, adyacencia métrica en el volumen.
 Sonata, a través de PTv3, opera sobre una \textbf{secuencia unidimensional},
 donde el vecino es el que quedó al lado dentro de un parche de 1024 elementos de
 la curva. Una curva de llenado de espacio preserva la localidad de forma
-aproximada y no exacta, de modo que dos puntos contiguos en el volumen pueden
+aproximada y no exacta. Dos puntos contiguos en el volumen pueden
 quedar separados en la secuencia si caen a ambos lados de un giro. Pasar la
 salida de una rama a la otra exige absorber ese desajuste de forma explícita.
 
 Se suma una segunda incompatibilidad, de ingeniería y no de arquitectura, que la
-inspección del código de ambos grupos deja en evidencia: las dos ramas exigen
+inspección del código de ambos grupos deja en evidencia que las dos ramas exigen
 \textbf{pilas de dependencias mutuamente excluyentes}, MinkowskiEngine contra
 CUDA 11.3 y PTv3 contra CUDA 12.4. Integrar las dos implementaciones de
 referencia en un único proceso no es posible sin renunciar a una de las dos, de
 modo que el punto de fusión no puede ser un objeto en memoria compartido.
 
-La Tabla~\ref{tab:eficiencia-ptv3} deja además un dato relevante: PTv3 no es la
+La Tabla~\ref{tab:eficiencia-ptv3} muestra además que PTv3 no es la
 pieza cara del sistema, porque con 46,2\,M de parámetros consume menos memoria de
 inferencia que MinkUNet, que tiene 37,9\,M, y es más rápido. El costo del híbrido
 no viene de añadir un transformador, sino de ejecutarlo dentro del bucle de
 entrenamiento. Y lo que hace resoluble todo lo anterior es que el codificador se
-emplea congelado y solo en inferencia: su salida no depende de la época ni del
+emplea congelado y solo en inferencia. Su salida no depende de la época ni del
 estado del optimizador, así que puede calcularse una sola vez por sección.
 
 \textbf{Aporte del proyecto.}
@@ -356,28 +356,28 @@ Segmentation} \cite{su2025brdl}. Se identifica con \textbf{OE2}.
 
 \textbf{Aporte al proyecto.}
 
-\emph{Qué hizo.} Aborda la pregunta que plantea OE2: cómo se ajusta un sistema
+\emph{Qué hizo.} Aborda la pregunta que plantea OE2, es decir, cómo se ajusta un sistema
 que debe incorporar clases sobre las que no tuvo supervisión completa sin
 degradar las que ya clasificaba bien. Combina dos piezas, una destilación
 residual que refina el conocimiento previo ampliando la red y un aprendizaje
 balanceado de pseudo-etiquetas que corrige el sesgo hacia las clases base. El
-escenario no es el mismo que el de esta tesis: BRDL trabaja en aprendizaje
+escenario no es el mismo que el de esta tesis. BRDL trabaja en aprendizaje
 incremental por clases, donde las categorías nuevas sí llegan etiquetadas cuando
 les toca su turno, mientras que en descubrimiento de clases novedosas nunca lo
 están.
 
 \emph{Qué resultado obtuvo.} Interesan tres bloques. Primero, el barrido de un
-solo hiperparámetro: al mover $\lambda_2$ entre $0{,}1$ y $1{,}0$ el mIoU recorre
+solo hiperparámetro. Al mover $\lambda_2$ entre $0{,}1$ y $1{,}0$ el mIoU recorre
 el intervalo de 45,1 a 46,28, con el máximo en
 $\lambda_2=0{,}2$.\footnote{Tabla~3 de \cite{su2025brdl}, S3DIS, partición S0,
 con $|\mathcal{C}_{\text{novel}}|=1$.} Segundo, la grilla conjunta de dos
-hiperparámetros acoplados: al barrer $\lambda_2$ y $\lambda_3$ a la vez el máximo
+hiperparámetros acoplados. Al barrer $\lambda_2$ y $\lambda_3$ a la vez el máximo
 sube a 46,58 en la combinación $(0{,}2;\,0{,}5)$ y el mínimo se mantiene en 45,1,
-de modo que toda la grilla cabe en 1,48 puntos de mIoU.\footnote{Tabla~4 de
+con lo que toda la grilla cabe en 1,48 puntos de mIoU.\footnote{Tabla~4 de
 \cite{su2025brdl}.} Tercero, la ablación de las dos estrategias
 (Tabla~\ref{tab:ablacion-brdl}).\footnote{Tabla~6 de \cite{su2025brdl}, S3DIS,
 partición S0, con $|\mathcal{C}_{\text{novel}}|=3$, columna \emph{all}.} A ello
-se suman dos datos que el artículo publica sin comentar: en el entrenamiento
+se suman dos datos que el artículo publica sin comentar. En el entrenamiento
 multi-paso una clase se queda en $0{,}00$ de mIoU en los cinco pasos y para los
 dos métodos comparados, y otra cae de 34,42 a $0{,}07$;\footnote{Tabla~5 de
 \cite{su2025brdl}.} y el costo incremental de la modificación se reporta de forma
@@ -388,7 +388,7 @@ memoria.\footnote{Tabla~8 de \cite{su2025brdl}.}
 \centering
 \caption{Ablación de las dos estrategias de BRDL sobre S3DIS, partición S0,
 según la Tabla~6 de \cite{su2025brdl}. La fila intermedia es la que importa para
-esta tesis: una de las dos estrategias, aplicada por separado, deja el resultado
+esta tesis, y es que una de las dos estrategias, aplicada por separado, deja el resultado
 por debajo de no aplicar ninguna.}
 \label{tab:ablacion-brdl}
 \begin{tabular}{@{}p{6.3cm}cc@{}}
@@ -403,23 +403,23 @@ Las dos estrategias juntas & 47,26 & $+2{,}07$ \\
 \end{tabular}
 \end{table}
 
-\emph{Por qué sirve.} Por tres razones. La primera es metodológica: es el único
+\emph{Por qué sirve.} Por tres razones. La primera es metodológica. Es el único
 trabajo revisado que publica una grilla conjunta de dos parámetros acoplados y la
 lee como tal, concluyendo que $\lambda_2$ domina y que $\lambda_3$ solo introduce
 ajustes finos que amplifican o amortiguan el efecto según el valor de
 $\lambda_2$. El efecto no es separable, y una calibración parámetro por parámetro
 llega a un óptimo distinto del de la grilla conjunta. La
 Tabla~\ref{tab:ablacion-brdl} refuerza el punto desde el lado de los
-componentes: activar una sola de las dos piezas empeora el resultado respecto de
+componentes. Activar una sola de las dos piezas empeora el resultado respecto de
 no activar ninguna, y solo la combinación gana.
 
-La segunda es de magnitud: toda la grilla mueve 1,48 puntos de mIoU mientras que
+La segunda es de magnitud. Toda la grilla mueve 1,48 puntos de mIoU mientras que
 activar o desactivar los componentes mueve 2,07. La calibración es necesaria pero
 no es donde está la ganancia grande, y esa cifra fija la expectativa realista de
 OE2.
 
-La tercera es sobre el desbalance: el fracaso por falta de soporte no es gradual
-sino total, con una clase en cero en los cinco pasos y para los dos métodos.
+La tercera tiene que ver con el desbalance. El fracaso por falta de soporte es
+total y no gradual, con una clase en cero en los cinco pasos y para los dos métodos.
 Ningún valor de hiperparámetro rescata una clase cuyo soporte es insuficiente.
 Eso coincide con el régimen que esta tesis declara desfavorable, el de clases
 novedosas por debajo del 0,5\% de los puntos de la sección, y explica por qué
@@ -432,16 +432,16 @@ de escenario; lo que se traslada es el procedimiento y el diagnóstico.
 \begin{enumerate}
 \item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas heterogéneas
 (OE2).} El descriptor híbrido $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ une dos
-ramas de escala distinta: 96 componentes entrenadas junto con el resto del
+ramas de escala distinta, con 96 componentes entrenadas junto con el resto del
 modelo y 1088 componentes congeladas cuyo rango no está normalizado contra el de
 la rama semántica. Sin corrección, la rama más ancha domina la similitud por
 coseno $S_s$ con la que se comparan las regiones, y el valor publicado
 $\alpha=0{,}5$ deja de repartir el peso entre forma y significado como en la
 línea base. Hacer comparables las dos ramas antes de concatenarlas es una
-precondición de la calibración y no un detalle de implementación, y el régimen
+requisito previo a la calibración, y el régimen
 congelado lo agrava porque impide que la rama auto-supervisada se reescale sola
 durante el entrenamiento. En BRDL los dos parámetros pertenecen al mismo método
-y comparten escala, de modo que este caso queda fuera de lo que ese trabajo
+y comparten escala, por lo que este caso queda fuera de lo que ese trabajo
 cubre. \emph{Resultado verificable:} el procedimiento de normalización adoptado
 y su efecto medido sobre la distribución de $S_b$ antes y después.
 
@@ -456,9 +456,9 @@ sensibilidad y la configuración fijada.
 \item[\textbf{A7}] \textbf{Verificación de que la configuración se sostiene fuera
 de donde se calibró (OE2).} La configuración se fija sobre una única sección de
 referencia y se aplica \textbf{sin reajuste} a las cuatro restantes, reportando
-la degradación observada. Es lo que separa haber calibrado de haber ajustado
+la degradación observada. Así se distingue una calibración real de un ajuste hecho
 sobre aquello que se iba a medir, y el estudio de referencia muestra por qué
-importa: al cambiar solo el orden de presentación de las clases, los métodos
+importa. Al cambiar solo el orden de presentación de las clases, los métodos
 incrementales existentes se degradan de forma significativa mientras que el
 entrenamiento conjunto apenas se mueve. \emph{Resultado verificable:} la métrica
 por sección bajo configuración fija y su diferencia respecto de la sección de

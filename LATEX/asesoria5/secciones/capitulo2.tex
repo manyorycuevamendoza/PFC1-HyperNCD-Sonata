@@ -20,9 +20,9 @@ documentación.
 
 Una nube de puntos es un conjunto $P=\{(x_i,f_i)\}_{i=1}^{N}$ donde
 $x_i\in\mathbb{R}^3$ es la posición medida de un punto de la superficie y $f_i$
-sus atributos: el color, que registra el sensor, y la normal, que se estima a
+sus atributos, que son el color, que registra el sensor, y la normal, que se estima a
 partir de los vecinos (Sección~\ref{sec:normales}). No tiene conectividad ni
-orden: es una lista de mediciones, no una malla.
+orden. Es una lista de mediciones, no una malla.
 
 \subsection{Levantamiento Láser Terrestre (TLS)}
 \label{sec:tls}
@@ -46,7 +46,7 @@ La normal no forma parte del formato.
 \label{sec:sor}
 
 Un levantamiento en bruto contiene puntos que no pertenecen a ninguna
-superficie: reflejos en vidrios, personas u objetos que cruzaron durante el
+superficie, como reflejos en vidrios, personas u objetos que cruzaron durante el
 escaneo y mediciones aisladas en el límite del alcance del sensor. Se reconocen
 porque quedan lejos de sus vecinos, y el filtrado estadístico de valores
 atípicos (SOR, \emph{Statistical Outlier Removal}) los elimina con ese criterio.
@@ -76,14 +76,14 @@ puntos y homogeniza la densidad. El lado del cubo se denomina tamaño de vóxel.
 \label{sec:normales}
 
 La normal de un punto es el vector perpendicular a la superficie en ese punto.
-El escáner no la mide, de modo que se estima a partir de los mismos $q$ vecinos:
+Como el escáner no la mide, se estima a partir de los mismos $q$ vecinos:
 con ellos se forma la matriz de covarianza local
 \begin{equation}
 C_i=\frac{1}{q}\sum_{j\in\mathcal{N}_q(i)}\left(x_j-\bar{x}_i\right)\left(x_j-\bar{x}_i\right)^{\top},
 \label{eq:normal}
 \end{equation}
 donde $\bar{x}_i$ es el centroide de esos vecinos, y la normal es el autovector
-de $C_i$ asociado a su menor autovalor: la dirección en la que los vecinos menos
+de $C_i$ asociado a su menor autovalor. Es la dirección en la que los vecinos menos
 se dispersan, que sobre una superficie es la perpendicular.
 
 \subsection{Sección Espacial}
@@ -154,7 +154,7 @@ propuesto, con $96+1088=1184$.
 
 Salida por punto de la red troncal supervisada de HyperNCD, una
 MinkowskiUNet-34C de 96 canales. Codifica a qué se parece un punto en términos
-de las clases que la red vio etiquetadas: no son medidas físicas sino
+de las clases que la red vio etiquetadas. No son medidas físicas, son
 coordenadas aprendidas, próximas entre puntos de una misma clase. Como la red se
 entrena, su salida cambia en cada época y debe recalcularse. Se denota
 $f_{\mathrm{sem}}$.
@@ -169,7 +169,7 @@ planaridad $(\lambda_2-\lambda_3)/\lambda_1$ y dispersión
 $\lambda_3/\lambda_1$. El artículo los calcula sobre un vecindario de 15 puntos;
 la implementación ejecutada los calcula sobre la región que contiene al punto
 (Sección~\ref{sec:region}) y les concatena el centroide de esa región, lo que da
-una dimensión total de 6. Este trabajo adopta la versión ejecutada: cada punto
+una dimensión total de 6. Este trabajo adopta la versión ejecutada, en la que cada punto
 hereda el descriptor de su región. Se denota $f_{\mathrm{geo}}$ y es el
 componente del descriptor que este trabajo sustituye. Solo describe forma, sin
 ningún conocimiento de qué es el punto.
@@ -182,11 +182,11 @@ con pesos congelados. Su dimensión es 1088, resultado de concatenar las anchura
 $512+384+192$ de las tres últimas etapas durante la propagación inversa del
 submuestreo. Se denota $f_{\mathrm{ssl}}$ y codifica estructura aprendida sobre
 140 mil escenas, sin haber visto las clases de este proyecto. A diferencia de
-$f_{\mathrm{geo}}$, no es un descriptor de forma: el preentrenamiento de Sonata
+$f_{\mathrm{geo}}$, no es un descriptor de forma. El preentrenamiento de Sonata
 está diseñado para evitar el atajo geométrico (Sección~\ref{sec:atajo}), de
 modo que $f_{\mathrm{ssl}}$ aporta al descriptor un conocimiento semántico
 adquirido sin etiquetas, complementario al supervisado de $f_{\mathrm{sem}}$.
-El modelo resultante es híbrido en ese sentido: cada punto se describe a la vez
+Por eso el modelo es híbrido. Cada punto se describe a la vez
 con lo aprendido de las clases conocidas del proyecto y con lo aprendido de
 forma auto-supervisada fuera de él.
 
@@ -210,7 +210,7 @@ $4{,}2$~GB de memoria de vídeo (GPU) por sección (Anexo~D).
 \label{sec:atajo}
 
 Modo de falla del preentrenamiento auto-supervisado en tres dimensiones,
-diagnosticado por Sonata: la representación colapsa sobre pistas geométricas
+diagnosticado por Sonata, en el que la representación colapsa sobre pistas geométricas
 fácilmente accesibles, como la normal, la altura o la curvatura local, en lugar
 de aprender semántica.
 
@@ -218,7 +218,7 @@ de aprender semántica.
 \label{sec:serializacion}
 
 Ordenamiento de los puntos mediante una curva de llenado de espacio, de tipo Z o
-Hilbert, de modo que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad
+Hilbert, para que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad
 dentro de una secuencia unidimensional. Es el mecanismo que permite a PTv3
 aplicar atención con costo lineal.
 
@@ -273,7 +273,7 @@ $i$ se denota $\hat{y}_i$.
 \label{sec:region}
 
 Agrupación de puntos vecinos y semejantes que el método trata como una sola
-unidad: los descriptores $F_i$ de sus puntos se agregan en uno solo. Razonar
+unidad. Los descriptores $F_i$ de sus puntos se agregan en uno solo. Razonar
 sobre regiones y no sobre puntos reduce el número de nodos en varios órdenes de
 magnitud.
 
@@ -295,10 +295,10 @@ Donde:
 \item $z_{i,k}$: puntuación del punto $i$ para el prototipo $k$; puede ser
 cualquier número real.
 \item $s_{i,k}$: peso, entre 0 y 1, con que el punto $i$ pertenece al prototipo
-$k$. Los pesos de un punto suman 1, de modo que se leen como un reparto.
+$k$. Los pesos de un punto suman 1 y se leen como un reparto.
 \item $K$: número de prototipos.
 \end{itemize}
-La matriz $S_p$ de todos los $s_{i,k}$ es la \emph{asignación suave}: un punto
+La matriz $S_p$ de todos los $s_{i,k}$ es la \emph{asignación suave}. Un punto
 puede pertenecer en parte a varios prototipos, lo que ocurre en las transiciones
 entre elementos arquitectónicos. Cada prototipo es el promedio de los
 descriptores, ponderado por esa pertenencia:
@@ -320,7 +320,7 @@ simultáneamente en la explicación de una novedosa.
 
 Elemento $e_i\in\mathcal{E}$ formado por una región $r_i$
 (Sección~\ref{sec:region}) y sus $M$ regiones más afines según la afinidad
-$S_b$. Los nodos del hipergrafo son por tanto regiones y no prototipos: como
+$S_b$. Los nodos del hipergrafo son por tanto regiones y no prototipos. Como
 una sección contiene muchas más regiones que clases, cada hiperarista conecta
 un subconjunto selectivo de nodos, lo que no ocurriría con solo $K$ prototipos.
 Los autores de HyperNCD reportan $M=8$ como valor óptimo. Cada región recibe
@@ -352,7 +352,7 @@ puntos (Ec.~\eqref{eq:hibrido}); es aquí donde entra $f_{\mathrm{ssl}}$.
 \item $g^{(i)}$: rasgo geométrico de la región $i$, es decir, su
 $f_{\mathrm{geo}}$ (Sección~\ref{sec:fgeo}). Aunque $f_{\mathrm{geo}}$ sale del
 descriptor $F_i$ en el modelo propuesto, se sigue calculando para la afinidad y es igual
-en la línea base y en el modelo propuesto, de modo que el razonamiento
+en la línea base y en el modelo propuesto, con lo que el razonamiento
 geométrico del hipergrafo se conserva íntegro.
 \item $\tau$: temperatura, fijada en 0{,}1. Un valor pequeño hace exigente al
 criterio, porque solo considera afines a las regiones muy próximas; uno grande
@@ -363,10 +363,10 @@ Ambos se combinan en
 S_b=\alpha\,S_g+(1-\alpha)\,S_s,\qquad \alpha\in[0,1],
 \label{eq:afinidad}
 \end{equation}
-donde $\alpha$ reparte el peso: con $\alpha=1$ la afinidad depende solo de la
+donde $\alpha$ reparte el peso. Con $\alpha=1$ la afinidad depende solo de la
 forma y con $\alpha=0$, solo del significado. En el modelo propuesto el
 significado ya incluye el conocimiento auto-supervisado de $f_{\mathrm{ssl}}$,
-mientras que la forma sigue medida por $g$, de modo que $f_{\mathrm{ssl}}$ entra
+mientras que la forma sigue medida por $g$. Así $f_{\mathrm{ssl}}$ entra
 una sola vez en el sistema y $\alpha$ conserva su interpretación.
 
 \subsection{Pseudo-etiqueta}
@@ -451,7 +451,7 @@ izquierda); y vistas enmascaradas, en las que se ocultan parches de una rejilla
 (arriba a la izquierda).
 \item \textbf{Estudiante y maestro} (\emph{student}, \emph{teacher}). El
 estudiante procesa las vistas locales y enmascaradas; el maestro, las globales.
-El maestro no se entrena directamente: sus pesos son una media móvil
+El maestro no se entrena directamente. Sus pesos son una media móvil
 exponencial (EMA) de los del estudiante, lo que lo hace más estable.
 \item \textbf{Destilación.} Cada punto de una vista local o enmascarada se
 empareja con el punto de la vista global que ocupa la misma posición, y el
@@ -500,7 +500,7 @@ Se reporta por separado como mIoU \emph{known}, mIoU \emph{novel} y mIoU
 \subsection{Análisis de Dominancia}
 \label{sec:dominancia}
 
-La Ec.~\eqref{eq:miou} es una media aritmética no ponderada, de modo que
+La Ec.~\eqref{eq:miou} es una media aritmética no ponderada, por lo que
 \begin{equation}
 \frac{\partial\,\mathrm{mIoU}}{\partial\,\mathrm{IoU}_c}=\frac{1}{|\mathcal{S}|}
 \qquad \forall\, c\in\mathcal{S}.
@@ -554,7 +554,7 @@ donde $I$ es la información mutua y $H$ la entropía.
 \subsection{Linear Probing}
 \label{sec:probing}
 
-Protocolo de evaluación de un descriptor congelado: se entrena únicamente un
+Protocolo de evaluación de un descriptor congelado, en el que se entrena únicamente un
 clasificador lineal $W$ sobre él,
 \begin{equation}
 \hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right),
@@ -586,7 +586,7 @@ G=\frac{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{nov
 {\mathrm{mIoU}^{\mathrm{known}}_{\mathrm{base}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}.
 \label{eq:G}
 \end{equation}
-$G$ es adimensional: $G=0$ indica que la sustitución no aporta, $G=1$ que las
+$G$ es adimensional. $G=0$ indica que la sustitución no aporta, $G=1$ que las
 clases novedosas alcanzan la calidad con que el modelo segmenta las conocidas y
 $G<0$ degradación.
 
@@ -594,7 +594,7 @@ $G<0$ degradación.
 \label{sec:metricas-hibrido}
 
 Como el proceso es separable en dos etapas, la métrica se reporta también en el
-punto intermedio y no solo al final: \emph{linear probing} sobre el descriptor
+punto intermedio y no solo al final, con \emph{linear probing} sobre el descriptor
 (Ec.~\eqref{eq:probe}) antes de la formación de prototipos y mIoU
 (Ec.~\eqref{eq:miou}) después. Esa separación permite atribuir una mejora a la
 representación o al razonamiento, y no al sistema tratado como caja negra.
@@ -663,7 +663,7 @@ por punto (Sección~\ref{sec:fssl}).
 (Secciones~\ref{sec:ssl} y~\ref{sec:arq-sonata-paper}).
 \item Prescinde del decodificador para evitar el atajo geométrico
 (Sección~\ref{sec:atajo}).
-\item Se usa congelado: una vez por sección, con la salida guardada en disco
+\item Se usa congelado, una vez por sección, con la salida guardada en disco
 (Sección~\ref{sec:congelado}).
 \item Devuelve la salida a la resolución original mediante \emph{up-cast}
 (Sección~\ref{sec:upcast}).
@@ -676,7 +676,7 @@ por punto (Sección~\ref{sec:fssl}).
 
 Recibe $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ y entrega la etiqueta
 $\hat{y}_i$ de cada punto (Sección~\ref{sec:ncd}). Es el único módulo que este
-trabajo modifica. Realiza cinco operaciones: la figura las muestra en cuatro
+trabajo modifica. Realiza cinco operaciones. La figura las muestra en cuatro
 recuadros y coloca el agrupamiento en regiones sobre la flecha que une el primero
 con el segundo.
 \begin{enumerate}\setlength{\itemsep}{1pt}
