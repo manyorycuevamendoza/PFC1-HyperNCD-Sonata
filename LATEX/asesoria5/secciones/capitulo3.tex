@@ -203,7 +203,7 @@ procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
 \node[disco, below=2.2mm of p2] (cache)
   {\textbf{Frontera de disco:} \emph{cache} de $f_{\mathrm{ssl}}$ en \texttt{.npz}};
 \node[paso, below=2.2mm of cache] (p3)
-  {\textbf{P3.} Fusión y entrenamiento de HyperNCD sobre $S_j$\\\emph{entorno CUDA 11.4}, en cada época};
+  {\textbf{P3.} Fusión y entrenamiento de HyperNCD sobre $S_j$\\\emph{entorno CUDA 11.8}, en cada época};
 \node[dec, below=3.4mm of p3] (d1) {¿3 repeticiones\\completas?};
 \node[dec, below=3.4mm of d1] (d2) {¿quedan\\secciones?};
 \node[paso, below=3.4mm of d2] (p4)
@@ -286,7 +286,12 @@ ganadora se congela y se aplica sin reajuste al resto de secciones.
 \item \textbf{P5. Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
 (Ec.~\eqref{eq:delta}), de la brecha cerrada $G$ (Ec.~\eqref{eq:G}) y del
 análisis de dominancia (Ec.~\eqref{eq:dominante}), más la ablación de las tres
-variantes del descriptor.
+variantes del descriptor: la línea base
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}}]$, el modelo híbrido
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ y la variante completa
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ del Plan~B
+(Sección~\ref{sec:riesgos}). En las tres la afinidad geométrica del hipergrafo
+se calcula igual, de modo que la única diferencia entre ellas es el descriptor.
 \end{enumerate}
 
 \subsection{Protocolo de Repetición}

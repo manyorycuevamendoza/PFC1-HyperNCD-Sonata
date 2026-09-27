@@ -225,7 +225,7 @@ GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-
 VRAM & Por medir en OE3; cota inferior de 0{,}43\,GB por los pesos del codificador (108{,}46\,M parámetros) & 48\,GB (49\,140\,MiB) \\
 RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
 Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
-\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.4 y 12.4 vía módulos; driver 610.57.04 \\
+\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos; driver 610.57.04 \\
 Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
 Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \bottomrule

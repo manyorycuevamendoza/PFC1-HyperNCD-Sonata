@@ -33,9 +33,9 @@ $z_{i,k}$ & Puntuación del punto $i$ para el prototipo $k$ & Número real \\
 $s_{i,k}$ & Peso de pertenencia del punto $i$ al prototipo $k$ & Entre 0 y 1 \\
 $S_p$ & Matriz de asignación suave, formada por los $s_{i,k}$ & -- \\
 $P_k$ & Prototipo $k$ & Ec.~\eqref{eq:prototipo} \\
-$\mathcal{H}$ & Hipergrafo de prototipos & -- \\
-$S_g$ & Afinidad geométrica entre prototipos & Núcleo gaussiano \\
-$S_s$ & Afinidad semántica entre prototipos & Coseno \\
+$\mathcal{H}$ & Hipergrafo de regiones & -- \\
+$S_g$ & Afinidad geométrica entre regiones & Núcleo gaussiano \\
+$S_s$ & Afinidad semántica entre regiones & Coseno \\
 $S_b$ & Afinidad combinada & Ec.~\eqref{eq:afinidad} \\
 $\alpha$ & Balance geométrico-semántico en $S_b$ & $[0,1]$; se calibra \\
 $\tau$ & Temperatura del núcleo gaussiano & 0{,}1 \\
@@ -62,7 +62,7 @@ $G$ & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \endhead
 \bottomrule
 \endlastfoot
-Afinidad & Semejanza entre dos prototipos; combina una componente geométrica y una semántica. \\
+Afinidad & Semejanza entre dos regiones; combina una componente geométrica y una semántica. \\
 Análisis de dominancia & Identificación de la clase que más se aparta del mIoU y explica su valor. \\
 Aprendizaje auto-supervisado & Entrenamiento cuya señal de supervisión procede de los propios datos y no de etiquetas humanas. \\
 ARI & Índice de Rand ajustado: coincidencia entre la agrupación descubierta y la real. \\
@@ -81,7 +81,7 @@ Descriptor semántico & Descriptor de la red supervisada de HyperNCD; 96 dimensi
 Emparejamiento húngaro & Asignación óptima entre agrupaciones descubiertas y clases reales. \\
 Formato LAS & Formato binario estándar de la ASPRS para nubes de puntos láser. \\
 Ganancia absoluta & Diferencia de mIoU en clases novedosas entre el modelo híbrido y la línea base. \\
-Hiperarista & Conjunto formado por un prototipo y sus $M$ vecinos más afines. \\
+Hiperarista & Conjunto formado por una región y sus $M$ regiones más afines. \\
 Hipergrafo & Estructura en la que una arista puede conectar más de dos nodos a la vez. \\
 IoU & Intersección sobre unión de una clase: aciertos entre la suma de aciertos y errores. \\
 \emph{Linear probing} & Evaluación de un descriptor congelado mediante un clasificador lineal. \\

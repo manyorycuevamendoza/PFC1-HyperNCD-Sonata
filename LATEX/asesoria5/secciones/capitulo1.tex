@@ -104,7 +104,7 @@ del método, y por tanto que una representación aprendida puesta en su lugar
 debería aportar más.
 
 La limitación de fondo es la naturaleza de ese descriptor. $f_{\text{geo}}$ se
-calcula de forma analítica: se toman los $K=15$ vecinos más cercanos, se arma la
+calcula de forma analítica: se toman los 15 vecinos más cercanos, se arma la
 matriz de covarianza de sus distancias, se obtienen sus autovalores y de ellos se
 derivan la linealidad, la planaridad y la dispersión \cite{zhang2026hyperncd}.
 Ese cálculo es siempre el mismo y no aprende nada del dominio en el que se
@@ -116,7 +116,7 @@ reporta ninguna cifra de cómputo}, ni GPU, ni memoria, ni tiempo.
 
 De aquí el proyecto toma la arquitectura y su código público; los
 hiperparámetros publicados, que fijan el punto de partida de la calibración
-($K=15$, $M=8$, $\alpha=0{,}5$, $\epsilon=0{,}15$); y la vara contra la cual se
+(15 vecinos, $M=8$, $\alpha=0{,}5$, $\epsilon=0{,}15$); y la vara contra la cual se
 mide el aporte principal, porque cualquier reemplazo de $f_{\text{geo}}$ debe
 compararse contra sus $+4{,}2$ puntos.
 
@@ -431,19 +431,19 @@ de escenario; lo que se traslada es el procedimiento y el diagnóstico.
 
 \begin{enumerate}
 \item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas heterogéneas
-(OE2).} La afinidad entre prototipos combina una componente geométrica y una
-semántica según $S_b=\alpha\,S_g+(1-\alpha)\,S_s$. Mientras $S_g$ se calcula
-sobre un descriptor de seis componentes acotadas, el valor publicado
-$\alpha=0{,}5$ significa efectivamente mitad y mitad. En cuanto $S_g$ pasa a
-calcularse sobre un vector de cientos de dimensiones producido por un codificador
-congelado, cuyo rango no está normalizado contra el de la rama semántica, ese
-mismo valor deja de significar eso. Hacer comparables las dos similitudes es una
+(OE2).} El descriptor híbrido $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ une dos
+ramas de escala distinta: 96 componentes entrenadas junto con el resto del
+modelo y 1088 componentes congeladas cuyo rango no está normalizado contra el de
+la rama semántica. Sin corrección, la rama más ancha domina la similitud por
+coseno $S_s$ con la que se comparan las regiones, y el valor publicado
+$\alpha=0{,}5$ deja de repartir el peso entre forma y significado como en la
+línea base. Hacer comparables las dos ramas antes de concatenarlas es una
 precondición de la calibración y no un detalle de implementación, y el régimen
-congelado lo agrava porque impide que la rama aprendida se reescale sola durante
-el entrenamiento. En BRDL los dos parámetros pertenecen al mismo método y
-comparten escala, de modo que este caso queda fuera de lo que ese trabajo cubre.
-\emph{Resultado verificable:} el procedimiento de normalización adoptado y su
-efecto medido sobre la distribución de $S_b$ antes y después.
+congelado lo agrava porque impide que la rama auto-supervisada se reescale sola
+durante el entrenamiento. En BRDL los dos parámetros pertenecen al mismo método
+y comparten escala, de modo que este caso queda fuera de lo que ese trabajo
+cubre. \emph{Resultado verificable:} el procedimiento de normalización adoptado
+y su efecto medido sobre la distribución de $S_b$ antes y después.
 
 \item[\textbf{A6}] \textbf{Calibración conjunta y verificación de
 no-aditividad (OE2).} Determinar los tres valores con una grilla

@@ -163,10 +163,16 @@ $f_{\mathrm{sem}}$.
 \label{sec:fgeo}
 
 Vector calculado con una fórmula cerrada, sin aprendizaje, a partir de los
-autovalores de la matriz de covarianza de un vecindario de 15 puntos:
-linealidad, planaridad y dispersión, concatenados en la implementación con el
-centroide de la región, lo que da una dimensión total de 6. Se denota
-$f_{\mathrm{geo}}$ y es el componente que este trabajo sustituye.
+autovalores $\lambda_1\geq\lambda_2\geq\lambda_3$ de la matriz de covarianza de
+un conjunto de puntos: linealidad $(\lambda_1-\lambda_2)/\lambda_1$,
+planaridad $(\lambda_2-\lambda_3)/\lambda_1$ y dispersión
+$\lambda_3/\lambda_1$. El artículo los calcula sobre un vecindario de 15 puntos;
+la implementación ejecutada los calcula sobre la región que contiene al punto
+(Sección~\ref{sec:region}) y les concatena el centroide de esa región, lo que da
+una dimensión total de 6. Este trabajo adopta la versión ejecutada: cada punto
+hereda el descriptor de su región. Se denota $f_{\mathrm{geo}}$ y es el
+componente del descriptor que este trabajo sustituye. Solo describe forma, sin
+ningún conocimiento de qué es el punto.
 
 \subsubsection{Descriptor Auto-supervisado}
 \label{sec:fssl}
@@ -175,7 +181,14 @@ Salida del codificador PTv3 preentrenado de Sonata~\cite{wu2025sonata}, usado
 con pesos congelados. Su dimensión es 1088, resultado de concatenar las anchuras
 $512+384+192$ de las tres últimas etapas durante la propagación inversa del
 submuestreo. Se denota $f_{\mathrm{ssl}}$ y codifica estructura aprendida sobre
-140 mil escenas, sin haber visto las clases de este proyecto.
+140 mil escenas, sin haber visto las clases de este proyecto. A diferencia de
+$f_{\mathrm{geo}}$, no es un descriptor de forma: el preentrenamiento de Sonata
+está diseñado para evitar el atajo geométrico (Sección~\ref{sec:atajo}), de
+modo que $f_{\mathrm{ssl}}$ aporta al descriptor un conocimiento semántico
+adquirido sin etiquetas, complementario al supervisado de $f_{\mathrm{sem}}$.
+El modelo resultante es híbrido en ese sentido: cada punto se describe a la vez
+con lo aprendido de las clases conocidas del proyecto y con lo aprendido de
+forma auto-supervisada fuera de él.
 
 \subsection{Aprendizaje Auto-supervisado}
 \label{sec:ssl}
@@ -305,33 +318,44 @@ simultáneamente en la explicación de una novedosa.
 \subsubsection{Hiperarista}
 \label{sec:hiperarista}
 
-Elemento $e_i\in\mathcal{E}$ formado por un prototipo $P_i$ y sus $M$ prototipos
-más afines según la afinidad $S_b$. Los autores de HyperNCD reportan $M=8$ como
-valor óptimo.
+Elemento $e_i\in\mathcal{E}$ formado por una región $r_i$
+(Sección~\ref{sec:region}) y sus $M$ regiones más afines según la afinidad
+$S_b$. Los nodos del hipergrafo son por tanto regiones y no prototipos: como
+una sección contiene muchas más regiones que clases, cada hiperarista conecta
+un subconjunto selectivo de nodos, lo que no ocurriría con solo $K$ prototipos.
+Los autores de HyperNCD reportan $M=8$ como valor óptimo. Cada región recibe
+después el promedio de los descriptores de su hiperarista, ponderado por la
+afinidad, y es ese descriptor enriquecido el que se compara con los
+prototipos.
 
 \subsubsection{Afinidad entre Prototipos}
 \label{sec:afinidad}
 \label{sec:afinhiper}
 
-Medida de semejanza entre dos prototipos que combina un criterio semántico y uno
-geométrico. El semántico es la similitud por coseno,
+Medida de semejanza entre dos regiones que combina un criterio semántico y uno
+geométrico. El semántico es la similitud por coseno entre sus descriptores,
 \begin{equation}
-S_s^{(ij)}=\frac{\left\langle P_i,\;P_j\right\rangle}{\lVert P_i\rVert\;\lVert P_j\rVert},
+S_s^{(ij)}=\frac{\left\langle F^{(i)},\;F^{(j)}\right\rangle}{\lVert F^{(i)}\rVert\;\lVert F^{(j)}\rVert},
 \label{eq:coseno}
 \end{equation}
 que vale 1 cuando ambos vectores apuntan en la misma dirección. El geométrico es
 un núcleo gaussiano,
 \begin{equation}
-S_g^{(ij)}=\exp\left(-\frac{\lVert f^{(i)}-f^{(j)}\rVert^{2}}{\tau}\right),
+S_g^{(ij)}=\exp\left(-\frac{\lVert g^{(i)}-g^{(j)}\rVert^{2}}{\tau}\right),
 \label{eq:gauss}
 \end{equation}
-que vale 1 cuando los descriptores coinciden y cae hacia 0 al alejarse. Donde:
+que vale 1 cuando las regiones tienen la misma forma y posición y cae hacia 0 al
+alejarse. Donde:
 \begin{itemize}\setlength{\itemsep}{1pt}
-\item $\lVert f^{(i)}-f^{(j)}\rVert^{2}$: distancia al cuadrado entre los
-descriptores de las regiones $i$ y $j$; en la línea base es $f_{\mathrm{geo}}$
-y en el modelo propuesto, $f_{\mathrm{ssl}}$.
+\item $F^{(i)}$: descriptor de la región $i$, promedio de los $F_i$ de sus
+puntos (Ec.~\eqref{eq:hibrido}); es aquí donde entra $f_{\mathrm{ssl}}$.
+\item $g^{(i)}$: rasgo geométrico de la región $i$, es decir, su
+$f_{\mathrm{geo}}$ (Sección~\ref{sec:fgeo}). Aunque $f_{\mathrm{geo}}$ sale del
+descriptor $F_i$ en el modelo propuesto, se sigue calculando para la afinidad y es igual
+en la línea base y en el modelo propuesto, de modo que el razonamiento
+geométrico del hipergrafo se conserva íntegro.
 \item $\tau$: temperatura, fijada en 0{,}1. Un valor pequeño hace exigente al
-criterio, porque solo considera afines a los prototipos muy próximos; uno grande
+criterio, porque solo considera afines a las regiones muy próximas; uno grande
 lo hace permisivo.
 \end{itemize}
 Ambos se combinan en
@@ -340,7 +364,10 @@ S_b=\alpha\,S_g+(1-\alpha)\,S_s,\qquad \alpha\in[0,1],
 \label{eq:afinidad}
 \end{equation}
 donde $\alpha$ reparte el peso: con $\alpha=1$ la afinidad depende solo de la
-forma y con $\alpha=0$, solo del significado.
+forma y con $\alpha=0$, solo del significado. En el modelo propuesto el
+significado ya incluye el conocimiento auto-supervisado de $f_{\mathrm{ssl}}$,
+mientras que la forma sigue medida por $g$, de modo que $f_{\mathrm{ssl}}$ entra
+una sola vez en el sistema y $\alpha$ conserva su interpretación.
 
 \subsection{Pseudo-etiqueta}
 \label{sec:pseudo}
@@ -397,7 +424,9 @@ etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
 La figura corresponde a la formulación del artículo. La implementación publicada
 que este trabajo ejecuta realiza las tres primeras etapas, pero no el reajuste
 dinámico de la cuarta, y asigna las pseudo-etiquetas con Sinkhorn-Knopp en lugar
-del umbral (Anexo~D).
+del umbral (Anexo~D). Además, en la implementación los nodos del hipergrafo son
+regiones y no prototipos (Sección~\ref{sec:hiperarista}); este trabajo adopta esa
+formulación.
 
 \subsection{Arquitectura de Sonata}
 \label{sec:arq-sonata-paper}
@@ -584,7 +613,8 @@ paso remite al concepto que lo define en las secciones anteriores.
 {\hypersetup{linkcolor=blue!55!black}\fuentediagrama
 \adjustbox{max width=\linewidth, max totalheight=12.9cm}{\input{imagenes/diagrama_diseno_tikz}}}
 \caption{Diseño del modelo híbrido propuesto. Los Módulos~2 y~4 provienen de
-HyperNCD y el Módulo~3 de Sonata; el Módulo~4 contiene sus cuatro operaciones.
+HyperNCD y el Módulo~3 de Sonata; el Módulo~4 muestra sus operaciones en cuatro
+recuadros, con el agrupamiento en regiones sobre la flecha que une los dos primeros.
 Cada término y cada fórmula enlazan con la sección o ecuación donde se definen.
 Elaboración propia.}
 \label{fig:diseno}
@@ -597,8 +627,8 @@ Elaboración propia.}
 Recibe el levantamiento en bruto en formato LAS, de hasta 1\,TB, y entrega las
 secciones $S_j$ (Sección~\ref{sec:seccion}).
 \begin{enumerate}\setlength{\itemsep}{1pt}
-\item Carga del archivo LAS: coordenadas $(x,y,z)$ y color
-(Sección~\ref{sec:las}).
+\item Lectura por bloques del archivo LAS: coordenadas $(x,y,z)$ y color
+(Sección~\ref{sec:las}). El archivo no se carga completo en memoria.
 \item Corte en cinco secciones $S_j$ (Sección~\ref{sec:seccion}).
 \item Limpieza de ruido por SOR, con $q=20$ y $\lambda=2$
 (Ec.~\eqref{eq:sor}).
@@ -646,7 +676,9 @@ por punto (Sección~\ref{sec:fssl}).
 
 Recibe $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ y entrega la etiqueta
 $\hat{y}_i$ de cada punto (Sección~\ref{sec:ncd}). Es el único módulo que este
-trabajo modifica; la figura muestra sus operaciones como cuatro recuadros.
+trabajo modifica. Realiza cinco operaciones: la figura las muestra en cuatro
+recuadros y coloca el agrupamiento en regiones sobre la flecha que une el primero
+con el segundo.
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Concatenación de los descriptores en $F_i$ (Ec.~\eqref{eq:hibrido}).
 \item Agrupamiento en regiones (Sección~\ref{sec:region}).
