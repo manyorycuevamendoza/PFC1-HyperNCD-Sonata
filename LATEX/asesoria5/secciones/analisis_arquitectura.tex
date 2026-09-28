@@ -116,7 +116,7 @@ propagación inversa del submuestreo.
    \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ interfaz\quad
    \tikz\node[draw,rounded corners,fill=purple!12,minimum height=2.6mm,minimum width=3.5mm]{};\ salida usada};
 \end{tikzpicture}
-\caption{Arquitectura del \emph{encoder} de Sonata: cinco etapas jerárquicas sin
+\caption[Arquitectura del \emph{encoder} de Sonata]{Arquitectura del \emph{encoder} de Sonata: cinco etapas jerárquicas sin
 decodificador. Cada etapa es un componente del mismo tipo, formado por bloques
 idénticos (Fig.~\ref{fig:bloque-sonata}), y queda caracterizada por tres
 magnitudes: resolución, anchura y capacidad. Al descender la jerarquía, la
@@ -177,7 +177,7 @@ cada bloque, cuya estructura detalla la Figura~\ref{fig:bloque-sonata}.
 \node[below=1.5mm of p2, font=\tiny, align=center, text=black!70, xshift=6mm]
   {cada parche: $H$ cabezas en paralelo};
 \end{tikzpicture}
-\caption{Bloque elemental, repetido 24 veces. Dentro de cada bloque, la atención
+\caption[Bloque elemental del \emph{encoder} de Sonata]{Bloque elemental, repetido 24 veces. Dentro de cada bloque, la atención
 se calcula de forma independiente sobre $m=N/K$ parches contiguos de la secuencia
 serializada, y dentro de cada parche sobre $H$ cabezas; ambos niveles se resuelven
 en paralelo como una única operación densa por lotes. El paralelismo del modelo
@@ -206,7 +206,7 @@ desglose de la Tabla~\ref{tab:params-sonata}.
 
 \begin{table}[H]
 \centering
-\caption{Distribución de parámetros del \emph{encoder} de Sonata por etapa.}
+\caption[Parámetros del \emph{encoder} de Sonata por etapa]{Distribución de parámetros del \emph{encoder} de Sonata por etapa.}
 \label{tab:params-sonata}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
@@ -260,7 +260,7 @@ etapas, como muestra la Tabla~\ref{tab:vram-sonata}.
 
 \begin{table}[H]
 \centering
-\caption{Estimación de memoria de vídeo por etapa para una sección de
+\caption[Memoria de vídeo por etapa del \emph{encoder}]{Estimación de memoria de vídeo por etapa para una sección de
 $3\times10^{5}$ puntos tras voxelización, en precisión simple y sin
 FlashAttention.}
 \label{tab:vram-sonata}
@@ -353,7 +353,7 @@ ejecución.
    El paralelismo es perfecto: el \emph{encoder} está congelado y no hay
    sincronización de gradientes entre secciones.};
 \end{tikzpicture}
-\caption{Esquema de ejecución del cacheo de características. En (a) las secciones
+\caption[Ejecución del cacheo de características]{Esquema de ejecución del cacheo de características. En (a) las secciones
 se procesan uno tras otra sobre una sola unidad; en (b) se distribuyen mediante un
 arreglo de trabajos del gestor de colas. La independencia entre secciones,
 consecuencia de mantener el \emph{encoder} congelado, hace que la aceleración sea
@@ -433,7 +433,7 @@ inicial de 32 canales.
 \draw[fl, red!65, thick] ($(geo.west)+(-0.8,0)$) -- (geo.west)
   node[midway, above, font=\tiny, text=red!70, align=center] {aporte:\\$f_{\mathrm{ssl}}$};
 \end{tikzpicture}
-\caption{Estructura de HyperNCD. La red troncal dispersa produce
+\caption[Estructura de HyperNCD]{Estructura de HyperNCD. La red troncal dispersa produce
 $f_{\mathrm{sem}}$ por punto; el agrupamiento en regiones y el descriptor
 geométrico analítico alimentan el hipergrafo, cuya salida se convierte en
 pseudo-etiquetas mediante Sinkhorn-Knopp. La flecha roja indica el punto donde
@@ -489,7 +489,7 @@ procedimiento de optimización.
 
 \begin{table}[H]
 \centering
-\caption{Contraste entre las dos ramas del modelo híbrido.}
+\caption[Contraste entre las dos ramas]{Contraste entre las dos ramas del modelo híbrido.}
 \label{tab:contraste-ramas}
 \begin{tabular}{@{}p{3.4cm}p{4.4cm}p{4.4cm}@{}}
 \toprule
@@ -519,7 +519,7 @@ Tabla~\ref{tab:escenarios} los enumera junto con el factor que limita a cada uno
 
 \begin{table}[H]
 \centering
-\caption{Escenarios de ejecución considerados para el cacheo de características.}
+\caption[Escenarios de ejecución del cacheo]{Escenarios de ejecución considerados para el cacheo de características.}
 \label{tab:escenarios}
 \begin{tabular}{@{}p{3.5cm}p{2.2cm}p{5.6cm}@{}}
 \toprule
@@ -563,7 +563,7 @@ atribuible a este trabajo.
 
 \begin{table}[H]
 \centering
-\caption{Delimitación del aporte a partir del análisis de los componentes.}
+\caption[Delimitación del aporte]{Delimitación del aporte a partir del análisis de los componentes.}
 \label{tab:atribucion}
 \begin{tabular}{@{}p{4.3cm}p{4.1cm}p{4.1cm}@{}}
 \toprule
