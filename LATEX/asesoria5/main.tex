@@ -31,12 +31,12 @@
 \usepackage{adjustbox}
 % Enlace a la seccion donde se explica un termino, con su numero al lado
 % Tamanos de letra del diagrama iguales a los del PDF suelto (base 10 pt)
-\newcommand{\fuentediagrama}{\setstretch{1}\def\scriptsize{\fontsize{7}{8.5}\selectfont}\def\tiny{\fontsize{5}{6}\selectfont}}
+\newcommand{\fuentediagrama}{\setstretch{1}\def\scriptsize{\fontsize{7.8}{9.4}\selectfont}\def\tiny{\fontsize{6}{7.2}\selectfont}}
 \newcommand{\enlace}[2]{\hyperref[#1]{#2}\nobreakspace{\tiny\color{black!45}(\S\ref*{#1})}}
 % Logo de una herramienta, enlazado a la tabla de herramientas
 \newcommand{\logo}[1]{\hyperref[sec:anexo-software]{\raisebox{-0.25ex}{\includegraphics[height=1.7ex]{imagenes/logos/#1}}}}
 % Pestana de modulo: nombre en blanco enlazado a su seccion
-\newcommand{\tabmod}[2]{\hyperref[#1]{\textcolor{white}{#2}}\nobreakspace{\tiny\color{white}(\S\ref*{#1})}}
+\newcommand{\tabmod}[2]{\hyperref[#1]{\textcolor{white}{#2}} {\tiny\color{white}(\S\ref*{#1})}}
 \newcommand{\enlaceec}[2]{\hyperref[#1]{#2}\nobreakspace{\tiny\color{black!45}(Ec.\,\ref*{#1})}}
 
 % Ubicación de los imágenes.

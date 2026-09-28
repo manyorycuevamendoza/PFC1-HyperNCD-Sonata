@@ -12,14 +12,29 @@
   font=\scriptsize,
   execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000},
   mod/.style={rounded corners=3pt, draw, thick, align=center, inner sep=5pt},
-  tab/.style={rounded corners=2pt, text=white, font=\scriptsize\bfseries, inner sep=3pt, anchor=center},
+  tab/.style={rounded corners=2pt, text=white, font=\scriptsize\bfseries, inner sep=3pt, anchor=south, align=center},
   tarj/.style={rounded corners=2.5pt, draw=black!40, fill=white, semithick,
-               align=left, inner sep=4pt, text width=4.3cm, minimum height=3.4cm, anchor=north},
+               align=left, inner sep=4pt, text width=4.45cm, minimum height=3.5cm, anchor=north},
   chico/.style={font=\tiny, text=black!65},
   fl/.style={-{Latex[length=2.1mm]}, thick, black!65}
 ]
+%% ---------- preprocesamiento ----------
+\node[mod, draw=cEnt, fill=cEnt!6, text width=4.3cm, anchor=center] (M1) at (0,0)
+ {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:tls]{\textcolor{cEnt}{levantamiento TLS}} · \hyperref[sec:modulo1]{\textcolor{cEnt}{hasta 1\,TB}}}\\[4pt]
+  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
+    \draw[black!35] (0.34,0.23) rectangle (1.59,1.28);
+    \draw[black!35] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
+    \foreach \x/\y/\t in {0.097/0.087/95, 0.089/0.121/98, 0.080/0.175/97, 0.104/0.235/93, 0.139/0.278/89, 0.129/0.332/87, 0.129/0.372/89, 0.106/0.408/92, 0.135/0.448/87, 0.142/0.512/86, 0.117/0.540/93, 0.159/0.598/85, 0.104/0.595/97, 0.101/0.671/94, 0.121/0.703/92, 0.118/0.750/91, 0.132/0.815/89, 0.168/0.875/84, 0.148/0.892/86, 0.139/0.944/90, 0.148/0.980/87, 0.087/0.988/98, 0.163/0.103/93, 0.165/0.134/93, 0.198/0.218/83, 0.129/0.216/96, 0.215/0.297/82, 0.233/0.353/79, 0.179/0.362/87, 0.155/0.397/91, 0.150/0.427/95, 0.226/0.521/80, 0.191/0.543/88, 0.187/0.597/87, 0.213/0.657/81, 0.195/0.685/85, 0.204/0.736/81, 0.145/0.742/95, 0.141/0.786/95, 0.152/0.835/94, 0.197/0.904/85, 0.191/0.955/85, 0.174/0.976/87, 0.193/1.022/88, 0.235/0.109/86, 0.242/0.163/83, 0.254/0.215/81, 0.241/0.260/82, 0.257/0.300/80, 0.227/0.325/86, 0.236/0.364/86, 0.231/0.430/85, 0.243/0.456/86, 0.244/0.522/85, 0.234/0.547/84, 0.255/0.623/80, 0.252/0.651/80, 0.236/0.690/86, 0.249/0.738/81, 0.227/0.767/86, 0.269/0.837/78, 0.261/0.870/78, 0.251/0.920/84, 0.239/0.953/87, 0.263/1.014/81, 0.231/1.026/86, 0.300/0.122/80, 0.263/0.160/88, 0.349/0.247/73, 0.323/0.279/78, 0.262/0.294/86, 0.298/0.354/81, 0.308/0.410/79, 0.324/0.447/75, 0.292/0.482/83, 0.315/0.539/76, 0.322/0.595/75, 0.279/0.600/87, 0.276/0.645/87, 0.297/0.694/81, 0.320/0.756/76, 0.258/0.755/87, 0.324/0.841/74, 0.317/0.867/80, 0.286/0.906/83, 0.299/0.960/82, 0.265/0.982/87, 0.297/1.051/82, 0.340/0.125/80, 0.359/0.188/79, 0.369/0.231/78, 0.374/0.282/74, 0.358/0.320/78, 0.369/0.370/75, 0.343/0.396/79, 0.368/0.456/78, 0.361/0.491/80, 0.385/0.541/72, 0.390/0.605/72, 0.374/0.634/76, 0.314/0.644/85, 0.318/0.694/85, 0.376/0.760/72, 0.377/0.801/73, 0.363/0.858/75, 0.381/0.904/75, 0.394/0.933/72, 0.336/0.961/83, 0.341/1.010/83, 0.381/1.078/72, 0.395/0.130/78, 0.418/0.197/75, 0.407/0.228/77, 0.419/0.271/74, 0.456/0.339/70, 0.429/0.386/71, 0.427/0.415/74, 0.402/0.452/79, 0.438/0.526/69, 0.438/0.555/71, 0.390/0.567/79, 0.406/0.616/78, 0.414/0.680/77, 0.455/0.737/68, 0.405/0.745/78, 0.397/0.800/77, 0.398/0.838/77, 0.467/0.912/66, 0.419/0.941/75, 0.438/0.997/73, 0.447/1.050/69, 0.452/1.099/67, 0.458/0.140/76, 0.518/0.231/64, 0.468/0.227/76, 0.485/0.291/69, 0.472/0.335/75, 0.485/0.372/72, 0.457/0.393/77, 0.479/0.455/73, 0.445/0.491/79, 0.472/0.551/72, 0.501/0.620/65, 0.447/0.624/77, 0.443/0.670/78, 0.462/0.722/77, 0.512/0.785/67, 0.499/0.821/69, 0.467/0.858/75, 0.499/0.926/69, 0.479/0.938/72, 0.486/1.006/69, 0.491/1.035/69, 0.511/1.090/65, 0.568/0.177/63, 0.537/0.215/67, 0.546/0.262/67, 0.507/0.277/74, 0.537/0.358/66, 0.523/0.385/72, 0.551/0.443/64, 0.499/0.459/74, 0.528/0.506/72, 0.549/0.574/66, 0.499/0.594/75, 0.497/0.618/76, 0.518/0.683/74, 0.540/0.744/66, 0.549/0.791/68, 0.499/0.805/74, 0.511/0.855/74, 0.490/0.895/77, 0.574/0.987/62, 0.534/1.003/68, 0.550/1.064/67, 0.525/1.094/70, 0.550/0.153/75, 0.590/0.219/68, 0.562/0.243/73, 0.584/0.290/68, 0.592/0.348/67, 0.570/0.383/73, 0.559/0.416/75, 0.548/0.450/74, 0.571/0.524/71, 0.568/0.553/73, 0.624/0.633/61, 0.578/0.652/70, 0.618/0.726/62, 0.580/0.746/68, 0.541/0.751/75, 0.574/0.818/68, 0.583/0.869/69, 0.585/0.909/68, 0.568/0.942/73, 0.585/1.003/70, 0.586/1.052/67, 0.554/1.063/73, 0.607/0.721/73, 0.602/0.781/71, 0.670/0.851/61, 0.609/0.856/71, 0.629/0.914/69, 0.653/0.989/60, 0.600/0.970/74, 0.586/1.018/74, 0.647/1.116/61, 0.652/0.765/72, 0.697/0.844/64, 0.648/0.858/72, 0.679/0.905/68, 0.654/0.948/73, 0.679/1.022/65, 0.682/1.057/68, 0.674/1.092/70, 0.757/0.840/62, 0.688/0.860/71, 0.736/0.927/65, 0.692/0.985/73, 0.749/1.066/63, 0.708/1.092/68, 0.799/0.847/61, 0.797/0.884/62, 0.766/0.915/65, 0.719/0.937/75, 0.751/0.988/71, 0.747/1.041/72, 0.741/1.081/70, 0.813/0.847/66, 0.780/0.836/75, 0.783/0.986/71, 0.783/1.026/71, 0.825/1.108/64, 0.822/0.776/73, 0.822/0.794/76, 0.852/0.872/67, 0.840/0.917/71, 0.816/0.949/72, 0.851/1.015/66, 0.809/1.033/74, 0.860/1.109/66, 0.848/0.757/75, 0.820/0.786/81, 0.827/0.845/80, 0.900/0.906/68, 0.834/0.922/81, 0.826/0.974/79, 0.878/1.052/69, 0.851/1.084/74, 0.881/0.706/79, 0.865/0.745/83, 0.913/0.823/73, 0.905/0.869/73, 0.859/0.864/82, 0.872/0.938/79, 0.857/0.934/86, 0.927/1.043/72, 0.908/1.070/75, 0.902/0.128/82, 0.895/0.167/84, 0.900/0.202/85, 0.945/0.285/74, 0.944/0.325/78, 0.893/0.349/85, 0.924/0.403/77, 0.895/0.428/85, 0.919/0.472/83, 0.949/0.554/75, 0.922/0.569/80, 0.931/0.626/76, 0.943/0.656/77, 0.902/0.703/84, 0.936/0.762/75, 0.927/0.804/78, 0.911/0.824/81, 0.922/0.876/79, 0.894/0.898/88, 0.917/0.963/79, 0.894/0.986/84, 0.912/1.038/81, 0.963/0.124/83, 0.974/0.185/80, 0.911/0.189/91, 0.943/0.239/87, 0.923/0.267/91, 0.914/0.314/93, 0.896/0.353/92, 0.928/0.400/90, 0.932/0.463/86, 0.936/0.509/87, 0.947/0.578/82, 0.951/0.610/81, 0.911/0.602/94, 0.967/0.701/80, 0.938/0.717/88, 0.919/0.767/90, 0.948/0.812/83, 0.933/0.876/84, 0.921/0.879/90, 0.941/0.959/85, 0.947/1.013/83, 0.925/1.017/89, 0.972/0.091/90, 0.985/0.154/86, 0.987/0.207/87, 0.955/0.221/90, 0.988/0.289/83, 0.991/0.353/82, 0.951/0.374/90, 0.927/0.381/96, 0.989/0.466/84, 0.962/0.477/92, 0.945/0.521/93, 0.949/0.583/91, 0.954/0.621/89, 0.980/0.674/87, 0.968/0.727/87, 0.952/0.763/90, 0.974/0.811/88, 0.984/0.849/85, 0.975/0.891/89, 0.974/0.956/86, 0.995/1.012/82, 0.961/1.036/89, 0.973/0.090/95, 0.964/0.115/100, 0.988/0.185/94, 0.986/0.227/94, 1.012/0.282/89, 1.003/0.313/89, 1.018/0.365/88, 1.030/0.418/87, 0.979/0.434/97, 0.999/0.503/89, 0.992/0.531/92, 0.990/0.581/92, 0.991/0.608/92, 0.963/0.650/98, 0.981/0.691/95, 0.958/0.714/100, 0.989/0.783/93, 0.987/0.828/92, 0.996/0.885/94, 0.971/0.900/97, 0.959/0.960/99, 0.991/1.002/96, 0.988/0.076/100, 0.993/0.106/100, 1.031/0.193/92, 0.989/0.198/100, 0.997/0.244/100, 1.001/0.300/100, 1.030/0.337/96, 1.001/0.379/99, 1.020/0.431/98, 1.039/0.482/93, 1.016/0.522/96, 0.989/0.532/100, 1.035/0.606/94, 1.039/0.675/92, 0.985/0.663/100, 1.045/0.760/91, 1.044/0.794/90, 1.035/0.831/94, 1.021/0.877/94, 0.989/0.882/100, 0.990/0.945/100, 1.027/1.003/92, 1.074/0.088/94, 1.056/0.111/98, 1.046/0.159/97, 1.036/0.187/100, 1.008/0.234/100, 1.066/0.293/97, 1.026/0.324/100, 1.057/0.386/96, 1.031/0.405/100, 1.039/0.460/99, 1.025/0.495/100, 1.021/0.530/100, 1.018/0.583/100, 1.055/0.643/99, 1.038/0.673/100, 1.058/0.726/96, 1.070/0.775/95, 1.037/0.809/100, 1.010/0.853/100, 1.010/0.893/100, 1.021/0.928/100, 1.011/0.956/100, 1.081/0.050/100, 1.040/0.083/100, 1.067/0.133/100, 1.037/0.163/100, 1.102/0.239/98, 1.037/0.272/100, 1.062/0.327/100, 1.080/0.364/100, 1.061/0.411/100, 1.043/0.411/100, 1.064/0.497/100, 1.062/0.530/100, 1.032/0.559/100, 1.046/0.618/100, 1.056/0.653/100, 1.102/0.737/98, 1.054/0.738/100, 1.065/0.798/100, 1.045/0.819/100, 1.060/0.880/100, 1.067/0.944/100, 1.031/0.950/100, 1.089/0.041/100, 1.079/0.066/100, 1.098/0.129/100, 1.069/0.160/100, 1.091/0.210/100, 1.073/0.245/100, 1.108/0.320/100, 1.130/0.358/100, 1.135/0.420/100, 1.117/0.465/100, 1.120/0.507/100, 1.120/0.555/100, 1.073/0.546/100, 1.087/0.599/100, 1.076/0.656/100, 1.073/0.706/100, 1.077/0.746/100, 1.069/0.788/100, 1.070/0.831/100, 1.088/0.859/100, 1.094/0.924/100, 1.079/0.954/100, 1.150/0.055/100, 1.113/0.052/100, 1.153/0.136/100, 1.137/0.177/100, 1.086/0.187/100, 1.118/0.234/100, 1.164/0.307/100, 1.093/0.327/100, 1.122/0.372/100, 1.110/0.417/100, 1.084/0.453/100, 1.108/0.494/100, 1.109/0.541/100, 1.114/0.592/100, 1.141/0.661/100, 1.123/0.697/100, 1.143/0.744/100, 1.126/0.776/100, 1.122/0.810/100, 1.126/0.856/100, 1.121/0.907/100, 1.102/0.944/100} \fill[cEnt!\t] (\x,\y) circle (0.013);
+    \draw[black!55, semithick] (0,0) rectangle (1.25,1.05);}\\[5pt]
+  \begin{minipage}{\linewidth}\raggedright\scriptsize
+  {\color{cEnt}\tiny$\blacksquare$}\,\hyperref[sec:las]{Lectura por bloques del .LAS}\\
+  {\color{cEnt}\tiny$\blacksquare$}\,\hyperref[sec:seccion]{Corte en 5 secciones $S_j$}~\logo{numpy.png}\\
+  {\color{cEnt}\tiny$\blacksquare$}\,\hyperref[sec:sor]{Limpieza de ruido (SOR)}~\logo{open3d.png}\\
+  {\color{cEnt}\tiny$\blacksquare$}\,\hyperref[sec:voxel]{Voxelización a 5\,cm}~\logo{open3d.png}\\
+  {\color{cEnt}\tiny$\blacksquare$}\,\hyperref[sec:normales]{Normales por vecindad}~\logo{open3d.png}\end{minipage}};
+
 %% ---------- semantica y encoder ----------
-\node[mod, draw=cSem, fill=cSem!6, text width=3.9cm, anchor=south] (M2) at (6.25,0.25)
+\node[mod, draw=cSem, fill=cSem!6, text width=4.3cm, anchor=south] (M2) at ($(M1.north)+(1.25,1.6)$)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-hyperncd-paper]{\textcolor{cSem}{HyperNCD}}}\\[4pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\h in {0/0.95, 1/0.72, 2/0.50, 3/0.32}
@@ -30,13 +45,13 @@
       \draw[cSem!80, densely dashed, -{Latex[length=1mm]}] (\a*0.24+0.16,0.5+\h/2+0.05) -- (1.1+\b*0.24,0.5+\h/2+0.05);
     \draw[-{Latex[length=1.2mm]}, cSem!80, semithick] (0.88,0.5) -- (1.08,0.5);}\\[5pt]
   \begin{minipage}{\linewidth}\raggedright\scriptsize
-  \textbf{1.} \hyperref[sec:rejilla]{Indexa en rejilla dispersa}\\
-  \textbf{2.} \hyperref[sec:fsem]{Red MinkowskiUNet-34C}~\logo{pytorch.png}\\
-  \textbf{3.} \hyperref[sec:clases]{Entrena con clases conocidas}\\
-  \textbf{4.} \hyperref[sec:fsem]{Se reentrena cada época}\end{minipage}\\[3pt]
+  {\color{cSem}\tiny$\blacksquare$}\,\hyperref[sec:rejilla]{Indexa en rejilla dispersa}\\
+  {\color{cSem}\tiny$\blacksquare$}\,\hyperref[sec:fsem]{Red MinkowskiUNet-34C}~\logo{pytorch.png}\\
+  {\color{cSem}\tiny$\blacksquare$}\,\hyperref[sec:clases]{Entrena con clases conocidas}\\
+  {\color{cSem}\tiny$\blacksquare$}\,\hyperref[sec:fsem]{Se reentrena cada época}\end{minipage}\\[3pt]
   \hyperref[sec:fsem]{\textbf{$\rightarrow f_{\mathrm{sem}}(x^i)$: 96 números}}};
 
-\node[mod, draw=cEnc, fill=cEnc!6, text width=3.9cm, anchor=north] (M3) at (6.25,-0.25)
+\node[mod, draw=cEnc, fill=cEnc!6, text width=4.3cm, anchor=north] (M3) at ($(M1.south)+(1.25,-1.75)$)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-sonata-paper]{\textcolor{cEnc}{Sonata}}}\\[4pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\w in {0/1.15, 1/0.97, 2/0.79, 3/0.61, 4/0.43}
@@ -47,56 +62,41 @@
         \foreach \s in {1,-1}{ \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a+40*\s}:0.08); \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a-40*\s}:0.08);}}
     \end{scope}}\\[5pt]
   \begin{minipage}{\linewidth}\raggedright\scriptsize
-  \textbf{1.} \hyperref[sec:serializacion]{Ordena por serialización}\\
-  \textbf{2.} \hyperref[sec:ssl]{PTv3 auto-supervisado}\\
-  \textbf{3.} \hyperref[sec:atajo]{Sin decoder: sin atajo geom.}\\
-  \textbf{4.} \hyperref[sec:congelado]{Congelado: 1 vez, a disco}~\logo{numpy.png}\\
-  \textbf{5.} \hyperref[sec:upcast]{\emph{Up-cast} a resolución original}\\
-  \textbf{6.} \hyperref[sec:probing]{Calidad: \emph{linear probing}}\end{minipage}\\[3pt]
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:serializacion]{Ordena por serialización}\\
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:ssl]{PTv3 auto-supervisado}\\
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:atajo]{Sin decoder: sin atajo geom.}\\
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:congelado]{Congelado: 1 vez, a disco}~\logo{numpy.png}\\
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:upcast]{\emph{Up-cast} a resolución original}\\
+  {\color{cEnc}\tiny$\blacksquare$}\,\hyperref[sec:probing]{Calidad: \emph{linear probing}}\end{minipage}\\[3pt]
   \hyperref[sec:fssl]{\textbf{$\rightarrow f_{\mathrm{ssl}}(x^i)$: 1088 números}}\\[1pt]
   {\tiny\hyperref[sec:congelado]{costo: 108\,M parámetros · 4{,}2\,GB de memoria GPU}}};
 
-%% ---------- preprocesamiento ----------
-\node[mod, draw=cEnt, fill=cEnt!6, text width=4.3cm, anchor=center] (M1) at (0.0,0)
- {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:tls]{\textcolor{cEnt}{levantamiento TLS}} · \hyperref[sec:modulo1]{\textcolor{cEnt}{hasta 1\,TB}}}\\[4pt]
-  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
-    \draw[black!35] (0.34,0.23) rectangle (1.59,1.28);
-    \draw[black!35] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
-    \foreach \x/\y/\t in {0.097/0.087/95, 0.089/0.121/98, 0.080/0.175/97, 0.104/0.235/93, 0.139/0.278/89, 0.129/0.332/87, 0.129/0.372/89, 0.106/0.408/92, 0.135/0.448/87, 0.142/0.512/86, 0.117/0.540/93, 0.159/0.598/85, 0.104/0.595/97, 0.101/0.671/94, 0.121/0.703/92, 0.118/0.750/91, 0.132/0.815/89, 0.168/0.875/84, 0.148/0.892/86, 0.139/0.944/90, 0.148/0.980/87, 0.087/0.988/98, 0.163/0.103/93, 0.165/0.134/93, 0.198/0.218/83, 0.129/0.216/96, 0.215/0.297/82, 0.233/0.353/79, 0.179/0.362/87, 0.155/0.397/91, 0.150/0.427/95, 0.226/0.521/80, 0.191/0.543/88, 0.187/0.597/87, 0.213/0.657/81, 0.195/0.685/85, 0.204/0.736/81, 0.145/0.742/95, 0.141/0.786/95, 0.152/0.835/94, 0.197/0.904/85, 0.191/0.955/85, 0.174/0.976/87, 0.193/1.022/88, 0.235/0.109/86, 0.242/0.163/83, 0.254/0.215/81, 0.241/0.260/82, 0.257/0.300/80, 0.227/0.325/86, 0.236/0.364/86, 0.231/0.430/85, 0.243/0.456/86, 0.244/0.522/85, 0.234/0.547/84, 0.255/0.623/80, 0.252/0.651/80, 0.236/0.690/86, 0.249/0.738/81, 0.227/0.767/86, 0.269/0.837/78, 0.261/0.870/78, 0.251/0.920/84, 0.239/0.953/87, 0.263/1.014/81, 0.231/1.026/86, 0.300/0.122/80, 0.263/0.160/88, 0.349/0.247/73, 0.323/0.279/78, 0.262/0.294/86, 0.298/0.354/81, 0.308/0.410/79, 0.324/0.447/75, 0.292/0.482/83, 0.315/0.539/76, 0.322/0.595/75, 0.279/0.600/87, 0.276/0.645/87, 0.297/0.694/81, 0.320/0.756/76, 0.258/0.755/87, 0.324/0.841/74, 0.317/0.867/80, 0.286/0.906/83, 0.299/0.960/82, 0.265/0.982/87, 0.297/1.051/82, 0.340/0.125/80, 0.359/0.188/79, 0.369/0.231/78, 0.374/0.282/74, 0.358/0.320/78, 0.369/0.370/75, 0.343/0.396/79, 0.368/0.456/78, 0.361/0.491/80, 0.385/0.541/72, 0.390/0.605/72, 0.374/0.634/76, 0.314/0.644/85, 0.318/0.694/85, 0.376/0.760/72, 0.377/0.801/73, 0.363/0.858/75, 0.381/0.904/75, 0.394/0.933/72, 0.336/0.961/83, 0.341/1.010/83, 0.381/1.078/72, 0.395/0.130/78, 0.418/0.197/75, 0.407/0.228/77, 0.419/0.271/74, 0.456/0.339/70, 0.429/0.386/71, 0.427/0.415/74, 0.402/0.452/79, 0.438/0.526/69, 0.438/0.555/71, 0.390/0.567/79, 0.406/0.616/78, 0.414/0.680/77, 0.455/0.737/68, 0.405/0.745/78, 0.397/0.800/77, 0.398/0.838/77, 0.467/0.912/66, 0.419/0.941/75, 0.438/0.997/73, 0.447/1.050/69, 0.452/1.099/67, 0.458/0.140/76, 0.518/0.231/64, 0.468/0.227/76, 0.485/0.291/69, 0.472/0.335/75, 0.485/0.372/72, 0.457/0.393/77, 0.479/0.455/73, 0.445/0.491/79, 0.472/0.551/72, 0.501/0.620/65, 0.447/0.624/77, 0.443/0.670/78, 0.462/0.722/77, 0.512/0.785/67, 0.499/0.821/69, 0.467/0.858/75, 0.499/0.926/69, 0.479/0.938/72, 0.486/1.006/69, 0.491/1.035/69, 0.511/1.090/65, 0.568/0.177/63, 0.537/0.215/67, 0.546/0.262/67, 0.507/0.277/74, 0.537/0.358/66, 0.523/0.385/72, 0.551/0.443/64, 0.499/0.459/74, 0.528/0.506/72, 0.549/0.574/66, 0.499/0.594/75, 0.497/0.618/76, 0.518/0.683/74, 0.540/0.744/66, 0.549/0.791/68, 0.499/0.805/74, 0.511/0.855/74, 0.490/0.895/77, 0.574/0.987/62, 0.534/1.003/68, 0.550/1.064/67, 0.525/1.094/70, 0.550/0.153/75, 0.590/0.219/68, 0.562/0.243/73, 0.584/0.290/68, 0.592/0.348/67, 0.570/0.383/73, 0.559/0.416/75, 0.548/0.450/74, 0.571/0.524/71, 0.568/0.553/73, 0.624/0.633/61, 0.578/0.652/70, 0.618/0.726/62, 0.580/0.746/68, 0.541/0.751/75, 0.574/0.818/68, 0.583/0.869/69, 0.585/0.909/68, 0.568/0.942/73, 0.585/1.003/70, 0.586/1.052/67, 0.554/1.063/73, 0.607/0.721/73, 0.602/0.781/71, 0.670/0.851/61, 0.609/0.856/71, 0.629/0.914/69, 0.653/0.989/60, 0.600/0.970/74, 0.586/1.018/74, 0.647/1.116/61, 0.652/0.765/72, 0.697/0.844/64, 0.648/0.858/72, 0.679/0.905/68, 0.654/0.948/73, 0.679/1.022/65, 0.682/1.057/68, 0.674/1.092/70, 0.757/0.840/62, 0.688/0.860/71, 0.736/0.927/65, 0.692/0.985/73, 0.749/1.066/63, 0.708/1.092/68, 0.799/0.847/61, 0.797/0.884/62, 0.766/0.915/65, 0.719/0.937/75, 0.751/0.988/71, 0.747/1.041/72, 0.741/1.081/70, 0.813/0.847/66, 0.780/0.836/75, 0.783/0.986/71, 0.783/1.026/71, 0.825/1.108/64, 0.822/0.776/73, 0.822/0.794/76, 0.852/0.872/67, 0.840/0.917/71, 0.816/0.949/72, 0.851/1.015/66, 0.809/1.033/74, 0.860/1.109/66, 0.848/0.757/75, 0.820/0.786/81, 0.827/0.845/80, 0.900/0.906/68, 0.834/0.922/81, 0.826/0.974/79, 0.878/1.052/69, 0.851/1.084/74, 0.881/0.706/79, 0.865/0.745/83, 0.913/0.823/73, 0.905/0.869/73, 0.859/0.864/82, 0.872/0.938/79, 0.857/0.934/86, 0.927/1.043/72, 0.908/1.070/75, 0.902/0.128/82, 0.895/0.167/84, 0.900/0.202/85, 0.945/0.285/74, 0.944/0.325/78, 0.893/0.349/85, 0.924/0.403/77, 0.895/0.428/85, 0.919/0.472/83, 0.949/0.554/75, 0.922/0.569/80, 0.931/0.626/76, 0.943/0.656/77, 0.902/0.703/84, 0.936/0.762/75, 0.927/0.804/78, 0.911/0.824/81, 0.922/0.876/79, 0.894/0.898/88, 0.917/0.963/79, 0.894/0.986/84, 0.912/1.038/81, 0.963/0.124/83, 0.974/0.185/80, 0.911/0.189/91, 0.943/0.239/87, 0.923/0.267/91, 0.914/0.314/93, 0.896/0.353/92, 0.928/0.400/90, 0.932/0.463/86, 0.936/0.509/87, 0.947/0.578/82, 0.951/0.610/81, 0.911/0.602/94, 0.967/0.701/80, 0.938/0.717/88, 0.919/0.767/90, 0.948/0.812/83, 0.933/0.876/84, 0.921/0.879/90, 0.941/0.959/85, 0.947/1.013/83, 0.925/1.017/89, 0.972/0.091/90, 0.985/0.154/86, 0.987/0.207/87, 0.955/0.221/90, 0.988/0.289/83, 0.991/0.353/82, 0.951/0.374/90, 0.927/0.381/96, 0.989/0.466/84, 0.962/0.477/92, 0.945/0.521/93, 0.949/0.583/91, 0.954/0.621/89, 0.980/0.674/87, 0.968/0.727/87, 0.952/0.763/90, 0.974/0.811/88, 0.984/0.849/85, 0.975/0.891/89, 0.974/0.956/86, 0.995/1.012/82, 0.961/1.036/89, 0.973/0.090/95, 0.964/0.115/100, 0.988/0.185/94, 0.986/0.227/94, 1.012/0.282/89, 1.003/0.313/89, 1.018/0.365/88, 1.030/0.418/87, 0.979/0.434/97, 0.999/0.503/89, 0.992/0.531/92, 0.990/0.581/92, 0.991/0.608/92, 0.963/0.650/98, 0.981/0.691/95, 0.958/0.714/100, 0.989/0.783/93, 0.987/0.828/92, 0.996/0.885/94, 0.971/0.900/97, 0.959/0.960/99, 0.991/1.002/96, 0.988/0.076/100, 0.993/0.106/100, 1.031/0.193/92, 0.989/0.198/100, 0.997/0.244/100, 1.001/0.300/100, 1.030/0.337/96, 1.001/0.379/99, 1.020/0.431/98, 1.039/0.482/93, 1.016/0.522/96, 0.989/0.532/100, 1.035/0.606/94, 1.039/0.675/92, 0.985/0.663/100, 1.045/0.760/91, 1.044/0.794/90, 1.035/0.831/94, 1.021/0.877/94, 0.989/0.882/100, 0.990/0.945/100, 1.027/1.003/92, 1.074/0.088/94, 1.056/0.111/98, 1.046/0.159/97, 1.036/0.187/100, 1.008/0.234/100, 1.066/0.293/97, 1.026/0.324/100, 1.057/0.386/96, 1.031/0.405/100, 1.039/0.460/99, 1.025/0.495/100, 1.021/0.530/100, 1.018/0.583/100, 1.055/0.643/99, 1.038/0.673/100, 1.058/0.726/96, 1.070/0.775/95, 1.037/0.809/100, 1.010/0.853/100, 1.010/0.893/100, 1.021/0.928/100, 1.011/0.956/100, 1.081/0.050/100, 1.040/0.083/100, 1.067/0.133/100, 1.037/0.163/100, 1.102/0.239/98, 1.037/0.272/100, 1.062/0.327/100, 1.080/0.364/100, 1.061/0.411/100, 1.043/0.411/100, 1.064/0.497/100, 1.062/0.530/100, 1.032/0.559/100, 1.046/0.618/100, 1.056/0.653/100, 1.102/0.737/98, 1.054/0.738/100, 1.065/0.798/100, 1.045/0.819/100, 1.060/0.880/100, 1.067/0.944/100, 1.031/0.950/100, 1.089/0.041/100, 1.079/0.066/100, 1.098/0.129/100, 1.069/0.160/100, 1.091/0.210/100, 1.073/0.245/100, 1.108/0.320/100, 1.130/0.358/100, 1.135/0.420/100, 1.117/0.465/100, 1.120/0.507/100, 1.120/0.555/100, 1.073/0.546/100, 1.087/0.599/100, 1.076/0.656/100, 1.073/0.706/100, 1.077/0.746/100, 1.069/0.788/100, 1.070/0.831/100, 1.088/0.859/100, 1.094/0.924/100, 1.079/0.954/100, 1.150/0.055/100, 1.113/0.052/100, 1.153/0.136/100, 1.137/0.177/100, 1.086/0.187/100, 1.118/0.234/100, 1.164/0.307/100, 1.093/0.327/100, 1.122/0.372/100, 1.110/0.417/100, 1.084/0.453/100, 1.108/0.494/100, 1.109/0.541/100, 1.114/0.592/100, 1.141/0.661/100, 1.123/0.697/100, 1.143/0.744/100, 1.126/0.776/100, 1.122/0.810/100, 1.126/0.856/100, 1.121/0.907/100, 1.102/0.944/100} \fill[cEnt!\t] (\x,\y) circle (0.013);
-    \draw[black!55, semithick] (0,0) rectangle (1.25,1.05);}\\[5pt]
-  \begin{minipage}{\linewidth}\raggedright\scriptsize
-  \textbf{1.} \hyperref[sec:las]{Lectura por bloques del .LAS}\\
-  \textbf{2.} \hyperref[sec:seccion]{Corte en 5 secciones $S_j$}~\logo{numpy.png}\\
-  \textbf{3.} \hyperref[sec:sor]{Limpieza de ruido (SOR)}~\logo{open3d.png}\\
-  \textbf{4.} \hyperref[sec:voxel]{Voxelización a 5\,cm}~\logo{open3d.png}\\
-  \textbf{5.} \hyperref[sec:normales]{Normales por vecindad}~\logo{open3d.png}\end{minipage}};
-
 %% ---------- fusion ----------
-\node[align=center, anchor=north, text width=9cm] (M4h) at (15.8,4.4)
+\node[align=center, anchor=north, text width=4.8cm] (M4h) at (7.75,9.2)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-hyperncd-paper]{\textcolor{cFus}{HyperNCD}} · \hyperref[sec:ncd]{\textcolor{cFus}{descubre clases novedosas}}}};
 
-\node[tarj] (T1) at ($(M4h.south)+(-3.0,-0.3)$)
+\node[tarj] (T1) at ($(M4h.south)+(0,-0.3)$)
  {\enlace{sec:concat}{\textbf{\textcircled{\scriptsize 1} Concatenación}}\\[3pt]
-  \centering
-  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
+  \begin{minipage}{\linewidth}\centering
+  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \fill[cSem!45, draw=cSem] (0,0) rectangle (0.36,0.22);
     \fill[cEnc!45, draw=cEnc] (0.36,0) rectangle (2.2,0.22);
     \node[font=\tiny] at (0.18,0.11) {\hyperref[sec:fsem]{96}};
     \node[font=\tiny] at (1.28,0.11) {\hyperref[sec:fssl]{1088}};
     \fill[cSem!45, draw=cSem] (2.45,0) rectangle (2.81,0.22);
     \fill[red!30, draw=cFus] (2.81,0) rectangle (2.93,0.22);
-    \node[font=\tiny, text=black!60] at (2.69,-0.16) {\hyperref[sec:fgeo]{antes}};}\\[5pt]
-  \centering \enlaceec{eq:hibrido}{$F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]$}\\[5pt]
-  \raggedright
-  \textbf{1.} \hyperref[sec:fsem]{$f_{\mathrm{sem}}$: 96 valores semánticos}\\
-  \textbf{2.} \hyperref[sec:fssl]{$f_{\mathrm{ssl}}$: 1088, auto-supervisado}\\
-  \textbf{3.} \hyperref[sec:descriptor]{Descriptor $F_i$: 1184 valores}\\
-  \textbf{4.} \hyperref[sec:fgeo]{Sustituye a $f_{\mathrm{geo}}$ (6, manual)}};
+    \node[font=\tiny, text=black!60] at (2.69,-0.16) {\hyperref[sec:fgeo]{antes}};}}\\[4pt]
+  \enlaceec{eq:hibrido}{$F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]$}\end{minipage}\\[4pt]
+  \begin{minipage}{\linewidth}\raggedright
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:fsem]{$f_{\mathrm{sem}}$: 96 valores semánticos}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:fssl]{$f_{\mathrm{ssl}}$: 1088, auto-supervisado}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:descriptor]{Descriptor $F_i$: 1184 valores}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:fgeo]{Sustituye a $f_{\mathrm{geo}}$ (6, manual)}\end{minipage}};
 
-\node[tarj] (T2) at ($(M4h.south)+(3.0,-0.3)$)
+\node[tarj] (T2) at ($(T1.south)+(0,-0.8)$)
  {\enlace{sec:formproto}{\textbf{\textcircled{\scriptsize 2} Prototipos}}~\logo{pytorch.png}\\[3pt]
-  \centering
-  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
+  \begin{minipage}{\linewidth}\centering
+  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
     \foreach \x/\y/\c in {0.222/0.339/cSem, 0.457/0.245/cSem, 0.212/0.293/cSem, 0.401/0.416/cSem, 0.234/0.177/cSem, 0.429/0.353/cSem, 0.494/0.392/cSem, 0.330/0.247/cSem, 1.343/0.558/cEnc, 1.069/0.463/cEnc, 1.179/0.624/cEnc, 1.092/0.570/cEnc, 1.182/0.660/cEnc, 1.267/0.602/cEnc, 0.986/0.644/cEnc, 1.005/0.562/cEnc, 1.651/0.120/cSal, 1.712/0.144/cSal, 1.999/0.117/cSal, 1.884/-0.012/cSal, 1.766/0.197/cSal, 1.785/0.179/cSal, 1.811/0.011/cSal, 1.862/0.031/cSal} \fill[\c!55] (\x,\y) circle (0.035);
     \foreach \x/\y/\c in {0.35/0.30/cSem, 1.15/0.58/cEnc, 1.80/0.12/cSal}
       \node[star, star points=5, star point ratio=2.2, draw=\c, fill=\c!35, inner sep=0.6pt] at (\x,\y) {};
@@ -104,59 +104,60 @@
     \draw[dashed, black!55] (0.80,0.20) -- (0.35,0.30);
     \draw[dashed, black!55] (0.80,0.20) -- (1.15,0.58);
     \node[font=\tiny, text=black!60] at (0.52,0.02) {\hyperref[sec:formproto]{70\,\%}};
-    \node[font=\tiny, text=black!60] at (1.22,0.20) {\hyperref[sec:formproto]{30\,\%}};\end{scope}}\\[5pt]
-  \centering \enlaceec{eq:softmax}{$s_{i,k}=\frac{e^{z_{i,k}}}{\sum_{j}e^{z_{i,j}}}$}\\[5pt]
-  \raggedright
-  \textbf{1.} \hyperref[sec:formproto]{Puntuación $z_{i,k}$ por grupo}\\
-  \textbf{2.} \hyperref[sec:formproto]{\emph{Softmax}: reparto $s_{i,k}$, suma 1}\\
-  \textbf{3.} \hyperref[sec:prototipo]{Prototipo $P_k$: media ponderada}\\
-  \textbf{4.} \hyperref[sec:formproto]{$K$ = número de clases}};
+    \node[font=\tiny, text=black!60] at (1.22,0.20) {\hyperref[sec:formproto]{30\,\%}};\end{scope}}}\\[4pt]
+  \enlaceec{eq:softmax}{$s_{i,k}=\frac{e^{z_{i,k}}}{\sum_{j}e^{z_{i,j}}}$}\end{minipage}\\[4pt]
+  \begin{minipage}{\linewidth}\raggedright
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:formproto]{Puntuación $z_{i,k}$ por grupo}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:formproto]{\emph{Softmax}: reparto $s_{i,k}$, suma 1}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:prototipo]{Prototipo $P_k$: media ponderada}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:formproto]{$K$ = número de clases}\end{minipage}};
 
 \node[tarj] (T3) at ($(T2.south)+(0,-0.8)$)
  {\enlace{sec:afinhiper}{\textbf{\textcircled{\scriptsize 3} Afinidad e hiperaristas}}\\[3pt]
-  \centering
-  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
+  \begin{minipage}{\linewidth}\centering
+  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
     \fill[cSem!25, draw=cSem!60, rotate=20] (0.72,0.26) ellipse (0.80 and 0.34);
     \fill[cEnc!25, draw=cEnc!60, rotate=-15] (1.42,0.52) ellipse (0.74 and 0.32);
     \foreach \x/\y in {0.25/0.20, 0.72/0.46, 1.05/0.14, 1.55/0.40, 1.98/0.12, 1.62/0.70}
-      \fill[black!75] (\x,\y) circle (0.05);\end{scope}}\\[5pt]
-  \centering \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\\[5pt]
-  \raggedright
-  \textbf{1.} \hyperref[eq:gauss]{$S_g$: forma de la región, $\tau=0{,}1$}\\
-  \textbf{2.} \hyperref[eq:coseno]{$S_s$: parecido de significado}\\
-  \textbf{3.} \hyperref[sec:afinidad]{$\alpha$: peso forma vs. significado}\\
-  \textbf{4.} \hyperref[sec:hiperarista]{Hiperarista: $M=8$ regiones}};
+      \fill[black!75] (\x,\y) circle (0.05);\end{scope}}}\\[4pt]
+  \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\end{minipage}\\[4pt]
+  \begin{minipage}{\linewidth}\raggedright
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[eq:gauss]{$S_g$: forma de la región, $\tau=0{,}1$}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[eq:coseno]{$S_s$: parecido de significado}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:afinidad]{$\alpha$: peso forma vs. significado}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:hiperarista]{Hiperarista: $M=8$ regiones}\end{minipage}};
 
-\node[tarj] (T4) at ($(T1.south)+(0,-0.8)$)
+\node[tarj] (T4) at ($(T3.south)+(0,-0.8)$)
  {\enlace{sec:pseudoetq}{\textbf{\textcircled{\scriptsize 4} Pseudo-etiquetas}}\\[3pt]
-  \centering
-  \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
+  \begin{minipage}{\linewidth}\centering
+  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\h/\c in {0/0.62/cSem, 1/0.16/cEnc, 2/0.08/cSal}
       \fill[\c!55, draw=\c] (\i*0.26,0) rectangle (\i*0.26+0.2,\h);
     \draw[-{Latex[length=1.3mm]}, black!55] (0.95,0.28) -- (1.4,0.28);
     \foreach \i/\c in {0/cSem, 1/cEnc, 2/cSal}
-      \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}\\[5pt]
-  \raggedright
-  \textbf{1.} \hyperref[sec:pseudo]{Pseudo-etiqueta por grupo}\\
-  \textbf{2.} \hyperref[sec:sinkhorn]{Sinkhorn-Knopp: equilibra}\\
-  \textbf{3.} \hyperref[sec:pseudoetq]{Suavizado $\epsilon=0{,}15$}\\
-  \textbf{4.} \hyperref[sec:pseudoetq]{Vuelven al entrenamiento}};
+      \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}}\end{minipage}\\[4pt]
+  \begin{minipage}{\linewidth}\raggedright
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:pseudo]{Pseudo-etiqueta por grupo}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:sinkhorn]{Sinkhorn-Knopp: equilibra}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:pseudoetq]{Suavizado $\epsilon=0{,}15$}\\
+  {\color{cFus}\tiny$\blacksquare$}\,\hyperref[sec:pseudoetq]{Vuelven al entrenamiento}\end{minipage}};
 
 \begin{pgfonlayer}{background}
 \node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, very thick, fill=cFus!5,
       rounded corners=3pt, inner sep=7pt] (M4) {};
 \end{pgfonlayer}
-\draw[fl] (T1.east |- T2.west) -- (T2.west)
-  node[midway, above=0.3mm, chico, fill=cFus!5, inner sep=1pt, align=center]
-  {\hyperref[eq:hibrido]{$F_i$}\\por \hyperref[sec:region]{región}};
+\draw[fl] (T1.south) -- (T2.north)
+  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
+  {\hyperref[eq:hibrido]{$F_i$} por \hyperref[sec:region]{región}};
 \draw[fl] (T2.south) -- (T3.north)
-  node[midway, right=0.4mm, chico, fill=cFus!5, inner sep=1pt] {\hyperref[sec:region]{regiones} y \hyperref[eq:prototipo]{$P_k$}};
-\draw[fl] (T3.west |- T4.east) -- (T4.east)
-  node[midway, above=0.3mm, chico, fill=cFus!5, inner sep=1pt, align=center]
-  {\hyperref[sec:hipergrafo]{hipergrafo}\\\hyperref[sec:hipergrafo]{$\mathcal{H}$}};
+  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
+  {\hyperref[sec:region]{regiones} y \hyperref[eq:prototipo]{$P_k$}};
+\draw[fl] (T3.south) -- (T4.north)
+  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
+  {\hyperref[sec:hipergrafo]{hipergrafo $\mathcal{H}$}};
 
 %% ---------- salida ----------
-\node[mod, draw=cSal, fill=cSal!6, text width=4.6cm, anchor=west] (M5) at ($(M4.east)+(1.35,0)$)
+\node[mod, draw=cSal, fill=cSal!6, text width=4.35cm, anchor=west] (M5) at ($(M4.east)+(1.3,0)$)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:modulo5]{\textcolor{cSal}{evaluación y plataforma}}}\\[4pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \draw[black!35] (0.34,0.23) rectangle (1.59,1.28);
@@ -165,43 +166,45 @@
     \draw[black!55, semithick] (0,0) rectangle (1.25,1.05);}\\[5pt]
   \begin{minipage}{\linewidth}\raggedright\scriptsize
   \hyperref[sec:metricas]{\textbf{Evaluación}}\\
-  \textbf{1.} \hyperref[sec:segsem]{Segmentación semántica}\\
-  \textbf{2.} \hyperref[sec:hungaro]{Húngaro: nombra los grupos}\\
-  \textbf{3.} \hyperref[sec:iou]{IoU} · \hyperref[sec:miou]{mIoU \emph{known}/\emph{novel}/\emph{all}}\\
-  \textbf{4.} \hyperref[sec:dominancia]{Clase dominante del mIoU}\\
-  \textbf{5.} \hyperref[sec:ari]{ARI} · \hyperref[sec:nmi]{NMI}: calidad de grupos\\
-  \textbf{6.} \hyperref[sec:ganancia]{$\Delta$mIoU frente a la línea base}\\
-  \textbf{7.} \hyperref[sec:brecha]{Brecha cerrada $G$}\\
-  \textbf{8.} \hyperref[sec:metricas-hibrido]{Atribución por etapas}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:segsem]{Segmentación semántica}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:hungaro]{Húngaro: nombra los grupos}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:iou]{IoU} · \hyperref[sec:miou]{mIoU \emph{known}/\emph{novel}/\emph{all}}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:dominancia]{Clase dominante del mIoU}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:ari]{ARI} · \hyperref[sec:nmi]{NMI}: calidad de grupos\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:ganancia]{$\Delta$mIoU frente a la línea base}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:brecha]{Brecha cerrada $G$}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:metricas-hibrido]{Atribución por etapas}\\
   \hyperref[sec:modulo5]{\textbf{Plataforma}}\\
-  \textbf{9.} \hyperref[sec:caja]{Caja de sección y cortes}\\
-  \textbf{10.} \hyperref[sec:modulo5]{Lista: columnas, vigas, techos}\\
-  \textbf{11.} \hyperref[sec:modulo5]{Clic: elemento resaltado}\\
-  \textbf{12.} \hyperref[sec:poisson]{Sólido 3D (Poisson)}~\logo{open3d.png}\end{minipage}};
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:caja]{Caja de sección y cortes}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:modulo5]{Lista: columnas, vigas, techos}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:modulo5]{Clic: elemento resaltado}\\
+  {\color{cSal}\tiny$\blacksquare$}\,\hyperref[sec:poisson]{Sólido 3D (Poisson)}~\logo{open3d.png}\end{minipage}};
 
 %% ---------- pestanas con el nombre de cada modulo ----------
-\node[tab, fill=cEnt] at (M1.north) {\tabmod{sec:modulo1}{MÓDULO 1: PREPROCESAMIENTO}};
-\node[tab, fill=cSem] at (M2.north) {\tabmod{sec:modulo2}{MÓDULO 2: SEMÁNTICA}};
-\node[tab, fill=cEnc] at (M3.north) {\tabmod{sec:modulo3}{MÓDULO 3: ENCODER}};
-\node[tab, fill=cFus] at (M4.north) {\tabmod{sec:modulo4}{MÓDULO 4: FUSIÓN}};
-\node[tab, fill=cSal] at (M5.north) {\tabmod{sec:modulo5}{MÓDULO 5: SALIDA}};
+\node[tab, text width=4.1cm, fill=cEnt] (P1) at ($(M1.north)+(0,-0.2)$) {\tabmod{sec:modulo1}{MÓDULO 1: PREPROCESAMIENTO}};
+\node[tab, text width=4.1cm, fill=cSem] (P2) at ($(M2.north)+(0,-0.2)$) {\tabmod{sec:modulo2}{MÓDULO 2: SEMÁNTICA}};
+\node[tab, text width=4.1cm, fill=cEnc] (P3) at ($(M3.north)+(0,-0.2)$) {\tabmod{sec:modulo3}{MÓDULO 3: ENCODER}};
+\node[tab, text width=4.9cm, fill=cFus] (P4) at ($(M4.north)+(0,-0.2)$) {\tabmod{sec:modulo4}{MÓDULO 4: FUSIÓN}};
+\node[tab, text width=4.15cm, fill=cSal] (P5) at ($(M5.north)+(0,-0.2)$) {\tabmod{sec:modulo5}{MÓDULO 5: SALIDA}};
 
 %% ---------- flechas entre modulos: que entra y que sale ----------
-\draw[fl] ($(M1.west)+(-1.6,0)$) -- (M1.west)
-  node[midway, above=0.5mm, chico, align=center]
-  {\hyperref[sec:nube]{nube de}\\\hyperref[sec:nube]{puntos}\\en \hyperref[sec:las]{.LAS}};
-\draw[fl] (M1.east) to[out=25, in=180, looseness=0.9]
-  node[pos=0.42, above=0.8mm, chico, align=center, fill=white, inner sep=1pt]
-  {\hyperref[sec:seccion]{$S_j$}\\\hyperref[sec:seccion]{voxelizada}} (M2.west);
-\draw[fl] (M1.east) to[out=-25, in=180, looseness=0.9]
-  node[pos=0.42, below=0.8mm, chico, align=center, fill=white, inner sep=1pt]
-  {\hyperref[sec:seccion]{$S_j$:}\\\hyperref[sec:seccion]{9 canales}} (M3.west);
+\draw[fl] ($(P1.north west)+(0.5,1.2)$) -- ($(P1.north west)+(0.5,0)$)
+  node[pos=0, above=0.5mm, chico, align=center]
+  {\hyperref[sec:nube]{nube de}\\\hyperref[sec:nube]{puntos en}\\\hyperref[sec:las]{.LAS}};
+\coordinate (sube) at ($(P1.north east)+(-0.45,0)$);
+\coordinate (baja) at ($(M1.south)+(1.15,0)$);
+\draw[fl] (sube) -- (sube |- M2.south)
+  node[midway, right=0.8mm, chico, align=left, fill=white, inner sep=1pt]
+  {\hyperref[sec:seccion]{$S_j$ voxelizada}};
+\draw[fl] (baja) -- (baja |- P3.north)
+  node[midway, right=0.8mm, chico, align=left, fill=white, inner sep=1pt]
+  {\hyperref[sec:seccion]{$S_j$: 9 canales}};
 \draw[fl] (M2.east) -- (M4.west |- M2.east)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
-  {\hyperref[sec:fsem]{$f_{\mathrm{sem}}$}\\\hyperref[sec:fsem]{96 por punto}};
+  {\hyperref[sec:fsem]{$f_{\mathrm{sem}}$}\\\hyperref[sec:fsem]{96}\\\hyperref[sec:fsem]{por punto}};
 \draw[fl] (M3.east) -- (M4.west |- M3.east)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
-  {\hyperref[sec:fssl]{$f_{\mathrm{ssl}}$}\\\hyperref[sec:fssl]{1088 por punto}};
+  {\hyperref[sec:fssl]{$f_{\mathrm{ssl}}$}\\\hyperref[sec:fssl]{1088}\\\hyperref[sec:fssl]{por punto}};
 \draw[fl] (M4.east |- M5.west) -- (M5.west)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
   {\hyperref[sec:ncd]{etiquetas}\\\hyperref[sec:ncd]{$\hat{y}_i$}};

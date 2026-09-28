@@ -3,6 +3,7 @@
 \usepackage[spanish]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{adjustbox}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
 % Fuera de la tesis no hay destinos: los enlaces se imprimen como texto.
@@ -11,6 +12,7 @@
 \providecommand{\enlaceec}[2]{#2}
 \providecommand{\tabmod}[2]{\textcolor{white}{#2}}
 \providecommand{\logo}[1]{\raisebox{-0.25ex}{\includegraphics[height=1.7ex]{logos/#1}}}
+\def\scriptsize{\fontsize{7.8}{9.4}\selectfont}\def\tiny{\fontsize{6}{7.2}\selectfont}
 \begin{document}
 \input{diagrama_diseno_tikz}
 \end{document}
