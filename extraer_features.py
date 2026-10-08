@@ -96,7 +96,12 @@ def main():
     modelo = cargar_modelo()
 
     print(f"[3/4] transform (GridSample = {args.grid} m)")
-    point = sonata.transform.default()(point)
+    transform = sonata.transform.default()
+    # default() trae GridSample fijo en 0.02 m; se aplica el --grid pedido.
+    for t in transform.transforms:
+        if type(t).__name__ == "GridSample":
+            t.grid_size = args.grid
+    point = transform(point)
     n_rejilla = point["coord"].shape[0]
     print(f"      {n_original} -> {n_rejilla} puntos "
           f"({100 * n_rejilla / n_original:.1f}% retenido)")
