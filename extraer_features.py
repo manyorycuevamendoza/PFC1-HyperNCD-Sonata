@@ -33,8 +33,12 @@ def parse_args():
 
 
 def cargar_nube(ruta):
-    """Lee el .txt y lo arma en el dict que espera Sonata."""
-    datos = np.loadtxt(ruta, dtype=np.float32)
+    """Lee el .txt (o el .npy de preprocesar.py) y lo arma en el dict que
+    espera Sonata."""
+    if str(ruta).endswith(".npy"):
+        datos = np.load(ruta).astype(np.float32)
+    else:
+        datos = np.loadtxt(ruta, dtype=np.float32)
     if datos.ndim != 2 or datos.shape[1] != 9:
         raise ValueError(
             f"{ruta}: se esperaban 9 columnas (XYZ RGB NxNyNz), "
