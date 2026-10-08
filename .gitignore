@@ -7,6 +7,19 @@ data/
 *.ply
 __pycache__/
 
+# Nubes crudas y planos (viven en Khipu y en la USB, no en git)
+datos_crudos/
+*.las
+*.laz
+*.dxf
+
+# Pesos de modelos y salidas de SLURM en Khipu
+*.pth
+*.pt
+*.ckpt
+slurm-*.out
+*.err
+
 # LaTeX build artifacts
 *.aux
 *.bbl
