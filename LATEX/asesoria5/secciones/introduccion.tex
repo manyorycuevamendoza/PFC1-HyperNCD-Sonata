@@ -74,7 +74,7 @@ puntos conocidos y descubra agrupaciones consistentes para los novedosos. El mej
 alcanza solo entre 11,8 y 47,5 mIoU sobre $\mathcal{C}_n$ y construye sus
 prototipos sobre un descriptor geométrico analítico, con linealidad, planaridad y
 dispersión, que la literatura auto-supervisada considera un atajo perjudicial. La
-pregunta de investigación es si reemplazarlo por una representación
+hipótesis de investigación es que reemplazarlo por una representación
 auto-supervisada confiable aumenta de forma medible el mIoU sobre las clases
 novedosas en un levantamiento patrimonial real.
 
@@ -106,7 +106,7 @@ la diferencia de resolución entre PTv3 y la rejilla de Minkowski con
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item \textit{Herramientas y trabajo computacional:} pesos públicos de Sonata,
 Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch; módulo de fusión e
-inferencia congelada sobre las cinco secciones.
+inferencia congelada sobre cada sección.
 \item \textit{Resultado verificable:} repositorio con el híbrido produciendo
 $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ y una \textbf{prueba de
 funcionamiento} sobre una sección de control donde el mIoU de las clases
@@ -173,30 +173,39 @@ es decir nave con columnas y arcos, cubierta abovedada y fachada con torres, y n
 se extienden a vivienda ni a obra vial o industrial.
 
 \paragraph*{Volumen de datos}
-El alcance se declara sobre el levantamiento disponible, de \textbf{1 a 2\,GB}
-después de voxelizar, es decir de dividir el espacio en cubos de lado fijo y
-reemplazar por uno solo los puntos que caen en el mismo cubo. Los
-datos quedan en \textbf{cinco secciones espaciales disjuntas}, que son nave,
-coro, ábside, torres y fachada, y funcionan como particiones de entrenamiento y
-evaluación (Tabla~\ref{tab:datos}). El vóxel de 5\,cm es un límite, no una preferencia. Por debajo, con muy pocos
-puntos por clase novedosa, la diferencia entre el modelo base y el híbrido
-dejaría de distinguirse del ruido entre corridas.
+El levantamiento se recibe como archivos LAS (Sección~\ref{sec:las}) y la unidad
+de trabajo es la \textbf{sección espacial} (Sección~\ref{sec:seccion}). Una sección es el conjunto de
+archivos que se preprocesan juntos, y las secciones funcionan como particiones de
+entrenamiento y evaluación. El preprocesamiento
+implementado aplica dos reducciones de naturaleza distinta
+(Tabla~\ref{tab:datos}). El filtrado SOR descarta los puntos estadísticamente
+aislados, que en el escaneo de prueba son el 4,73\,\%. La voxelización no
+descarta ruido. Agrupa los puntos que caen en un mismo cubo de 5\,cm y los
+representa con uno solo, de modo que 8\,184\,419 puntos quedan en 610\,637
+representantes, el 7,46\,\% de los registros anteriores. El 92,54\,\% restante
+no era ruido, sino mediciones redundantes de superficies que el representante
+de su vóxel sigue describiendo. El vóxel de 5\,cm es un límite, no una
+preferencia. Por debajo, con muy pocos puntos por clase novedosa, la diferencia
+entre el modelo base y el híbrido dejaría de distinguirse del ruido entre
+corridas.
 
 \begin{table}[!htb]
 \centering
 \small
 \renewcommand{\arraystretch}{0.95}
-\caption[Cadena de reducción de datos del levantamiento]{Cadena de reducción de datos sobre el levantamiento real disponible.}
+\caption[Cadena de reducción de datos del preprocesamiento]{Cadena de reducción de datos medida sobre un escaneo del levantamiento
+(archivo \texttt{PL7\_SCN0001.las}), con los conteos que registra el propio
+preprocesamiento.}
 \label{tab:datos}
-\begin{tabular}{@{}p{5.6cm}p{3.4cm}p{3.0cm}@{}}
+\begin{tabular}{@{}p{4.9cm}p{4.6cm}p{2.5cm}@{}}
 \toprule
 \textbf{Etapa} & \textbf{Volumen} & \textbf{Recurso} \\
 \midrule
-Nube provista (TLS) & 1 a 2\,GB & Almacenamiento \\
-Teselado en secciones & 5 particiones disjuntas & CPU \\
-Vóxel 5\,cm y normalización & $\sim$2$\times$10$^{7}$ pts & 1 GPU \\
-Ventana por paso & $\sim$10$^{5}$ pts & VRAM del nodo \\
-Sonata congelado, una pasada con \emph{cache} & Fija & 1 GPU \\
+Archivo LAS en bruto & 8\,590\,904 puntos, 292\,MB & Almacenamiento \\
+Filtrado SOR, $q=20$ y $\lambda=2$ & 8\,184\,419 puntos (95,27\,\%) & CPU \\
+Voxelización a 5\,cm & 610\,637 representantes (7,46\,\% de los anteriores) & CPU \\
+Matriz de salida & $610\,637\times 9$ en precisión simple, 22\,MB & Almacenamiento \\
+Sonata congelado, una pasada con \emph{cache} & Una vez por sección & 1 GPU \\
 \bottomrule
 \end{tabular}
 \end{table}

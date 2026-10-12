@@ -1,14 +1,91 @@
 \chapter{MARCO METODOLÓGICO}
 \label{cap:metodo}
 
-La metodología se compone de tres unidades que se ejecutan en secuencia y que,
-en conjunto, garantizan el cumplimiento de los objetivos específicos del
-proyecto. La primera prepara la nube de puntos, la segunda extrae los
-descriptores y los fusiona, y la tercera entrena, calibra y evalúa el modelo. A
-ellas se añaden la delimitación del dominio del objeto de estudio y el
-tratamiento de los riesgos. A continuación se describen el diseño general del
-sistema y cada una de las unidades, junto con las actividades principales que se
-desarrollan en ellas.
+Este capítulo explica el procedimiento del proyecto con el detalle necesario
+para repetirlo. Primero presenta el diagrama de flujo general, el hardware y el
+repositorio donde está el código. Después describe cada unidad de trabajo: qué
+se ejecuta, con qué entrada y qué salida produce. La Unidad~1 ya se ejecutó
+sobre un escaneo real y se describe con sus resultados medidos, de modo que la
+metodología se corresponde con los resultados preliminares. Las Unidades~2 y~3
+describen el procedimiento previsto.
+
+% =====================================================================
+\section{Diagrama de Flujo General}
+\label{sec:diagrama-flujo}
+
+La Figura~\ref{fig:flujo} muestra los pasos del proyecto en el orden en que se
+ejecutan, de P0 a P5.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, node distance=3.5mm,
+  caja/.style={draw, rounded corners, text width=6.2cm, minimum height=0.8cm,
+               align=center, inner sep=2pt},
+  paso/.style={caja, fill=blue!12},
+  cong/.style={caja, fill=purple!14},
+  disco/.style={caja, fill=black!8},
+  dat/.style={caja, fill=orange!18},
+  fl/.style={-{Latex[length=1.8mm]}, thick},
+  ret/.style={-{Latex[length=1.8mm]}, thick, black!60, rounded corners=2mm}
+]
+\node[dat] (p0) {\textbf{P0.} Nube TLS en archivos LAS};
+\node[paso, below=of p0] (p1) {\textbf{P1.} Preprocesamiento: matriz $S$};
+\node[cong, below=of p1] (p2) {\textbf{P2.} Sonata congelado sobre $S$};
+\node[disco, below=of p2] (cache) {\textbf{Disco.} \emph{Cache} de $f_{\mathrm{ssl}}$};
+\node[paso, below=of cache] (p3) {\textbf{P3.} Fusión y entrenamiento de HyperNCD};
+\node[paso, below=of p3] (p4) {\textbf{P4.} Métricas y análisis de dominancia};
+\node[dat, below=of p4] (p5) {\textbf{P5.} $\Delta$mIoU, brecha cerrada $G$ y ablación};
+\foreach \a/\b in {p0/p1, p1/p2, p2/cache, cache/p3, p3/p4, p4/p5}
+  \draw[fl] (\a) -- (\b);
+\draw[ret] (p3.east) -- ++(0.7,0) |- (p2.east);
+\node[font=\tiny, text=black!70, rotate=-90] at ($(p3.east)!0.5!(p2.east)+(0.95,0)$) {3 repeticiones};
+\draw[ret] (p3.west) -- ++(-0.7,0) |- (p1.west);
+\node[font=\tiny, text=black!70, rotate=90] at ($(p3.west)!0.5!(p1.west)+(-0.95,0)$) {por cada sección};
+\end{tikzpicture}
+\caption{Diagrama de flujo general del proyecto. Elaboración propia.}
+\label{fig:flujo}
+\end{figure}
+
+El flujo muestra tres elementos que la arquitectura no representa. El primero es
+la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine la versión 11.x,
+que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
+un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
+asimetría de frecuencia, porque P2 se ejecuta una vez por sección y P3 en cada época,
+lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
+de repeticiones y el de recorrido de secciones.
+
+La diferencia con la Figura~\ref{fig:diseno} es de naturaleza. La
+Figura~\ref{fig:flujo} es un diagrama de flujo porque describe una secuencia
+temporal con decisiones y bucles; el diagrama de diseño describe componentes y
+dependencias sin comprometerse con el orden de ejecución.
+Si todo fuera secuencial bastaría el primero, pero los Módulos~2 y~3 son ramas
+concurrentes, y esa concurrencia es una propiedad estructural que el flujo no
+expresa.
+
+% =====================================================================
+\section{Hardware y Repositorio}
+\label{sec:hardware-repo}
+
+\paragraph*{Hardware}
+El proyecto se ejecuta en el clúster Khipu de UTEC, cuyos recursos se detallan
+en la Tabla~\ref{tab:hardware}. Cada paso pide al gestor de colas solo lo que
+necesita. El preprocesamiento usa 16 núcleos y 64\,GB de memoria, sin GPU. La
+extracción de descriptores con Sonata usa una GPU RTX~A6000, 8 núcleos y
+64\,GB. El entrenamiento de HyperNCD usa una GPU, 8 núcleos y 32\,GB. La prueba
+preliminar de la Unidad~1 se ejecutó en un equipo local.
+% PENDIENTE (autores): procesador, memoria, sistema operativo y GPU del equipo
+% local, y versiones de Python, laspy, NumPy y Open3D con que se ejecuto.
+
+\paragraph*{Repositorio}
+Todo el código está en el repositorio del
+proyecto.\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}}
+Contiene el programa de preprocesamiento (\texttt{preprocesar.py}), el programa
+que extrae y guarda los descriptores de Sonata (\texttt{extraer\_features.py}),
+el código de HyperNCD y de Sonata en dos carpetas, un guion de instalación que
+crea un entorno para cada método, porque sus dependencias son incompatibles, y
+un guion por paso para lanzarlo en el clúster. Los archivos LAS y las salidas no
+se guardan en el repositorio; se copian aparte.
 
 % =====================================================================
 \section{Diseño General del Sistema}
@@ -43,9 +120,9 @@ incompatibilidad de dimensión o de resolución aparezca antes de implementar.
 \toprule
 \textbf{Módulo} & \textbf{Entrada} & \textbf{Salida} & \textbf{Régimen} & \textbf{Frecuencia} \\
 \midrule
-1 & Archivo LAS en bruto, $N$ puntos & 5 secciones limpias y voxelizadas: coord., color, normal & Sin modelo & Una vez \\
-2 & Sección voxelizada & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa & Entrenado & Cada época \\
-3 & Sección voxelizada, 9 canales & $f_{\mathrm{ssl}}$, 1088 dim.\ por punto, rejilla serializada & Congelado & Una vez por sección \\
+1 & Archivos LAS de la sección, $N$ puntos & Matriz $S$ de 9 columnas: coord., color, normal & Sin modelo & Una vez por sección \\
+2 & Coordenadas de $S$, con característica constante 1 & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa de 5\,cm & Entrenado & Cada época \\
+3 & $S$, 9 columnas & $f_{\mathrm{ssl}}$, 1088 dim.\ por punto, rejilla propia de 2\,cm, con índice inverso & Congelado & Una vez por sección \\
 4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Prototipos, hipergrafo y pseudo-etiquetas & Entrenado & Cada época \\
 5 & Pseudo-etiquetas y verdad de terreno & Etiqueta por punto, mIoU por clase e interfaz de consulta & Evaluación y consulta & Por corrida \\
 \bottomrule
@@ -75,33 +152,110 @@ Elaboración propia.}
 \toprule
 \textbf{Herramienta} & \textbf{Uso} & \textbf{Módulo} \\
 \midrule
-\texttt{laspy} & Lectura del archivo LAS & 1 \\
+\texttt{laspy} & Lectura por bloques del archivo LAS & 1 \\
 Open3D & Filtrado SOR, voxelización y estimación de normales; reconstrucción de Poisson para exportar el sólido & 1, 5 \\
-NumPy & Teselado en secciones y almacenamiento de $f_{\mathrm{ssl}}$ en disco & 1, 3 \\
+NumPy & Apilado de coordenadas y color, centrado, y almacenamiento de $S$ y de $f_{\mathrm{ssl}}$ en disco & 1, 3 \\
 PyTorch & Entrenamiento de la rama semántica y del módulo de prototipos & 2, 4 \\
 MinkowskiEngine & Rejilla dispersa y convoluciones de la MinkowskiUNet-34C & 2 \\
 Pointcept, \texttt{spconv} & Codificador PTv3 de Sonata con sus pesos públicos & 3 \\
 Código oficial de HyperNCD & Prototipos, hipergrafo y pseudo-etiquetas & 2, 4 \\
 Weights \& Biases & Registro de métricas por corrida & 5 \\
-Clúster Khipu (Slurm) & Ejecución en GPU de los Módulos~2 a~4 & 2--4 \\
+Clúster Khipu (Slurm) & Ejecución en CPU del Módulo~1 y en GPU de los Módulos~2 a~4 & 1--4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 % =====================================================================
-\section{Unidad 1: Preparación de la Nube de Puntos}
+\section{Unidad 1: Preprocesamiento}
 \label{sec:unidad1}
 
-La primera unidad ejecuta el Módulo~1 descrito en la Sección~\ref{sec:modulo1}.
-Parte del archivo LAS en bruto de la Catedral de Lima, entregado por la Facultad
-de Ingeniería Civil con al menos cuatro clases base anotadas en la sección de
-referencia, requisito mínimo de la tarea NCD. Sobre él aplica, en este orden, la
-carga con \texttt{laspy}, el teselado en cinco secciones disjuntas, la limpieza
-por SOR (Ec.~\eqref{eq:sor}), la voxelización a 5\,cm y la estimación de
-normales (Ec.~\eqref{eq:normal}), estas tres últimas con Open3D. La salida de la unidad son las cinco secciones $S_1\ldots S_5$, cada una con
-coordenadas, color y normal, que constituyen la unidad indivisible de trabajo
-del proyecto. Ninguna sección depende de otra y todas pueden
-procesarse de forma independiente.
+La primera unidad convierte un escaneo en bruto, en formato LAS, en la matriz
+$S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1
+(Sección~\ref{sec:modulo1}) y está en el programa \texttt{preprocesar.py} del
+repositorio. Se describe tal como se ejecutó en la prueba preliminar, sobre el
+escaneo \texttt{PL7\_SCN0001.las} de la Catedral de Lima, en el equipo local de
+la Sección~\ref{sec:hardware-repo}. Ese escaneo es una parte pequeña del
+levantamiento, que en total ocupa 28\,GB.
+% PENDIENTE (autores): numero de archivos LAS, tamano total y numero total de
+% puntos del levantamiento completo.
+
+\subsection{Procedimiento}
+\label{sec:u1-procedimiento}
+
+El programa recibe un archivo LAS y entrega la matriz $S$. Realiza seis pasos,
+en este orden. De cada uno se explica qué hace, por qué se hace y qué resultado
+dio en la prueba.
+
+\begin{enumerate}\setlength{\itemsep}{4pt}
+\item \textbf{Carga.} El archivo se abre con \texttt{laspy} y se lee en bloques
+de cinco millones de puntos, para no pedir toda la memoria de una vez
+(Sección~\ref{sec:las}). De cada punto se conservan solo la posición $(x,y,z)$
+y el color $(R,G,B)$, que son los datos que usan los modelos. El color viene en
+16~bits y se divide entre 256 para llevarlo al rango 0 a 255. En la prueba se
+leen 8\,590\,904 puntos.
+
+\item \textbf{Centrado.} Las coordenadas vienen en metros sobre el mapa, con
+valores de cientos de miles y de millones. Con números tan grandes se pierde
+precisión al guardarlos, así que a todos los puntos se les resta el centro del
+escaneo (Ec.~\eqref{eq:centrado}). La forma de la nube no cambia; solo se
+traslada al origen. El centro restado se guarda para poder devolver cualquier
+resultado a su posición real.
+
+\item \textbf{Filtrado SOR.} El escaneo trae puntos sueltos que no pertenecen a
+ninguna superficie. Para cada punto se mide la distancia media a sus 20 vecinos
+más cercanos y, si supera la media de toda la nube en más de dos desviaciones
+estándar, el punto se descarta (Ec.~\eqref{eq:sor}). Se hace antes de voxelizar
+para que esos puntos no se promedien con los válidos. Quedan 8\,184\,419
+puntos; se descartan 406\,485, el 4{,}73\,\%.
+
+\item \textbf{Voxelización.} El escáner mide muchos más puntos cerca de él que
+lejos. Para igualar la densidad, el espacio se divide en cubos de 5\,cm y los
+puntos de cada cubo se sustituyen por uno solo, con su posición y su color
+promedio (Ec.~\eqref{eq:voxel}). No se pierde ninguna superficie; cambia
+cuántos puntos la describen. Quedan 610\,637 representantes, el 7{,}46\,\% de
+los puntos anteriores.
+
+\item \textbf{Normales.} La normal indica hacia dónde mira la superficie en
+cada punto, y el escáner no la mide. Se estima con los 20 vecinos de cada
+representante: la dirección en la que esos vecinos menos se dispersan es la
+perpendicular a la superficie (Ec.~\eqref{eq:normal}). Todas se orientan con
+$n_z\geq 0$ para que sean consistentes entre sí.
+
+\item \textbf{Escritura.} Se guarda la matriz $S$ (Ec.~\eqref{eq:sj}), con una
+fila por representante y sus nueve valores, y un archivo de metadatos con los
+parámetros usados, el centro restado y el número de puntos tras cada paso. En
+la prueba, $S$ tiene 610\,637 filas.
+\end{enumerate}
+
+\subsection{Entrada y Salida de la Prueba}
+\label{sec:u1-salida}
+
+La Figura~\ref{fig:cubo-pl7} muestra una porción del escaneo, un cubo de un metro
+de lado, antes y después del preprocesamiento. Los 48\,098 puntos de la entrada
+quedan en 921 representantes, repartidos de forma uniforme, que conservan la
+forma y el color de las superficies.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{imagenes/prueba_pl7_cubo.png}
+\caption{Un cubo de 1\,m del escaneo PL7 antes y después del preprocesamiento.
+Elaboración propia.}
+\label{fig:cubo-pl7}
+\end{figure}
+
+\subsection{Verificación y Reproducibilidad}
+\label{sec:u1-reproducibilidad}
+
+El programa no tiene pasos aleatorios, de modo que la misma entrada produce la
+misma salida. El tamaño de vóxel, el número de vecinos y el umbral del SOR son
+opciones del programa; la prueba usó sus valores por defecto, 5\,cm, 20 y 2.
+Para repetirla basta ejecutar
+\begin{center}
+{\small\texttt{python preprocesar.py --input PL7\_SCN0001.las}\\
+\texttt{\hspace{2em}--output PL7\_SCN0001\_preprocesado}}
+\end{center}
+y comparar los conteos del archivo de metadatos con los de la
+Tabla~\ref{tab:datos}. La prueba tardó 14{,}4 segundos.
 
 % =====================================================================
 \section{Unidad 2: Extracción de Descriptores y Fusión}
@@ -142,7 +296,7 @@ propia.}
 \textbf{Observable} & \textbf{Para qué sirve} & \textbf{Valor esperado} \\
 \midrule
 Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 \\
-Puntos retenidos tras voxelizar & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir \\
+Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir \\
 VRAM pico & Verifica la cota analítica de memoria & Cota estimada de 4{,}2\,GB \\
 Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir \\
 Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir \\
@@ -151,13 +305,15 @@ Tamaño del archivo de \emph{cache} & Dimensiona el almacenamiento del proyecto 
 \end{tabular}
 \end{table}
 
-Dos de estos observables condicionan decisiones de diseño. El tamaño de vóxel
-efectivo del codificador no coincide necesariamente con el declarado para la
-rejilla dispersa, porque la rutina de preparación de Sonata aplica su propio
-submuestreo; verificar cuál es el valor aplicado determina el número de puntos
-retenidos, la memoria y la resolución de salida. La disponibilidad de
+Dos de estos observables condicionan decisiones de diseño. El tamaño de celda
+efectivo del codificador no coincide con el de la rejilla dispersa, porque la
+rutina de preparación de Sonata aplica su propio muestreo por rejilla
+(Sección~\ref{sec:gridsample}), de 2\,cm por defecto, sobre la sección ya
+voxelizada a 5\,cm; ese valor determina el número de puntos retenidos, la memoria
+y la resolución de salida, y es un parámetro de la corrida. La disponibilidad de
 FlashAttention determina si la matriz de atención se materializa de forma
-explícita y, con ello, si el pico de memoria aparece o no.
+explícita y, con ello, si el pico de memoria aparece o no; la implementación la
+desactiva porque no está instalada en el clúster.
 
 \subsection{Punto de Fusión}
 \label{sec:fusion}
@@ -177,87 +333,6 @@ la ablación.
 La tercera unidad describe cómo se ejecuta el sistema en el tiempo, con qué
 procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
 
-\subsection{Flujo de Ejecución}
-\label{sec:diagrama-flujo}
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize,
-  paso/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.62cm,
-               align=center, fill=blue!12},
-  cong/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.62cm,
-               align=center, fill=purple!14},
-  disco/.style={draw, minimum width=5.6cm, minimum height=0.55cm,
-                align=center, fill=black!8},
-  dec/.style={draw, diamond, aspect=2.8, inner sep=1pt, align=center,
-              fill=yellow!22},
-  dat/.style={draw, rounded corners, minimum width=5.6cm, minimum height=0.5cm,
-              align=center, fill=orange!18},
-  fl/.style={-{Latex[length=1.8mm]}, thick},
-  ret/.style={-{Latex[length=1.8mm]}, thick, black!60, rounded corners=2mm}
-]
-\node[dat] (p0) {\textbf{P0.} Nube TLS de la Catedral de Lima};
-\node[paso, below=2.2mm of p0] (p1)
-  {\textbf{P1.} Teselado, voxelización y normalización\\\emph{salida:} 5 secciones $S_1\ldots S_5$};
-\node[cong, below=2.2mm of p1] (p2)
-  {\textbf{P2.} Inferencia congelada de Sonata sobre $S_j$\\\emph{entorno CUDA 12.4}, una vez por sección};
-\node[disco, below=2.2mm of p2] (cache)
-  {\textbf{Frontera de disco:} \emph{cache} de $f_{\mathrm{ssl}}$ en \texttt{.npz}};
-\node[paso, below=2.2mm of cache] (p3)
-  {\textbf{P3.} Fusión y entrenamiento de HyperNCD sobre $S_j$\\\emph{entorno CUDA 11.8}, en cada época};
-\node[dec, below=3.4mm of p3] (d1) {¿3 repeticiones\\completas?};
-\node[dec, below=3.4mm of d1] (d2) {¿quedan\\secciones?};
-\node[paso, below=3.4mm of d2] (p4)
-  {\textbf{P4.} Agregación de métricas y análisis de dominancia};
-\node[dat, below=2.2mm of p4] (p5)
-  {\textbf{P5.} $\Delta$mIoU, brecha cerrada $G$ y ablación};
-
-\foreach \a/\b in {p0/p1, p1/p2, p2/cache, cache/p3, p3/d1}
-  \draw[fl] (\a) -- (\b);
-\draw[fl] (d1) -- node[left=0.6mm, font=\tiny] {sí} (d2);
-\draw[fl] (d2) -- node[left=0.6mm, font=\tiny] {no} (p4);
-\draw[fl] (p4) -- (p5);
-
-\coordinate (car) at ($(p2.east)+(0.8,0)$);
-\coordinate (ciz) at ($(p1.west)+(-0.8,0)$);
-
-\draw[ret] (d1.east) -- node[above, pos=0.7, font=\tiny, text=black!70] {no}
-  (d1.east -| car) -- (car) -- (p2.east);
-\node[font=\tiny, text=black!70, rotate=-90]
-  at ($(car)!0.5!(d1.east -| car)+(0.3,0)$) {bucle interno};
-
-\draw[ret] (d2.west) -- node[above, pos=0.7, font=\tiny, text=black!70] {sí}
-  (d2.west -| ciz) -- (ciz) -- (p1.west);
-\node[font=\tiny, text=black!70, rotate=90]
-  at ($(ciz)!0.5!(d2.west -| ciz)+(-0.3,0)$) {bucle externo};
-
-\node[below=3mm of p5, align=center, font=\tiny, text=black!70]
-  {\tikz\node[draw,rounded corners,fill=purple!14,minimum height=2.4mm,minimum width=3.4mm]{};\ etapa congelada\quad
-   \tikz\node[draw,rounded corners,fill=blue!12,minimum height=2.4mm,minimum width=3.4mm]{};\ etapa entrenable\quad
-   \tikz\node[draw,fill=black!8,minimum height=2.4mm,minimum width=3.4mm]{};\ persistencia en disco\quad
-   \tikz\node[draw,diamond,aspect=1.6,fill=yellow!22,minimum height=2.4mm,minimum width=3.4mm,inner sep=0.3pt]{};\ decisión};
-\end{tikzpicture}
-\caption{Flujo de ejecución del sistema. Elaboración propia.}
-\label{fig:flujo}
-\end{figure}
-
-El flujo muestra tres elementos que la arquitectura no representa. El primero es
-la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine la versión 11.x,
-que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
-un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
-asimetría de frecuencia, porque P2 se ejecuta una vez por sección y P3 en cada época,
-lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
-de repeticiones y el de recorrido de secciones.
-
-La diferencia con la Figura~\ref{fig:diseno} es de naturaleza. La
-Figura~\ref{fig:flujo} es un diagrama de flujo porque describe una secuencia
-temporal con decisiones y bucles; el diagrama de diseño describe componentes y
-dependencias sin comprometerse con el orden de ejecución.
-Si todo fuera secuencial bastaría el primero, pero los Módulos~2 y~3 son ramas
-concurrentes, y esa concurrencia es una propiedad estructural que el flujo no
-expresa.
-
 \subsection{Procedimiento Experimental}
 \label{sec:procedimiento}
 
@@ -269,8 +344,8 @@ objetivos específicos:
 \begin{enumerate}\setlength{\itemsep}{2pt}
 \item \textbf{P0. Recepción.} Nube TLS con al menos cuatro clases base anotadas
 en la sección de referencia, requisito mínimo de la tarea NCD.
-\item \textbf{P1. Preparación y línea base.} Teselado en cinco secciones
-disjuntas, voxelización a 5\,cm y normalización; ejecución de HyperNCD sin
+\item \textbf{P1. Preparación y línea base.} Preprocesamiento de cada sección
+(centrado, SOR, voxelización a 5\,cm y normales); ejecución de HyperNCD sin
 modificaciones con tres semillas distintas para fijar el punto de partida contra
 el que se compara el híbrido. El cambio de esquema de normalización fue ensayado
 y descartado como resultado negativo.

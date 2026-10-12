@@ -1,7 +1,7 @@
 % =====================================================================
 %  CAPITULO I - REVISION CRITICA DE LA LITERATURA
-%  Ficha de tres entradas por estudio: Estudio relevante / Aporte al
-%  proyecto / Aporte del proyecto.
+%  Ficha por estudio: Estudio relevante / Aporte al proyecto.
+%  El Aporte del proyecto (A1..A7) se enuncia al final, en la Seccion 1.5.
 %  Aportes numerados A1..A7, secuenciales en orden de lectura.
 %  Todas las cifras citadas provienen de las tablas de los articulos
 %  originales, con la procedencia indicada en nota al pie.
@@ -120,38 +120,6 @@ hiperparámetros publicados, que fijan el punto de partida de la calibración
 mide el aporte principal, porque cualquier reemplazo de $f_{\text{geo}}$ debe
 compararse contra sus $+4{,}2$ puntos.
 
-\textbf{Aporte del proyecto.}
-
-\begin{enumerate}
-\item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico (OE1).} Reemplazar $f_{\text{geo}}$ por
-$f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
-razonamiento por hipergrafo. Así,
-$F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
-la métrica es atribuible a ese reemplazo y a nada más.
-\emph{Resultado verificable:} el híbrido corriendo de extremo a extremo sobre una
-sección de control, con las dimensiones de ambas ramas documentadas y sin que el
-mIoU de las clases conocidas baje respecto de la línea base.
-
-\item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
-corrección de la línea base (OE1).} La inspección del código liberado muestra
-que el módulo que reproduce la formulación publicada del razonamiento por
-hipergrafo no se invoca desde ninguna ruta de entrenamiento ni de evaluación;
-que las matrices de peso de sus capas se instancian dentro del cuerpo de la
-función en cada llamada, por lo que no se registran entre los parámetros del
-modelo, no reciben gradiente y se reinicializan al azar en cada invocación; que
-el procedimiento llamado de actualización dinámica reproduce término por término
-el de construcción inicial sobre la misma matriz de similitud y, en la práctica, no
-actualiza nada; y que el descriptor geométrico ejecutado tiene dimensión seis,
-porque incorpora el centroide de la región, y no tres como describe el artículo.
-Esto obliga a tres decisiones. La línea base se establece sobre el código que se
-ejecuta y no sobre la formulación publicada, la comparación se hace contra
-corridas propias bajo condiciones idénticas de datos, partición y semilla, y la
-sustitución se aplica sobre el descriptor de dimensión seis. Sin esta corrección,
-cualquier mejora reportada quedaría mal atribuida. \emph{Resultado verificable:}
-la tabla de correspondencia entre artículo e implementación y las tres decisiones
-metodológicas que de ella se derivan.
-\end{enumerate}
-
 % =====================================================================
 \section[Sonata]{Wu et al. (2025): Sonata y el atajo geométrico}
 \label{sec:sonata}
@@ -232,28 +200,6 @@ límite superior de clases novedosas simultáneas que el proyecto puede declarar
 como rango favorable.
 \end{enumerate}
 
-\textbf{Aporte del proyecto.} Este estudio sostiene, junto con la
-Sección~\ref{sec:hyperncd}, el aporte A1, porque aporta la pieza que se coloca en
-lugar de $f_{\text{geo}}$ y la evidencia de que hacerlo tiene sentido. Verificar
-si la nocividad del atajo geométrico, demostrada en régimen supervisado, se
-mantiene en régimen de descubrimiento de clases novedosas es la pregunta que A1
-responde. De su metodología nace además un aporte propio:
-
-\begin{enumerate}
-\item[\textbf{A3}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
-atribución por etapas (OE3).} Las métricas estándar no separan lo que aporta la
-representación de lo que aporta el razonamiento. El mIoU final es el mismo número
-venga de donde venga la ganancia. Trasladando el principio del \emph{linear
-probing}, este trabajo formula la brecha cerrada $G$ (Ec.~\eqref{eq:G}), que
-expresa qué parte de la distancia entre clases conocidas y novedosas se logró
-recuperar, y mide también en el punto intermedio del proceso
-(Sección~\ref{sec:metricas-hibrido}). Incorpora además un análisis de dominancia
-que identifica qué clase gobierna cada mejora agregada, para que un promedio
-favorable no oculte una única clase que arrastra al resto. \emph{Resultado
-verificable:} $G$ formulada, la medición intermedia y las proyecciones PCA de los
-descriptores.
-\end{enumerate}
-
 % =====================================================================
 \section[Point Transformer V3]{Wu et al. (2024): Point Transformer V3 y el
 problema de integración}
@@ -328,22 +274,6 @@ no viene de añadir un transformador, sino de ejecutarlo dentro del bucle de
 entrenamiento. Y lo que hace resoluble todo lo anterior es que el codificador se
 emplea congelado y solo en inferencia. Su salida no depende de la época ni del
 estado del optimizador, así que puede calcularse una sola vez por sección.
-
-\textbf{Aporte del proyecto.}
-
-\begin{enumerate}
-\item[\textbf{A4}] \textbf{Puente entre dos estructuras espaciales incompatibles
-(OE1).} Resolver el emparejamiento entre la secuencia serializada de PTv3 y la
-rejilla dispersa de Minkowski mediante \emph{up-cast} de resolución y
-\emph{cache} de características por sección. La misma decisión resuelve tres
-problemas a la vez: el emparejamiento de vecindades, la incompatibilidad entre
-pilas de dependencias, que deja de importar porque las dos ramas nunca coexisten
-en un mismo proceso, y la repetición del costo del codificador en cada época, que
-desaparece. Incluye la formulación propia de una cota de aceleración que delimita
-hasta dónde vale la pena distribuir el cacheo. \emph{Resultado verificable:} el
-\emph{cache} persistente por sección, legible desde los dos entornos, y la cota
-de aceleración.
-\end{enumerate}
 
 % =====================================================================
 \section[BRDL]{Su, Chen y Wang (2025): BRDL, calibración bajo desbalance de
@@ -427,7 +357,81 @@ HyperNCD necesita a la vez el ajuste dinámico de hiperaristas y el suavizado de
 etiquetas $\epsilon$. Las cifras de BRDL no se pueden trasladar por la diferencia
 de escenario; lo que se traslada es el procedimiento y el diagnóstico.
 
-\textbf{Aporte del proyecto.}
+% =====================================================================
+\section[Conclusión: aportes del proyecto]{Conclusión de la revisión crítica}
+\label{sec:aporte}
+
+Los estudios previos resuelven el problema \textbf{solo de forma parcial}. Existe
+un método de razonamiento entre clases que funciona, pero su descriptor
+geométrico aporta menos de la mitad que el mecanismo que lo consume
+(Sección~\ref{sec:hyperncd}). Existe una representación de puntos de calidad
+demostrada, pero medida en régimen supervisado y de vocabulario cerrado
+(Sección~\ref{sec:sonata}). Existe una caracterización precisa de la estructura
+espacial sobre la que esa representación opera, y por eso mismo se sabe que no
+coincide con la del método anterior (Sección~\ref{sec:ptv3}). Existe un
+procedimiento publicado para calibrar mecanismos acoplados, pero sobre parámetros
+de un mismo método y de una misma escala (Sección~\ref{sec:brdl}). Ninguno de
+esos trabajos se ha evaluado sobre patrimonio construido, y nadie ha juntado las
+piezas.
+
+Sobre esa base el proyecto declara \textbf{siete aportes}. Se enuncian a
+continuación, agrupados por objetivo específico, y la
+Tabla~\ref{tab:obj-vs-revision} los reúne.
+
+\medskip
+\noindent\textbf{OE1. Integración de Sonata en el módulo de prototipos.}
+Tres aportes. Sustituir el descriptor geométrico analítico por el codificador
+auto-supervisado congelado (A1), corregir la base de comparación a partir de la
+auditoría del código liberado (A2) y resolver el puente entre las dos estructuras
+espaciales que hace viable esa sustitución (A4).
+
+\begin{enumerate}
+\item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico (OE1).} Reemplazar $f_{\text{geo}}$ por
+$f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
+razonamiento por hipergrafo. Así,
+$F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
+la métrica es atribuible a ese reemplazo y a nada más.
+\emph{Resultado verificable:} el híbrido corriendo de extremo a extremo sobre una
+sección de control, con las dimensiones de ambas ramas documentadas y sin que el
+mIoU de las clases conocidas baje respecto de la línea base.
+
+\item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
+corrección de la línea base (OE1).} La inspección del código liberado muestra
+que el módulo que reproduce la formulación publicada del razonamiento por
+hipergrafo no se invoca desde ninguna ruta de entrenamiento ni de evaluación;
+que las matrices de peso de sus capas se instancian dentro del cuerpo de la
+función en cada llamada, por lo que no se registran entre los parámetros del
+modelo, no reciben gradiente y se reinicializan al azar en cada invocación; que
+el procedimiento llamado de actualización dinámica reproduce término por término
+el de construcción inicial sobre la misma matriz de similitud y, en la práctica, no
+actualiza nada; y que el descriptor geométrico ejecutado tiene dimensión seis,
+porque incorpora el centroide de la región, y no tres como describe el artículo.
+Esto obliga a tres decisiones. La línea base se establece sobre el código que se
+ejecuta y no sobre la formulación publicada, la comparación se hace contra
+corridas propias bajo condiciones idénticas de datos, partición y semilla, y la
+sustitución se aplica sobre el descriptor de dimensión seis. Sin esta corrección,
+cualquier mejora reportada quedaría mal atribuida. \emph{Resultado verificable:}
+la tabla de correspondencia entre artículo e implementación y las tres decisiones
+metodológicas que de ella se derivan.
+
+\item[\textbf{A4}] \textbf{Puente entre dos estructuras espaciales incompatibles
+(OE1).} Resolver el emparejamiento entre la secuencia serializada de PTv3 y la
+rejilla dispersa de Minkowski mediante \emph{up-cast} de resolución y
+\emph{cache} de características por sección. La misma decisión resuelve tres
+problemas a la vez: el emparejamiento de vecindades, la incompatibilidad entre
+pilas de dependencias, que deja de importar porque las dos ramas nunca coexisten
+en un mismo proceso, y la repetición del costo del codificador en cada época, que
+desaparece. Incluye la formulación propia de una cota de aceleración que delimita
+hasta dónde vale la pena distribuir el cacheo. \emph{Resultado verificable:} el
+\emph{cache} persistente por sección, legible desde los dos entornos, y la cota
+de aceleración.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{OE2. Calibración del híbrido.} Tres aportes. Hacer comparables
+dos ramas de escalas distintas (A5), calibrar de forma conjunta los tres
+parámetros que gobiernan la afinidad entre regiones (A6) y verificar que la
+configuración elegida se sostiene fuera de la sección donde se calibró (A7).
 
 \begin{enumerate}
 \item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas heterogéneas
@@ -455,7 +459,7 @@ sensibilidad y la configuración fijada.
 
 \item[\textbf{A7}] \textbf{Verificación de que la configuración se sostiene fuera
 de donde se calibró (OE2).} La configuración se fija sobre una única sección de
-referencia y se aplica \textbf{sin reajuste} a las cuatro restantes, reportando
+referencia y se aplica \textbf{sin reajuste} a las restantes, reportando
 la degradación observada. Así se distingue una calibración real de un ajuste hecho
 sobre aquello que se iba a medir, y el estudio de referencia muestra por qué
 importa. Al cambiar solo el orden de presentación de las clases, los métodos
@@ -465,51 +469,37 @@ por sección bajo configuración fija y su diferencia respecto de la sección de
 calibración.
 \end{enumerate}
 
-% =====================================================================
-\section[Conclusión: aportes del proyecto]{Conclusión de la revisión crítica}
-\label{sec:aporte}
-
-Los estudios previos resuelven el problema \textbf{solo de forma parcial}. Existe
-un método de razonamiento entre clases que funciona, pero su descriptor
-geométrico aporta menos de la mitad que el mecanismo que lo consume
-(Sección~\ref{sec:hyperncd}). Existe una representación de puntos de calidad
-demostrada, pero medida en régimen supervisado y de vocabulario cerrado
-(Sección~\ref{sec:sonata}). Existe una caracterización precisa de la estructura
-espacial sobre la que esa representación opera, y por eso mismo se sabe que no
-coincide con la del método anterior (Sección~\ref{sec:ptv3}). Existe un
-procedimiento publicado para calibrar mecanismos acoplados, pero sobre parámetros
-de un mismo método y de una misma escala (Sección~\ref{sec:brdl}). Ninguno de
-esos trabajos se ha evaluado sobre patrimonio construido, y nadie ha juntado las
-piezas.
-
-Sobre esa base el proyecto declara \textbf{siete aportes}. Cada uno se enunció ya
-en la sección de la que nace, y la Tabla~\ref{tab:obj-vs-revision} los reúne.
-
-\medskip
-\noindent\textbf{OE1. Integración de Sonata en el módulo de prototipos.}
-Tres aportes. Sustituir el descriptor geométrico analítico por el codificador
-auto-supervisado congelado (A1), corregir la base de comparación a partir de la
-auditoría del código liberado (A2) y resolver el puente entre las dos estructuras
-espaciales que hace viable esa sustitución (A4).
-
-\medskip
-\noindent\textbf{OE2. Calibración del híbrido.} Tres aportes. Hacer comparables
-dos ramas de escalas distintas (A5), calibrar de forma conjunta los tres
-parámetros que gobiernan la afinidad entre regiones (A6) y verificar que la
-configuración elegida se sostiene fuera de la sección donde se calibró (A7).
-
 \medskip
 \noindent\textbf{OE3. Cuantificación de la mejora y delimitación del rango de
 operación.} Un aporte. Formular una métrica que separe la contribución de la
 representación de la del razonamiento, junto con el protocolo de atribución por
-etapas que la acompaña (A3).
+etapas que la acompaña (A3). El estudio de Sonata (Sección~\ref{sec:sonata}) sostiene, junto con la
+Sección~\ref{sec:hyperncd}, el aporte A1, porque aporta la pieza que se coloca en
+lugar de $f_{\text{geo}}$ y la evidencia de que hacerlo tiene sentido. Verificar
+si la nocividad del atajo geométrico, demostrada en régimen supervisado, se
+mantiene en régimen de descubrimiento de clases novedosas es la pregunta que A1
+responde. De su metodología nace además un aporte propio:
+
+\begin{enumerate}
+\item[\textbf{A3}] \textbf{Métrica de brecha cerrada $G$ y protocolo de
+atribución por etapas (OE3).} Las métricas estándar no separan lo que aporta la
+representación de lo que aporta el razonamiento. El mIoU final es el mismo número
+venga de donde venga la ganancia. Trasladando el principio del \emph{linear
+probing}, este trabajo formula la brecha cerrada $G$ (Ec.~\eqref{eq:G}), que
+expresa qué parte de la distancia entre clases conocidas y novedosas se logró
+recuperar, y mide también en el punto intermedio del proceso
+(Sección~\ref{sec:metricas-hibrido}). Incorpora además un análisis de dominancia
+que identifica qué clase gobierna cada mejora agregada, para que un promedio
+favorable no oculte una única clase que arrastra al resto. \emph{Resultado
+verificable:} $G$ formulada, la medición intermedia y las proyecciones PCA de los
+descriptores.
+\end{enumerate}
 
 \begin{table}[htbp]
 \centering
 \small
 \caption[Aportes del proyecto]{Inventario de los siete aportes del proyecto. Cada uno nace de un estudio
-revisado y termina en un resultado propio que se puede verificar. La numeración
-sigue el orden de lectura del capítulo.}
+revisado y termina en un resultado propio que se puede verificar.}
 \label{tab:obj-vs-revision}
 \begin{tabular}{@{}p{0.7cm}p{4.3cm}p{2.8cm}p{4.7cm}@{}}
 \hline

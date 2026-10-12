@@ -37,6 +37,10 @@
 \newcommand{\logo}[1]{\hyperref[sec:anexo-software]{\raisebox{-0.25ex}{\includegraphics[height=1.7ex]{imagenes/logos/#1}}}}
 % Pestana de modulo: nombre en blanco enlazado a su seccion
 \newcommand{\tabmod}[2]{\hyperref[#1]{\textcolor{white}{#2}} {\tiny\color{white}(\S\ref*{#1})}}
+% Simbolo enlazado a su fila en la nomenclatura (Anexo B)
+\newcommand{\nom}[2]{\begingroup\hypersetup{linkcolor=blue!55!black}\hyperlink{nom:#1}{#2}\endgroup}
+% Igual, para operadores con limites (sumatoria, arg max)
+\newcommand{\nomop}[2]{\mathop{\nom{#1}{#2}}\limits}
 \newcommand{\enlaceec}[2]{\hyperref[#1]{#2}\nobreakspace{\tiny\color{black!45}(Ec.\,\ref*{#1})}}
 
 % Ubicación de los imágenes.
@@ -99,7 +103,7 @@ arquitectónico}
 \input{secciones/introduccion}
 \input{secciones/capitulo1}
 \input{secciones/capitulo2}
-%%\input{secciones/capitulo3}  % Marco metodologico: oculto por ahora
+\input{secciones/capitulo3}
 %%\input{secciones/capitulo4}
 %%\input{secciones/conclusiones}
 %%\input{secciones/trabajosFuturos} % sección opcional
