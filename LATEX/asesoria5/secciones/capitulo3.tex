@@ -73,9 +73,11 @@ en la Tabla~\ref{tab:hardware}. Cada paso pide al gestor de colas solo lo que
 necesita. El preprocesamiento usa 16 núcleos y 64\,GB de memoria, sin GPU. La
 extracción de descriptores con Sonata usa una GPU RTX~A6000, 8 núcleos y
 64\,GB. El entrenamiento de HyperNCD usa una GPU, 8 núcleos y 32\,GB. La prueba
-preliminar de la Unidad~1 se ejecutó en un equipo local.
-% PENDIENTE (autores): procesador, memoria, sistema operativo y GPU del equipo
-% local, y versiones de Python, laspy, NumPy y Open3D con que se ejecuto.
+preliminar de la Unidad~1 se ejecutó en una laptop con procesador AMD Ryzen~5
+8645HS de 6 núcleos y 12 hilos, 16\,GB de memoria y Windows~11 Home
+(versión 10.0.26200). Su GPU, una NVIDIA GeForce RTX~3050 de 6\,GB, no interviene
+en el preprocesamiento. El programa corrió con Python~3.12.7, \texttt{laspy}~2.7.0,
+NumPy~2.3.5 y Open3D~0.20.0.
 
 \paragraph*{Repositorio}
 Todo el código está en el repositorio del
@@ -175,9 +177,8 @@ $S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1
 repositorio. Se describe tal como se ejecutó en la prueba preliminar, sobre el
 escaneo \texttt{PL7\_SCN0001.las} de la Catedral de Lima, en el equipo local de
 la Sección~\ref{sec:hardware-repo}. Ese escaneo es una parte pequeña del
-levantamiento, que en total ocupa 28\,GB.
-% PENDIENTE (autores): numero de archivos LAS, tamano total y numero total de
-% puntos del levantamiento completo.
+levantamiento, que suma 23 archivos LAS, 20{,}05\,GB y 589\,708\,290 puntos.
+PL7 aporta el 1{,}46\,\% de esos puntos.
 
 \subsection{Procedimiento}
 \label{sec:u1-procedimiento}
@@ -247,15 +248,24 @@ Elaboración propia.}
 \label{sec:u1-reproducibilidad}
 
 El programa no tiene pasos aleatorios, de modo que la misma entrada produce la
-misma salida. El tamaño de vóxel, el número de vecinos y el umbral del SOR son
-opciones del programa; la prueba usó sus valores por defecto, 5\,cm, 20 y 2.
-Para repetirla basta ejecutar
-\begin{center}
-{\small\texttt{python preprocesar.py --input PL7\_SCN0001.las}\\
-\texttt{\hspace{2em}--output PL7\_SCN0001\_preprocesado}}
-\end{center}
-y comparar los conteos del archivo de metadatos con los de la
-Tabla~\ref{tab:datos}. La prueba tardó 14{,}4 segundos.
+misma salida. La prueba se ejecutó con la orden siguiente, con un vóxel de
+5\,cm, 20 vecinos y un umbral de 2, que son los valores por defecto del programa.
+\begin{lstlisting}[basicstyle=\small\ttfamily,frame=single,columns=fullflexible,
+                   xleftmargin=1em,xrightmargin=1em]
+python preprocesar.py --input PL7_SCN0001.las \
+       --output PL7_SCN0001_preprocesado \
+       --voxel 0.05 --q 20 --lam 2
+\end{lstlisting}
+Tardó 14{,}4 segundos en el equipo local de la Sección~\ref{sec:hardware-repo}.
+Una repetición se comprueba comparando los conteos del archivo de metadatos,
+\texttt{n\_crudo}, \texttt{n\_sor} y \texttt{n\_voxel}, con los de la
+Tabla~\ref{tab:datos}. Deben coincidir exactamente.
+
+El mismo programa preprocesó después el levantamiento completo en el clúster
+Khipu, con los mismos parámetros. Procesó los 23 archivos LAS, que pasaron de
+589\,708\,290 puntos a 17\,807\,859 representantes. La suma de los tiempos por
+archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL7 en esa
+corrida coinciden con los de la prueba local.
 
 % =====================================================================
 \section{Unidad 2: Extracción de Descriptores y Fusión}
