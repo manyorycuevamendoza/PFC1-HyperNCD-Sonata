@@ -4,9 +4,10 @@
 Este capítulo explica el procedimiento del proyecto con el detalle necesario
 para repetirlo. Primero presenta el diagrama de flujo general, el hardware y el
 repositorio donde está el código. Después describe cada unidad de trabajo: qué
-se ejecuta, con qué entrada y qué salida produce. La Unidad~1 ya se ejecutó
-sobre un escaneo real y se describe con sus resultados medidos, de modo que la
-metodología se corresponde con los resultados preliminares. Las Unidades~2 y~3
+se ejecuta, con qué entrada y qué salida produce. La Unidad~1 y la rama
+auto-supervisada de la Unidad~2 ya se ejecutaron sobre escaneos reales y se
+describen con sus resultados medidos, de modo que la metodología se corresponde
+con los resultados preliminares. El resto de la Unidad~2 y la Unidad~3
 describen el procedimiento previsto.
 
 % =====================================================================
@@ -228,6 +229,62 @@ parámetros usados, el centro restado y el número de puntos tras cada paso. En
 la prueba, $S$ tiene 610\,637 filas.
 \end{enumerate}
 
+El Algoritmo~\ref{alg:preproc} resume el programa y la
+Figura~\ref{fig:flujo-u1} muestra el flujo con los conteos de la prueba.
+
+\begin{algorithm}[H]
+\small
+\caption{Preprocesamiento de un escaneo (\texttt{preprocesar.py}).}
+\label{alg:preproc}
+\KwIn{archivo LAS; vóxel $\ell=0{,}05$\,m; vecinos $q=20$; umbral $\lambda=2$}
+\KwOut{matriz $S\in\mathbb{R}^{N\times 9}$ y archivo de metadatos}
+$P \leftarrow$ leer $(x,y,z)$ y $(R,G,B)$ en bloques de $5\times10^{6}$ puntos\;
+\lIf{el color usa 16 bits}{$(R,G,B)\leftarrow(R,G,B)/256$}
+$c \leftarrow$ centro de la caja que contiene $P$\;
+$P \leftarrow P - c$ \tcp*{Ec.~\eqref{eq:centrado}}
+\ForEach{punto $p\in P$}{
+  $d_p \leftarrow$ distancia media de $p$ a sus $q$ vecinos más cercanos\;
+}
+$P \leftarrow \{\,p : d_p \le \mu_d + \lambda\,\sigma_d\,\}$ \tcp*{SOR, Ec.~\eqref{eq:sor}}
+$P \leftarrow$ promedio de los puntos de cada cubo de lado $\ell$
+\tcp*{Ec.~\eqref{eq:voxel}}
+\ForEach{representante $p\in P$}{
+  $n_p \leftarrow$ normal por PCA de sus $q$ vecinos \tcp*{Ec.~\eqref{eq:normal}}
+  \lIf{$n_{p,z}<0$}{$n_p\leftarrow -n_p$}
+}
+guardar $S=[\,P \mid RGB \mid n\,]$ y los metadatos $(\ell,q,\lambda,c,$ conteos$)$\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, node distance=3mm,
+  caja/.style={draw, rounded corners, text width=5.6cm, minimum height=0.75cm,
+               align=center, inner sep=2pt},
+  dat/.style={caja, fill=orange!18},
+  paso/.style={caja, fill=blue!12},
+  cifra/.style={font=\scriptsize\itshape, text=black!70, anchor=west},
+  fl/.style={-{Latex[length=1.8mm]}, thick}
+]
+\node[dat] (a) {\textbf{Entrada.} \texttt{PL7\_SCN0001.las}};
+\node[paso, below=of a] (b) {\textbf{1--2.} Carga por bloques y centrado};
+\node[paso, below=of b] (c) {\textbf{3.} Filtrado SOR ($q=20$, $\lambda=2$)};
+\node[paso, below=of c] (d) {\textbf{4.} Voxelización a 5\,cm};
+\node[paso, below=of d] (e) {\textbf{5.} Normales con $q=20$ vecinos};
+\node[dat, below=of e] (f) {\textbf{6. Salida.} Matriz $S$ y metadatos};
+\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[fl] (\u) -- (\v);
+\node[cifra] at ($(a.east)+(0.2,0)$) {8\,590\,904 puntos, coordenadas UTM};
+\node[cifra] at ($(b.east)+(0.2,0)$) {8\,590\,904 puntos, centrados};
+\node[cifra] at ($(c.east)+(0.2,0)$) {8\,184\,419 puntos ($-4{,}73$\,\%)};
+\node[cifra] at ($(d.east)+(0.2,0)$) {610\,637 representantes};
+\node[cifra] at ($(e.east)+(0.2,0)$) {610\,637 normales};
+\node[cifra] at ($(f.east)+(0.2,0)$) {$610\,637\times 9$};
+\end{tikzpicture}
+\caption{Flujo del preprocesamiento con los conteos medidos en la prueba sobre
+PL7. Elaboración propia.}
+\label{fig:flujo-u1}
+\end{figure}
+
 \subsection{Entrada y Salida de la Prueba}
 \label{sec:u1-salida}
 
@@ -290,40 +347,170 @@ con pesos congelados y solo en inferencia. Entrega $f_{\mathrm{ssl}}$, de 1088
 dimensiones por punto, y se ejecuta una sola vez por sección. Su salida se
 escribe en disco y se reutiliza en todas las épocas del entrenamiento.
 
-La ejecución de esta rama produce un conjunto acotado de observables que el
-diseño declara por adelantado y que la corrida debe confirmar
-(Tabla~\ref{tab:salidas-p2}). Todos se registran en la misma corrida que genera
-el almacenamiento intermedio y no exigen una ejecución adicional.
+Esta rama ya se ejecutó en una prueba preliminar sobre el escaneo
+\texttt{PL13\_SCN0001}, en el clúster Khipu, con una GPU NVIDIA RTX~A6000 de
+48\,GB. La entrada fue la matriz $S$ que entrega la Unidad~1 para ese escaneo,
+con los mismos parámetros que la prueba sobre PL7: 803\,099 representantes de
+9 columnas. El programa es \texttt{extraer\_features.py} del repositorio.
+
+\subsubsection*{Procedimiento}
+El programa realiza cinco pasos, en este orden.
+
+\begin{enumerate}\setlength{\itemsep}{4pt}
+\item \textbf{Carga.} Lee la matriz $S$ y separa posición, color y normal, que
+son las tres entradas que espera Sonata. En la prueba tardó 0{,}3 segundos.
+
+\item \textbf{Carga del modelo.} Descarga una sola vez los pesos públicos de
+Sonata y los guarda en el disco del clúster, porque los nodos con GPU no tienen
+salida a internet. El modelo tiene 108{,}46 millones de parámetros. Se usa en
+modo de inferencia y sus pesos no cambian. FlashAttention se desactiva porque
+no está instalada en el clúster.
+
+\item \textbf{Preparación.} Aplica la rutina de preparación de Sonata. Traslada
+la nube al origen, la muestrea con una rejilla de 2\,cm
+(Sección~\ref{sec:gridsample}) y divide el color entre 255. La rejilla guarda un
+índice inverso que dice a qué celda pertenece cada punto de entrada. En la prueba
+quedan 796\,315 de los 803\,099 puntos, el 99{,}2\,\%.
+
+\item \textbf{Inferencia.} Pasa la nube por el codificador PTv3 y devuelve sus
+descriptores a la resolución de la rejilla (Sección~\ref{sec:upcast}). Cada
+punto queda con un vector de 1088 dimensiones. En la prueba tardó 13{,}9
+segundos.
+
+\item \textbf{Escritura.} Guarda en un archivo \texttt{.npz} los descriptores en
+precisión media, las coordenadas, el índice inverso y el tamaño de rejilla. En
+la prueba el archivo ocupa 680\,MB.
+\end{enumerate}
+
+El Algoritmo~\ref{alg:sonata} resume el programa y la
+Figura~\ref{fig:flujo-sonata} muestra el flujo con los valores medidos.
+
+\begin{algorithm}[H]
+\small
+\caption{Extracción de descriptores con Sonata congelado
+(\texttt{extraer\_features.py}).}
+\label{alg:sonata}
+\KwIn{matriz $S\in\mathbb{R}^{N\times 9}$ de la Unidad~1; rejilla $g=0{,}02$\,m}
+\KwOut{$f_{\mathrm{ssl}}\in\mathbb{R}^{M\times 1088}$, coordenadas e índice inverso}
+$(\mathit{coord},\mathit{color},\mathit{normal}) \leftarrow$ columnas de $S$\;
+$\Phi \leftarrow$ pesos preentrenados de Sonata, congelados\;
+$\mathit{coord} \leftarrow \mathit{coord} - $ centro de la nube\;
+$(\mathit{coord},\mathit{inv}) \leftarrow$ muestreo por rejilla de lado $g$
+\tcp*{$N \rightarrow M$ puntos}
+$\mathit{color} \leftarrow \mathit{color}/255$\;
+$f \leftarrow \mathrm{PTv3}_{\Phi}(\mathit{coord},\mathit{color},\mathit{normal})$
+\tcp*{solo inferencia}
+$f_{\mathrm{ssl}} \leftarrow$ devolver $f$ a la resolución de la rejilla
+\tcp*{Sección~\ref{sec:upcast}}
+guardar $(f_{\mathrm{ssl}},\mathit{coord},\mathit{inv},g)$ en disco\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, node distance=3mm,
+  caja/.style={draw, rounded corners, text width=5.6cm, minimum height=0.75cm,
+               align=center, inner sep=2pt},
+  dat/.style={caja, fill=orange!18},
+  paso/.style={caja, fill=blue!12},
+  cong/.style={caja, fill=purple!14},
+  cifra/.style={font=\scriptsize\itshape, text=black!70, anchor=west},
+  fl/.style={-{Latex[length=1.8mm]}, thick}
+]
+\node[dat] (a) {\textbf{Entrada.} Matriz $S$ de \texttt{PL13\_SCN0001}};
+\node[paso, below=of a] (b) {\textbf{1--2.} Carga de $S$ y de los pesos};
+\node[paso, below=of b] (c) {\textbf{3.} Centrado y rejilla de 2\,cm};
+\node[cong, below=of c] (d) {\textbf{4.} Codificador PTv3 congelado};
+\node[dat, below=of d] (e) {\textbf{5. Salida.} \emph{Cache} \texttt{.npz} con $f_{\mathrm{ssl}}$};
+\foreach \u/\v in {a/b, b/c, c/d, d/e} \draw[fl] (\u) -- (\v);
+\node[cifra] at ($(a.east)+(0.2,0)$) {803\,099 puntos $\times$ 9};
+\node[cifra] at ($(b.east)+(0.2,0)$) {108{,}46\,M parámetros};
+\node[cifra] at ($(c.east)+(0.2,0)$) {796\,315 puntos (99{,}2\,\%)};
+\node[cifra] at ($(d.east)+(0.2,0)$) {13{,}9\,s; 34{,}60\,GB de VRAM};
+\node[cifra] at ($(e.east)+(0.2,0)$) {$796\,315\times 1088$; 680\,MB};
+\end{tikzpicture}
+\caption{Flujo de la extracción de descriptores con los valores medidos en la
+prueba sobre PL13. Elaboración propia.}
+\label{fig:flujo-sonata}
+\end{figure}
+
+\subsubsection*{Observables}
+El diseño declaró por adelantado qué debía medir esta corrida. La
+Tabla~\ref{tab:salidas-p2} compara lo esperado con lo medido en PL13. Todos los
+valores salen del registro de la misma corrida que genera el almacenamiento
+intermedio.
 
 \begin{table}[H]
 \centering
 \setstretch{1}\small
-\caption{Observables de la inferencia congelada del codificador. Elaboración
-propia.}
+\caption{Observables de la inferencia congelada del codificador, esperados y
+medidos en la prueba sobre PL13. Elaboración propia.}
 \label{tab:salidas-p2}
-\begin{tabular}{@{}p{3.9cm}p{4.3cm}p{4.3cm}@{}}
+\begin{tabular}{@{}p{3.6cm}p{4.1cm}p{2.3cm}p{2.4cm}@{}}
 \toprule
-\textbf{Observable} & \textbf{Para qué sirve} & \textbf{Valor esperado} \\
+\textbf{Observable} & \textbf{Para qué sirve} & \textbf{Esperado} & \textbf{Medido} \\
 \midrule
-Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 \\
-Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir \\
-VRAM pico & Verifica la cota analítica de memoria & Cota estimada de 4{,}2\,GB \\
-Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir \\
-Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir \\
-Tamaño del archivo de \emph{cache} & Dimensiona el almacenamiento del proyecto & Por medir \\
+Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 & 1088 \\
+Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir & 796\,315 de 803\,099 (99{,}2\,\%) \\
+VRAM pico & Verifica la cota analítica de memoria & Cota de 4{,}2\,GB & 34{,}60\,GB \\
+Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir & 13{,}9\,s \\
+Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir & 57\,397 \\
+Tamaño del archivo de \emph{cache} & Dimensiona el almacenamiento del proyecto & Por medir & 680\,MB \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Dos de estos observables condicionan decisiones de diseño. El tamaño de celda
-efectivo del codificador no coincide con el de la rejilla dispersa, porque la
-rutina de preparación de Sonata aplica su propio muestreo por rejilla
-(Sección~\ref{sec:gridsample}), de 2\,cm por defecto, sobre la sección ya
-voxelizada a 5\,cm; ese valor determina el número de puntos retenidos, la memoria
-y la resolución de salida, y es un parámetro de la corrida. La disponibilidad de
-FlashAttention determina si la matriz de atención se materializa de forma
-explícita y, con ello, si el pico de memoria aparece o no; la implementación la
-desactiva porque no está instalada en el clúster.
+La memoria medida es unas ocho veces la cota analítica. Sin FlashAttention la
+matriz de atención se materializa de forma explícita, y la cota no lo tenía en
+cuenta. La medición reemplaza a la cota. PL13 usó el 72\,\% de los 48\,GB de la
+GPU con 803\,099 puntos, y seis escaneos del levantamiento superan el millón de
+puntos tras la Unidad~1. Si la memoria crece con el número de puntos, esos
+escaneos no caben en una sola pasada. Para ellos se prevé dividir la sección en
+bloques espaciales con un margen de solape y procesar cada bloque por separado.
+
+\subsubsection*{Configuración de las rejillas}
+En la prueba intervienen dos rejillas. La Unidad~1 voxeliza a 5\,cm y la rutina
+de Sonata vuelve a muestrear a 2\,cm. Como la segunda es más fina que la primera,
+casi no elimina puntos: retiene el 99{,}2\,\%. En la práctica, la resolución con
+que trabaja el codificador la fija la Unidad~1. Sonata se preentrenó con
+rejillas de 2\,cm, de modo que en esta prueba recibe una nube más gruesa que la
+de su entrenamiento. El tamaño de la rejilla de Sonata es una opción del programa
+(\texttt{--grid}), igual que el vóxel lo es de \texttt{preprocesar.py}.
+
+Más adelante se harán pruebas con otras combinaciones de rejilla, por ejemplo
+con vóxeles de 2, 3 y 5\,cm en la Unidad~1. En cada una se medirán los puntos
+retenidos, la memoria y el tiempo, y la calidad de los descriptores. El objetivo
+es ver cómo la resolución afecta al agrupamiento del Módulo~4 y elegir el
+tamaño con datos, no por defecto.
+
+\subsubsection*{Revisión de los descriptores}
+Los descriptores no traen etiquetas, así que su calidad no se puede medir
+todavía con una métrica de acierto. Se revisan de forma cualitativa con el
+programa \texttt{visualizar\_features.py} del repositorio, en la carpeta
+\texttt{experimentacion}. La Figura~\ref{fig:sonata-pl13} muestra el resultado
+sobre PL13 en cuatro vistas de la misma nube. La primera es el color real. La
+segunda proyecta los 1088 valores sobre sus tres componentes principales y los
+usa como color, de modo que un mismo color indica descriptores parecidos. La
+tercera colorea cada punto según su similitud coseno con un punto de consulta.
+La cuarta agrupa los descriptores en ocho grupos con $k$-means, sin etiquetas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{imagenes/sonata_pl13_features.png}
+\caption{Descriptores de Sonata sobre PL13: color real, componentes principales,
+similitud con el punto $\star$ y agrupamiento con $k$-means. Elaboración propia.}
+\label{fig:sonata-pl13}
+\end{figure}
+
+En las componentes principales, los arcos de bóvedas distintas toman el mismo
+tono, el suelo otro y los muros otro. En la vista de similitud, el punto de
+consulta cae en una nervadura y se parecen a él otros arcos de la escena, pero
+no el suelo. El $k$-means separa en grupos distintos arcos, suelo y muros. Las
+tres componentes principales explican el 25{,}3\,\% de la varianza y las diez
+primeras el 43{,}4\,\%. El rango efectivo del espectro es de 110{,}6 sobre 1088
+dimensiones, lejos del valor 1 que indicaría un colapso. Estas observaciones son
+cualitativas. La medida de acierto es el \emph{linear probing}
+(Sección~\ref{sec:probing}), que requiere puntos etiquetados.
 
 \subsection{Punto de Fusión}
 \label{sec:fusion}
