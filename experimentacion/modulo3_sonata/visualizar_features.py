@@ -13,8 +13,9 @@ Ademas imprime y guarda en .json medidas sin etiquetas: varianza explicada
 por la PCA, rango efectivo de las features y tamano de cada grupo.
 
 Uso:
-    python visualizar_features.py --feats cache/PL13_feats.npz \
-        --data data/PL13_SCN0001.npy --output figuras/PL13
+    python experimentacion/modulo3_sonata/visualizar_features.py \
+        --feats cache/PL13_feats.npz --data data/PL13_SCN0001.npy \
+        --output experimentacion/resultados/modulo3_PL13 --html
 """
 
 import argparse
@@ -39,7 +40,40 @@ def parse_args():
     ap.add_argument("--consulta", type=int, default=-1,
                     help="indice del punto de consulta (-1 = automatico)")
     ap.add_argument("--semilla", type=int, default=0)
+    ap.add_argument("--html", action="store_true",
+                    help="genera ademas un .html 3D interactivo (requiere plotly)")
+    ap.add_argument("--puntos-html", type=int, default=80_000,
+                    help="puntos en la vista interactiva (default 80000)")
     return ap.parse_args()
+
+
+def a_texto_rgb(c):
+    c = (np.clip(c, 0, 1) * 255).astype(int)
+    return [f"rgb({r},{g},{b})" for r, g, b in c]
+
+
+def guardar_html(ruta, xyz, vistas, q_xyz, titulo):
+    """Una sola escena 3D con botones para cambiar la coloracion."""
+    import plotly.graph_objects as go
+    nombres = list(vistas)
+    fig = go.Figure([
+        go.Scatter3d(x=xyz[:, 0], y=xyz[:, 1], z=xyz[:, 2], mode="markers",
+                     marker=dict(size=1.5, color=vistas[nombres[0]]),
+                     hoverinfo="skip", name="nube"),
+        go.Scatter3d(x=[q_xyz[0]], y=[q_xyz[1]], z=[q_xyz[2]], mode="markers",
+                     marker=dict(size=8, color="black", symbol="diamond"),
+                     name="punto de consulta"),
+    ])
+    botones = [dict(label=n, method="restyle",
+                    args=[{"marker.color": [vistas[n]]}, [0]]) for n in nombres]
+    fig.update_layout(
+        title=dict(text=titulo, y=0.98), showlegend=False, height=850,
+        scene=dict(aspectmode="data", xaxis_visible=False,
+                   yaxis_visible=False, zaxis_visible=False),
+        updatemenus=[dict(type="buttons", direction="right", x=0.5, y=1.0,
+                          xanchor="center", yanchor="bottom", buttons=botones)],
+        margin=dict(l=0, r=0, t=110, b=0))
+    fig.write_html(ruta, include_plotlyjs="cdn")
 
 
 def normalizar(x):
@@ -140,6 +174,20 @@ def main():
         "kmeans_tamanos": tam.tolist(),
     }
     salida.with_suffix(".json").write_text(json.dumps(medidas, indent=2))
+
+    if args.html:
+        sub = rng.choice(m, min(m, args.puntos_html), replace=False)
+        paleta = plt.get_cmap("tab10")(np.arange(10))[:, :3]
+        sim_col = plt.get_cmap("coolwarm")((sim[sub] + 1) / 2)[:, :3]
+        vistas = {
+            "Color real": a_texto_rgb(color[sub]),
+            "PCA de f_ssl": a_texto_rgb(normalizar(pca[sub])),
+            "Similitud con ◆": a_texto_rgb(sim_col),
+            f"k-means (k={args.k})": a_texto_rgb(paleta[grupo[sub] % 10]),
+        }
+        guardar_html(salida.with_suffix(".html"), coord[sub], vistas, coord[q],
+                     f"{Path(args.feats).stem}: gira con el mouse, cambia la vista con los botones")
+        print(f"[ok] {salida.with_suffix('.html')}")
     for clave, valor in medidas.items():
         print(f"{clave:16s} {valor}")
     print(f"[ok] {salida.with_suffix('.png')}")

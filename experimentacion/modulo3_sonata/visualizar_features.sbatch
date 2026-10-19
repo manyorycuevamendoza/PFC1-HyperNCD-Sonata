@@ -1,6 +1,7 @@
 #!/bin/bash
 # Dibuja y mide las features de Sonata (Modulo 3). Solo usa CPU.
-# Uso:  sbatch visualizar_features.sbatch PL13_SCN0001 PL13
+# Uso (desde la raiz del repo):
+#       sbatch experimentacion/modulo3_sonata/visualizar_features.sbatch PL13_SCN0001 PL13
 #       (nombre del .npy en data/ y prefijo del .npz en cache/)
 
 #SBATCH --job-name=visfeats
@@ -21,7 +22,8 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate sonata-env
 
 cd "$REPO"
-mkdir -p figuras logs
+mkdir -p experimentacion/resultados logs
 
-python visualizar_features.py --feats "cache/${FEATS}_feats.npz" \
-    --data "data/${DATO}.npy" --output "figuras/${FEATS}"
+python experimentacion/modulo3_sonata/visualizar_features.py \
+    --feats "cache/${FEATS}_feats.npz" --data "data/${DATO}.npy" \
+    --output "experimentacion/resultados/modulo3_${FEATS}" --html

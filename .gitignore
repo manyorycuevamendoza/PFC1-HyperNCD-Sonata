@@ -34,3 +34,7 @@ slurm-*.out
 *.synctex.gz
 LATEX/**/main.pdf
 region_save/
+
+# Experimentacion: datos pesados y vistas 3D (se regeneran con los scripts)
+experimentacion/datos/
+experimentacion/resultados/*.html
