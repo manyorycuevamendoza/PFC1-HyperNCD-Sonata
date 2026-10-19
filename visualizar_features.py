@@ -84,7 +84,10 @@ def main():
     rango_efectivo = float(np.exp(-(p * np.log(p)).sum()))
 
     # --- similitud coseno con un punto de consulta ---
-    fn = feat / (np.linalg.norm(feat, axis=1, keepdims=True) + 1e-8)
+    # Se resta la media: sin centrar, todas las features comparten una
+    # componente comun y la similitud sale alta en toda la escena.
+    fn = feat - media
+    fn /= np.linalg.norm(fn, axis=1, keepdims=True) + 1e-8
     q = args.consulta if args.consulta >= 0 else int(rng.integers(m))
     sim = fn @ fn[q]
 
