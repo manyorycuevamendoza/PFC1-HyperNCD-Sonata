@@ -53,6 +53,9 @@ def parse_args():
                     help="punto de consulta de la similitud (-1 = al azar)")
     ap.add_argument("--recorte", help="X0,Y0,Z0,LADO: dibuja solo ese cubo, con todos "
                     "sus puntos (si no superan --puntos)")
+    ap.add_argument("--marcar-sor", action="store_true",
+                    help="agrega una etapa con los puntos que el SOR descarta en "
+                         "rojo (requiere --las y --json; usa q y lambda del .json)")
     ap.add_argument("--brillo", type=float, default=1.0,
                     help="multiplica el color real (ej. 2.2 para escaneos oscuros)")
     ap.add_argument("--semilla", type=int, default=0)
@@ -148,13 +151,27 @@ def main():
         import laspy
         las = laspy.read(args.las)
         # float32, como la matriz S: asi el recorte decide los bordes igual
-        xyz = (np.stack([las.x, las.y, las.z], 1)
-               - np.array(meta["offset_utm"])).astype(np.float32)
+        xyz64 = np.stack([las.x, las.y, las.z], 1) - np.array(meta["offset_utm"])
+        xyz = xyz64.astype(np.float32)
         i = elegir(xyz)
-        xyz = xyz[i]
         rgb = np.stack([las.red[i], las.green[i], las.blue[i]], 1).astype(np.float32)
         rgb /= 65535.0 if rgb.max() > 255 else 255.0
-        etapas.append((f"Crudo ({len(i):,})", xyz, rgb * args.brillo))
+        etapas.append((f"Crudo ({len(i):,})", xyz[i], rgb * args.brillo))
+        if args.marcar_sor:
+            # mismo SOR que preprocesar.py, sobre todo el escaneo; se pintan en
+            # rojo los puntos que descarta
+            import open3d as o3d
+            nube = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(xyz64))
+            _, quedan = nube.remove_statistical_outlier(
+                nb_neighbors=meta["q"], std_ratio=meta["lambda"])
+            fuera = np.ones(len(xyz64), bool)
+            fuera[quedan] = False
+            col = rgb * args.brillo
+            col[fuera[i]] = [0.85, 0.05, 0.05]
+            print(f"SOR: {fuera.sum():,} descartados en total, "
+                  f"{fuera[i].sum():,} en lo dibujado")
+            etapas.append((f"SOR: descartados en rojo ({fuera[i].sum():,})",
+                           xyz[i], col))
     if caja is not None:
         print(f"recorte: crudo {len(etapas[0][1]) if args.las else '-'}  "
               f"preprocesado {len(j)}")

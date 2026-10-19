@@ -169,42 +169,55 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \end{tabular}
 \end{table}
 
+% Diagrama de flujo de un paso: entrada, operacion y salida.
+\newcommand{\flujopaso}[3]{%
+\begin{tikzpicture}[font=\scriptsize, node distance=6mm,
+  caja/.style={draw, rounded corners, text width=3.5cm, minimum height=1cm,
+               align=center, inner sep=2pt},
+  fl/.style={-{Latex[length=1.8mm]}, thick}]
+\node[caja, fill=orange!18] (a) {#1};
+\node[caja, fill=blue!12, right=of a] (b) {#2};
+\node[caja, fill=orange!18, right=of b] (c) {#3};
+\draw[fl] (a) -- (b); \draw[fl] (b) -- (c);
+\end{tikzpicture}}
+
 \subsection{Visor 3D del Proyecto}
 \label{sec:visor}
 
 Para revisar las nubes en cada etapa se construyó un visor propio, el programa
-\texttt{visor\_3d.py} de la carpeta \texttt{experimentacion} del repositorio. Recibe
-un escaneo en sus distintas etapas y genera una página web que se abre en el
-navegador, sin instalar nada. La página tiene una sola escena 3D y un botón por
-etapa: la entrada cruda, la matriz $S$ del Módulo~1 con su color y con sus
-normales, y los descriptores del Módulo~3 vistos de tres formas. Todas las
-etapas comparten las coordenadas, la escala y la cámara. Al cambiar de botón el
-ángulo no se mueve, así que las etapas se comparan desde el mismo punto de vista.
-La página permite girar, acercar y exportar la vista a PNG. Las figuras de este
-capítulo que muestran nubes completas se obtuvieron así.
+\texttt{visor\_3d.py} de la carpeta \texttt{experimentacion} del repositorio.
+Recibe un escaneo en sus distintas etapas y genera una página web que se abre en
+el navegador sin instalar nada. La página tiene una sola escena 3D y un botón por
+etapa. Las etapas son la entrada cruda, los puntos que descarta el filtrado, la
+matriz $S$ de la Unidad~1 con su color y con sus normales, y los descriptores de
+Sonata vistos de tres formas. Todas las etapas comparten las coordenadas, la
+escala y la cámara. Al cambiar de botón el ángulo no se mueve, así que las etapas
+se comparan desde el mismo punto de vista. La página permite girar, acercar y
+exportar la vista a PNG. El visor también puede recortar un cubo y dibujar todos
+sus puntos. Todas las figuras de nubes de este capítulo se obtuvieron así.
 
 Se prefirió a Matplotlib por tres motivos. Matplotlib dibuja en 3D proyectando
 los puntos sobre un plano en la CPU, y con cientos de miles de puntos se vuelve
-lento y no resuelve bien qué punto tapa a cuál. El visor se basa en
-Plotly, que dibuja con WebGL en la GPU del navegador y maneja cien mil puntos por
+lento y no resuelve bien qué punto tapa a cuál. El visor se basa en Plotly, que
+dibuja con WebGL en la GPU del navegador y maneja cientos de miles de puntos por
 etapa con giro fluido. Además, Matplotlib entrega una imagen fija con un ángulo
 elegido de antemano, mientras que el visor permite buscar el ángulo que mejor
 muestra cada estructura antes de exportar. Por último, la página es un solo
 archivo que cualquier miembro del equipo abre sin Python.
 
-El visor también comprueba que los datos de cada etapa correspondan entre sí. Los
-descriptores de Sonata se asocian a los puntos de $S$ por el orden de las filas,
-y el visor verifica que cada punto caiga en su celda antes de dibujar. Si no
-corresponden, se detiene con un aviso
-(Sección~\ref{sec:u1-reproducibilidad}).
+El visor también comprueba que los datos de cada etapa correspondan entre sí.
+Los descriptores de Sonata se asocian a los puntos de $S$ por el orden de las
+filas, y el visor verifica que cada punto caiga en su celda antes de dibujar. Si
+no corresponden, se detiene con un aviso, como se explica en la
+Sección~\ref{sec:u1-reproducibilidad}.
 
 % =====================================================================
-\section{Unidad 1: Preprocesamiento}
+\section{Unidad 1. Preprocesamiento}
 \label{sec:unidad1}
 
 La primera unidad convierte un escaneo en bruto, en formato LAS, en la matriz
-$S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1
-(Sección~\ref{sec:modulo1}) y está en el programa \texttt{preprocesar.py} del
+$S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1, descrito en
+la Sección~\ref{sec:modulo1}, y está en el programa \texttt{preprocesar.py} del
 repositorio. Se describe tal como se ejecutó en la prueba preliminar, sobre el
 escaneo \texttt{PL7\_SCN0001.las} de la Catedral de Lima, en el equipo local de
 la Sección~\ref{sec:hardware-repo}. Ese escaneo es una parte pequeña del
@@ -215,75 +228,11 @@ PL7 aporta el 1{,}46\,\% de esos puntos.
 \label{sec:u1-procedimiento}
 
 El programa recibe un archivo LAS y entrega la matriz $S$. Realiza seis pasos,
-en este orden. De cada uno se explica qué hace, por qué se hace y qué resultado
-dio en la prueba.
-
-\begin{enumerate}\setlength{\itemsep}{4pt}
-\item \textbf{Carga.} El archivo se abre con \texttt{laspy} y se lee en bloques
-de cinco millones de puntos, para no pedir toda la memoria de una vez
-(Sección~\ref{sec:las}). De cada punto se conservan solo la posición $(x,y,z)$
-y el color $(R,G,B)$, que son los datos que usan los modelos. El color viene en
-16~bits y se divide entre 256 para llevarlo al rango 0 a 255. En la prueba se
-leen 8\,590\,904 puntos.
-
-\item \textbf{Centrado.} Las coordenadas vienen en metros sobre el mapa, con
-valores de cientos de miles y de millones. Con números tan grandes se pierde
-precisión al guardarlos, así que a todos los puntos se les resta el centro del
-escaneo (Ec.~\eqref{eq:centrado}). La forma de la nube no cambia; solo se
-traslada al origen. El centro restado se guarda para poder devolver cualquier
-resultado a su posición real.
-
-\item \textbf{Filtrado SOR.} El escaneo trae puntos sueltos que no pertenecen a
-ninguna superficie. Para cada punto se mide la distancia media a sus 20 vecinos
-más cercanos y, si supera la media de toda la nube en más de dos desviaciones
-estándar, el punto se descarta (Ec.~\eqref{eq:sor}). Se hace antes de voxelizar
-para que esos puntos no se promedien con los válidos. Quedan 8\,184\,419
-puntos; se descartan 406\,485, el 4{,}73\,\%.
-
-\item \textbf{Voxelización.} El escáner mide muchos más puntos cerca de él que
-lejos. Para igualar la densidad, el espacio se divide en cubos de 5\,cm y los
-puntos de cada cubo se sustituyen por uno solo, con su posición y su color
-promedio (Ec.~\eqref{eq:voxel}). No se pierde ninguna superficie; cambia
-cuántos puntos la describen. Quedan 610\,637 representantes, el 7{,}46\,\% de
-los puntos anteriores.
-
-\item \textbf{Normales.} La normal indica hacia dónde mira la superficie en
-cada punto, y el escáner no la mide. Se estima con los 20 vecinos de cada
-representante: la dirección en la que esos vecinos menos se dispersan es la
-perpendicular a la superficie (Ec.~\eqref{eq:normal}). Todas se orientan con
-$n_z\geq 0$ para que sean consistentes entre sí.
-
-\item \textbf{Escritura.} Se guarda la matriz $S$ (Ec.~\eqref{eq:sj}), con una
-fila por representante y sus nueve valores, y un archivo de metadatos con los
-parámetros usados, el centro restado y el número de puntos tras cada paso. En
-la prueba, $S$ tiene 610\,637 filas.
-\end{enumerate}
-
-El Algoritmo~\ref{alg:preproc} resume el programa y la
-Figura~\ref{fig:flujo-u1} muestra el flujo con los conteos de la prueba.
-
-\begin{algorithm}[H]
-\small
-\caption{Preprocesamiento de un escaneo (\texttt{preprocesar.py}).}
-\label{alg:preproc}
-\KwIn{archivo LAS; vóxel $\ell=0{,}05$\,m; vecinos $q=20$; umbral $\lambda=2$}
-\KwOut{matriz $S\in\mathbb{R}^{N\times 9}$ y archivo de metadatos}
-$P \leftarrow$ leer $(x,y,z)$ y $(R,G,B)$ en bloques de $5\times10^{6}$ puntos\;
-\lIf{el color usa 16 bits}{$(R,G,B)\leftarrow(R,G,B)/256$}
-$c \leftarrow$ centro de la caja que contiene $P$\;
-$P \leftarrow P - c$ \tcp*{Ec.~\eqref{eq:centrado}}
-\ForEach{punto $p\in P$}{
-  $d_p \leftarrow$ distancia media de $p$ a sus $q$ vecinos más cercanos\;
-}
-$P \leftarrow \{\,p : d_p \le \mu_d + \lambda\,\sigma_d\,\}$ \tcp*{SOR, Ec.~\eqref{eq:sor}}
-$P \leftarrow$ promedio de los puntos de cada cubo de lado $\ell$
-\tcp*{Ec.~\eqref{eq:voxel}}
-\ForEach{representante $p\in P$}{
-  $n_p \leftarrow$ normal por PCA de sus $q$ vecinos \tcp*{Ec.~\eqref{eq:normal}}
-  \lIf{$n_{p,z}<0$}{$n_p\leftarrow -n_p$}
-}
-guardar $S=[\,P \mid RGB \mid n\,]$ y los metadatos $(\ell,q,\lambda,c,$ conteos$)$\;
-\end{algorithm}
+en este orden. La Figura~\ref{fig:flujo-u1} los resume con los conteos de la
+prueba. Cada paso se describe a continuación con su pseudocódigo, su diagrama de
+flujo y su resultado en la prueba. Los parámetros son tres, el tamaño de vóxel
+$\ell=5$\,cm, el número de vecinos $q=20$ y el umbral del filtrado $\lambda=2$.
+La prueba tardó 14{,}4 segundos en total.
 
 \begin{figure}[H]
 \centering
@@ -297,67 +246,295 @@ guardar $S=[\,P \mid RGB \mid n\,]$ y los metadatos $(\ell,q,\lambda,c,$ conteos
   fl/.style={-{Latex[length=1.8mm]}, thick}
 ]
 \node[dat] (a) {\textbf{Entrada.} \texttt{PL7\_SCN0001.las}};
-\node[paso, below=of a] (b) {\textbf{1--2.} Carga por bloques y centrado};
-\node[paso, below=of b] (c) {\textbf{3.} Filtrado SOR ($q=20$, $\lambda=2$)};
-\node[paso, below=of c] (d) {\textbf{4.} Voxelización a 5\,cm};
-\node[paso, below=of d] (e) {\textbf{5.} Normales con $q=20$ vecinos};
-\node[dat, below=of e] (f) {\textbf{6. Salida.} Matriz $S$ y metadatos};
+\node[paso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga por bloques y centrado};
+\node[paso, below=of b] (c) {\textbf{Paso 3.} Filtrado SOR, $q=20$ y $\lambda=2$};
+\node[paso, below=of c] (d) {\textbf{Paso 4.} Voxelización a 5\,cm};
+\node[paso, below=of d] (e) {\textbf{Paso 5.} Normales con $q=20$ vecinos};
+\node[dat, below=of e] (f) {\textbf{Paso 6. Salida.} Matriz $S$ y metadatos};
 \foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[fl] (\u) -- (\v);
 \node[cifra] at ($(a.east)+(0.2,0)$) {8\,590\,904 puntos, coordenadas UTM};
 \node[cifra] at ($(b.east)+(0.2,0)$) {8\,590\,904 puntos, centrados};
-\node[cifra] at ($(c.east)+(0.2,0)$) {8\,184\,419 puntos ($-4{,}73$\,\%)};
+\node[cifra] at ($(c.east)+(0.2,0)$) {8\,184\,419 puntos, se descarta el 4{,}73\,\%};
 \node[cifra] at ($(d.east)+(0.2,0)$) {610\,637 representantes};
 \node[cifra] at ($(e.east)+(0.2,0)$) {610\,637 normales};
 \node[cifra] at ($(f.east)+(0.2,0)$) {$610\,637\times 9$};
 \end{tikzpicture}
-\caption{Flujo del preprocesamiento con los conteos medidos en la prueba sobre
-PL7. Elaboración propia.}
+\caption{Diagrama de flujo general del preprocesamiento, con los conteos medidos
+en la prueba sobre PL7. Elaboración propia.}
 \label{fig:flujo-u1}
 \end{figure}
 
-\subsection{Entrada y Salida de la Prueba}
-\label{sec:u1-salida}
+\subsubsection*{Paso 1. Carga}
 
-La Figura~\ref{fig:cubo-pl7} muestra de cerca una porción del escaneo, un cubo
-de un metro de lado, antes y después del preprocesamiento, con el visor de la
-Sección~\ref{sec:visor}. Se dibujan todos los puntos del cubo. Los 48\,098
-puntos de la entrada quedan en 921 representantes, repartidos de forma uniforme,
-que conservan la forma y el color de las superficies. El tercer panel colorea
-cada representante según su normal: superficies con la misma orientación toman
-el mismo color.
+El archivo se abre con \texttt{laspy} y se lee en bloques de cinco millones de
+puntos, para no pedir toda la memoria de una vez, como se explica en la
+Sección~\ref{sec:las}. De cada punto se conservan solo la posición $(x,y,z)$ y
+el color $(R,G,B)$, que son los datos que usan los modelos. La intensidad, el
+número de retorno y la clase se descartan. El color viene en 16 bits, con un
+máximo de 65\,535, y se divide entre 256 para llevarlo al rango de 0 a 255. En
+la prueba se leen 8\,590\,904 puntos en dos bloques, en cerca de un segundo. La
+Figura~\ref{fig:m1-paso1} muestra el escaneo cargado.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 1 del Módulo~1, carga.}
+\KwIn{archivo LAS de $N$ puntos}
+\KwOut{posiciones $P\in\mathbb{R}^{N\times 3}$ y colores $C\in[0,255]^{N\times 3}$}
+\ForEach{bloque de $5\times 10^{6}$ puntos del archivo}{
+  añadir a $P$ las columnas $x$, $y$ y $z$ del bloque\;
+  añadir a $C$ las columnas $R$, $G$ y $B$ del bloque\;
+}
+\lIf{el color usa 16 bits}{$C \leftarrow C/256$}
+\end{algorithm}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{imagenes/visor_pl7_cubo.png}
+\flujopaso{Archivo LAS\\8\,590\,904 puntos}{Leer en bloques y conservar posición y color}{$P$ y $C$\\8\,590\,904 puntos}
+\caption{Diagrama de flujo del Paso~1 del Módulo~1. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth]{imagenes/m1_paso1_carga.png}
+\caption{Escaneo PL7 tras la carga, con su color real. Se dibujan 200\,000
+puntos tomados al azar. Elaboración propia.}
+\label{fig:m1-paso1}
+\end{figure}
+
+\subsubsection*{Paso 2. Centrado}
+
+Las coordenadas vienen en metros sobre el mapa, en el sistema UTM, con valores
+de cientos de miles y de millones. Con números tan grandes se pierde precisión
+al guardarlos en precisión simple, así que a todos los puntos se les resta el
+centro de la caja que los contiene, según la Ecuación~\ref{eq:centrado}. La
+forma de la nube no cambia, solo se traslada al origen. El centro restado se
+guarda en los metadatos para poder devolver cualquier resultado a su posición
+real. La Tabla~\ref{tab:m1-centrado} muestra el efecto en la prueba. Este paso no
+lleva imagen porque la nube se ve igual antes y después, solo cambian los números
+de los ejes.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 2 del Módulo~1, centrado.}
+\KwIn{posiciones $P$ en coordenadas UTM}
+\KwOut{posiciones centradas y centro $c$}
+$c \leftarrow (\min P + \max P)/2$, calculado por eje\;
+$P \leftarrow P - c$\;
+guardar $c$ para los metadatos\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{$P$ en UTM\\$x\approx 278\,800$ m}{Restar el centro de la caja}{$P$ centrada\\$x$ entre $-25{,}67$ y $25{,}67$ m}
+\caption{Diagrama de flujo del Paso~2 del Módulo~1. Elaboración propia.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\caption{Rango de las coordenadas de PL7 antes y después del centrado, en
+metros. Elaboración propia.}
+\label{tab:m1-centrado}
+\begin{tabular}{@{}p{1.2cm}p{4.4cm}p{2.6cm}p{3.6cm}@{}}
+\toprule
+\textbf{Eje} & \textbf{Antes, en UTM} & \textbf{Centro} & \textbf{Después} \\
+\midrule
+$x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}67$ \\
+$y$ & 8\,667\,724{,}83 a 8\,667\,780{,}02 & 8\,667\,752{,}42 & $-27{,}60$ a $27{,}60$ \\
+$z$ & 159{,}36 a 188{,}83 & 174{,}10 & $-14{,}73$ a $14{,}73$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Paso 3. Filtrado SOR}
+
+El escaneo trae puntos sueltos que no pertenecen a ninguna superficie. Para cada
+punto se mide la distancia media a sus 20 vecinos más cercanos. Si esa distancia
+supera la media de toda la nube en más de dos desviaciones estándar, el punto se
+descarta, según la Ecuación~\ref{eq:sor}. El filtrado se hace antes de voxelizar
+para que esos puntos no se promedien con los válidos. En la prueba quedan
+8\,184\,419 puntos y se descartan 406\,485, el 4{,}73\,\%. El filtrado tardó
+cerca de doce segundos, la mayor parte de la prueba.
+
+La Figura~\ref{fig:m1-paso3} marca en rojo los puntos descartados. Se concentran
+en las zonas donde la nube es rala, lejos de donde estaba el escáner. Ahí la
+distancia entre vecinos es grande aunque el punto pertenezca a una superficie
+real, de modo que el filtrado elimina tanto ruido como parte de esas superficies
+lejanas. Es una consecuencia de usar un umbral único para toda la nube y conviene
+tenerla en cuenta al elegir $\lambda$.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 3 del Módulo~1, filtrado SOR.}
+\KwIn{posiciones $P$ y colores $C$, vecinos $q=20$, umbral $\lambda=2$}
+\KwOut{$P$ y $C$ sin los puntos aislados}
+\ForEach{punto $p\in P$}{
+  $d_p \leftarrow$ distancia media de $p$ a sus $q$ vecinos más cercanos\;
+}
+$\mu,\sigma \leftarrow$ media y desviación estándar de todos los $d_p$\;
+conservar en $P$ y $C$ solo los puntos con $d_p \le \mu + \lambda\sigma$\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{8\,590\,904 puntos}{Distancia media a 20 vecinos y umbral $\mu+2\sigma$}{8\,184\,419 puntos\\se descartan 406\,485}
+\caption{Diagrama de flujo del Paso~3 del Módulo~1. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{imagenes/m1_paso3_sor.png}
+\caption{Escaneo PL7 antes del filtrado y con los puntos descartados en rojo,
+desde la misma cámara. Se dibujan 200\,000 puntos tomados al azar, de los
+cuales 9\,404 son descartados. Elaboración propia.}
+\label{fig:m1-paso3}
+\end{figure}
+
+\subsubsection*{Paso 4. Voxelización}
+
+El escáner mide muchos más puntos cerca de él que lejos. Para igualar la
+densidad, el espacio se divide en cubos de 5\,cm de lado y los puntos de cada
+cubo se sustituyen por uno solo, con su posición y su color promedio, según la
+Ecuación~\ref{eq:voxel}. No se pierde ninguna superficie, cambia cuántos puntos
+la describen. En la prueba quedan 610\,637 representantes, el 7{,}46\,\% de los
+puntos que salieron del filtrado. La Figura~\ref{fig:m1-paso4} muestra el
+escaneo completo antes y después, y la Figura~\ref{fig:cubo-pl7} muestra de
+cerca un cubo de 1\,m de lado. En ese cubo los 48\,098 puntos de la entrada
+quedan en 921 representantes, repartidos de forma uniforme, que conservan la
+forma y el color de las superficies.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 4 del Módulo~1, voxelización.}
+\KwIn{posiciones $P$ y colores $C$, lado del vóxel $\ell=0{,}05$\,m}
+\KwOut{representantes $P'$ y $C'$}
+\ForEach{punto $p\in P$}{
+  $v_p \leftarrow \lfloor p/\ell \rfloor$ \tcp*{cubo al que pertenece}
+}
+\ForEach{cubo $v$ con al menos un punto}{
+  añadir a $P'$ y $C'$ la posición y el color promedio de sus puntos\;
+}
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{8\,184\,419 puntos}{Un representante promedio por cubo de 5\,cm}{610\,637\\representantes}
+\caption{Diagrama de flujo del Paso~4 del Módulo~1. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{imagenes/m1_paso4_voxel_completo.png}
+\caption{Escaneo PL7 completo antes y después de la voxelización, desde la
+misma cámara. Cada panel dibuja 200\,000 puntos tomados al azar.
+Elaboración propia.}
+\label{fig:m1-paso4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{imagenes/m1_paso4_voxel_cubo.png}
 \caption{Un cubo de 1\,m del escaneo PL7 antes y después del preprocesamiento,
-desde la misma cámara. El color real se aclaró por un factor de 2{,}2 para que
-se distinga. Elaboración propia.}
+desde la misma cámara. Se dibujan todos sus puntos y el color real se aclaró por
+un factor de 2{,}2 para que se distinga. Elaboración propia.}
 \label{fig:cubo-pl7}
 \end{figure}
 
-El cubo, de $x=-19$ a $-18$\,m, $y=-3$ a $-2$\,m y $z=-12$ a $-11$\,m en
-coordenadas centradas, se eligió por tener superficies en varias orientaciones,
-donde el efecto del preprocesamiento se aprecia mejor. La Figura~\ref{fig:visor-pl7} muestra el
-escaneo completo, antes y después, desde la misma cámara, con el visor de la
-Sección~\ref{sec:visor}. En la entrada los puntos se concentran cerca del
-escáner y escasean lejos de él. En la salida la densidad es pareja en toda la
-escena.
+El cubo va de $x=-19$ a $-18$\,m, de $y=-3$ a $-2$\,m y de $z=-12$ a $-11$\,m en
+coordenadas centradas. Se eligió por tener superficies en varias orientaciones,
+donde el efecto de la voxelización se aprecia mejor. En la entrada los puntos se
+amontonan en franjas densas, y en la salida quedan separados de forma regular.
+
+\subsubsection*{Paso 5. Normales}
+
+La normal indica hacia dónde mira la superficie en cada punto, y el escáner no
+la mide. Se estima con los 20 vecinos de cada representante, según la
+Ecuación~\ref{eq:normal}. La dirección en la que esos vecinos menos se dispersan
+es la perpendicular a la superficie. Todas las normales se orientan con
+$n_z\geq 0$ para que sean consistentes entre sí. En la
+Figura~\ref{fig:m1-paso5} cada normal se usa como color, de modo que las
+superficies con la misma orientación toman el mismo tono, por ejemplo los suelos
+por un lado y cada pared por otro.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 5 del Módulo~1, normales.}
+\KwIn{representantes $P'$, vecinos $q=20$}
+\KwOut{normales $n\in\mathbb{R}^{M\times 3}$ de largo 1}
+\ForEach{representante $p\in P'$}{
+  $\Sigma_p \leftarrow$ covarianza de sus $q$ vecinos más cercanos\;
+  $n_p \leftarrow$ autovector de $\Sigma_p$ con el menor autovalor\;
+  \lIf{$n_{p,z}<0$}{$n_p\leftarrow -n_p$}
+}
+\end{algorithm}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{imagenes/visor_pl7_entrada_m1.png}
-\caption{Escaneo PL7 completo antes y después del preprocesamiento, desde la
-misma cámara. Cada panel dibuja 100\,000 puntos tomados al azar. Elaboración
-propia.}
-\label{fig:visor-pl7}
+\flujopaso{610\,637\\representantes}{Covarianza de 20 vecinos y menor autovector}{610\,637 normales\\orientadas hacia arriba}
+\caption{Diagrama de flujo del Paso~5 del Módulo~1. Elaboración propia.}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{imagenes/m1_paso5_normales.png}
+\caption{Normales del escaneo PL7 usadas como color. Se dibujan 200\,000
+representantes tomados al azar. Elaboración propia.}
+\label{fig:m1-paso5}
+\end{figure}
+
+\subsubsection*{Paso 6. Escritura}
+
+Se guarda la matriz $S$, descrita en la Ecuación~\ref{eq:sj}, con una fila por
+representante y sus nueve valores, la posición, el color y la normal. Se guarda
+en precisión simple, y en la prueba ocupa 22\,MB con 610\,637 filas. Junto a ella
+se escribe un archivo de metadatos con los parámetros usados, el centro restado y
+el número de puntos tras cada paso. La Tabla~\ref{tab:m1-metadatos} muestra su
+contenido en la prueba.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 6 del Módulo~1, escritura.}
+\KwIn{$P'$, $C'$, $n$, centro $c$ y conteos de cada paso}
+\KwOut{archivo de la matriz $S$ y archivo de metadatos}
+$S \leftarrow [\,P' \mid C' \mid n\,]$ en precisión simple\;
+guardar $S$\;
+guardar $\ell$, $q$, $\lambda$, $c$ y los conteos en el archivo de metadatos\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{Posición, color\\y normal}{Unir en $S$ y escribir los metadatos}{$S$ de $610\,637\times 9$\\22\,MB}
+\caption{Diagrama de flujo del Paso~6 del Módulo~1. Elaboración propia.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\caption{Contenido del archivo de metadatos en la prueba sobre PL7.
+Elaboración propia.}
+\label{tab:m1-metadatos}
+\begin{tabular}{@{}p{3cm}p{3.8cm}p{5.6cm}@{}}
+\toprule
+\textbf{Campo} & \textbf{Valor} & \textbf{Significado} \\
+\midrule
+\texttt{voxel} & 0{,}05 & Lado del vóxel, en metros \\
+\texttt{q} & 20 & Vecinos del filtrado y de las normales \\
+\texttt{lambda} & 2 & Umbral del filtrado \\
+\texttt{offset\_utm} & 278\,800{,}97, 8\,667\,752{,}42 y 174{,}10 & Centro restado en el Paso~2 \\
+\texttt{n\_crudo} & 8\,590\,904 & Puntos tras la carga \\
+\texttt{n\_sor} & 8\,184\,419 & Puntos tras el filtrado \\
+\texttt{n\_voxel} & 610\,637 & Representantes tras la voxelización \\
+\texttt{segundos} & 14{,}4 & Tiempo total \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Verificación y Reproducibilidad}
 \label{sec:u1-reproducibilidad}
 
 El programa no tiene pasos aleatorios, de modo que la misma entrada produce la
-misma salida. La prueba se ejecutó con la orden siguiente, con un vóxel de
-5\,cm, 20 vecinos y un umbral de 2, que son los valores por defecto del programa.
+misma salida. La prueba se ejecutó con la orden siguiente, con los valores por
+defecto del programa.
 \begin{lstlisting}[basicstyle=\small\ttfamily,frame=single,columns=fullflexible,
                    xleftmargin=1em,xrightmargin=1em]
 python preprocesar.py --input PL7_SCN0001.las \
@@ -370,8 +547,8 @@ Una repetición se comprueba comparando los conteos del archivo de metadatos,
 Tabla~\ref{tab:datos}. Deben coincidir exactamente.
 
 Lo que se repite son los puntos, no necesariamente su orden. El escaneo PL13 se
-preprocesó en Khipu, con Open3D~0.19, y en el equipo local, con Open3D~0.20.
-Las dos salidas tienen los mismos 803\,099 puntos con valores idénticos, pero en
+preprocesó en Khipu, con Open3D~0.19, y en el equipo local, con Open3D~0.20. Las
+dos salidas tienen los mismos 803\,099 puntos con valores idénticos, pero en
 distinto orden de filas. Como los descriptores de Sonata se asocian a los puntos
 por ese orden, cada archivo de descriptores debe usarse con la misma matriz $S$
 que entró a Sonata, y no con otra repetición del preprocesamiento.
@@ -383,7 +560,7 @@ archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL7 en esa
 corrida coinciden con los de la prueba local.
 
 % =====================================================================
-\section{Unidad 2: Extracción de Descriptores y Fusión}
+\section{Unidad 2. Extracción de Descriptores y Fusión}
 \label{sec:unidad2}
 
 La segunda unidad abarca los Módulos~2, 3 y~4. Las dos ramas de extracción
@@ -400,68 +577,20 @@ se ejecuta en cada época.
 \subsection{Rama Auto-supervisada Congelada}
 \label{sec:rama-ssl}
 
-La rama auto-supervisada es el codificador PTv3 preentrenado de Sonata, usado
-con pesos congelados y solo en inferencia. Entrega $f_{\mathrm{ssl}}$, de 1088
-dimensiones por punto, y se ejecuta una sola vez por sección. Su salida se
-escribe en disco y se reutiliza en todas las épocas del entrenamiento.
+La rama auto-supervisada es el codificador PTv3 preentrenado de Sonata. Se usa
+con los pesos congelados y solo en inferencia, de modo que no se entrena ni
+cambia. Entrega $f_{\mathrm{ssl}}$, un vector de 1088 dimensiones por punto. Se
+ejecuta una sola vez por sección, y su salida se escribe en disco para
+reutilizarla en todas las épocas del entrenamiento. Corresponde al Módulo~3 y
+está en el programa \texttt{extraer\_features.py} del repositorio.
 
-Esta rama ya se ejecutó en una prueba preliminar sobre el escaneo
-\texttt{PL13\_SCN0001}, en el clúster Khipu, con una GPU NVIDIA RTX~A6000 de
-48\,GB. La entrada fue la matriz $S$ que entrega la Unidad~1 para ese escaneo,
-con los mismos parámetros que la prueba sobre PL7: 803\,099 representantes de
-9 columnas. El programa es \texttt{extraer\_features.py} del repositorio.
-
-\subsubsection*{Procedimiento}
-El programa realiza cinco pasos, en este orden.
-
-\begin{enumerate}\setlength{\itemsep}{4pt}
-\item \textbf{Carga.} Lee la matriz $S$ y separa posición, color y normal, que
-son las tres entradas que espera Sonata. En la prueba tardó 0{,}3 segundos.
-
-\item \textbf{Carga del modelo.} Descarga una sola vez los pesos públicos de
-Sonata y los guarda en el disco del clúster, porque los nodos con GPU no tienen
-salida a internet. El modelo tiene 108{,}46 millones de parámetros. Se usa en
-modo de inferencia y sus pesos no cambian. FlashAttention se desactiva porque
-no está instalada en el clúster.
-
-\item \textbf{Preparación.} Aplica la rutina de preparación de Sonata. Traslada
-la nube al origen, la muestrea con una rejilla de 2\,cm
-(Sección~\ref{sec:gridsample}) y divide el color entre 255. La rejilla guarda un
-índice inverso que dice a qué celda pertenece cada punto de entrada. En la prueba
-quedan 796\,315 de los 803\,099 puntos, el 99{,}2\,\%.
-
-\item \textbf{Inferencia.} Pasa la nube por el codificador PTv3 y devuelve sus
-descriptores a la resolución de la rejilla (Sección~\ref{sec:upcast}). Cada
-punto queda con un vector de 1088 dimensiones. En la prueba tardó 13{,}9
-segundos.
-
-\item \textbf{Escritura.} Guarda en un archivo \texttt{.npz} los descriptores en
-precisión media, las coordenadas, el índice inverso y el tamaño de rejilla. En
-la prueba el archivo ocupa 680\,MB.
-\end{enumerate}
-
-El Algoritmo~\ref{alg:sonata} resume el programa y la
-Figura~\ref{fig:flujo-sonata} muestra el flujo con los valores medidos.
-
-\begin{algorithm}[H]
-\small
-\caption{Extracción de descriptores con Sonata congelado
-(\texttt{extraer\_features.py}).}
-\label{alg:sonata}
-\KwIn{matriz $S\in\mathbb{R}^{N\times 9}$ de la Unidad~1; rejilla $g=0{,}02$\,m}
-\KwOut{$f_{\mathrm{ssl}}\in\mathbb{R}^{M\times 1088}$, coordenadas e índice inverso}
-$(\mathit{coord},\mathit{color},\mathit{normal}) \leftarrow$ columnas de $S$\;
-$\Phi \leftarrow$ pesos preentrenados de Sonata, congelados\;
-$\mathit{coord} \leftarrow \mathit{coord} - $ centro de la nube\;
-$(\mathit{coord},\mathit{inv}) \leftarrow$ muestreo por rejilla de lado $g$
-\tcp*{$N \rightarrow M$ puntos}
-$\mathit{color} \leftarrow \mathit{color}/255$\;
-$f \leftarrow \mathrm{PTv3}_{\Phi}(\mathit{coord},\mathit{color},\mathit{normal})$
-\tcp*{solo inferencia}
-$f_{\mathrm{ssl}} \leftarrow$ devolver $f$ a la resolución de la rejilla
-\tcp*{Sección~\ref{sec:upcast}}
-guardar $(f_{\mathrm{ssl}},\mathit{coord},\mathit{inv},g)$ en disco\;
-\end{algorithm}
+Esta rama ya se ejecutó en una prueba preliminar sobre el escaneo PL13, en el
+clúster Khipu, con una GPU NVIDIA RTX~A6000 de 48\,GB. El archivo del escaneo es
+\texttt{PL13\_SCN0001}. La entrada fue la matriz $S$ que entrega la Unidad~1 para ese escaneo,
+con los mismos parámetros que la prueba sobre PL7. Tiene 803\,099
+representantes de 9 columnas. La Figura~\ref{fig:flujo-sonata} resume los cinco
+pasos con los valores medidos. Cada paso se describe a continuación con su
+pseudocódigo, su diagrama de flujo y su resultado en la prueba.
 
 \begin{figure}[H]
 \centering
@@ -476,27 +605,194 @@ guardar $(f_{\mathrm{ssl}},\mathit{coord},\mathit{inv},g)$ en disco\;
   fl/.style={-{Latex[length=1.8mm]}, thick}
 ]
 \node[dat] (a) {\textbf{Entrada.} Matriz $S$ de \texttt{PL13\_SCN0001}};
-\node[paso, below=of a] (b) {\textbf{1--2.} Carga de $S$ y de los pesos};
-\node[paso, below=of b] (c) {\textbf{3.} Centrado y rejilla de 2\,cm};
-\node[cong, below=of c] (d) {\textbf{4.} Codificador PTv3 congelado};
-\node[dat, below=of d] (e) {\textbf{5. Salida.} \emph{Cache} \texttt{.npz} con $f_{\mathrm{ssl}}$};
+\node[paso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga de $S$ y de los pesos};
+\node[paso, below=of b] (c) {\textbf{Paso 3.} Centrado y rejilla de 2\,cm};
+\node[cong, below=of c] (d) {\textbf{Paso 4.} Codificador PTv3 congelado};
+\node[dat, below=of d] (e) {\textbf{Paso 5. Salida.} Archivo \texttt{.npz} con $f_{\mathrm{ssl}}$};
 \foreach \u/\v in {a/b, b/c, c/d, d/e} \draw[fl] (\u) -- (\v);
 \node[cifra] at ($(a.east)+(0.2,0)$) {803\,099 puntos $\times$ 9};
-\node[cifra] at ($(b.east)+(0.2,0)$) {108{,}46\,M parámetros};
-\node[cifra] at ($(c.east)+(0.2,0)$) {796\,315 puntos (99{,}2\,\%)};
-\node[cifra] at ($(d.east)+(0.2,0)$) {13{,}9\,s; 34{,}60\,GB de VRAM};
-\node[cifra] at ($(e.east)+(0.2,0)$) {$796\,315\times 1088$; 680\,MB};
+\node[cifra] at ($(b.east)+(0.2,0)$) {108{,}46 millones de parámetros};
+\node[cifra] at ($(c.east)+(0.2,0)$) {796\,315 puntos, el 99{,}2\,\%};
+\node[cifra] at ($(d.east)+(0.2,0)$) {13{,}9\,s y 34{,}60\,GB de VRAM};
+\node[cifra] at ($(e.east)+(0.2,0)$) {$796\,315\times 1088$, 680\,MB};
 \end{tikzpicture}
-\caption{Flujo de la extracción de descriptores con los valores medidos en la
-prueba sobre PL13. Elaboración propia.}
+\caption{Diagrama de flujo general de la extracción de descriptores, con los
+valores medidos en la prueba sobre PL13. Elaboración propia.}
 \label{fig:flujo-sonata}
 \end{figure}
 
+\subsubsection*{Paso 1. Carga de la matriz}
+
+El programa lee la matriz $S$ que dejó la Unidad~1 y la separa en tres partes,
+la posición, el color y la normal. Son las tres entradas que espera Sonata. La
+matriz se lee completa porque, tras la voxelización, ya cabe en memoria. En la
+prueba se leen 803\,099 filas en 0{,}3 segundos. La
+Figura~\ref{fig:m3-paso1} muestra esa entrada.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 1 del Módulo~3, carga de la matriz.}
+\KwIn{archivo de la matriz $S\in\mathbb{R}^{N\times 9}$}
+\KwOut{$\mathit{coord}$, $\mathit{color}$ y $\mathit{normal}$, cada una de $N\times 3$}
+$S \leftarrow$ leer el archivo\;
+$\mathit{coord} \leftarrow$ columnas 1 a 3 de $S$\;
+$\mathit{color} \leftarrow$ columnas 4 a 6 de $S$\;
+$\mathit{normal} \leftarrow$ columnas 7 a 9 de $S$\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{Matriz $S$\\803\,099 $\times$ 9}{Leer y separar columnas}{Posición, color y normal\\tres matrices de 803\,099 $\times$ 3}
+\caption{Diagrama de flujo del Paso~1 del Módulo~3. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{imagenes/m3_paso1_entrada.png}
+\caption{Entrada de Sonata en la prueba, la matriz $S$ de PL13 con su color
+real. Elaboración propia.}
+\label{fig:m3-paso1}
+\end{figure}
+
+\subsubsection*{Paso 2. Carga del modelo}
+
+El programa carga los pesos públicos de Sonata. Se descargan una sola vez, desde
+el nodo de acceso del clúster, y quedan guardados en disco, porque los nodos con
+GPU no tienen salida a internet. El modelo tiene 108{,}46 millones de
+parámetros y se pasa a la GPU en modo de inferencia, de modo que sus pesos no
+cambian. FlashAttention se desactiva porque no está instalada en el clúster, y
+el tamaño de parche del codificador se fija en 1024 puntos.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 2 del Módulo~3, carga del modelo.}
+\KwIn{pesos públicos de Sonata guardados en disco}
+\KwOut{codificador $\mathrm{PTv3}_{\Phi}$ listo en la GPU}
+$\Phi \leftarrow$ leer los pesos preentrenados sin conexión a internet\;
+crear PTv3 con FlashAttention desactivada y parches de 1024 puntos\;
+cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{Pesos de Sonata\\en disco}{Crear PTv3 y cargar los pesos}{Codificador congelado\\108{,}46 millones de parámetros}
+\caption{Diagrama de flujo del Paso~2 del Módulo~3. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 3. Preparación}
+
+El programa aplica la rutina de preparación de Sonata. Primero traslada la nube,
+de modo que el centro de la caja en $x$ e $y$ y el punto más bajo en $z$ quedan
+en el origen. Después la muestrea con una rejilla de 2\,cm, según la
+Sección~\ref{sec:gridsample}, y guarda un índice inverso que dice a qué celda
+pertenece cada punto de entrada. Ese índice permite devolver más adelante los
+descriptores a cada punto de $S$. Por último divide el color entre 255. En la
+prueba quedan 796\,315 de los 803\,099 puntos, el 99{,}2\,\%. La diferencia es
+tan pequeña que a simple vista no se distingue, por eso este paso no lleva
+imagen.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 3 del Módulo~3, preparación.}
+\KwIn{$\mathit{coord}$, $\mathit{color}$ y $\mathit{normal}$ de $N$ puntos, rejilla $g=0{,}02$\,m}
+\KwOut{$M$ puntos de la rejilla e índice inverso $\mathit{inv}$ de $N$ entradas}
+$\mathit{coord} \leftarrow \mathit{coord} - (\bar{x}, \bar{y}, z_{\min})$\;
+$(\mathit{coord},\mathit{inv}) \leftarrow$ un punto por celda de lado $g$\;
+$\mathit{color} \leftarrow \mathit{color}/255$\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{803\,099 puntos\\de $S$}{Trasladar, muestrear a 2\,cm y normalizar el color}{796\,315 puntos e\\índice inverso}
+\caption{Diagrama de flujo del Paso~3 del Módulo~3. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 4. Inferencia}
+
+El programa pasa la nube preparada por el codificador PTv3. Como el codificador
+es jerárquico, su salida queda a una resolución más gruesa que la entrada. El
+programa la devuelve a la resolución de la rejilla siguiendo la
+Sección~\ref{sec:upcast}, y así cada punto queda con un vector de 1088
+dimensiones. En la prueba la inferencia tardó 13{,}9 segundos, procesó 57\,397
+puntos por segundo y usó un máximo de 34{,}60\,GB de memoria de la GPU. La
+Figura~\ref{fig:visor-pl13-etapas} muestra el resultado. Los 1088 valores de
+cada punto se proyectan sobre sus tres componentes principales y se usan como
+color, de modo que un mismo color indica descriptores parecidos.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 4 del Módulo~3, inferencia.}
+\KwIn{$M$ puntos preparados, codificador $\mathrm{PTv3}_{\Phi}$}
+\KwOut{$f_{\mathrm{ssl}}\in\mathbb{R}^{M\times 1088}$}
+$f \leftarrow \mathrm{PTv3}_{\Phi}(\mathit{coord},\mathit{color},\mathit{normal})$
+\tcp*{sin calcular gradientes}
+$f_{\mathrm{ssl}} \leftarrow$ devolver $f$ a la resolución de la rejilla\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{796\,315 puntos\\preparados}{Codificador PTv3 congelado y retorno a la rejilla}{$f_{\mathrm{ssl}}$ de\\$796\,315\times 1088$}
+\caption{Diagrama de flujo del Paso~4 del Módulo~3. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{imagenes/visor_pl13_entrada_m1_m3.png}
+\caption{Escaneo PL13 en sus tres etapas, desde la misma cámara. Se ven la
+entrada cruda, la salida de la Unidad~1 y los descriptores de Sonata por
+componentes principales. Cada panel dibuja 100\,000 puntos tomados al azar.
+Elaboración propia.}
+\label{fig:visor-pl13-etapas}
+\end{figure}
+
+\subsubsection*{Paso 5. Escritura}
+
+El programa guarda en un archivo \texttt{.npz} todo lo que necesita la
+Unidad~2 para usar los descriptores sin volver a ejecutar Sonata. La
+Tabla~\ref{tab:npz} detalla su contenido. Los descriptores se guardan en
+precisión media para reducir el tamaño a la mitad. En la prueba el archivo
+ocupa 680\,MB.
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 5 del Módulo~3, escritura.}
+\KwIn{$f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$ y $g$}
+\KwOut{archivo \texttt{.npz} en disco}
+convertir $f_{\mathrm{ssl}}$ a precisión media\;
+guardar $f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$, $g$ y $N$ en un archivo comprimido\;
+\end{algorithm}
+
+\begin{figure}[H]
+\centering
+\flujopaso{$f_{\mathrm{ssl}}$, coordenadas\\e índice inverso}{Convertir a precisión media y comprimir}{Archivo \texttt{.npz}\\680\,MB}
+\caption{Diagrama de flujo del Paso~5 del Módulo~3. Elaboración propia.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\setstretch{1}\small
+\caption{Contenido del archivo de descriptores en la prueba sobre PL13.
+Elaboración propia.}
+\label{tab:npz}
+\begin{tabular}{@{}p{2.4cm}p{3.6cm}p{6.4cm}@{}}
+\toprule
+\textbf{Campo} & \textbf{Forma} & \textbf{Contenido} \\
+\midrule
+\texttt{feat} & $796\,315\times 1088$ & Descriptores $f_{\mathrm{ssl}}$ en precisión media \\
+\texttt{coord} & $796\,315\times 3$ & Posición de cada punto de la rejilla \\
+\texttt{inverse} & $803\,099$ & Celda de la rejilla de cada punto de $S$ \\
+\texttt{grid\_size} & 1 valor & Lado de la rejilla, 0{,}02\,m \\
+\texttt{n\_original} & 1 valor & Número de puntos de $S$, 803\,099 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsubsection*{Observables}
+
 El diseño declaró por adelantado qué debía medir esta corrida. La
 Tabla~\ref{tab:salidas-p2} compara lo esperado con lo medido en PL13. Todos los
-valores salen del registro de la misma corrida que genera el almacenamiento
-intermedio.
+valores salen del registro de la misma corrida que genera el archivo de
+descriptores.
 
 \begin{table}[H]
 \centering
@@ -509,79 +805,71 @@ medidos en la prueba sobre PL13. Elaboración propia.}
 \textbf{Observable} & \textbf{Para qué sirve} & \textbf{Esperado} & \textbf{Medido} \\
 \midrule
 Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 & 1088 \\
-Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir & 796\,315 de 803\,099 (99{,}2\,\%) \\
+Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir & 796\,315 de 803\,099, el 99{,}2\,\% \\
 VRAM pico & Verifica la cota analítica de memoria & Cota de 4{,}2\,GB & 34{,}60\,GB \\
 Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir & 13{,}9\,s \\
 Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir & 57\,397 \\
-Tamaño del archivo de \emph{cache} & Dimensiona el almacenamiento del proyecto & Por medir & 680\,MB \\
+Tamaño del archivo de descriptores & Dimensiona el almacenamiento del proyecto & Por medir & 680\,MB \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 La memoria medida es unas ocho veces la cota analítica. Sin FlashAttention la
-matriz de atención se materializa de forma explícita, y la cota no lo tenía en
-cuenta. La medición reemplaza a la cota. PL13 usó el 72\,\% de los 48\,GB de la
-GPU con 803\,099 puntos, y seis escaneos del levantamiento superan el millón de
-puntos tras la Unidad~1. Si la memoria crece con el número de puntos, esos
-escaneos no caben en una sola pasada. Para ellos se prevé dividir la sección en
-bloques espaciales con un margen de solape y procesar cada bloque por separado.
+matriz de atención se guarda completa en memoria, y la cota no lo tenía en
+cuenta. Por eso la medición reemplaza a la cota. PL13 usó el 72\,\% de los
+48\,GB de la GPU con 803\,099 puntos, y seis escaneos del levantamiento superan
+el millón de puntos tras la Unidad~1. Si la memoria crece con el número de
+puntos, esos escaneos no caben en una sola pasada. Para ellos se prevé dividir
+la sección en bloques espaciales con un margen de solape y procesar cada bloque
+por separado.
 
 \subsubsection*{Configuración de las rejillas}
+
 En la prueba intervienen dos rejillas. La Unidad~1 voxeliza a 5\,cm y la rutina
-de Sonata vuelve a muestrear a 2\,cm. Como la segunda es más fina que la primera,
-casi no elimina puntos: retiene el 99{,}2\,\%. En la práctica, la resolución con
-que trabaja el codificador la fija la Unidad~1. Sonata se preentrenó con
-rejillas de 2\,cm, de modo que en esta prueba recibe una nube más gruesa que la
-de su entrenamiento. El tamaño de la rejilla de Sonata es una opción del programa
-(\texttt{--grid}), igual que el vóxel lo es de \texttt{preprocesar.py}.
+de Sonata vuelve a muestrear a 2\,cm. Como la segunda es más fina que la
+primera, casi no elimina puntos y retiene el 99{,}2\,\%. En la práctica, la
+resolución con que trabaja el codificador la fija la Unidad~1. Sonata se
+preentrenó con rejillas de 2\,cm, de modo que en esta prueba recibe una nube
+más gruesa que la de su entrenamiento. El tamaño de la rejilla de Sonata es una
+opción del programa, \texttt{--grid}, igual que el vóxel lo es de
+\texttt{preprocesar.py}.
 
 Más adelante se harán pruebas con otras combinaciones de rejilla, por ejemplo
 con vóxeles de 2, 3 y 5\,cm en la Unidad~1. En cada una se medirán los puntos
-retenidos, la memoria y el tiempo, y la calidad de los descriptores. El objetivo
+retenidos, la memoria, el tiempo y la calidad de los descriptores. El objetivo
 es ver cómo la resolución afecta al agrupamiento del Módulo~4 y elegir el
 tamaño con datos, no por defecto.
 
 \subsubsection*{Revisión de los descriptores}
-Los descriptores no traen etiquetas, así que su calidad no se puede medir
-todavía con una métrica de acierto. Se revisan de forma cualitativa con el visor
-de la Sección~\ref{sec:visor}. La Figura~\ref{fig:visor-pl13-etapas} muestra
-PL13 en sus tres etapas desde la misma cámara: la entrada cruda, la salida del
-Módulo~1 y la salida del Módulo~3. En la tercera, los 1088 valores de cada punto
-se proyectan sobre sus tres componentes principales y se usan como color, de
-modo que un mismo color indica descriptores parecidos.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{imagenes/visor_pl13_entrada_m1_m3.png}
-\caption{Escaneo PL13 en sus tres etapas, desde la misma cámara: entrada cruda,
-salida del Módulo~1 y descriptores del Módulo~3 por componentes principales.
-Cada panel dibuja 100\,000 puntos tomados al azar. Elaboración propia.}
-\label{fig:visor-pl13-etapas}
-\end{figure}
-
-La Figura~\ref{fig:sonata-pl13} muestra los descriptores de tres formas. La
-primera repite las componentes principales. La segunda colorea cada punto según
-su similitud coseno con un punto de consulta, marcado con un rombo negro: rojo si
-se parece y azul si no. La tercera agrupa los descriptores en ocho grupos con
-$k$-means, sin etiquetas.
+Los descriptores no traen etiquetas, así que su calidad todavía no se puede
+medir con una métrica de acierto. Se revisan de forma cualitativa con el visor
+de la Sección~\ref{sec:visor}. La Figura~\ref{fig:sonata-pl13} los muestra de
+tres formas, desde la misma cámara. La primera repite las componentes
+principales. La segunda colorea cada punto según su similitud coseno con un
+punto de consulta, marcado con un rombo negro, en rojo si se parece y en azul si
+no. La tercera agrupa los descriptores en ocho grupos con $k$-means, sin
+etiquetas.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{imagenes/visor_pl13_descriptores_m3.png}
-\caption{Descriptores de Sonata sobre PL13: componentes principales, similitud
-con el punto marcado y agrupamiento con $k$-means. Elaboración propia.}
+\caption{Descriptores de Sonata sobre PL13 por componentes principales, por
+similitud con el punto marcado y por agrupamiento con $k$-means. Elaboración
+propia.}
 \label{fig:sonata-pl13}
 \end{figure}
 
 En las componentes principales, los arcos de bóvedas distintas toman el mismo
 tono, el suelo otro y los muros otro. En la vista de similitud, el punto de
-consulta cae en una nervadura y se parecen a él otros arcos de la escena, pero
-no el suelo. El $k$-means separa en grupos distintos arcos, suelo y muros. Las
-tres componentes principales explican el 25{,}3\,\% de la varianza y las diez
-primeras el 43{,}4\,\%. El rango efectivo del espectro es de 110{,}6 sobre 1088
-dimensiones, lejos del valor 1 que indicaría un colapso. Estas observaciones son
-cualitativas. La medida de acierto es el \emph{linear probing}
-(Sección~\ref{sec:probing}), que requiere puntos etiquetados.
+consulta cae en una nervadura y se parecen a él otras nervaduras de la escena,
+pero no el suelo. El $k$-means separa en grupos distintos las bóvedas, el suelo
+y los muros. Las tres primeras componentes principales explican el 25{,}3\,\% de
+la varianza y las diez primeras el 43{,}4\,\%. El rango efectivo del espectro es
+de 110{,}6 sobre 1088 dimensiones, lejos del valor 1 que indicaría un colapso.
+Estas observaciones son cualitativas. La medida de acierto es el \emph{linear
+probing}, descrito en la Sección~\ref{sec:probing}, que requiere puntos
+etiquetados.
 
 \subsection{Punto de Fusión}
 \label{sec:fusion}
@@ -595,7 +883,7 @@ vecinos al construir el hipergrafo. Esa es la condición que hace interpretable
 la ablación.
 
 % =====================================================================
-\section{Unidad 3: Entrenamiento, Calibración y Evaluación}
+\section{Unidad 3. Entrenamiento, Calibración y Evaluación}
 \label{sec:unidad3}
 
 La tercera unidad describe cómo se ejecuta el sistema en el tiempo, con qué
