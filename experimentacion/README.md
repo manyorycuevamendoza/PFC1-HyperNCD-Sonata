@@ -1,5 +1,8 @@
 # Experimentación
 
+> ¿Solo quieres ver y entender la vista 3D de Sonata? Lee
+> [VER_RESULTADOS_SONATA.md](VER_RESULTADOS_SONATA.md).
+
 Pruebas y análisis sobre los resultados reales del pipeline, separados del
 código principal (`preprocesar.py`, `extraer_features.py`, que viven en la raíz).
 
