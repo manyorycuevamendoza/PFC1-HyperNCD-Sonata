@@ -66,7 +66,7 @@ def normalizar(x):
 
 def a_texto_rgb(c):
     c = (np.clip(c, 0, 1) * 255).astype(int)
-    return [f"rgb({r},{g},{b})" for r, g, b in c]
+    return [f"#{r:02x}{g:02x}{b:02x}" for r, g, b in c]   # formato corto: pesa menos
 
 
 def coolwarm(v):
@@ -167,7 +167,12 @@ def main():
         etapas.append(("M3: similitud con ◆", S[j, :3], coolwarm(sim[j])))
         etapas.append((f"M3: k-means (k={args.k})", S[j, :3], TAB10[grupo[j] % 10]))
 
-    trazas = [go.Scatter3d(x=x[:, 0], y=x[:, 1], z=x[:, 2], mode="markers",
+    # coordenadas redondeadas al milimetro: no cambia la vista y el .html pesa menos
+    # (en float64: un float32 redondeado se sigue escribiendo con ~15 decimales)
+    trazas = [go.Scatter3d(x=x[:, 0].astype(float).round(3),
+                           y=x[:, 1].astype(float).round(3),
+                           z=x[:, 2].astype(float).round(3),
+                           mode="markers",
                            marker=dict(size=args.tam, color=a_texto_rgb(c)),
                            hoverinfo="skip", name=n, visible=(k == 0))
               for k, (n, x, c) in enumerate(etapas)]

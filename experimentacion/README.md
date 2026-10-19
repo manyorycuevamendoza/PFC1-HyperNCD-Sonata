@@ -24,6 +24,8 @@ experimentacion/
 │   └── modulo3_PL13/
 └── resultados/
     ├── visor_PL7.html          vista 3D de PL7: crudo y Módulo 1   (NO va a git)
+    ├── visor_PL7_denso.html    lo mismo con 610 637 puntos por etapa (NO va a git)
+    ├── visor_PL7_cubo.html     solo el cubo de 1 m de la tesis      (NO va a git)
     ├── visor_PL13.html         vista 3D de PL13: crudo, M1 y M3    (NO va a git)
     ├── modulo3_PL13.json       medidas de f_ssl (visualizar_features.py)
     ├── modulo3_PL13.png        4 vistas Matplotlib (visualizar_features.py)
@@ -82,6 +84,10 @@ python experimentacion/visor_3d.py \
   contorno; `--brillo 2.2` aclara el color real (los escaneos son oscuros).
   La figura del cubo de la tesis se hizo así:
   `--recorte=-19,-3,-12,1 --tam 2.5 --brillo 2.2 --camara=1.6,-1.6,1.2` sobre PL7.
+- **Versión densa:** `--puntos 610637` dibuja **todo** el Módulo 1 de PL7 y la
+  misma cantidad del crudo (~54 MB, tarda unos segundos en abrir). Con 1 000 000
+  por etapa el navegador falla (`Array buffer allocation failed`): ese es el
+  límite práctico de Plotly con varias etapas en una página.
 - Para la lámina: `figuras_informe/componer_lamina.py --imagenes ... --titulos ... --output ...`
   (ejemplo en el propio archivo).
 
