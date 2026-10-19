@@ -51,6 +51,10 @@ def parse_args():
     ap.add_argument("--k", type=int, default=8, help="grupos de k-means")
     ap.add_argument("--consulta", type=int, default=-1,
                     help="punto de consulta de la similitud (-1 = al azar)")
+    ap.add_argument("--recorte", help="X0,Y0,Z0,LADO: dibuja solo ese cubo, con todos "
+                    "sus puntos (si no superan --puntos)")
+    ap.add_argument("--brillo", type=float, default=1.0,
+                    help="multiplica el color real (ej. 2.2 para escaneos oscuros)")
     ap.add_argument("--semilla", type=int, default=0)
     return ap.parse_args()
 
@@ -122,18 +126,39 @@ def main():
     rng = np.random.default_rng(args.semilla)
     meta = json.load(open(args.json)) if args.json else {}
     S = np.load(args.npy)
-    j = rng.choice(len(S), min(len(S), args.puntos), replace=False)
+    caja = None
+    if args.recorte:
+        x0, y0, z0, lado_c = map(float, args.recorte.split(","))
+        caja = np.array([[x0, x0 + lado_c], [y0, y0 + lado_c], [z0, z0 + lado_c]])
+
+    def elegir(xyz):
+        """Indices a dibujar: los del recorte (si hay) y como mucho --puntos."""
+        idx = np.arange(len(xyz))
+        if caja is not None:
+            dentro = np.all((xyz >= caja[:, 0]) & (xyz < caja[:, 1]), axis=1)
+            idx = np.flatnonzero(dentro)
+        if len(idx) > args.puntos:
+            idx = rng.choice(idx, args.puntos, replace=False)
+        return idx
+
+    j = elegir(S[:, :3])
 
     etapas = []          # (nombre, xyz, colores)
     if args.las:
         import laspy
         las = laspy.read(args.las)
-        i = rng.choice(len(las.x), min(len(las.x), args.puntos), replace=False)
-        xyz = np.stack([las.x[i], las.y[i], las.z[i]], 1) - np.array(meta["offset_utm"])
+        # float32, como la matriz S: asi el recorte decide los bordes igual
+        xyz = (np.stack([las.x, las.y, las.z], 1)
+               - np.array(meta["offset_utm"])).astype(np.float32)
+        i = elegir(xyz)
+        xyz = xyz[i]
         rgb = np.stack([las.red[i], las.green[i], las.blue[i]], 1).astype(np.float32)
         rgb /= 65535.0 if rgb.max() > 255 else 255.0
-        etapas.append(("Crudo", xyz, rgb))
-    etapas.append(("M1: color real", S[j, :3], S[j, 3:6] / 255))
+        etapas.append((f"Crudo ({len(i):,})", xyz, rgb * args.brillo))
+    if caja is not None:
+        print(f"recorte: crudo {len(etapas[0][1]) if args.las else '-'}  "
+              f"preprocesado {len(j)}")
+    etapas.append((f"M1: color real ({len(j):,})", S[j, :3], S[j, 3:6] / 255 * args.brillo))
     etapas.append(("M1: normales", S[j, :3], (S[j, 6:9] + 1) / 2))
     q_xyz = None
     if args.feats:
@@ -150,19 +175,33 @@ def main():
         trazas.append(go.Scatter3d(x=[q_xyz[0]], y=[q_xyz[1]], z=[q_xyz[2]],
                                    mode="markers", name="◆", visible=False,
                                    marker=dict(size=9, color="black", symbol="diamond")))
+    if caja is not None:   # aristas del cubo, siempre visibles
+        v = np.array([[caja[0, x], caja[1, y], caja[2, z]]
+                      for x in (0, 1) for y in (0, 1) for z in (0, 1)])
+        aristas = [(p, q) for p in range(8) for q in range(p + 1, 8)
+                   if (np.abs(v[p] - v[q]) > 0).sum() == 1]
+        xs, ys, zs = [], [], []
+        for p, q in aristas:
+            for w in (v[p], v[q], [None] * 3):
+                xs.append(w[0]); ys.append(w[1]); zs.append(w[2])
+        trazas.append(go.Scatter3d(x=xs, y=ys, z=zs, mode="lines", name="cubo",
+                                   line=dict(color="gray", width=2), hoverinfo="skip"))
     n_et = len(etapas)
 
     def visibles(k):
         v = [e == k for e in range(n_et)]
         if q_xyz is not None:
             v.append(etapas[k][0].startswith("M3: similitud"))
+        if caja is not None:
+            v.append(True)
         return v
 
     botones = [dict(label=n, method="update", args=[{"visible": visibles(k)}])
                for k, (n, _, _) in enumerate(etapas)]
 
     # escala fija (la de S) para que cambiar de etapa no reencuadre
-    lim = np.array([np.percentile(S[:, d], [0.5, 99.5]) for d in range(3)])
+    lim = caja if caja is not None else \
+        np.array([np.percentile(S[:, d], [0.5, 99.5]) for d in range(3)])
     lado = lim[:, 1] - lim[:, 0]
     ojo = dict(zip("xyz", map(float, args.camara.split(","))))
     nombre = Path(args.npy).stem.replace("_preprocesado", "")
@@ -170,7 +209,9 @@ def main():
     if meta:
         pie = (f"Crudo {meta['n_crudo']:,} → SOR {meta['n_sor']:,} → vóxel "
                f"{meta['voxel'] * 100:g} cm: {meta['n_voxel']:,} puntos.  "
-               f"Cada etapa dibuja {args.puntos:,} puntos al azar.")
+               f""
+               + ("Recorte: se dibujan todos los puntos del cubo." if caja is not None
+                  else f"Cada etapa dibuja {args.puntos:,} puntos al azar."))
 
     fig = go.Figure(trazas)
     fig.update_layout(

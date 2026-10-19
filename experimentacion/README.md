@@ -29,6 +29,7 @@ experimentacion/
     ├── modulo3_PL13.png        4 vistas Matplotlib (visualizar_features.py)
     └── informe/                capturas del visor y láminas para la tesis
         ├── PL7_*.png, PL13_*.png             una captura por etapa, mismo ángulo
+        ├── lamina_PL7_cubo.png               → tesis: imagenes/visor_pl7_cubo.png
         ├── lamina_PL7_entrada_M1.png         → tesis: imagenes/visor_pl7_entrada_m1.png
         ├── lamina_PL13_entrada_M1_M3.png     → tesis: imagenes/visor_pl13_entrada_m1_m3.png
         └── lamina_PL13_descriptores_M3.png   → tesis: imagenes/visor_pl13_descriptores_m3.png
@@ -77,6 +78,10 @@ python experimentacion/visor_3d.py \
 - Abre el `.html` con **doble clic**. Gira, elige el ángulo y pulsa la cámara 📷
   (arriba a la derecha) para bajar el PNG. Al cambiar de botón el ángulo **no**
   cambia, así que todas las etapas salen con el mismo encuadre.
+- `--recorte X0,Y0,Z0,LADO` dibuja solo ese cubo con **todos** sus puntos y su
+  contorno; `--brillo 2.2` aclara el color real (los escaneos son oscuros).
+  La figura del cubo de la tesis se hizo así:
+  `--recorte=-19,-3,-12,1 --tam 2.5 --brillo 2.2 --camara=1.6,-1.6,1.2` sobre PL7.
 - Para la lámina: `figuras_informe/componer_lamina.py --imagenes ... --titulos ... --output ...`
   (ejemplo en el propio archivo).
 
@@ -91,11 +96,17 @@ con un ángulo decidido de antemano. Por eso la figura del cubo de la tesis
 (`LATEX/asesoria5/imagenes/prueba_pl7_cubo.png`) muestra solo 1 m. El visor usa
 Plotly (WebGL, GPU del navegador): gira con fluidez con 100 000 puntos por
 etapa, mantiene la misma cámara entre etapas y es un solo archivo que cualquiera
-abre sin Python.
+abre sin Python. Por eso **todas** las figuras de nubes de la tesis salen del visor.
 
 ## Historial de cambios que pueden confundir
 
-- **`prueba_pl7_cubo.png` aparece modificada en git** (commit "cambio de la
+- **La figura del cubo se rehízo con el visor (`imagenes/visor_pl7_cubo.png`)
+  y se borraron `imagenes/prueba_pl7_cubo.png` y `imagenes/figura_entrada_salida.py`**
+  (Matplotlib). Mismo cubo y mismas cifras (48 098 → 921), ahora con el estilo
+  de las demás figuras, contorno del cubo y un panel de normales. Para que el
+  recorte cuente igual que antes, el visor pasa el crudo a float32 como la
+  matriz S (en float64 salían 48 091: 7 puntos justo en el borde).
+- **Antes, `prueba_pl7_cubo.png` apareció modificada en git** (commit "cambio de la
   imagen"): se regeneró al completar el capítulo 3 para comprobar sus cifras.
   Es la misma figura: mismo cubo (x −19 a −18, y −3 a −2, z −12 a −11), mismos
   48 098 → 921 puntos; solo cambian ~2,5 KB de compresión. El cubo no es al azar:

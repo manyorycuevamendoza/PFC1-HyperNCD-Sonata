@@ -49,15 +49,18 @@ def main():
             for i in imgs]
 
     alto_titulo = 70
-    w, h = imgs[0].size
-    lamina = Image.new("RGB", (w * len(imgs), h + alto_titulo), "white")
-    dibujo = ImageDraw.Draw(lamina)
     try:
         fuente = ImageFont.truetype("arial.ttf", 40)
     except OSError:
         fuente = ImageFont.load_default()
+    medir = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    # cada panel es tan ancho como su imagen o su titulo, lo que sea mayor
+    w_img, h = imgs[0].size
+    w = int(max(w_img, *(medir.textlength(t, font=fuente) + 40 for t in args.titulos)))
+    lamina = Image.new("RGB", (w * len(imgs), h + alto_titulo), "white")
+    dibujo = ImageDraw.Draw(lamina)
     for k, (img, titulo) in enumerate(zip(imgs, args.titulos)):
-        lamina.paste(img, (k * w, alto_titulo))
+        lamina.paste(img, (k * w + (w - w_img) // 2, alto_titulo))
         ancho = dibujo.textlength(titulo, font=fuente)
         dibujo.text((k * w + (w - ancho) / 2, 12), titulo, fill="black", font=fuente)
     lamina.save(args.output)

@@ -185,8 +185,7 @@ capítulo que muestran nubes completas se obtuvieron así.
 
 Se prefirió a Matplotlib por tres motivos. Matplotlib dibuja en 3D proyectando
 los puntos sobre un plano en la CPU, y con cientos de miles de puntos se vuelve
-lento y no resuelve bien qué punto tapa a cuál; por eso la
-Figura~\ref{fig:cubo-pl7} se limita a un cubo de 1\,m. El visor se basa en
+lento y no resuelve bien qué punto tapa a cuál. El visor se basa en
 Plotly, que dibuja con WebGL en la GPU del navegador y maneja cien mil puntos por
 etapa con giro fluido. Además, Matplotlib entrega una imagen fija con un ángulo
 elegido de antemano, mientras que el visor permite buscar el ángulo que mejor
@@ -319,21 +318,26 @@ PL7. Elaboración propia.}
 \subsection{Entrada y Salida de la Prueba}
 \label{sec:u1-salida}
 
-La Figura~\ref{fig:cubo-pl7} muestra una porción del escaneo, un cubo de un metro
-de lado, antes y después del preprocesamiento. Los 48\,098 puntos de la entrada
-quedan en 921 representantes, repartidos de forma uniforme, que conservan la
-forma y el color de las superficies.
+La Figura~\ref{fig:cubo-pl7} muestra de cerca una porción del escaneo, un cubo
+de un metro de lado, antes y después del preprocesamiento, con el visor de la
+Sección~\ref{sec:visor}. Se dibujan todos los puntos del cubo. Los 48\,098
+puntos de la entrada quedan en 921 representantes, repartidos de forma uniforme,
+que conservan la forma y el color de las superficies. El tercer panel colorea
+cada representante según su normal: superficies con la misma orientación toman
+el mismo color.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\linewidth]{imagenes/prueba_pl7_cubo.png}
-\caption{Un cubo de 1\,m del escaneo PL7 antes y después del preprocesamiento.
-Elaboración propia.}
+\includegraphics[width=\linewidth]{imagenes/visor_pl7_cubo.png}
+\caption{Un cubo de 1\,m del escaneo PL7 antes y después del preprocesamiento,
+desde la misma cámara. El color real se aclaró por un factor de 2{,}2 para que
+se distinga. Elaboración propia.}
 \label{fig:cubo-pl7}
 \end{figure}
 
-El cubo se eligió por tener superficies en varias orientaciones, donde el efecto
-del preprocesamiento se aprecia mejor. La Figura~\ref{fig:visor-pl7} muestra el
+El cubo, de $x=-19$ a $-18$\,m, $y=-3$ a $-2$\,m y $z=-12$ a $-11$\,m en
+coordenadas centradas, se eligió por tener superficies en varias orientaciones,
+donde el efecto del preprocesamiento se aprecia mejor. La Figura~\ref{fig:visor-pl7} muestra el
 escaneo completo, antes y después, desde la misma cámara, con el visor de la
 Sección~\ref{sec:visor}. En la entrada los puntos se concentran cerca del
 escáner y escasean lejos de él. En la salida la densidad es pareja en toda la
