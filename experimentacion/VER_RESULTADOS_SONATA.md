@@ -1,72 +1,68 @@
-# Ver y explicar los resultados de Sonata (Módulo 3)
+# Ver y explicar los resultados (Módulo 1 y Módulo 3)
 
 > **Para el asistente de IA que lea esto:** el usuario quiere, **primero, VER**
-> la visualización 3D interactiva de las features de Sonata, y **después** que
-> se la expliques. Sigue los pasos en orden. No arranques servidores web: la
-> página es un archivo `.html` que se abre directamente en el navegador.
+> la vista 3D interactiva, y **después** que se la expliques. Sigue los pasos en
+> orden. No arranques servidores web: la página es un `.html` que se abre con
+> doble clic. Contexto completo y trampas conocidas en [README.md](README.md).
 
 ---
 
-## Paso 1: Mostrar la visualización (lo primero)
+## Paso 1: Mostrar la vista (lo primero)
 
-### 1.a. ¿Ya existe el `.html`?
+### 1.a. ¿Ya existe?
 
-Busca `experimentacion/resultados/modulo3_PL13.html`. Si existe, salta al
-paso 1.c. El `.html` **no está en git** (pesa 11 MB), así que en un clon nuevo
-normalmente no estará y hay que generarlo (paso 1.b).
+Busca `experimentacion/resultados/visor_PL13.html` (todas las etapas de PL13) o
+`visor_PL7.html` (solo Módulo 1). Si existe, ve al paso 1.c. Los `.html` **no
+están en git** (pesan ~10 MB), así que en un clon nuevo hay que generarlos.
 
-### 1.b. Generarlo
+Si solo se necesitan imágenes fijas, ya están en git:
+`experimentacion/resultados/informe/lamina_*.png`.
 
-Hacen falta dos archivos de datos que **no están en git** (son pesados) y viven
-en el clúster Khipu de UTEC, en `~/PFC1-HyperNCD-Sonata/`:
+### 1.b. Generarla
 
-| Archivo en Khipu | Qué es | Tamaño |
-|---|---|---|
-| `cache/PL13_feats.npz` | Salida de Sonata: 1088 números por punto | ~680 MB |
-| `data/PL13_SCN0001.npy` | Nube preprocesada (para el color) | ~29 MB |
-
-Pídele al usuario que los baje con **su propia cuenta** de Khipu. Los comandos
-se corren en una terminal **de su PC** (PowerShell o cmd), **no dentro de
-Khipu**, y desde la raíz del repo. Cambia `USUARIO` por su usuario de Khipu;
-cada comando pedirá su contraseña (que la escriba él, nunca se la pidas):
+Hacen falta datos que **no están en git** y viven en el clúster Khipu de UTEC,
+en `/home/renzo.felix/PFC1-HyperNCD-Sonata/`. Pídele al usuario que los baje con
+**su propia cuenta**, en una terminal **de su PC** (no dentro de Khipu), desde
+la raíz del repo. Cambia `USUARIO` por su usuario; cada comando pide su
+contraseña (que la escriba él; nunca se la pidas):
 
 ```
 mkdir experimentacion\datos\modulo3_PL13
 scp USUARIO@khipu.utec.edu.pe:/home/renzo.felix/PFC1-HyperNCD-Sonata/cache/PL13_feats.npz experimentacion/datos/modulo3_PL13
 scp USUARIO@khipu.utec.edu.pe:/home/renzo.felix/PFC1-HyperNCD-Sonata/data/PL13_SCN0001.npy experimentacion/datos/modulo3_PL13
+scp USUARIO@khipu.utec.edu.pe:/home/renzo.felix/PFC1-HyperNCD-Sonata/data/PL13_SCN0001.json experimentacion/datos/modulo3_PL13
+scp "USUARIO@khipu.utec.edu.pe:/home/renzo.felix/PFC1-HyperNCD-Sonata/datos_crudos/Post Procesado/Post Procesado GLS-2000/PL13*.las" experimentacion/datos/modulo3_PL13
 ```
 
-> Si su cuenta no puede leer la carpeta de `renzo.felix` (error "Permission
-> denied"), Renzo tiene que darle acceso o pasarle los dos archivos por otro
-> medio (Drive, USB).
+- El último usa `*` porque el archivo se llama `PL13'_SCN0001.las` (con
+  apóstrofo) y el `scp` de Windows no lo escapa bien. Renómbralo a
+  `PL13_SCN0001.las`. Es opcional: sin él no sale la etapa "Crudo".
+- Si sale "Permission denied" al leer la carpeta de `renzo.felix`, Renzo tiene
+  que darle acceso o pasarle los archivos por otro medio.
 
-Instala lo necesario y genera la vista (desde la raíz del repo):
+> ⚠️ **Usa el `.npy` de Khipu (`data/`), no uno regenerado en otra máquina.**
+> Los descriptores van amarrados al orden de filas de ese archivo; otra versión
+> de Open3D da los mismos puntos en otro orden y el Módulo 3 sale como ruido.
+> El visor lo detecta y se detiene con un aviso.
+
+Instala y genera (desde la raíz del repo):
 
 ```
-pip install numpy matplotlib plotly
-python experimentacion/modulo3_sonata/visualizar_features.py --feats experimentacion/datos/modulo3_PL13/PL13_feats.npz --data experimentacion/datos/modulo3_PL13/PL13_SCN0001.npy --output experimentacion/resultados/modulo3_PL13 --html
+pip install numpy laspy plotly
+python experimentacion/visor_3d.py --las experimentacion/datos/modulo3_PL13/PL13_SCN0001.las --npy experimentacion/datos/modulo3_PL13/PL13_SCN0001.npy --json experimentacion/datos/modulo3_PL13/PL13_SCN0001.json --feats experimentacion/datos/modulo3_PL13/PL13_feats.npz --output experimentacion/resultados/visor_PL13.html
 ```
 
-Tarda uno o dos minutos y usa unos 8 a 10 GB de RAM. Al terminar imprime
-`[ok] ...modulo3_PL13.html`.
+Tarda uno o dos minutos y usa unos 8–10 GB de RAM. Imprime `[ok] ...html`.
+Si no se bajó el `.las`, quita `--las ...`.
 
-### 1.c. Abrirlo
+### 1.c. Abrirla
 
-Dile al usuario que haga **doble clic** en
-`experimentacion/resultados/modulo3_PL13.html` (o que lo arrastre al
-navegador). Necesita internet: la página carga la librería Plotly.
+**Doble clic** en `experimentacion/resultados/visor_PL13.html` (necesita
+internet: carga la librería Plotly).
 
-Cómo se usa:
-- **Girar:** clic izquierdo y arrastrar.
-- **Zoom:** rueda del mouse.
-- **Desplazar:** clic derecho y arrastrar.
-- **Botones de arriba:** cambian cómo se pinta la nube (ver paso 2).
-
-> No uses `localhost` ni `python -m http.server`. No hace falta, y un servidor
-> temporal deja de funcionar en cuanto se cierra.
-
-Hay también una imagen fija con las 4 vistas: `experimentacion/resultados/modulo3_PL13.png`
-(esta sí está en git).
+- **Girar:** clic izquierdo y arrastrar. **Zoom:** rueda. **Desplazar:** clic derecho.
+- **Botones de arriba:** cambian la etapa. **El ángulo se mantiene** al cambiar.
+- **📷 arriba a la derecha:** baja la vista actual en PNG.
 
 ---
 
@@ -74,51 +70,46 @@ Hay también una imagen fija con las 4 vistas: `experimentacion/resultados/modul
 
 ### Contexto en una frase
 
-Es una **iglesia colonial (Catedral de Lima)** escaneada con láser. Se pasó
-por **Sonata**, un modelo que mira la nube de puntos y le asigna a **cada
-punto 1088 números** que describen "qué es" ese punto. Nadie puede ver 1088
-números, así que los botones muestran 4 formas de resumirlos.
+Es una **iglesia colonial (Catedral de Lima)** escaneada con láser. El escaneo
+pasa por el **Módulo 1** (limpieza y reducción) y luego por **Sonata**
+(Módulo 3), que le asigna a **cada punto 1088 números** que describen "qué es".
+
+### Los botones, en orden
+
+| Botón | Etapa | Cómo leerlo |
+|---|---|---|
+| **Crudo** | Entrada (`.las`) | Lo que midió el escáner. Muchos puntos cerca del escáner, pocos lejos |
+| **M1: color real** | Salida del Módulo 1 | Limpia (sin puntos sueltos) y con densidad pareja: un punto por cubo de 5 cm |
+| **M1: normales** | Salida del Módulo 1 | Color = hacia dónde mira la superficie. Pisos de un color, paredes de otro |
+| **M3: PCA de f_ssl** | Salida de Sonata | Los 1088 números comprimidos a 3 y usados como color. **Mismo color = Sonata cree que son parecidos** |
+| **M3: similitud con ◆** | Salida de Sonata | Rojo = parecido al rombo negro, azul = distinto. Es el experimento del "sofá" del paper de Sonata: si se encienden otros arcos y no todo lo que está a la misma altura, el modelo no hace trampa con la geometría |
+| **M3: k-means** | Salida de Sonata | 8 grupos formados **sin etiquetas**. Si coinciden con arcos, piso y muros, Sonata ya separa partes de la iglesia sola |
 
 ### Qué es Sonata (por si pregunta)
 
-- Sonata (Wu et al., CVPR 2025) **no inventó una arquitectura nueva**: usa la
-  red PTv3. Lo nuevo es **cómo la entrenaron**: sin etiquetas
-  (*self-supervised*), solo con el encoder, y ocultando pistas geométricas
-  fáciles para que aprenda **qué son las cosas** y no solo su forma o altura.
+- Sonata (Wu et al., CVPR 2025) **no inventó una arquitectura**: usa la red
+  PTv3. Lo nuevo es **cómo la entrenaron**: sin etiquetas, solo el encoder, y
+  ocultando pistas geométricas fáciles para que aprenda qué son las cosas.
 - Aquí se usan sus **pesos ya entrenados**, congelados. No se entrenó nada.
-
-### Los 4 botones
-
-| Botón | Qué muestra | Cómo leerlo |
-|---|---|---|
-| **Color real** | El color que midió el escáner | Referencia: para saber qué es cada cosa (arco, piso, muro) |
-| **PCA de f_ssl** | Los 1088 números comprimidos a 3 y usados como color | **Mismo color = Sonata cree que esos puntos son parecidos.** Si arcos de bóvedas distintas salen del mismo color, Sonata "entiende" que son lo mismo |
-| **Similitud con ◆** | Qué tan parecido es cada punto al punto negro ◆ (similitud coseno: +1 igual, 0 sin relación, −1 opuesto) | **Rojo = parecido al ◆, azul = distinto.** Es el mismo experimento del "sofá" del paper de Sonata: si se encienden otros arcos y no todo lo que está a la misma altura, el modelo no hace trampa con la geometría |
-| **k-means (k=8)** | Los puntos repartidos en 8 grupos según sus 1088 números, **sin ninguna etiqueta** | Si un grupo coincide con "los arcos" y otro con "el piso", Sonata ya separa partes de la iglesia por sí sola |
 
 ### Qué se observó en PL13
 
-- **PCA:** los arcos de distintas bóvedas salen rosados, el piso morado y los
-  muros verdes o celestes.
-- **Similitud:** el ◆ cae en una nervadura; se parecen otros arcos, no el piso.
-- **k-means:** separa arcos, piso y muros en grupos distintos.
-- **Medidas** (`experimentacion/resultados/modulo3_PL13.json`): rango efectivo
-  110,6 de 1088, es decir, las features usan unas 110 direcciones distintas y
-  **no colapsaron** (un modelo colapsado daría ~1).
+- **PCA:** nervaduras de distintas bóvedas en verde y azul, piso en amarillo,
+  muros en rojo.
+- **Similitud:** el ◆ cae en una nervadura; se parecen otras nervaduras, no el piso.
+- **k-means:** separa bóvedas, piso y muros en grupos distintos.
+- **Medidas** (`resultados/modulo3_PL13.json`): rango efectivo 110,6 de 1088,
+  las features **no colapsaron** (un modelo colapsado daría ~1).
 
 ### Qué NO se puede decir todavía
 
-- Es una revisión **visual, cualitativa**. No hay un "% de acierto" porque los
-  datos de la iglesia **no tienen etiquetas**. Para medir acierto hace falta
-  *linear probing* con puntos etiquetados.
-- El ◆ se eligió al azar. Se puede fijar con `--consulta N`.
+- Es una revisión **visual, cualitativa**. No hay "% de acierto" porque los
+  datos **no tienen etiquetas**. Para eso hace falta *linear probing*.
+- Cada etapa dibuja 100 000 puntos al azar, no todos.
 
 ### Dónde encaja en la tesis
 
-Pipeline: **Módulo 1** (limpia la nube) → **Módulo 3** (Sonata, esto) →
-**Módulo 4** (HyperNCD agrupa en regiones, prototipos e hipergrafo para
-descubrir clases nuevas). El k-means de aquí es un agrupamiento "a ciegas";
-HyperNCD debería agrupar mejor porque suma conocimiento de clases
-etiquetadas y relaciones entre regiones. Más detalle en
-`LATEX/asesoria5/secciones/capitulo3.tex` (sección "Rama Auto-supervisada
-Congelada").
+**Módulo 1** → **Módulo 3** (Sonata) → **Módulo 4** (HyperNCD: regiones,
+prototipos e hipergrafo para descubrir clases nuevas). Las mismas imágenes
+están en `LATEX/asesoria5/secciones/capitulo3.tex` (secciones "Visor 3D del
+Proyecto", "Entrada y Salida de la Prueba" y "Rama Auto-supervisada Congelada").
