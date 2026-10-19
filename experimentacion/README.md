@@ -84,6 +84,13 @@ python experimentacion/visor_3d.py \
   contorno; `--brillo 2.2` aclara el color real (los escaneos son oscuros).
   La figura del cubo de la tesis se hizo así:
   `--recorte=-19,-3,-12,1 --tam 2.5 --brillo 2.2 --camara=1.6,-1.6,1.2` sobre PL7.
+- `--marcar-sor` agrega la etapa "SOR: descartados en rojo": repite el filtrado
+  de `preprocesar.py` (q y λ del `.json`) y pinta en rojo lo que elimina. En PL7
+  descarta 406 485 puntos, igual que la tesis, sobre todo en zonas ralas lejos del
+  escáner. En el cubo de 1 m no descarta ninguno (es zona densa).
+- **Imágenes por paso de la tesis** (`resultados/informe/m1_paso*.png`,
+  `m3_paso1_entrada.png`): capturas de `visor_PL7.html` (con `--marcar-sor
+  --puntos 200000`), del cubo y de `visor_PL13.html`, unidas con `componer_lamina.py`.
 - **Versión densa:** `--puntos 610637` dibuja **todo** el Módulo 1 de PL7 y la
   misma cantidad del crudo (~54 MB, tarda unos segundos en abrir). Con 1 000 000
   por etapa el navegador falla (`Array buffer allocation failed`): ese es el
