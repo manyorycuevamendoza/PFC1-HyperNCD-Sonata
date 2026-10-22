@@ -388,8 +388,8 @@ actualiza las características de los puntos con tres sumas residuales,
 \label{eq:bloque}
 \end{equation}
 donde CPE es una convolución dispersa que codifica la posición y MLP dos capas
-lineales. La atención se calcula dentro de cada parche
-(Sección~\ref{sec:serializacion}): si $\nom{Hp}{\mathbf{H}_p}$ reúne las
+lineales. La atención es la de los Transformers~\cite{vaswani2017attention}, que PTv3
+aplica dentro de cada parche (Sección~\ref{sec:serializacion}): si $\nom{Hp}{\mathbf{H}_p}$ reúne las
 características de los 1024 puntos de un parche,
 \begin{equation}
 \mathrm{Atn}(\nom{Hp}{\mathbf{H}_p})=\mathrm{softmax}\!\left(\frac{(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_Q})(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_K})^{\nom{T}{\top}}}{\sqrt{\nom{dcab}{d}}}\right)\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_V},
