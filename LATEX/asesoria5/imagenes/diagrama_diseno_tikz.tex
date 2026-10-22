@@ -120,7 +120,10 @@
       \fill[\c!55, draw=\c] (\i*0.26,0) rectangle (\i*0.26+0.2,\h);
     \draw[-{Latex[length=1.3mm]}, black!55] (0.95,0.28) -- (1.4,0.28);
     \foreach \i/\c in {0/cSem, 1/cEnc, 2/cSal}
-      \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}}\end{minipage}};
+      \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-costo}{$Q_{ik}=\mathrm{softmax}(o_i/0{,}1)_k^{1/\epsilon_{\mathrm{sk}}}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:suavizado}{$\tilde{y}_i=(1-\epsilon)\,e_{y_i}+\epsilon/|\mathcal{C}_k|$}}\end{minipage}};
 
 \begin{pgfonlayer}{background}
 \node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, very thick, fill=cFus!5,

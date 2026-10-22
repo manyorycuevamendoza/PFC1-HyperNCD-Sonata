@@ -122,7 +122,15 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:alpha}{$\alpha$} & Balance geométrico-semántico en $S_b$ & $[0,1]$; 0{,}5 en la implementación \\
 \leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano; un valor pequeño solo considera afines a las regiones muy próximas & 0{,}1 \\
 \leavevmode\hypertarget{nom:M}{$M$} & Vecinos por hiperarista & 8 \\
-\leavevmode\hypertarget{nom:eps}{$\epsilon$} & Suavizado de pseudo-etiquetas & 0{,}15 en el artículo \\
+\leavevmode\hypertarget{nom:eps}{$\epsilon$} & Suavizado de la etiqueta de las clases conocidas & 0{,}15 \\
+\leavevmode\hypertarget{nom:ytil}{$\tilde{y}_i,\;e_{y_i}$} & Objetivo suavizado del punto $i$ y vector que vale 1 en su clase real & Ec.~\eqref{eq:suavizado} \\
+\leavevmode\hypertarget{nom:o}{$o_i$} & Salida del clasificador de clases novedosas para el punto $i$ & Un valor por clase novedosa \\
+\leavevmode\hypertarget{nom:B}{$B$} & Puntos sin etiqueta del lote & Variable \\
+\leavevmode\hypertarget{nom:Q}{$Q$} & Matriz de partida de Sinkhorn-Knopp & Ec.~\eqref{eq:sk-costo} \\
+\leavevmode\hypertarget{nom:epssk}{$\epsilon_{\mathrm{sk}}$} & Temperatura de Sinkhorn-Knopp & 0{,}1 \\
+\leavevmode\hypertarget{nom:uv}{$u,\;v$} & Vectores de escala de Sinkhorn-Knopp & Ec.~\eqref{eq:sk-iter} \\
+\leavevmode\hypertarget{nom:gamma}{$\gamma$} & Tolerancia al desequilibrio entre clases novedosas & 10 \\
+\leavevmode\hypertarget{nom:Y}{$Y$} & Pseudo-etiquetas: fila $i$ para el punto $i$ & Ec.~\eqref{eq:sk-plan} \\
 \leavevmode\hypertarget{nom:y}{$\hat{y}_i$} & Etiqueta asignada al punto $i$ & Clase conocida o novedosa \\
 \leavevmode\hypertarget{nom:clase}{$c$ (subíndice)} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una clase del conjunto $\mathcal{S}$} \\
 \leavevmode\hypertarget{nom:conj}{$\mathcal{S}$} & Conjunto de clases sobre el que se calcula una métrica & $\mathcal{C}_k$, $\mathcal{C}_n$ o $\mathcal{C}$ \\

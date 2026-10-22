@@ -578,11 +578,18 @@ una sola vez en el sistema y $\alpha$ conserva su interpretación.
 \label{sec:pseudoetq}
 
 Etiqueta que el propio modelo asigna a un punto sin supervisión humana y que
-después usa como si fuera verdadera para continuar entrenando. Se suaviza con
-\nom{eps}{$\epsilon=0{,}15$}: en lugar de certeza total, la clase ganadora recibe
-$1-\epsilon$ y $\epsilon$ se reparte entre las demás, lo que reduce el
-sobreajuste a los propios errores. Ese valor es el que publica el artículo; la
-implementación ejecutada no lo expone como parámetro. 
+después usa como si fuera verdadera para continuar entrenando. En la
+implementación ejecutada cada punto del lote recibe un objetivo de entrenamiento.
+Si el punto es de una clase conocida, el objetivo es su etiqueta real suavizada,
+\begin{equation}
+\nom{ytil}{\tilde{y}_i}=(1-\nom{eps}{\epsilon})\,\nom{ytil}{e_{y_i}}+\frac{\nom{eps}{\epsilon}}{\nom{Ck}{|\mathcal{C}_k|}}\,\mathbf{1},
+\label{eq:suavizado}
+\end{equation}
+donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás, y
+$\epsilon=0{,}15$ (opción \texttt{--label\_smoothing}). Así la clase real no
+recibe certeza total, lo que reduce el sobreajuste. Si el punto no tiene
+etiqueta, su objetivo es la pseudo-etiqueta que entrega la normalización de
+Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}). 
 
 \subsection{Normalización de Sinkhorn-Knopp}
 \label{sec:sinkhorn}
@@ -591,6 +598,30 @@ Procedimiento de normalización iterativa de una matriz que fuerza a que sus
 filas y columnas sumen valores prefijados. Aplicado a la asignación de
 pseudo-etiquetas, las reparte de forma equilibrada entre clases y evita el
 colapso, es decir, que casi todos los puntos caigan en la clase más frecuente.
+
+La implementación ejecutada usa una variante semi-relajada. Parte de la salida
+$\nom{o}{o_i}$ del clasificador de clases novedosas para cada uno de los
+$\nom{B}{B}$ puntos sin etiqueta del lote y forma
+\begin{equation}
+\nom{Q}{Q_{ik}}=\mathrm{softmax}\!\left(\nom{o}{o_i}/0{,}1\right)_k^{\,1/\nom{epssk}{\epsilon_{\mathrm{sk}}}} .
+\label{eq:sk-costo}
+\end{equation}
+Después alterna, hasta que se estabiliza, dos vectores de escala,
+\begin{equation}
+\nom{uv}{u}\leftarrow\frac{1/\nom{B}{B}}{\nom{Q}{Q}\,\nom{uv}{v}},\qquad
+\nom{uv}{v}\leftarrow\left(\frac{1/\nom{Cn}{|\mathcal{C}_n|}}{\nom{Q}{Q}^{\nom{T}{\top}}\nom{uv}{u}}\right)^{\nom{gamma}{\gamma}/(\nom{gamma}{\gamma}+\nom{epssk}{\epsilon_{\mathrm{sk}}})},
+\label{eq:sk-iter}
+\end{equation}
+con las divisiones elemento a elemento. La primera obliga a que cada punto
+reparta un peso total fijo; la segunda empuja a que las clases novedosas reciban
+pesos parecidos, con una tolerancia que fija $\gamma$. El resultado es
+\begin{equation}
+\nom{Y}{Y}=\nom{B}{B}\,\mathrm{diag}(\nom{uv}{u})\,\nom{Q}{Q}\,\mathrm{diag}(\nom{uv}{v}) ,
+\label{eq:sk-plan}
+\end{equation}
+y la fila $Y_i$ es la pseudo-etiqueta del punto $i$, repartida entre las clases
+novedosas. En el código, $\epsilon_{\mathrm{sk}}=0{,}1$ y $\gamma=10$
+(opción \texttt{--gamma}).
 
 
 \subsection{Arquitectura de HyperNCD}
