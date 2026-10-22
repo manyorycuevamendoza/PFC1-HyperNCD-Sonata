@@ -3,10 +3,65 @@
 
 \section*{Anexo A. Configuración de \emph{software}}
 \phantomsection\label{sec:anexo-software}
+\setcounter{table}{0}\renewcommand{\thetable}{A.\arabic{table}}
 
-Python 3.10, \texttt{laspy}, Open3D, NumPy, PyTorch, MinkowskiEngine,
-\texttt{spconv}, Pointcept, código oficial de HyperNCD y pesos públicos de Sonata. Seguimiento de experimentos con
-Weights~\&~Biases.
+El proyecto usa tres entornos. En Khipu, \texttt{sonata-env} (Python~3.10,
+PyTorch~2.5.0, CUDA~12.4, \texttt{spconv} y Pointcept) ejecuta Sonata, y
+\texttt{hyperncd-env} (Python~3.8, PyTorch~1.10.1, MinkowskiEngine, que declara
+CUDA~11.3 y se compiló con 11.8) ejecuta HyperNCD. En el equipo local, Python~3.12.7
+con \texttt{laspy}~2.7.0, NumPy~2.3.5 y Open3D~0.20.0 ejecutó la prueba de la
+Unidad~1. El seguimiento de experimentos usa Weights~\&~Biases.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Herramientas por módulo]{Herramientas empleadas y módulo en que interviene cada una.
+Elaboración propia.}
+\label{tab:herramientas}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.54\hsize}X>{\raggedright\arraybackslash\hsize=1.46\hsize}Xl@{}}
+\toprule
+\textbf{Herramienta} & \textbf{Uso} & \textbf{Módulo} \\
+\midrule
+\texttt{laspy} & Lectura por bloques del archivo LAS & 1 \\
+Open3D & Filtrado SOR, voxelización y estimación de normales; reconstrucción de Poisson para exportar el sólido & 1, 5 \\
+NumPy & Apilado de coordenadas y color, centrado, y almacenamiento de $S$ y de $f_{\mathrm{ssl}}$ en disco & 1, 3 \\
+PyTorch & Entrenamiento de la rama semántica y del módulo de prototipos; inferencia de Sonata & 2, 3, 4 \\
+MinkowskiEngine & Rejilla dispersa y convoluciones de la MinkowskiUNet-34C & 2 \\
+Pointcept, \texttt{spconv} & Codificador PTv3 de Sonata con sus pesos públicos & 3 \\
+Código oficial de HyperNCD & Prototipos, hipergrafo y pseudo-etiquetas & 2, 4 \\
+Weights \& Biases & Registro de métricas por corrida & 5 \\
+Clúster Khipu (Slurm) & Ejecución en CPU del Módulo~1 y en GPU de los Módulos~2 a~4 & 1--4 \\
+Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 1, 3 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph*{Comandos en el clúster Khipu.}
+Los guiones se lanzan desde la carpeta del repositorio, con los archivos LAS en
+\texttt{datos\_crudos/}. La variable \texttt{REPO} al inicio de cada guion
+apunta a la copia del repositorio en el clúster y debe ajustarse al usuario.
+\begin{lstlisting}[style=comando]
+# Unidad 1: todos los LAS, o solo los que calcen con el patron
+sbatch preprocesar.sbatch
+sbatch preprocesar.sbatch "PL13*"
+# Cambiar parametros (voxel en metros, vecinos, umbral)
+VOXEL=0.03 LAM=2.5 sbatch preprocesar.sbatch
+# Rehacer los que ya existen
+REHACER=1 sbatch preprocesar.sbatch
+# Unidad 2, rama auto-supervisada: una seccion por trabajo
+sbatch extraer_features.sbatch data/PL13_SCN0001.npy cache/PL13_feats.npz
+# Medidas de los descriptores de Sonata (rango efectivo, PCA, k-means)
+sbatch experimentacion/modulo3_sonata/visualizar_features.sbatch \
+       PL13_SCN0001 PL13
+# Visor 3D (en el equipo local, con los archivos copiados de Khipu)
+python experimentacion/visor_3d.py --las PL13_SCN0001.las \
+       --npy PL13_SCN0001.npy --json PL13_SCN0001.json \
+       --feats PL13_feats.npz --marcar-sor --output visor_PL13.html
+# Seguimiento
+squeue -u $USER
+tail -f logs/preproc_<id>.out
+\end{lstlisting}
+
 
 \section*{Anexo B. Nomenclatura}
 
@@ -15,7 +70,7 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 
 \begin{center}
 \setstretch{1}\small\renewcommand{\arraystretch}{1.3}
-\begin{longtable}{@{}p{2.6cm}p{6.9cm}p{3.2cm}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{8.1cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
 \toprule
 \textbf{Símbolo} & \textbf{Significado} & \textbf{Valor} \\
 \midrule
@@ -30,36 +85,36 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:xi}{$x_i$} & Posición del punto $i$ & Metros \\
 \leavevmode\hypertarget{nom:xyz}{$x,\;y,\;z$} & Coordenadas de un punto, ya decodificadas & Metros \\
 \leavevmode\hypertarget{nom:xip}{$x_i'$} & Posición del punto $i$ después del centrado & Metros \\
-\leavevmode\hypertarget{nom:N}{$N$} & Número de puntos & 610\,637 tras voxelizar, en el escaneo de prueba \\
+\leavevmode\hypertarget{nom:N}{$N$} & Número de puntos & 610\,637 en PL7 tras voxelizar \\
 \leavevmode\hypertarget{nom:las}{$X,\;s_x,\;o_x$} & Entero almacenado, escala y desplazamiento de la cabecera LAS & Ec.~\eqref{eq:las-escala} \\
 \leavevmode\hypertarget{nom:c}{$c$} & Centro de la sección, restado al centrar las coordenadas & Guardado en los metadatos \\
 \leavevmode\hypertarget{nom:q}{$q$} & Vecinos para SOR y normales & 20 \\
-\leavevmode\hypertarget{nom:vec}{$\mathcal{N}_q(i)$} & Vecindad de los $q$ vecinos más cercanos del punto $i$ & -- \\
+\leavevmode\hypertarget{nom:vec}{$\mathcal{N}_q(i)$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Vecindad de los $q$ vecinos más cercanos del punto $i$} \\
 \leavevmode\hypertarget{nom:dbar}{$\bar d_i$} & Distancia media del punto $i$ a sus $q$ vecinos & Ec.~\eqref{eq:sor-dist} \\
-\leavevmode\hypertarget{nom:musigma}{$\mu,\;\sigma$} & Media y desviación estándar de $\bar d_i$ sobre la sección & -- \\
+\leavevmode\hypertarget{nom:musigma}{$\mu,\;\sigma$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Media y desviación estándar de $\bar d_i$ sobre la sección} \\
 \leavevmode\hypertarget{nom:lam}{$\lambda$} & Desviaciones toleradas en SOR & 2 \\
 \leavevmode\hypertarget{nom:xv}{$v,\;|v|,\;\bar x_v$} & Vóxel, número de puntos que contiene y su representante & Vóxel de 5\,cm \\
 \leavevmode\hypertarget{nom:pbar}{$p_j,\;\bar p$} & Vecinos de un punto y su centroide local & Ec.~\eqref{eq:centroide} \\
 \leavevmode\hypertarget{nom:cov}{$C$} & Matriz de covarianza de la vecindad & Ec.~\eqref{eq:normal} \\
 \leavevmode\hypertarget{nom:n}{$n_i$} & Normal unitaria del punto $i$ & $(n_x,n_y,n_z)$ \\
 \leavevmode\hypertarget{nom:rgb}{$R,\;G,\;B$} & Color del punto: rojo, verde y azul & 0 a 255 \\
-\leavevmode\hypertarget{nom:T}{$\top$} & Traspuesta de un vector o de una matriz & -- \\
+\leavevmode\hypertarget{nom:T}{$\top$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Traspuesta de un vector o de una matriz} \\
 \leavevmode\hypertarget{nom:S}{$S$} & Sección preprocesada: posición, color y normal & 9 columnas por punto \\
 \leavevmode\hypertarget{nom:Ck}{$\mathcal{C}_k$} & Conjunto de clases conocidas (etiquetadas) & Por sección \\
 \leavevmode\hypertarget{nom:Cn}{$\mathcal{C}_n$} & Conjunto de clases novedosas (sin etiqueta) & Hasta 6 por sección \\
 \leavevmode\hypertarget{nom:fsem}{$f_{\mathrm{sem}}$} & Descriptor semántico (MinkowskiUNet-34C) & 96 dimensiones \\
 \leavevmode\hypertarget{nom:fgeo}{$f_{\mathrm{geo}}$} & Descriptor geométrico calculado a mano & 6 dimensiones \\
-\leavevmode\hypertarget{nom:eig}{$\lambda_1,\lambda_2,\lambda_3$} & Autovalores de la covarianza de una región, de mayor a menor & -- \\
+\leavevmode\hypertarget{nom:eig}{$\lambda_1,\lambda_2,\lambda_3$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Autovalores de la covarianza de una región, de mayor a menor} \\
 \leavevmode\hypertarget{nom:fssl}{$f_{\mathrm{ssl}}$} & Descriptor auto-supervisado (Sonata, congelado) & 1088 dimensiones \\
-\leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & Concatenación: el vector $b$ colocado a continuación del vector $a$ & -- \\
+\leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Concatenación: el vector $b$ colocado a continuación del vector $a$} \\
 \leavevmode\hypertarget{nom:Fi}{$F_i$} & Descriptor compuesto del punto $i$ & 1184 dimensiones \\
 \leavevmode\hypertarget{nom:K}{$K$} & Número de prototipos & Igual al de clases \\
 \leavevmode\hypertarget{nom:z}{$z_{i,k}$} & Puntuación del punto $i$ para el prototipo $k$ & Cualquier número real \\
 \leavevmode\hypertarget{nom:s}{$s_{i,k}$} & Peso de pertenencia del punto $i$ al prototipo $k$ & Entre 0 y 1 \\
-\leavevmode\hypertarget{nom:Sp}{$S_p$} & Matriz de asignación suave, formada por los $s_{i,k}$ & -- \\
+\leavevmode\hypertarget{nom:Sp}{$S_p$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Matriz de asignación suave, formada por los $s_{i,k}$} \\
 \leavevmode\hypertarget{nom:Pk}{$P_k$} & Prototipo $k$ & Ec.~\eqref{eq:prototipo} \\
-\leavevmode\hypertarget{nom:H}{$\mathcal{H}$} & Hipergrafo de regiones & -- \\
-\leavevmode\hypertarget{nom:Freg}{$F^{(i)}$} & Descriptor de la región $i$, promedio de los $F_i$ de sus puntos & -- \\
+\leavevmode\hypertarget{nom:H}{$\mathcal{H}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Hipergrafo de regiones} \\
+\leavevmode\hypertarget{nom:Freg}{$F^{(i)}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Descriptor de la región $i$, promedio de los $F_i$ de sus puntos} \\
 \leavevmode\hypertarget{nom:g}{$g^{(i)}$} & Rasgo geométrico de la región $i$ & Su $f_{\mathrm{geo}}$ \\
 \leavevmode\hypertarget{nom:Sg}{$S_g$} & Afinidad geométrica entre regiones & Núcleo gaussiano \\
 \leavevmode\hypertarget{nom:Ss}{$S_s$} & Afinidad semántica entre regiones & Coseno \\
@@ -69,7 +124,7 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:M}{$M$} & Vecinos por hiperarista & 8 \\
 \leavevmode\hypertarget{nom:eps}{$\epsilon$} & Suavizado de pseudo-etiquetas & 0{,}15 en el artículo \\
 \leavevmode\hypertarget{nom:y}{$\hat{y}_i$} & Etiqueta asignada al punto $i$ & Clase conocida o novedosa \\
-\leavevmode\hypertarget{nom:clase}{$c$ (subíndice)} & Una clase del conjunto $\mathcal{S}$ & -- \\
+\leavevmode\hypertarget{nom:clase}{$c$ (subíndice)} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una clase del conjunto $\mathcal{S}$} \\
 \leavevmode\hypertarget{nom:conj}{$\mathcal{S}$} & Conjunto de clases sobre el que se calcula una métrica & $\mathcal{C}_k$, $\mathcal{C}_n$ o $\mathcal{C}$ \\
 \leavevmode\hypertarget{nom:Ctodo}{$\mathcal{C}$} & Todas las clases & $\mathcal{C}_k\cup\mathcal{C}_n$ \\
 \leavevmode\hypertarget{nom:tp}{$TP_c,\,FP_c,\,FN_c$} & Verdaderos positivos, falsos positivos y falsos negativos de la clase $c$ & Número de puntos \\
@@ -77,103 +132,33 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:miou}{$\mathrm{mIoU}(\mathcal{S})$} & Promedio del IoU sobre el conjunto de clases $\mathcal{S}$ & Ec.~\eqref{eq:miou} \\
 \leavevmode\hypertarget{nom:cstar}{$c^{*}$} & Clase dominante del mIoU & Ec.~\eqref{eq:dominante} \\
 \leavevmode\hypertarget{nom:sigstar}{$\sigma^{*}$} & Emparejamiento óptimo entre grupos descubiertos y clases reales & Ec.~\eqref{eq:hungaro} \\
-\leavevmode\hypertarget{nom:perm}{$\sigma,\;\mathfrak{S}_{|\mathcal{C}_n|}$} & Una correspondencia entre grupos descubiertos y clases novedosas, y el conjunto de todas ellas & -- \\
-\leavevmode\hypertarget{nom:ytrue}{$y$} & Etiqueta real de un punto & -- \\
+\leavevmode\hypertarget{nom:perm}{$\sigma,\;\mathfrak{S}_{|\mathcal{C}_n|}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una correspondencia entre grupos descubiertos y clases novedosas, y el conjunto de todas ellas} \\
+\leavevmode\hypertarget{nom:ytrue}{$y$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Etiqueta real de un punto} \\
 \leavevmode\hypertarget{nom:ariv}{$\mathrm{ARI}$} & Índice de Rand ajustado & Ec.~\eqref{eq:ari} \\
-\leavevmode\hypertarget{nom:ntotal}{$n$} & Número total de puntos comparados & -- \\
+\leavevmode\hypertarget{nom:ntotal}{$n$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Número total de puntos comparados} \\
 \leavevmode\hypertarget{nom:ari}{$n_{ij},\,a_i,\,b_j$} & Puntos comunes entre la agrupación $i$ y la clase $j$, y sus marginales & Ec.~\eqref{eq:ari} \\
 \leavevmode\hypertarget{nom:nmiv}{$\mathrm{NMI}$} & Información mutua normalizada & Ec.~\eqref{eq:nmi} \\
-\leavevmode\hypertarget{nom:UV}{$U,\;V$} & Las dos agrupaciones que se comparan: la descubierta y la real & -- \\
+\leavevmode\hypertarget{nom:UV}{$U,\;V$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Las dos agrupaciones que se comparan: la descubierta y la real} \\
 \leavevmode\hypertarget{nom:nmi}{$I,\;H$} & Información mutua y entropía & Ec.~\eqref{eq:nmi} \\
 \leavevmode\hypertarget{nom:probe}{$W,\;b$} & Pesos y sesgo del clasificador lineal del \emph{linear probing} & Ec.~\eqref{eq:probe} \\
 \leavevmode\hypertarget{nom:delta}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}$} & Ganancia absoluta en clases novedosas & Ec.~\eqref{eq:delta} \\
-\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & mIoU del modelo $b$ (\emph{hib}: híbrido; \emph{base}: línea base) sobre las clases $a$ (\emph{novel}: novedosas; \emph{known}: conocidas) & -- \\
+\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{mIoU del modelo $b$ (\emph{hib}: híbrido; \emph{base}: línea base) sobre las clases $a$ (\emph{novel}: novedosas; \emph{known}: conocidas)} \\
 \leavevmode\hypertarget{nom:G}{$G$} & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \midrule
 \multicolumn{3}{@{}l}{\textbf{Índices y operadores}}\\
-\leavevmode\hypertarget{nom:idx}{$i,\;j,\;k$} & Índices: $i$ y $j$ recorren puntos, vecinos o regiones; $k$, prototipos & -- \\
-\leavevmode\hypertarget{nom:suma}{$\sum$} & Suma de los términos que indica el subíndice & -- \\
-\leavevmode\hypertarget{nom:minmax}{$\min,\;\max$} & Mínimo y máximo, tomados eje por eje & -- \\
-\leavevmode\hypertarget{nom:argmax}{$\arg\max$} & Elemento para el que la expresión toma su valor más alto & -- \\
-\leavevmode\hypertarget{nom:exp}{$\exp$} & Función exponencial & -- \\
-\leavevmode\hypertarget{nom:norma}{$\lVert\cdot\rVert$} & Longitud de un vector (norma euclídea) & -- \\
-\leavevmode\hypertarget{nom:prod}{$\langle\cdot,\cdot\rangle$} & Producto escalar de dos vectores & -- \\
-\leavevmode\hypertarget{nom:card}{$|\cdot|$} & Número de elementos de un conjunto; aplicado a un número, su valor absoluto & -- \\
-\leavevmode\hypertarget{nom:en}{$\in$} & Pertenece a & -- \\
-\leavevmode\hypertarget{nom:parcial}{$\partial$} & Derivada parcial: cuánto cambia una cantidad al variar otra & -- \\
-\leavevmode\hypertarget{nom:paratodo}{$\forall$} & Para todo & -- \\
+\leavevmode\hypertarget{nom:idx}{$i,\;j,\;k$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Índices: $i$ y $j$ recorren puntos, vecinos o regiones; $k$, prototipos} \\
+\leavevmode\hypertarget{nom:suma}{$\sum$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Suma de los términos que indica el subíndice} \\
+\leavevmode\hypertarget{nom:minmax}{$\min,\;\max$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Mínimo y máximo, tomados eje por eje} \\
+\leavevmode\hypertarget{nom:argmax}{$\arg\max$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Elemento para el que la expresión toma su valor más alto} \\
+\leavevmode\hypertarget{nom:exp}{$\exp$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Función exponencial} \\
+\leavevmode\hypertarget{nom:norma}{$\lVert\cdot\rVert$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Longitud de un vector (norma euclídea)} \\
+\leavevmode\hypertarget{nom:prod}{$\langle\cdot,\cdot\rangle$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Producto escalar de dos vectores} \\
+\leavevmode\hypertarget{nom:card}{$|\cdot|$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Número de elementos de un conjunto; aplicado a un número, su valor absoluto} \\
+\leavevmode\hypertarget{nom:en}{$\in$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Pertenece a} \\
+\leavevmode\hypertarget{nom:parcial}{$\partial$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Derivada parcial: cuánto cambia una cantidad al variar otra} \\
+\leavevmode\hypertarget{nom:paratodo}{$\forall$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Para todo} \\
 \leavevmode\hypertarget{nom:binom}{$\binom{m}{2}$} & Número de pares que se pueden formar con $m$ elementos & $m(m-1)/2$ \\
 \end{longtable}
 \end{center}
 
-\section*{Anexo C. Glosario de términos}
 
-\begin{center}
-\setstretch{1}\small
-\begin{longtable}{@{}p{4.0cm}p{8.7cm}@{}}
-\toprule
-\textbf{Término} & \textbf{Definición} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Término} & \textbf{Definición} \\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-Afinidad & Semejanza entre dos regiones; combina una componente geométrica y una semántica. \\
-Análisis de dominancia & Identificación de la clase que más se aparta del mIoU y explica su valor. \\
-Aprendizaje auto-supervisado & Entrenamiento cuya señal de supervisión procede de los propios datos y no de etiquetas humanas. \\
-ARI & Índice de Rand ajustado: coincidencia entre la agrupación descubierta y la real. \\
-Atajo geométrico & Colapso de la representación sobre pistas geométricas simples en lugar de aprender semántica. \\
-Atribución por etapas & Medición intermedia y final que separa el aporte de la representación del aporte del razonamiento. \\
-Brecha cerrada & Ganancia en clases novedosas normalizada por la distancia a las conocidas. \\
-Caja de sección & Paralelepípedo que muestra solo los puntos de la nube que quedan dentro. \\
-Centrado de coordenadas & Traslación que resta a la sección el centro de su caja envolvente; distinto del desplazamiento de la cabecera LAS. \\
-Centroide local & Promedio de las posiciones de los vecinos de un punto. \\
-Clase conocida & Clase con puntos etiquetados durante el entrenamiento. \\
-Clase novedosa & Clase presente en la nube pero sin ninguna etiqueta. \\
-Codificador congelado & Red usada solo en inferencia, cuyos pesos no se actualizan. \\
-Conexión de salto & Enlace que lleva la salida de un nivel del codificador al nivel del decodificador de igual resolución. \\
-Convolución dispersa & Convolución que solo se evalúa en los vóxeles ocupados. \\
-Corte & Plano que oculta la parte de la nube que queda a un lado. \\
-DBSCAN & Agrupamiento por densidad con el que HyperNCD forma las regiones. \\
-Descriptor & Vector numérico que resume el contenido de un punto o de una región. \\
-Descriptor auto-supervisado & Descriptor de Sonata aprendido sin etiquetas; 1088 dimensiones. \\
-Descriptor geométrico analítico & Descriptor de forma calculado con una fórmula cerrada; 6 dimensiones. \\
-Descriptor semántico & Descriptor de la red supervisada de HyperNCD; 96 dimensiones. \\
-Emparejamiento húngaro & Asignación óptima entre agrupaciones descubiertas y clases reales. \\
-Formato LAS & Formato binario estándar de la ASPRS para nubes de puntos láser. \\
-Ganancia absoluta & Diferencia de mIoU en clases novedosas entre el modelo híbrido y la línea base. \\
-Hiperarista & Conjunto formado por una región y sus $M$ regiones más afines. \\
-Hipergrafo & Estructura en la que una arista puede conectar más de dos nodos a la vez. \\
-Índice inverso & Tabla que anota, para cada punto de entrada, la celda de la rejilla de Sonata en la que cayó. \\
-IoU & Intersección sobre unión de una clase: aciertos entre la suma de aciertos y errores. \\
-\emph{Linear probing} & Evaluación de un descriptor congelado mediante un clasificador lineal. \\
-KNN & Los $q$ puntos más cercanos a uno dado; vecindad usada por el SOR y por las normales. \\
-Lectura por bloques & Lectura de un archivo LAS en grupos consecutivos de registros, que después se concatenan. \\
-Matriz de covarianza & Matriz que describe en qué direcciones se dispersan los vecinos de un punto alrededor de su centroide. \\
-MinkowskiUNet-34C & Red de convoluciones dispersas con codificador, decodificador y conexiones de salto; produce el descriptor semántico. \\
-Muestreo por rejilla & Discretización de 2\,cm que Sonata aplica antes de su codificador, conservando un punto por celda. \\
-mIoU & Promedio del IoU sobre un conjunto de clases. \\
-NCD & Descubrimiento de clases novedosas. \\
-NMI & Información mutua normalizada entre la agrupación descubierta y la real. \\
-Normal & Vector unitario perpendicular a la superficie en un punto, estimado a partir de sus vecinos; describe orientación, no clase. \\
-Nube de puntos & Conjunto de posiciones tridimensionales medidas con sus atributos. \\
-Prototipo & Vector representante de un grupo de puntos o regiones semejantes. \\
-Pseudo-etiqueta & Etiqueta asignada por el propio modelo, sin supervisión humana. \\
-Reconstrucción de Poisson & Conversión de una nube con normales en una malla cerrada. \\
-Región o superpunto & Agrupación de puntos vecinos tratada como una sola unidad. \\
-Rejilla dispersa & Indexación por coordenada entera de vóxel que almacena solo los ocupados. \\
-Sección & Partición espacial disjunta del levantamiento. \\
-Segmentación semántica & Asignación de una etiqueta de clase a cada punto. \\
-Serialización & Ordenamiento de los puntos mediante una curva de llenado de espacio. \\
-Sinkhorn-Knopp & Normalización iterativa que equilibra el reparto de pseudo-etiquetas. \\
-SOR & Filtrado estadístico que descarta los puntos aislados, es decir, alejados de sus vecinos. \\
-Tensor disperso & Lista de coordenadas de vóxel ocupado con un vector de características por cada una. \\
-TLS & Escaneo láser terrestre desde posiciones fijas. \\
-\emph{Up-cast} & Propagación inversa del submuestreo hasta la resolución de entrada. \\
-Vóxel & Celda cúbica de una rejilla regular que divide el espacio. \\
-Voxelización & Agrupación de los puntos de un mismo cubo y sustitución del grupo por un representante único. No es un paso de limpieza. \\
-\end{longtable}
-\end{center}

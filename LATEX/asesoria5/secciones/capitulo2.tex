@@ -343,8 +343,8 @@ no lo ejecuta, solo usa su resultado.
 Red cuyos pesos no se actualizan y que se usa exclusivamente en inferencia. Su
 costo se paga una sola vez y no en cada época, lo que permite calcular su salida
 por adelantado y almacenarla en disco. El codificador de Sonata tiene
-$108{,}46$~M de parámetros, es decir, de pesos aprendidos, y su memoria de vídeo
-(GPU) se estima en $4{,}2$~GB  por sección (Anexo~D).
+$108{,}46$~M de parámetros, es decir, de pesos aprendidos, y su inferencia sobre PL13
+usó $34{,}60$~GB de memoria de vídeo (Sección~\ref{sec:rama-ssl}).
 
 \subsection{Atajo Geométrico}
 \label{sec:atajo}
@@ -442,9 +442,9 @@ preprocesamiento, casi todos los puntos quedan solos en su celda.
 También llamada \emph{up-cast}, devuelve las características del codificador a
 la resolución de entrada reutilizando los índices de agrupamiento que el propio
 submuestreo registró. Es necesaria porque el codificador entrega su salida
-submuestreada varias veces. En los dos últimos pasos las características de la
-etapa gruesa se concatenan con las de la etapa anterior, y en los restantes
-solo se copian, lo que da las 1088 dimensiones de $f_{\mathrm{ssl}}$. 
+submuestreada varias veces. En los dos primeros pasos, desde la etapa más gruesa,
+las características se concatenan con las de la etapa anterior, la 5 con la 4 y
+el resultado con la 3, y en los restantes solo se copian, lo que da las 1088 dimensiones de $f_{\mathrm{ssl}}$. 
 
 \subsection{Caja de Sección y Corte}
 \label{sec:caja}
@@ -596,9 +596,9 @@ colapso, es decir, que casi todos los puntos caigan en la clase más frecuente.
 \subsection{Arquitectura de HyperNCD}
 \label{sec:arq-hyperncd-paper}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/arq_hyperncd_paper.png}
+\includegraphics[width=0.75\linewidth]{imagenes/arq_hyperncd_paper.png}
 \caption[Arquitectura de HyperNCD]{Arquitectura de HyperNCD. Fuente: Zhang et al.~\cite{zhang2026hyperncd},
 Fig.~2.}
 \label{fig:arq-hyperncd-paper}
@@ -630,16 +630,16 @@ etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
 La figura corresponde a la formulación del artículo. La implementación publicada
 que este trabajo ejecuta realiza las tres primeras etapas, pero no el reajuste
 dinámico de la cuarta, y asigna las pseudo-etiquetas con Sinkhorn-Knopp en lugar
-del umbral (Anexo~D). Además, en la implementación los nodos del hipergrafo son
+del umbral (Sección~\ref{sec:aporte}). Además, en la implementación los nodos del hipergrafo son
 regiones y no prototipos (Sección~\ref{sec:hiperarista}); este trabajo adopta esa
 formulación.
 
 \subsection{Arquitectura de Sonata}
 \label{sec:arq-sonata-paper}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.82\linewidth]{imagenes/arq_sonata_paper.png}
+\includegraphics[width=0.62\linewidth]{imagenes/arq_sonata_paper.png}
 \caption[Auto-destilación de Sonata]{Marco de auto-destilación de Sonata. Fuente: Wu et
 al.~\cite{wu2025sonata}, Fig.~5.}
 \label{fig:arq-sonata-paper}
@@ -822,15 +822,12 @@ diseño propuesto. Las flechas continuas son conexiones que el código ya realiz
 y las discontinuas, conexiones diseñadas y todavía no implementadas
 (Sección~\ref{sec:estado-impl}).
 
-\begin{figure}[p]
+\begin{figure}[!t]
 \centering
 {\hypersetup{linkcolor=blue!55!black}\fuentediagrama
-\adjustbox{max width=\linewidth, max totalheight=0.9\textheight}{\input{imagenes/diagrama_diseno_tikz}}}
-\caption[Diseño del modelo híbrido propuesto]{Diseño del modelo híbrido propuesto. El Módulo~1 es propio; los Módulos~2
-y~4 provienen de HyperNCD y el Módulo~3 de Sonata. El Módulo~4 muestra sus
-operaciones en cuatro recuadros, con el agrupamiento en regiones sobre la flecha
-que une los dos primeros. Flecha continua: conexión implementada; flecha
-discontinua: conexión propuesta. Cada fórmula enlaza con la ecuación del marco teórico donde se explica.}
+\makebox[\linewidth][c]{\adjustbox{max width=1.12\linewidth, max totalheight=0.85\textheight}{\input{imagenes/diagrama_diseno_tikz}}}}
+\caption[Diseño del modelo híbrido propuesto]{Diseño del modelo híbrido propuesto. Flecha continua: conexión
+implementada; discontinua: propuesta. Elaboración propia.}
 \label{fig:diseno}
 \end{figure}
 
@@ -861,13 +858,13 @@ La Tabla~\ref{tab:archivos} separa los archivos que forman parte del sistema de
 los que se generaron para examinar y documentar el dato. Estos últimos no son
 etapas de la arquitectura y por eso no figuran en el diagrama.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Archivos del sistema y archivos de inspección]{Archivos del sistema y archivos de inspección, para el escaneo de
+\caption[Archivos del sistema y archivos de inspección]{Archivos del sistema y archivos de inspección, para los escaneos de
 prueba. Elaboración propia.}
 \label{tab:archivos}
-\begin{tabular}{@{}p{6.4cm}p{5.8cm}@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Archivo} & \textbf{Función} \\
 \midrule
@@ -875,6 +872,7 @@ prueba. Elaboración propia.}
 \texttt{PL7\_SCN0001.las} & Entrada del Módulo~1: escaneo en bruto \\
 \texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1: matriz $S$, entrada del Módulo~3 \\
 \texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1: parámetros, centro restado y conteos \\
+\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13: $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
 \midrule
 \multicolumn{2}{@{}l}{\textbf{De inspección y documentación}}\\
 \texttt{PL7\_muestra\_100.csv} & Cien puntos del archivo LAS en texto, para examinar sus campos \\
@@ -883,7 +881,7 @@ prueba. Elaboración propia.}
 \texttt{inspeccionar\_data.py} & Guion que comprueba la coherencia entre los archivos anteriores, sin ejecutar ningún modelo \\
 \texttt{inspeccion\_DATA.json} & Reporte que produce ese guion \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Módulo 2: Semántica}
@@ -910,12 +908,10 @@ números por punto (Sección~\ref{sec:fssl}).
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Muestrea la sección en una rejilla propia de 2\,cm y forma la entrada de
 nueve valores por punto (Sección~\ref{sec:gridsample}).
-\item Ordena los puntos por serialización
-(Sección~\ref{sec:serializacion}).
 \item Aplica el PTv3 de Sonata, preentrenado de forma auto-supervisada
-(Secciones~\ref{sec:ssl} y~\ref{sec:arq-sonata-paper}).
-\item Prescinde del decodificador para evitar el atajo geométrico
-(Sección~\ref{sec:atajo}).
+(Secciones~\ref{sec:ssl} y~\ref{sec:arq-sonata-paper}). El PTv3 ordena los
+puntos por serialización (Sección~\ref{sec:serializacion}) y no usa
+decodificador, para evitar el atajo geométrico (Sección~\ref{sec:atajo}).
 \item Devuelve la salida a la resolución de entrada mediante \emph{up-cast}
 (Sección~\ref{sec:upcast}).
 \item Se usa congelado, una vez por sección, y guarda en disco los
@@ -987,17 +983,17 @@ prueba no trae etiquetas y su anotación está pendiente.
 \caption[Implementación actual y aporte por módulo]{Implementación actual y aporte previsto por módulo. Elaboración
 propia.}
 \label{tab:estado-impl}
-\begin{tabular}{@{}p{3.4cm}p{5.4cm}p{1.4cm}p{1.4cm}@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xll@{}}
 \toprule
 \textbf{Módulo} & \textbf{Implementación actual} & \textbf{Estado del arte} & \textbf{Aporte propio} \\
 \midrule
-1. Preprocesamiento & Implementado y probado en un escaneo & 20\,\% & 80\,\% \\
+1. Preprocesamiento & Implementado; probado en PL7 y ejecutado sobre los 23 archivos en Khipu & 20\,\% & 80\,\% \\
 2. Semántica & Código de HyperNCD; falta el lector de $S$ & 90\,\% & 10\,\% \\
-3. \emph{Encoder} & Extracción implementada; falta medirla & 60\,\% & 40\,\% \\
+3. \emph{Encoder} & Extracción implementada y probada en PL13; falta medir su calidad & 60\,\% & 40\,\% \\
 4. Fusión & Por implementar & 30\,\% & 70\,\% \\
 5. Salida & mIoU disponible; el resto, por implementar & 30\,\% & 70\,\% \\
 \midrule
 \textbf{Total} & & 230 & 270 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}

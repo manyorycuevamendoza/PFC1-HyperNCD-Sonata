@@ -25,9 +25,52 @@
 % Diagramas de arquitectura
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
+% Estilo de los bloques de comandos: interlineado simple y fondo gris claro.
+\lstdefinestyle{comando}{basicstyle=\linespread{1}\selectfont\footnotesize\ttfamily,
+  columns=fullflexible, keepspaces=true, breaklines=true, breakindent=2em, backgroundcolor=\color{black!4},
+  frame=l, framerule=1.5pt, rulecolor=\color{black!35}, xleftmargin=1.2em,
+  framexleftmargin=0.6em, aboveskip=0.8em, belowskip=0.8em,
+  commentstyle=\color{black!55}, morecomment=[l]{\#}}
 \usepackage{comment}
 % Pagina apaisada para el diagrama de diseno
 \usepackage{pdflscape}
+\usepackage{placeins}
+\usepackage{tabularx}
+% Encabezados sin numero (referencias, indices): sin el espacio superior de 50 pt
+% que trae report, y con el mismo tamano que los capitulos.
+\makeatletter
+\renewcommand\@makeschapterhead[1]{{\parindent\z@\centering\normalfont
+  \interlinepenalty\@M\Large\bfseries #1\par\nobreak\vskip 20\p@}}
+\makeatother
+% Referencias con interlineado reducido.
+\renewcommand{\bibfont}{\setstretch{1.15}}
+\setlength{\bibsep}{5pt}
+% Listas con interlineado reducido y sin espacio extra entre elementos.
+\usepackage{etoolbox}
+% Flotantes: dejar mas espacio para figuras y tablas en paginas con texto y
+% alinear arriba las paginas que solo llevan flotantes.
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}\setcounter{bottomnumber}{2}\setcounter{totalnumber}{5}
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpbot}{0pt plus 1fil}\makeatother
+\AtBeginEnvironment{enumerate}{\setstretch{1}\setlength{\parskip}{0pt}}
+\AtBeginEnvironment{itemize}{\setstretch{1}\setlength{\parskip}{0pt}}
+\usepackage{enumitem}
+% Tablas: menos separacion entre columnas.
+\setlength{\tabcolsep}{4pt}
+\setlist{itemsep=1pt, parsep=0pt, topsep=4pt}
+% Ecuaciones un poco mas pequenas y con menos espacio arriba y abajo.
+\newcommand{\ecuacioncompacta}{\small\setlength{\abovedisplayskip}{5pt plus 2pt}%
+  \setlength{\belowdisplayskip}{5pt plus 2pt}\setlength{\abovedisplayshortskip}{2pt}%
+  \setlength{\belowdisplayshortskip}{3pt plus 1pt}}
+\AtBeginEnvironment{equation}{\ecuacioncompacta}
+\AtBeginEnvironment{equation*}{\ecuacioncompacta}
+\AtBeginEnvironment{align}{\ecuacioncompacta}
+% Pseudocodigo con interlineado simple.
+\AtBeginEnvironment{algorithm}{\setstretch{1}}
+% Indices: sin el espacio superior por defecto de tocloft.
+\setlength{\cftbeforetoctitleskip}{0pt}\setlength{\cftaftertoctitleskip}{20pt}
+\setlength{\cftbeforelottitleskip}{0pt}\setlength{\cftafterlottitleskip}{20pt}
 % Encajar el diagrama en la pagina sin agrandarlo
 \usepackage{adjustbox}
 % Enlace a la seccion donde se explica un termino, con su numero al lado
@@ -117,7 +160,7 @@ arquitectónico}
 \bibliography{referencias} % Recibe las referencias de IEEE
 
 \input{secciones/anexos}
-% El analisis arquitectonico y computacional entra como Anexo D.
+% La arquitectura del encoder de Sonata entra como Anexo C.
 \input{secciones/analisis_arquitectura}
 
 \end{document}

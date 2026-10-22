@@ -197,7 +197,7 @@ corridas.
 (archivo \texttt{PL7\_SCN0001.las}), con los conteos que registra el propio
 preprocesamiento.}
 \label{tab:datos}
-\begin{tabular}{@{}p{4.9cm}p{4.6cm}p{2.5cm}@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.89\hsize}X>{\raggedright\arraybackslash\hsize=1.11\hsize}Xl@{}}
 \toprule
 \textbf{Etapa} & \textbf{Volumen} & \textbf{Recurso} \\
 \midrule
@@ -207,7 +207,7 @@ Voxelización a 5\,cm & 610\,637 representantes (7,46\,\% de los anteriores) & C
 Matriz de salida & $610\,637\times 9$ en precisión simple, 22\,MB & Almacenamiento \\
 Sonata congelado, una pasada con \emph{cache} & Una vez por sección & 1 GPU \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \paragraph*{Hardware}
@@ -226,30 +226,30 @@ en memoria.
 \caption[Requisitos del método y recursos del clúster Khipu]{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
 verificados por los autores sobre los nodos asignados.}
 \label{tab:hardware}
-\begin{tabular}{@{}p{2.4cm}p{5.2cm}p{4.7cm}@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.07\hsize}X>{\raggedright\arraybackslash\hsize=0.93\hsize}X@{}}
 \toprule
 \textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
 \midrule
 GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
-VRAM & Por medir en OE3; cota inferior de 0{,}43\,GB por los pesos del codificador (108{,}46\,M parámetros) & 48\,GB (49\,140\,MiB) \\
+VRAM & Pico medido de 34{,}60\,GB en PL13 (803\,099 puntos); los pesos del codificador (108{,}46\,M parámetros) ocupan 0{,}43\,GB & 48\,GB (49\,140\,MiB) \\
 RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
 Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
 \emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos; driver 610.57.04 \\
 Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
 Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 El nodo \texttt{ag001} ofrece además una A100 con particiones MIG, útiles para
 pruebas cortas. Los nodos de cómputo no tienen salida a internet, así que los
 pesos y los datos se descargan desde el nodo de acceso.
 
-\paragraph*{Costo computacional estimado}
+\paragraph*{Costo computacional medido}
 El codificador de Sonata corre congelado y una sola vez por sección, así que su
-costo no se repite en cada época. Para la sección de referencia, de
-$7{,}2\times10^{5}$ puntos, se estiman segundos a decenas de segundos en la RTX
-A6000, cifra que será sustituida por medición directa.
+costo no se repite en cada época. En el escaneo PL13, con 796\,315 puntos tras
+la rejilla de 2\,cm, la inferencia tardó 13{,}9 segundos en la RTX A6000 y usó
+34{,}60\,GB de memoria de vídeo (Sección~\ref{sec:rama-ssl}).
 
 \paragraph*{Rangos de operación}
 El proyecto declara por adelantado dónde se espera que el método funcione, y OE3

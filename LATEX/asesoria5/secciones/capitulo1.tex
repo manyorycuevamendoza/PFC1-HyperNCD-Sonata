@@ -17,13 +17,14 @@ con el de publicaciones porque un mismo estudio puede dar origen a más de uno,
 según cuántos de sus resultados se estén explotando. De HyperNCD nacen dos, de
 BRDL tres, y de Sonata y de PTv3 uno cada uno.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \small
 \caption[Publicaciones revisadas y su aporte a cada objetivo]{Correspondencia entre las publicaciones revisadas, lo que aportan y el
 objetivo específico con el que se identifican.}
 \label{tab:mapa-estudios}
-\begin{tabular}{@{}p{4.0cm}p{4.5cm}p{1.8cm}p{1.9cm}@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.88\hsize}X>{\raggedright\arraybackslash\hsize=1.12\hsize}Xll@{}}
 \hline
 \textbf{Publicación} & \textbf{Qué aporta a la tesis} & \textbf{Aportes} &
 \textbf{Objetivo} \\
@@ -41,7 +42,7 @@ Su et al. (2025), BRDL \newline (Sección~\ref{sec:brdl})
 & El procedimiento de calibración bajo desbalance de clases
 & A5, A6, A7 & OE2 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 % =====================================================================
@@ -68,22 +69,21 @@ descriptor geométrico $f_{\text{geo}}$ calculado con una fórmula fija.
 \emph{Qué resultado obtuvo.} Sobre SemanticKITTI obtiene entre 11,8 y 47,5 de
 mIoU en clases novedosas según la partición, frente a 49,8 del equivalente
 supervisado; sobre SemanticPOSS, entre 22,3 y 47,2 frente a
-50,6.\footnote{Tablas~1 y~2 de \cite{zhang2026hyperncd}. La fila \emph{Full} de
-cada tabla es el modelo supervisado y su valor se lee en la columna \emph{All}.}
+50,6 \cite[Tablas~1 y~2]{zhang2026hyperncd}.
 Más importante que el agregado es su estudio de ablación, que apaga una pieza a
 la vez para ver cuánto aporta cada una. Sobre la partición~0 de SemanticPOSS,
 partiendo de una red base que rinde 23,2 de mIoU, el prototipo geométrico aporta
 $+4{,}2$ puntos y el hipergrafo $+9{,}6$ sobre esa misma base
-(Tabla~\ref{tab:ablacion-hyperncd}).\footnote{Tabla~3 de
-\cite{zhang2026hyperncd}, columna \emph{Overall Avg}.}
+(Tabla~\ref{tab:ablacion-hyperncd}).
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \caption[Ablación de HyperNCD en SemanticPOSS]{Estudio de ablación de HyperNCD sobre la partición~0 de SemanticPOSS,
 según la Tabla~3 de \cite{zhang2026hyperncd}. Es la evidencia cuantitativa que
 sostiene la hipótesis de esta tesis.}
 \label{tab:ablacion-hyperncd}
-\begin{tabular}{@{}p{6.3cm}cc@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xcc@{}}
 \hline
 Configuración & mIoU promedio & Ganancia sobre la base \\
 \hline
@@ -93,7 +93,7 @@ Solo hipergrafo & 32,8 & $+9{,}6$ \\
 Prototipo geométrico e hipergrafo & 34,2 & $+11{,}0$ \\
 Método completo, con hiperaristas dinámicas & 36,5 & $+13{,}3$ \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \emph{Por qué sirve.} La ablación deja al descubierto un desequilibrio que los
@@ -147,10 +147,11 @@ codificador no puede cambiar, lo que se mide es la calidad de la representación
 nada más. Sobre ScanNet el desempeño pasa de 5,6 a 72,5 de mIoU
 (Tabla~\ref{tab:linprobe}); en S3DIS Área~5 alcanza 72,3 con clasificador lineal,
 prácticamente a la par de una red supervisada completa, que obtiene
-72,4.\footnote{Tabla~5 de \cite{wu2025sonata}, sobre eficiencia de parámetros.}
+72,4.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \caption[\emph{Linear probing} sobre ScanNet]{\emph{Linear probing} sobre ScanNet, conjunto de validación, según la
 Tabla~5 de \cite{wu2025sonata}. Todos los métodos congelan el codificador y
 entrenan una única capa lineal, así que la columna mide calidad de la
@@ -190,7 +191,7 @@ declarado.
 \item \textit{Régimen congelado en exteriores.} En escaneo láser urbano el
 \emph{linear probing} queda por debajo de una PTv3 supervisada, con 62,0 frente a
 69,1 de mIoU en SemanticKITTI, aunque con ajuste fino completo Sonata alcanza
-72,6 y la supera.\footnote{Tabla~8 de \cite{wu2025sonata}.} La desventaja es del
+72,6 y la supera \cite[Tabla~8]{wu2025sonata}. La desventaja es del
 régimen congelado y no de la representación, y el régimen congelado es
 exactamente el que adopta este proyecto.
 
@@ -226,15 +227,16 @@ Hilbert y sus dos variantes transpuestas, y alterna entre ellos.
 relativa ocupaban el 54\,\% del tiempo de paso hacia adelante de la versión
 anterior, y PTv3 elimina ambas. Su tabla de eficiencia, medida sobre nuScenes con
 lote 1 en una sola RTX 4090, da los valores de la
-Tabla~\ref{tab:eficiencia-ptv3}.\footnote{Tabla~1 de \cite{wu2024ptv3}.}
+Tabla~\ref{tab:eficiencia-ptv3}.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \caption[Eficiencia de PTv3 frente a la red dispersa]{Eficiencia de PTv3 frente a la red dispersa con la que tendrá que
 convivir en el modelo híbrido, según la Tabla~1 de \cite{wu2024ptv3}. Medido
 sobre nuScenes, lote de tamaño 1, una sola RTX 4090.}
 \label{tab:eficiencia-ptv3}
-\begin{tabular}{@{}p{4.2cm}rrrrr@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrrr@{}}
 \hline
  & & \multicolumn{2}{c}{Entrenamiento} & \multicolumn{2}{c}{Inferencia} \\
 Método & Parám. & Latencia & Memoria & Latencia & Memoria \\
@@ -244,7 +246,7 @@ PTv2, parche 16 & 12,8\,M & 213\,ms & 10,3\,G & 146\,ms & 12,3\,G \\
 \textbf{PTv3, parche 1024} & 46,2\,M & \textbf{119\,ms} & \textbf{3,3\,G} &
 \textbf{44\,ms} & \textbf{1,2\,G} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \emph{Por qué sirve.} Porque aquí aparece el problema que este proyecto debe
@@ -263,7 +265,7 @@ salida de una rama a la otra exige absorber ese desajuste de forma explícita.
 Se suma una segunda incompatibilidad, de ingeniería y no de arquitectura, que la
 inspección del código de ambos grupos deja en evidencia que las dos ramas exigen
 \textbf{pilas de dependencias mutuamente excluyentes}, MinkowskiEngine contra
-CUDA 11.3 y PTv3 contra CUDA 12.4. Integrar las dos implementaciones de
+CUDA 11.3 (en Khipu se compiló con 11.8) y PTv3 contra CUDA 12.4. Integrar las dos implementaciones de
 referencia en un único proceso no es posible sin renunciar a una de las dos, de
 modo que el punto de fusión no puede ser un objeto en memoria compartido.
 
@@ -299,29 +301,26 @@ están.
 \emph{Qué resultado obtuvo.} Interesan tres bloques. Primero, el barrido de un
 solo hiperparámetro. Al mover $\lambda_2$ entre $0{,}1$ y $1{,}0$ el mIoU recorre
 el intervalo de 45,1 a 46,28, con el máximo en
-$\lambda_2=0{,}2$.\footnote{Tabla~3 de \cite{su2025brdl}, S3DIS, partición S0,
-con $|\mathcal{C}_{\text{novel}}|=1$.} Segundo, la grilla conjunta de dos
+$\lambda_2=0{,}2$ \cite[Tabla~3]{su2025brdl}. Segundo, la grilla conjunta de dos
 hiperparámetros acoplados. Al barrer $\lambda_2$ y $\lambda_3$ a la vez el máximo
 sube a 46,58 en la combinación $(0{,}2;\,0{,}5)$ y el mínimo se mantiene en 45,1,
-con lo que toda la grilla cabe en 1,48 puntos de mIoU.\footnote{Tabla~4 de
-\cite{su2025brdl}.} Tercero, la ablación de las dos estrategias
-(Tabla~\ref{tab:ablacion-brdl}).\footnote{Tabla~6 de \cite{su2025brdl}, S3DIS,
-partición S0, con $|\mathcal{C}_{\text{novel}}|=3$, columna \emph{all}.} A ello
+con lo que toda la grilla cabe en 1,48 puntos de mIoU \cite[Tabla~4]{su2025brdl}. Tercero, la ablación de las dos estrategias
+(Tabla~\ref{tab:ablacion-brdl}). A ello
 se suman dos datos que el artículo publica sin comentar. En el entrenamiento
 multi-paso una clase se queda en $0{,}00$ de mIoU en los cinco pasos y para los
-dos métodos comparados, y otra cae de 34,42 a $0{,}07$;\footnote{Tabla~5 de
-\cite{su2025brdl}.} y el costo incremental de la modificación se reporta de forma
+dos métodos comparados, y otra cae de 34,42 a $0{,}07$ \cite[Tabla~5]{su2025brdl}; y el costo incremental de la modificación se reporta de forma
 explícita, con 142 a 144 segundos por época y 1608 a 1614\,KB de
-memoria.\footnote{Tabla~8 de \cite{su2025brdl}.}
+memoria \cite[Tabla~8]{su2025brdl}.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \caption[Ablación de BRDL en S3DIS]{Ablación de las dos estrategias de BRDL sobre S3DIS, partición S0,
 según la Tabla~6 de \cite{su2025brdl}. La fila intermedia es la que importa para
 esta tesis, y es que una de las dos estrategias, aplicada por separado, deja el resultado
 por debajo de no aplicar ninguna.}
 \label{tab:ablacion-brdl}
-\begin{tabular}{@{}p{6.3cm}cc@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xcc@{}}
 \hline
 Configuración & mIoU (\emph{all}) & Diferencia \\
 \hline
@@ -330,7 +329,7 @@ Solo una de las dos estrategias & 44,90 & $-0{,}29$ \\
 Solo la otra estrategia & 46,83 & $+1{,}64$ \\
 Las dos estrategias juntas & 47,26 & $+2{,}07$ \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \emph{Por qué sirve.} Por tres razones. La primera es metodológica. Es el único
@@ -424,7 +423,8 @@ en un mismo proceso, y la repetición del costo del codificador en cada época, 
 desaparece. Incluye la formulación propia de una cota de aceleración que delimita
 hasta dónde vale la pena distribuir el cacheo. \emph{Resultado verificable:} el
 \emph{cache} persistente por sección, legible desde los dos entornos, y la cota
-de aceleración.
+de aceleración. El \emph{cache} ya se generó para el escaneo PL13
+(Sección~\ref{sec:rama-ssl}); falta que la rama de HyperNCD lo lea.
 \end{enumerate}
 
 \medskip
@@ -495,13 +495,14 @@ verificable:} $G$ formulada, la medición intermedia y las proyecciones PCA de l
 descriptores.
 \end{enumerate}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
+\setstretch{1}\small
 \small
 \caption[Aportes del proyecto]{Inventario de los siete aportes del proyecto. Cada uno nace de un estudio
 revisado y termina en un resultado propio que se puede verificar.}
 \label{tab:obj-vs-revision}
-\begin{tabular}{@{}p{0.7cm}p{4.3cm}p{2.8cm}p{4.7cm}@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.90\hsize}X>{\raggedright\arraybackslash\hsize=0.83\hsize}X>{\raggedright\arraybackslash\hsize=1.27\hsize}X@{}}
 \hline
  & \textbf{Aporte} & \textbf{Nace de} & \textbf{Resultado verificable} \\
 \hline
@@ -532,7 +533,7 @@ A3 & Brecha cerrada $G$ y atribución por etapas
    & Sonata (\S\ref{sec:sonata})
    & $G$ formulada, medición intermedia, PCA \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 El aporte al estado del arte no es una arquitectura nueva. Es establecer si

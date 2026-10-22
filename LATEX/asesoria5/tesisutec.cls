@@ -121,7 +121,7 @@
     \else
     \@restonecolfalse
     \fi
-    \chapter*{\vspace{-2.0cm}\begin{center}\Large{\textbf{ÍNDICE DE FIGURAS}}\end{center}
+    \chapter*{ÍNDICE DE FIGURAS
       \@mkboth{\MakeUppercase\listfigurename}
               {\MakeUppercase\listfigurename}}
     \@starttoc{lof}
