@@ -15,9 +15,11 @@ describen el procedimiento previsto.
 \section{Diagrama de Flujo General}
 \label{sec:diagrama-flujo}
 
-La Figura~\ref{fig:flujo} muestra los pasos del proyecto en el orden en que se
-ejecutan, de P0 a P5. Las secciones se procesan una a una, y en cada sección
-los pasos P2 y P3 se repiten tres veces (Sección~\ref{sec:repeticiones}).
+La Figura~\ref{fig:flujo} muestra las etapas del proyecto en el orden en que se
+ejecutan, de E0 a E5. La letra E indica etapa, para distinguirlas de los pasos
+internos de cada módulo, que se numeran Paso~1, Paso~2 y siguientes en las
+secciones de cada unidad. Las secciones se procesan una a una, y en cada sección
+las etapas E2 y E3 se repiten tres veces (Sección~\ref{sec:repeticiones}).
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
@@ -36,15 +38,15 @@ los pasos P2 y P3 se repiten tres veces (Sección~\ref{sec:repeticiones}).
   et/.style={font=\tiny, text=black!70}
 ]
 \node[term] (ini) {Inicio};
-\node[dato, below=of ini] (p0) {\textbf{P0.} 23 archivos LAS del levantamiento};
-\node[proc, below=of p0] (p1) {\textbf{P1.} Preprocesar la sección: matriz $S$};
-\node[cong, below=of p1] (p2) {\textbf{P2.} Sonata congelado sobre $S$};
+\node[dato, below=of ini] (p0) {\textbf{E0.} 23 archivos LAS del levantamiento};
+\node[proc, below=of p0] (p1) {\textbf{E1.} Preprocesar la sección y obtener la matriz $S$};
+\node[cong, below=of p1] (p2) {\textbf{E2.} Sonata congelado sobre $S$};
 \node[disco, below=of p2] (c) {$f_{\mathrm{ssl}}$ en disco (\texttt{.npz})};
-\node[proc, below=of c] (p3) {\textbf{P3.} Fusión y entrenamiento de HyperNCD};
+\node[proc, below=of c] (p3) {\textbf{E3.} Fusión y entrenamiento de HyperNCD};
 \node[dec, below=of p3] (d1) {¿3 repeticiones?};
 \node[dec, below=of d1] (d2) {¿Quedan secciones?};
-\node[proc, below=of d2] (p4) {\textbf{P4.} Métricas y análisis de dominancia};
-\node[dato, below=of p4] (p5) {\textbf{P5.} $\Delta$mIoU, brecha $G$ y ablación};
+\node[proc, below=of d2] (p4) {\textbf{E4.} Métricas y análisis de dominancia};
+\node[dato, below=of p4] (p5) {\textbf{E5.} $\Delta$mIoU, brecha $G$ y ablación};
 \node[term, below=of p5] (fin) {Fin};
 \foreach \a/\b in {ini/p0,p0/p1,p1/p2,p2/c,c/p3,p3/d1,p4/p5,p5/fin} \draw[fl] (\a) -- (\b);
 \draw[fl] (d1) -- node[et, right, pos=0.4]{sí} (d2);
@@ -60,7 +62,7 @@ El flujo muestra tres elementos que la arquitectura no representa. El primero es
 la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine CUDA 11.x (11.8 en el
 clúster), que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
 un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
-asimetría de frecuencia, porque P2 se ejecuta una vez por sección y P3 en cada época,
+asimetría de frecuencia, porque E2 se ejecuta una vez por sección y E3 en cada época,
 lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
 de repeticiones y el de recorrido de secciones.
 
@@ -932,29 +934,29 @@ procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
 \label{sec:procedimiento}
 
 El procedimiento se ejecuta en seis pasos reproducibles, correspondientes a los
-rótulos P0 a P5 de la Figura~\ref{fig:flujo}. Los dos primeros son insumo de la
+rótulos E0 a E5 de la Figura~\ref{fig:flujo}. Los dos primeros son insumo de la
 revisión crítica y fijan la línea base; los restantes corresponden a los
 objetivos específicos:
 
 \begin{enumerate}\setlength{\itemsep}{2pt}
-\item \textbf{P0. Recepción.} Nube TLS con al menos cuatro clases base anotadas
+\item \textbf{E0. Recepción.} Nube TLS con al menos cuatro clases base anotadas
 en la sección de referencia, requisito mínimo de la tarea NCD.
-\item \textbf{P1. Preparación y línea base.} Preprocesamiento de cada sección
+\item \textbf{E1. Preparación y línea base.} Preprocesamiento de cada sección
 (centrado, SOR, voxelización a 5\,cm y normales); ejecución de HyperNCD sin
 modificaciones con tres semillas distintas para fijar el punto de partida contra
 el que se compara el híbrido.
-\item \textbf{P2. Inferencia congelada (OE1).} Ejecución del codificador sobre
+\item \textbf{E2. Inferencia congelada (OE1).} Ejecución del codificador sobre
 cada sección, con \emph{cache} de características y \emph{up-cast} para
 conciliar la resolución del \emph{encoder} PTv3 con la rejilla de Minkowski, y
 escritura de $f_{\mathrm{ssl}}$ en disco.
-\item \textbf{P3. Fusión y entrenamiento (OE1).} Sustitución del descriptor
+\item \textbf{E3. Fusión y entrenamiento (OE1).} Sustitución del descriptor
 según la Ec.~\eqref{eq:hibrido} y verificación de funcionamiento de extremo a
 extremo sobre una sección de control. Se comprueba que el mIoU de las clases
 conocidas no caiga respecto de la línea base.
-\item \textbf{P4. Calibración (OE2).} Búsqueda por grilla acotada sobre
+\item \textbf{E4. Calibración (OE2).} Búsqueda por grilla acotada sobre
 $\alpha$, $M$ y $\epsilon$ en la sección de referencia; la configuración
 ganadora se congela y se aplica sin reajuste al resto de secciones.
-\item \textbf{P5. Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
+\item \textbf{E5. Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
 (Ec.~\eqref{eq:delta}), de la brecha cerrada $G$ (Ec.~\eqref{eq:G}) y del
 análisis de dominancia (Ec.~\eqref{eq:dominante}), más la ablación de las tres
 variantes del descriptor: la línea base
@@ -978,7 +980,7 @@ media y la desviación entre repeticiones. La razón no es solo la variabilidad
 del entrenamiento. El submuestreo que precede al codificador elige al azar el
 punto representante de cada vóxel, por lo que dos ejecuciones sobre la misma
 sección no producen la misma $f_{\mathrm{ssl}}$. Las tres repeticiones abarcan
-por ello el procedimiento completo, P2 y P3, y no solo el entrenamiento.
+por ello el procedimiento completo, E2 y E3, y no solo el entrenamiento.
 
 Como las secciones son independientes, pueden repartirse entre varias GPU. Con
 $n_{\mathrm{gpu}}$ unidades y $n_{\mathrm{sec}}$ secciones, la aceleración frente
