@@ -53,7 +53,7 @@
   \adjustbox{max width=\linewidth}{\enlace{sec:fsem}{$f_{\mathrm{sem}}(x^i)\in\mathbb{R}^{96}$}}
 \end{minipage}};
 
-\node[mod, draw=cEnc, fill=cEnc!6, text width=4.3cm, anchor=north] (M3) at ($(M1.south)+(1.25,-1.75)$)
+\node[mod, draw=cEnc, fill=cEnc!6, text width=6.4cm, anchor=north] (M3) at ($(M1.south)+(0.2,-1.75)$)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-sonata-paper]{\textcolor{cEnc}{Sonata}}}\\[4pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\w in {0/1.15, 1/0.97, 2/0.79, 3/0.61, 4/0.43}
@@ -65,7 +65,7 @@
     \end{scope}}\\[5pt]
   \begin{minipage}{\linewidth}\centering\scriptsize
   \adjustbox{max width=\linewidth}{\enlaceec{eq:embedding}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:atencion}{$\mathrm{Atn}(\mathbf{H}_p)=\mathrm{softmax}\!\left(\frac{\mathbf{H}_pW_Q(\mathbf{H}_pW_K)^{\top}}{\sqrt{d}}\right)\mathbf{H}_pW_V$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:atencion}{$\mathrm{Atn}(\mathbf{H}_p)=\mathrm{softmax}\big(\mathbf{H}_pW_Q(\mathbf{H}_pW_K)^{\top}\!/\sqrt{d}\big)\,\mathbf{H}_pW_V$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:upcast}{$\tilde{f}_j=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:inverso}{$f_{\mathrm{ssl}}(x^i)=\tilde{f}_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:probe}{$\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right)$}}
