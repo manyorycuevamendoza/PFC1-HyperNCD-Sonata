@@ -64,7 +64,10 @@
         \foreach \s in {1,-1}{ \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a+40*\s}:0.08); \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a-40*\s}:0.08);}}
     \end{scope}}\\[5pt]
   \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{\enlace{sec:fssl}{$f_{\mathrm{ssl}}(x^i)\in\mathbb{R}^{1088}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:embedding}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:atencion}{$\mathrm{Atn}(\mathbf{H}_p)=\mathrm{softmax}\!\left(\frac{\mathbf{H}_pW_Q(\mathbf{H}_pW_K)^{\top}}{\sqrt{d}}\right)\mathbf{H}_pW_V$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:upcast}{$\tilde{f}_j=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:inverso}{$f_{\mathrm{ssl}}(x^i)=\tilde{f}_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:probe}{$\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right)$}}
 \end{minipage}};
 
@@ -108,9 +111,9 @@
     \fill[cEnc!25, draw=cEnc!60, rotate=-15] (1.42,0.52) ellipse (0.74 and 0.32);
     \foreach \x/\y in {0.25/0.20, 0.72/0.46, 1.05/0.14, 1.55/0.40, 1.98/0.12, 1.62/0.70}
       \fill[black!75] (\x,\y) circle (0.05);\end{scope}}}\\[4pt]
-  \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:coseno}{$S_s=\frac{\langle F^{(i)},F^{(j)}\rangle}{\lVert F^{(i)}\rVert\,\lVert F^{(j)}\rVert}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:gauss}{$S_g=\exp\left(-\lVert g^{(i)}-g^{(j)}\rVert^{2}/\tau\right)$}}\end{minipage}};
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:gauss}{$S_g=\exp\left(-\lVert g^{(i)}-g^{(j)}\rVert^{2}/\tau\right)$}}\\[4pt]
+  \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\end{minipage}};
 
 \node[tarj] (T4) at ($(T3.south)+(0,-0.8)$)
  {\enlace{sec:pseudoetq}{\textbf{\textcircled{\scriptsize 4} Pseudo-etiquetas}}\\[3pt]
@@ -121,9 +124,9 @@
     \draw[-{Latex[length=1.3mm]}, black!55] (0.95,0.28) -- (1.4,0.28);
     \foreach \i/\c in {0/cSem, 1/cEnc, 2/cSal}
       \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:suavizado}{$\tilde{y}_i=(1-\epsilon)\,e_{y_i}+\epsilon/|\mathcal{C}_k|$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-costo}{$Q_{ik}=\mathrm{softmax}(o_i/0{,}1)_k^{1/\epsilon_{\mathrm{sk}}}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:suavizado}{$\tilde{y}_i=(1-\epsilon)\,e_{y_i}+\epsilon/|\mathcal{C}_k|$}}\end{minipage}};
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\end{minipage}};
 
 \begin{pgfonlayer}{background}
 \node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, very thick, fill=cFus!5,
@@ -150,7 +153,7 @@
   \begin{minipage}{\linewidth}\centering\scriptsize
   \adjustbox{max width=\linewidth}{\enlaceec{eq:iou}{$\mathrm{IoU}_c=\frac{TP_c}{TP_c+FP_c+FN_c}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:miou}{$\mathrm{mIoU}(\mathcal{S})=\frac{1}{|\mathcal{S}|}\sum_{c\in\mathcal{S}}\mathrm{IoU}_c$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:hungaro}{$\sigma^{*}$}\quad\enlaceec{eq:dominante}{$c^{*}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:dominante}{$c^{*}$}\quad\enlaceec{eq:hungaro}{$\sigma^{*}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:ari}{$\mathrm{ARI}$}\quad\enlaceec{eq:nmi}{$\mathrm{NMI}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:delta}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}=\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:G}{$G=\frac{\Delta\mathrm{mIoU}^{\mathrm{novel}}}{\mathrm{mIoU}^{\mathrm{known}}_{\mathrm{base}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}$}}

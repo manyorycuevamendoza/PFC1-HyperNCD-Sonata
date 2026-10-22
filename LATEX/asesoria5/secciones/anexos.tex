@@ -106,6 +106,16 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:fgeo}{$f_{\mathrm{geo}}$} & Descriptor geométrico calculado a mano & 6 dimensiones \\
 \leavevmode\hypertarget{nom:eig}{$\lambda_1,\lambda_2,\lambda_3$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Autovalores de la covarianza de una región, de mayor a menor} \\
 \leavevmode\hypertarget{nom:fssl}{$f_{\mathrm{ssl}}$} & Descriptor auto-supervisado (Sonata, congelado) & 1088 dimensiones \\
+\leavevmode\hypertarget{nom:xin}{$\mathbf{x}_i$} & Los nueve valores del punto $i$ que entran al codificador & Posición, color y normal \\
+\leavevmode\hypertarget{nom:h}{$\mathbf{h}_i^{(s)}$} & Características del punto $i$ en la etapa $s$ del codificador & 48 a 512 canales \\
+\leavevmode\hypertarget{nom:We}{$W_e,\;b_e$} & Pesos y sesgo del \emph{embedding} & $48\times9$ y 48 \\
+\leavevmode\hypertarget{nom:Hp}{$\mathbf{H}_p$} & Características de los puntos de un parche & $1024$ filas \\
+\leavevmode\hypertarget{nom:WQKV}{$W_Q,\;W_K,\;W_V$} & Matrices aprendidas de la atención & Ec.~\eqref{eq:atencion} \\
+\leavevmode\hypertarget{nom:dcab}{$d$} & Canales por cabeza de atención & 16 \\
+\leavevmode\hypertarget{nom:Wp}{$W_p$} & Pesos del \emph{pooling} entre etapas & Ec.~\eqref{eq:pooling} \\
+\leavevmode\hypertarget{nom:ftil}{$\tilde{f}_j$} & Descriptor de 1088 valores del punto $j$ de la rejilla & Ec.~\eqref{eq:upcast} \\
+\leavevmode\hypertarget{nom:pis}{$\pi_s(j)$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Celda de la etapa $s$ que contiene al punto $j$} \\
+\leavevmode\hypertarget{nom:inv}{$\mathrm{inv}(i)$} & Índice inverso: celda en la que cayó el punto $i$ de $S$ & Ec.~\eqref{eq:inverso} \\
 \leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Concatenación: el vector $b$ colocado a continuación del vector $a$} \\
 \leavevmode\hypertarget{nom:Fi}{$F_i$} & Descriptor compuesto del punto $i$ & 1184 dimensiones \\
 \leavevmode\hypertarget{nom:K}{$K$} & Número de prototipos & Igual al de clases \\

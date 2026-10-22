@@ -366,6 +366,48 @@ transformador combina la información de los elementos de un conjunto. Es el
 mecanismo que permite a PTv3~\cite{wu2024ptv3}, la red del codificador, aplicar
  atención con costo lineal.
 
+\subsection{Codificador PTv3}
+\label{sec:codificador-ptv3}
+
+El codificador de Sonata es un PTv3~\cite{wu2024ptv3} que aplica cuatro
+operaciones; el número de etapas, bloques y canales de cada una está en el
+Anexo~C (Figura~\ref{fig:arq-sonata} y Tabla~\ref{tab:params-sonata}). Primero,
+un \emph{embedding} convierte los nueve valores $\nom{xin}{\mathbf{x}_i}$ de cada
+punto en un vector de 48 características,
+\begin{equation}
+\nom{h}{\mathbf{h}_i^{(0)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\nom{We}{W_e}\,\nom{xin}{\mathbf{x}_i}+\nom{We}{b_e}\right)\right),
+\label{eq:embedding}
+\end{equation}
+donde $W_e$ es una matriz aprendida de $48\times9$, $b_e$ un sesgo, LN una
+normalización por capa y GELU una activación no lineal. Segundo, cada bloque
+actualiza las características de los puntos con tres sumas residuales,
+\begin{equation}
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{CPE}(\mathbf{h}),\qquad
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{Atn}\!\left(\mathrm{LN}(\mathbf{h})\right),\qquad
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{MLP}\!\left(\mathrm{LN}(\mathbf{h})\right),
+\label{eq:bloque}
+\end{equation}
+donde CPE es una convolución dispersa que codifica la posición y MLP dos capas
+lineales. La atención se calcula dentro de cada parche
+(Sección~\ref{sec:serializacion}): si $\nom{Hp}{\mathbf{H}_p}$ reúne las
+características de los 1024 puntos de un parche,
+\begin{equation}
+\mathrm{Atn}(\nom{Hp}{\mathbf{H}_p})=\mathrm{softmax}\!\left(\frac{(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_Q})(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_K})^{\nom{T}{\top}}}{\sqrt{\nom{dcab}{d}}}\right)\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_V},
+\label{eq:atencion}
+\end{equation}
+con $W_Q$, $W_K$ y $W_V$ matrices aprendidas y $d$ el número de canales por
+cabeza; cada cabeza repite el cálculo con sus propias matrices. Cada fila de la
+matriz softmax indica cuánto atiende un punto a cada uno de los demás del
+parche. Tercero, entre una etapa y la siguiente, el \emph{pooling} duplica el
+lado de la celda y reúne los puntos que caen en la misma,
+\begin{equation}
+\nom{h}{\mathbf{h}_c^{(s+1)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\max_{i\in c}\,\nom{Wp}{W_p}\,\nom{h}{\mathbf{h}_i^{(s)}}\right)\right),
+\label{eq:pooling}
+\end{equation}
+donde $c$ es una celda de la etapa $s+1$, $W_p$ sube el número de canales y el
+máximo se toma canal a canal. Cuarto, el \emph{up-cast} reúne las tres últimas
+etapas (Sección~\ref{sec:upcast}).
+
 \subsection{Rejilla Dispersa y Tensor Disperso}
 \label{sec:rejilla}
 \label{sec:tensor}
@@ -431,8 +473,8 @@ codificador. El índice inverso anota, para cada punto de la entrada, la celda e
 la que cayó.
 
 Con el índice inverso, el descriptor de cada celda se
-devuelve a todos los puntos de $S$ que cayeron en ella, de modo que
-$f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos que entregó el
+devuelve a todos los puntos de $S$ que cayeron en ella (Ec.~\eqref{eq:inverso}), de
+modo que $f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos que entregó el
 Módulo~1. Como la celda de 2\,cm es menor que el vóxel de 5\,cm del
 preprocesamiento, casi todos los puntos quedan solos en su celda.
 
@@ -444,7 +486,20 @@ la resolución de entrada reutilizando los índices de agrupamiento que el propi
 submuestreo registró. Es necesaria porque el codificador entrega su salida
 submuestreada varias veces. En los dos primeros pasos, desde la etapa más gruesa,
 las características se concatenan con las de la etapa anterior, la 5 con la 4 y
-el resultado con la 3, y en los restantes solo se copian, lo que da las 1088 dimensiones de $f_{\mathrm{ssl}}$. 
+el resultado con la 3, y en los restantes solo se copian, lo que da las 1088 dimensiones de $f_{\mathrm{ssl}}$:
+\begin{equation}
+\nom{ftil}{\tilde{f}_j}=\left[\,\nom{h}{\mathbf{h}^{(3)}}_{\nom{pis}{\pi_3(j)}}\,;\,\nom{h}{\mathbf{h}^{(4)}}_{\nom{pis}{\pi_4(j)}}\,;\,\nom{h}{\mathbf{h}^{(5)}}_{\nom{pis}{\pi_5(j)}}\,\right]\in\mathbb{R}^{192+384+512},
+\label{eq:upcast}
+\end{equation}
+donde $j$ es un punto de la rejilla de 2\,cm y $\pi_s(j)$ la celda de la etapa
+$s$ que lo contiene, obtenida encadenando los índices del submuestreo.
+Por último, con el índice inverso (Sección~\ref{sec:gridsample}) cada punto de
+$S$ recibe el descriptor de la celda en la que cayó,
+\begin{equation}
+\nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})=\nom{ftil}{\tilde{f}}_{\nom{inv}{\mathrm{inv}(i)}},
+\label{eq:inverso}
+\end{equation}
+donde $\mathrm{inv}(i)$ es esa celda. 
 
 \subsection{Caja de Sección y Corte}
 \label{sec:caja}
@@ -694,6 +749,7 @@ al que se le quitó el decodificador, porque este favorecía el atajo geométric
 características se devuelven a la resolución de las etapas anteriores mediante
 el \emph{up-cast} (Sección~\ref{sec:upcast}).
 \end{itemize}
+
 
 % =====================================================================
 \section{Métricas de Evaluación de Modelos}

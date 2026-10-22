@@ -669,7 +669,7 @@ de modo que el centro de la caja en $x$ e $y$ y el punto más bajo en $z$ quedan
 en el origen. Después la muestrea con una rejilla de 2\,cm, según la
 Sección~\ref{sec:gridsample}, conservando un punto elegido al azar por celda, y guarda un índice inverso que dice a qué celda
 pertenece cada punto de entrada. Ese índice permite devolver más adelante los
-descriptores a cada punto de $S$. Por último divide el color entre 255. En la
+descriptores a cada punto de $S$ (Ec.~\eqref{eq:inverso}). Por último divide el color entre 255. En la
 prueba quedan 796\,315 de los 803\,099 puntos, el 99{,}2\,\%. La diferencia es
 tan pequeña que a simple vista no se distingue, por eso este paso no lleva
 imagen.
@@ -692,29 +692,49 @@ imagen.
 \FloatBarrier
 \subsubsection*{Paso 4. Inferencia}
 
-El programa pasa la nube preparada por el codificador PTv3. Como el codificador
-es jerárquico, su salida queda a una resolución más gruesa que la entrada. El
-programa la devuelve a la resolución de la rejilla siguiendo la
-Sección~\ref{sec:upcast}, y así cada punto queda con un vector de 1088
-dimensiones. En la prueba la inferencia tardó 13{,}9 segundos, procesó 57\,397
-puntos por segundo y usó un máximo de 34{,}60\,GB de memoria de la GPU. La
-Figura~\ref{fig:visor-pl13-etapas} muestra el resultado. Los 1088 valores de
-cada punto se proyectan sobre sus tres componentes principales y se usan como
-color, de modo que un mismo color indica descriptores parecidos. Cada panel dibuja 100\,000 puntos al azar, por eso la reducción de la Unidad~1 no se aprecia entre los dos primeros; se aprecia en la Figura~\ref{fig:m1-paso4}.
+El programa pasa la nube preparada por el codificador PTv3 de Sonata, sin
+calcular gradientes. Las operaciones y sus fórmulas están en la
+Sección~\ref{sec:codificador-ptv3}, y el detalle de cada etapa en el Anexo~C.
+La inferencia tiene cuatro subpasos, que resume la Figura~\ref{fig:m3-inferencia}.
+\begin{enumerate}
+\item \textbf{\emph{Embedding}.} Cada uno de los 796\,315 puntos pasa de 9 a 48
+valores (Ec.~\eqref{eq:embedding}).
+\item \textbf{Serialización y parches.} Los puntos se ordenan con curvas de
+orden Z y de Hilbert y la secuencia se corta en parches de 1024 puntos
+(Sección~\ref{sec:serializacion}).
+\item \textbf{Etapas.} Cinco etapas con 3, 3, 3, 12 y 3 bloques
+(Ec.~\eqref{eq:bloque}). En cada bloque, cada punto atiende a los demás de su
+parche (Ec.~\eqref{eq:atencion}). Entre etapas, el \emph{pooling}
+(Ec.~\eqref{eq:pooling}) lleva la celda de 2 a 4, 8, 16 y 32\,cm y los canales
+de 48 a 96, 192, 384 y 512.
+\item \textbf{\emph{Up-cast}.} Se concatenan las etapas 3, 4 y 5 y se devuelven a
+la rejilla de 2\,cm (Ec.~\eqref{eq:upcast}): cada punto queda con 1088 valores.
+\end{enumerate}
+La inferencia corrió en una GPU RTX~A6000 de 48\,GB, sin FlashAttention. Dentro
+de la GPU los parches y las cabezas de atención se calculan a la vez; las
+etapas, en cambio, van en orden, porque cada una usa la salida de la anterior.
+Tardó 13{,}9 segundos, procesó 57\,397 puntos por segundo y usó un máximo de
+34{,}60\,GB de memoria. La Figura~\ref{fig:visor-pl13-etapas} muestra el
+resultado: los 1088 valores de cada punto se proyectan sobre sus tres
+componentes principales y se usan como color, de modo que un mismo color indica
+descriptores parecidos. Cada panel dibuja 100\,000 puntos al azar, por eso la
+reducción de la Unidad~1 no se aprecia entre los dos primeros; se aprecia en la
+Figura~\ref{fig:m1-paso4}.
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
-\node[fdato] (a) {796\,315 puntos preparados};
-\node[fop, below=of a] (b) {Codificador PTv3 congelado, sin calcular gradientes};
-\node[fop, below=of b] (c) {Salida a la resolución más gruesa del codificador};
-\node[fop, below=of c] (d) {Up-cast: concatenar las etapas 5, 4 y 3 ($512+384+192$) y copiar a las etapas 2 y 1 por índice};
-\node[fdato, below=of d] (e) {$f_{\mathrm{ssl}}$: $796\,315\times 1088$};
-\foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
+\node[fdato] (a) {796\,315 puntos $\times$ 9 valores};
+\node[fop, below=of a] (b) {\textbf{4.1 Embedding:} 9 $\rightarrow$ 48 valores (Ec.~\ref{eq:embedding})};
+\node[fop, below=of b] (c) {\textbf{4.2 Serialización:} orden Z y Hilbert, parches de 1024};
+\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5:} bloques con atención (Ecs.~\ref{eq:bloque} y~\ref{eq:atencion}); \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
+\node[fop, below=of d] (e) {\textbf{4.4 Up-cast:} concatenar etapas 3, 4 y 5 (Ec.~\ref{eq:upcast})};
+\node[fdato, below=of e] (f) {$f_{\mathrm{ssl}}$: $796\,315\times 1088$};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
 \end{tikzpicture}
 \caption[Inferencia de Sonata]{Inferencia de Sonata. Elaboración propia.}
+\label{fig:m3-inferencia}
 \end{figure}
-
 
 \begin{figure}[!htbp]
 \centering
