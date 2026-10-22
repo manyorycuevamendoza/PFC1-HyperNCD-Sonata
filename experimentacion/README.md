@@ -91,6 +91,12 @@ python experimentacion/visor_3d.py \
 - **Imágenes por paso de la tesis** (`resultados/informe/m1_paso*.png`,
   `m3_paso1_entrada.png`): capturas de `visor_PL7.html` (con `--marcar-sor
   --puntos 200000`), del cubo y de `visor_PL13.html`, unidas con `componer_lamina.py`.
+- **Módulo 1 de PL13** (la tesis muestra PL13 como escaneo principal y PL7 al lado):
+  `visor_PL13_m1.html` (`--marcar-sor --puntos 200000`, con el `.npy` de Khipu) y
+  `visor_PL13_cubo.html` (`--recorte=-3,7,-8,1 --tam 2.5 --brillo 2.2 --camara=1.6,-1.6,1.2`:
+  37 777 → 1 159 puntos; cubo elegido con el mismo criterio que el de PL7, muchos
+  puntos crudos y superficies en varias orientaciones). Las láminas `m1_paso*.png`
+  ponen PL13 a la izquierda y PL7 a la derecha.
 - **Versión densa:** `--puntos 610637` dibuja **todo** el Módulo 1 de PL7 y la
   misma cantidad del crudo (~54 MB, tarda unos segundos en abrir). Con 1 000 000
   por etapa el navegador falla (`Array buffer allocation failed`): ese es el

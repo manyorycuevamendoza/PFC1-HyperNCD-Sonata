@@ -194,10 +194,14 @@ Sección~\ref{sec:u1-reproducibilidad}.
 La primera unidad convierte un escaneo en bruto, en formato LAS, en la matriz
 $S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1, descrito en
 la Sección~\ref{sec:modulo1}, y está en el programa \texttt{preprocesar.py} del
-repositorio. Se describe tal como se ejecutó en la prueba preliminar, sobre el
-escaneo \texttt{PL7\_SCN0001.las} de la Catedral de Lima, en el equipo local de
-la Sección~\ref{sec:hardware-repo}. Ese escaneo es una parte pequeña del
-levantamiento, que se describe en la Sección~\ref{sec:u1-datos}.
+repositorio. Se describe tal como se ejecutó en dos pruebas preliminares de la
+Catedral de Lima, sobre los escaneos PL13 y PL7, en el equipo local de la
+Sección~\ref{sec:hardware-repo}. PL13 es el escaneo principal, porque es el que
+después pasa por Sonata en la Unidad~2, de modo que todo el análisis sigue al
+mismo escaneo de principio a fin. PL7 se presenta al lado como segundo ejemplo,
+para mostrar que el procedimiento se comporta igual en otro escaneo. Los dos son
+una parte pequeña del levantamiento, que se describe en la
+Sección~\ref{sec:u1-datos}.
 
 \FloatBarrier
 \subsection{Datos de Entrada y Ejecución}
@@ -209,8 +213,9 @@ La Catedral de Lima se recibe como 23 archivos LAS, que suman 20{,}05\,GB y
 trae, por punto, coordenadas UTM, color de 16 bits, intensidad, número de retorno
 y clase, de los cuales solo se usan la posición y el color
 (Sección~\ref{sec:las}). Por término medio un archivo tiene unos 25{,}6 millones
-de puntos y ocupa unos 0{,}87\,GB; PL7, el de la prueba, tiene 8\,590\,904
-puntos, el 1{,}46\,\% del total. Los archivos no traen etiquetas.
+de puntos y ocupa unos 0{,}87\,GB. PL13 tiene 8\,239\,904 puntos, el 1{,}40\,\%
+del total, y PL7 tiene 8\,590\,904, el 1{,}46\,\%. Los archivos no traen
+etiquetas.
 
 \paragraph*{Cómo entran los archivos.}
 La unidad de trabajo es la sección (Sección~\ref{sec:seccion}). El programa
@@ -245,11 +250,12 @@ verificar una repetición (Sección~\ref{sec:u1-reproducibilidad}).
 \label{sec:u1-procedimiento}
 
 El programa recibe un archivo LAS y entrega la matriz $S$. Realiza seis pasos,
-en este orden. La Figura~\ref{fig:flujo-u1} los resume con los conteos de la
-prueba. Cada paso se describe a continuación con su resultado en la prueba. Los pasos
-cortos llevan pseudocódigo y los largos, diagrama de flujo. Los parámetros son tres, el tamaño de vóxel
+en este orden. La Figura~\ref{fig:flujo-u1} los resume con los conteos de las
+dos pruebas. Cada paso se describe a continuación con su resultado en PL13 y en
+PL7. Los pasos cortos llevan pseudocódigo y los largos, diagrama de flujo. Los
+parámetros son tres y son los mismos en las dos pruebas, el tamaño de vóxel
 $\ell=5$\,cm, el número de vecinos $q=20$ y el umbral del filtrado $\lambda=2$.
-La prueba tardó 14{,}4 segundos en total.
+La prueba sobre PL13 tardó 12{,}0 segundos en total y la de PL7, 14{,}4.
 
 \begin{figure}[!htbp]
 \centering
@@ -264,21 +270,23 @@ La prueba tardó 14{,}4 segundos en total.
   cifra/.style={font=\scriptsize\itshape, text=black!70, anchor=west},
   fl/.style={-{Latex[length=1.8mm]}, thick}
 ]
-\node[dat] (a) {\textbf{Entrada.} \texttt{PL7\_SCN0001.las}};
+\node[dat] (a) {\textbf{Entrada.} Archivo LAS};
 \node[paso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga por bloques y centrado};
 \node[paso, below=of b] (c) {\textbf{Paso 3.} Filtrado SOR, $q=20$ y $\lambda=2$};
 \node[paso, below=of c] (d) {\textbf{Paso 4.} Voxelización a 5\,cm};
 \node[paso, below=of d] (e) {\textbf{Paso 5.} Normales con $q=20$ vecinos};
 \node[dat, below=of e] (f) {\textbf{Paso 6. Salida.} Matriz $S$ y metadatos};
 \foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[fl] (\u) -- (\v);
-\node[cifra] at ($(a.east)+(0.2,0)$) {8\,590\,904 puntos, coordenadas UTM};
-\node[cifra] at ($(b.east)+(0.2,0)$) {8\,590\,904 puntos, centrados};
-\node[cifra] at ($(c.east)+(0.2,0)$) {8\,184\,419 puntos, se descarta el 4{,}73\,\%};
-\node[cifra] at ($(d.east)+(0.2,0)$) {610\,637 representantes};
-\node[cifra] at ($(e.east)+(0.2,0)$) {610\,637 normales};
-\node[cifra] at ($(f.east)+(0.2,0)$) {$610\,637\times 9$};
+\newcommand{\dospl}[2]{\makebox[1.7cm][r]{#1}\makebox[1.9cm][r]{#2}}
+\node[cifra, font=\scriptsize\bfseries\itshape] at ($(a.east)+(0.2,0.55)$) {\dospl{PL13}{PL7}};
+\node[cifra] at ($(a.east)+(0.2,0)$) {\dospl{8\,239\,904}{8\,590\,904}};
+\node[cifra] at ($(b.east)+(0.2,0)$) {\dospl{8\,239\,904}{8\,590\,904}};
+\node[cifra] at ($(c.east)+(0.2,0)$) {\dospl{8\,020\,796}{8\,184\,419}};
+\node[cifra] at ($(d.east)+(0.2,0)$) {\dospl{803\,099}{610\,637}};
+\node[cifra] at ($(e.east)+(0.2,0)$) {\dospl{803\,099}{610\,637}};
+\node[cifra] at ($(f.east)+(0.2,0)$) {\dospl{$803\,099\times 9$}{$610\,637\times 9$}};
 \end{tikzpicture}
-\caption[Flujo del preprocesamiento en PL7]{Flujo del preprocesamiento en PL7. Elaboración propia.}
+\caption[Flujo del preprocesamiento en PL13 y PL7]{Flujo del preprocesamiento en PL13 y PL7. Elaboración propia.}
 \label{fig:flujo-u1}
 \end{figure}
 
@@ -291,8 +299,10 @@ Sección~\ref{sec:las}. De cada punto se conservan solo la posición $(x,y,z)$ y
 el color $(R,G,B)$, que son los datos que usan los modelos. La intensidad, el
 número de retorno y la clase se descartan. El color viene en 16 bits, con un
 máximo de 65\,535, y se divide entre 256 para llevarlo al rango de 0 a 255. En
-la prueba se leen 8\,590\,904 puntos en dos bloques, en cerca de un segundo. Las figuras de PL7 dibujan 200\,000 puntos tomados al azar. La
-Figura~\ref{fig:m1-paso1} muestra el escaneo cargado.
+PL13 se leen 8\,239\,904 puntos y en PL7 8\,590\,904, en dos bloques cada uno,
+en cerca de un segundo. Las figuras de los escaneos completos dibujan 200\,000
+puntos tomados al azar. La Figura~\ref{fig:m1-paso1} muestra los dos escaneos
+cargados.
 
 \begin{algorithm}[H]
 \small
@@ -309,8 +319,8 @@ Figura~\ref{fig:m1-paso1} muestra el escaneo cargado.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.42\linewidth]{imagenes/m1_paso1_carga.png}
-\caption[PL7 tras la carga]{PL7 tras la carga. Elaboración propia.}
+\includegraphics[width=0.75\linewidth]{imagenes/m1_paso1_carga.png}
+\caption[PL13 y PL7 tras la carga]{PL13 y PL7 tras la carga. Elaboración propia.}
 \label{fig:m1-paso1}
 \end{figure}
 
@@ -323,7 +333,9 @@ al guardarlos en precisión simple, así que a todos los puntos se les resta el
 centro de la caja que los contiene, según la Ecuación~\ref{eq:centrado}. La
 forma de la nube no cambia, solo se traslada al origen. El centro restado se
 guarda en los metadatos para poder devolver cualquier resultado a su posición
-real. La Tabla~\ref{tab:m1-centrado} muestra el efecto en la prueba. Este paso no
+real. La Tabla~\ref{tab:m1-centrado} muestra el efecto en las dos pruebas. Los
+dos escaneos son vecinos, sus centros están a unos 17\,m uno de otro, pero cada
+uno se centra en su propio origen. Este paso no
 lleva imagen porque la nube se ve igual antes y después, solo cambian los números
 de los ejes.
 
@@ -341,15 +353,19 @@ guardar $c$ para los metadatos\;
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Coordenadas de PL7 antes y después del centrado]{Coordenadas de PL7 antes y después del centrado, en metros. Elaboración propia.}
+\caption[Coordenadas de PL13 y PL7 antes y después del centrado]{Coordenadas de PL13 y PL7 antes y después del centrado, en metros. Elaboración propia.}
 \label{tab:m1-centrado}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.00\hsize}Xll@{}}
+\begin{tabularx}{\linewidth}{@{}ll>{\raggedright\arraybackslash\hsize=1.00\hsize}Xll@{}}
 \toprule
-\textbf{Eje} & \textbf{Antes, en UTM} & \textbf{Centro} & \textbf{Después} \\
+\textbf{Escaneo} & \textbf{Eje} & \textbf{Antes, en UTM} & \textbf{Centro} & \textbf{Después} \\
 \midrule
-$x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}67$ \\
-$y$ & 8\,667\,724{,}83 a 8\,667\,780{,}02 & 8\,667\,752{,}42 & $-27{,}60$ a $27{,}60$ \\
-$z$ & 159{,}36 a 188{,}83 & 174{,}10 & $-14{,}73$ a $14{,}73$ \\
+PL13 & $x$ & 278\,772{,}08 a 278\,804{,}90 & 278\,788{,}49 & $-16{,}41$ a $16{,}41$ \\
+     & $y$ & 8\,667\,747{,}60 a 8\,667\,779{,}68 & 8\,667\,763{,}64 & $-16{,}04$ a $16{,}04$ \\
+     & $z$ & 161{,}61 a 183{,}89 & 172{,}75 & $-11{,}14$ a $11{,}14$ \\
+\midrule
+PL7  & $x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}67$ \\
+     & $y$ & 8\,667\,724{,}83 a 8\,667\,780{,}02 & 8\,667\,752{,}42 & $-27{,}60$ a $27{,}60$ \\
+     & $z$ & 159{,}36 a 188{,}83 & 174{,}10 & $-14{,}73$ a $14{,}73$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -361,23 +377,26 @@ El escaneo trae puntos sueltos que no pertenecen a ninguna superficie. Para cada
 punto se mide la distancia media a sus 20 vecinos más cercanos. Si esa distancia
 supera la media de toda la nube en más de dos desviaciones estándar, el punto se
 descarta, según la Ecuación~\ref{eq:sor}. El filtrado se hace antes de voxelizar
-para que esos puntos no se promedien con los válidos. En la prueba quedan
-8\,184\,419 puntos y se descartan 406\,485, el 4{,}73\,\%. El filtrado tardó
-cerca de doce segundos, la mayor parte de la prueba.
+para que esos puntos no se promedien con los válidos. En PL13 quedan
+8\,020\,796 puntos y se descartan 219\,108, el 2{,}66\,\%. En PL7 quedan
+8\,184\,419 y se descartan 406\,485, el 4{,}73\,\%. El filtrado es el paso más
+lento, cerca de nueve segundos en PL13 y doce en PL7.
 
-La Figura~\ref{fig:m1-paso3} marca en rojo los puntos descartados, que se
-concentran en las zonas ralas, lejos del escáner.
+La Figura~\ref{fig:m1-paso3} marca en rojo los puntos descartados en los dos
+escaneos. En ambos se concentran en las zonas ralas, lejos del escáner. PL7
+descarta casi el doble que PL13, y en la figura se ve que también tiene más
+zonas ralas.
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
-\node[fdato] (a) {$P$ y $C$: 8\,590\,904 puntos};
+\node[fdato] (a) {$P$ y $C$, 8\,239\,904 puntos en PL13 y 8\,590\,904 en PL7};
 \node[fop, below=of a] (b) {Para cada punto $p$: buscar sus $q=20$ vecinos más cercanos};
 \node[fop, below=of b] (c) {$d_p\leftarrow$ distancia media a esos vecinos};
 \node[fop, below=of c] (d) {$\mu,\sigma\leftarrow$ media y desviación de todos los $d_p$};
 \node[fdec, below=of d] (e) {$d_p\le\mu+2\sigma$?};
-\node[fno, right=6mm of e] (n) {Descartar\\406\,485};
-\node[fdato, below=of e] (f) {Conservar: 8\,184\,419 puntos};
+\node[fno, right=6mm of e] (n) {Descartar\\219\,108 en PL13\\406\,485 en PL7};
+\node[fdato, below=of e] (f) {Conservar, 8\,020\,796 puntos en PL13 y 8\,184\,419 en PL7};
 \foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
 \draw[ffl] (e) -- node[left, font=\tiny]{sí} (f);
 \draw[ffl] (e) -- node[above, font=\tiny]{no} (n);
@@ -388,8 +407,8 @@ concentran en las zonas ralas, lejos del escáner.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.6\linewidth]{imagenes/m1_paso3_sor.png}
-\caption[PL7 con los puntos descartados por el SOR en rojo]{PL7 con los puntos descartados por el SOR en rojo. Elaboración propia.}
+\includegraphics[width=0.85\linewidth]{imagenes/m1_paso3_sor.png}
+\caption[PL13 y PL7 con los puntos descartados por el SOR en rojo]{PL13 y PL7 con los puntos descartados por el SOR en rojo. Elaboración propia.}
 \label{fig:m1-paso3}
 \end{figure}
 
@@ -400,22 +419,30 @@ El escáner mide muchos más puntos cerca de él que lejos. Para igualar la
 densidad, el espacio se divide en cubos de 5\,cm de lado y los puntos de cada
 cubo se sustituyen por uno solo, con su posición y su color promedio, según la
 Ecuación~\ref{eq:voxel}. No se pierde ninguna superficie, cambia cuántos puntos
-la describen. En la prueba quedan 610\,637 representantes, el 7{,}46\,\% de los
-puntos que salieron del filtrado. La Figura~\ref{fig:m1-paso4} muestra el
-escaneo completo antes y después, y la Figura~\ref{fig:cubo-pl7} muestra de
-cerca un cubo de 1\,m de lado. En ese cubo los 48\,098 puntos de la entrada
-quedan en 921 representantes. La entrada contiene varias superficies paralelas
-separadas por pocos centímetros, que en la salida ya no se distinguen. Es el
-límite del vóxel de 5\,cm, que no separa superficies más próximas que su lado. En el cubo se dibujan todos los puntos, con el color aclarado por un factor de 2{,}2.
+la describen. En PL13 quedan 803\,099 representantes, el 10{,}01\,\% de los
+puntos que salieron del filtrado, y en PL7 610\,637, el 7{,}46\,\%. Las
+Figuras~\ref{fig:m1-paso4-pl13} y~\ref{fig:m1-paso4} muestran los dos escaneos
+completos antes y después. Las Figuras~\ref{fig:cubo-pl13} y~\ref{fig:cubo-pl7}
+muestran de cerca un cubo de 1\,m de lado de cada uno. En el cubo de PL13 los
+37\,777 puntos de la entrada quedan en 1\,159 representantes, y en el de PL7 los
+48\,098 quedan en 921. En el cubo de PL7 la entrada contiene varias superficies
+paralelas separadas por pocos centímetros, que en la salida ya no se distinguen.
+Es el límite del vóxel de 5\,cm, que no separa superficies más próximas que su
+lado. En los cubos se dibujan todos los puntos, con el color aclarado por un
+factor de 2{,}2. Los dos cubos se eligieron con el mismo criterio, tener muchos
+puntos y superficies en varias orientaciones. El de PL13 va de $x=-3$ a $-2$\,m,
+de $y=7$ a $8$\,m y de $z=-8$ a $-7$\,m, y el de PL7 de $x=-19$ a $-18$\,m, de
+$y=-3$ a $-2$\,m y de $z=-12$ a $-11$\,m, en las coordenadas centradas de cada
+escaneo.
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
-\node[fdato] (a) {$P$ y $C$: 8\,184\,419 puntos};
+\node[fdato] (a) {$P$ y $C$, 8\,020\,796 puntos en PL13 y 8\,184\,419 en PL7};
 \node[fop, below=of a] (b) {Para cada punto: cubo $v_p=\lfloor (p-p_0)/\ell\rfloor$, con $\ell=5$\,cm y $p_0$ la esquina mínima de la nube menos $\ell/2$};
 \node[fop, below=of b] (c) {Agrupar los puntos que caen en el mismo cubo};
 \node[fop, below=of c] (d) {Por cubo ocupado: promedio de posición y de color};
-\node[fdato, below=of d] (e) {$P'$ y $C'$: 610\,637 representantes};
+\node[fdato, below=of d] (e) {$P'$ y $C'$, 803\,099 representantes en PL13 y 610\,637 en PL7};
 \foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
 \end{tikzpicture}
 \caption[Voxelización]{Voxelización. Elaboración propia.}
@@ -424,9 +451,23 @@ límite del vóxel de 5\,cm, que no separa superficies más próximas que su lad
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_completo.png}
+\includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo_pl13.png}
+\caption[PL13 antes y después de la voxelización]{PL13 antes y después de la voxelización. Elaboración propia.}
+\label{fig:m1-paso4-pl13}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo.png}
 \caption[PL7 antes y después de la voxelización]{PL7 antes y después de la voxelización. Elaboración propia.}
 \label{fig:m1-paso4}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_cubo_pl13.png}
+\caption[Cubo de 1\,m de PL13 antes y después de la voxelización]{Cubo de 1\,m de PL13 antes y después de la voxelización. Elaboración propia.}
+\label{fig:cubo-pl13}
 \end{figure}
 
 \begin{figure}[!htbp]
@@ -453,13 +494,13 @@ punto aislado no describen bien la superficie.
 \begin{figure}[!htbp]
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
-\node[fdato] (a) {$P'$: 610\,637 representantes};
+\node[fdato] (a) {$P'$, 803\,099 representantes en PL13 y 610\,637 en PL7};
 \node[fop, below=of a] (b) {Para cada representante: sus $q=20$ vecinos};
 \node[fop, below=of b] (c) {$\Sigma_p\leftarrow$ covarianza de los vecinos};
 \node[fop, below=of c] (d) {$n_p\leftarrow$ autovector del menor autovalor};
 \node[fdec, below=of d] (e) {$n_{p,z}<0$?};
 \node[fno, right=6mm of e] (n) {$n_p\leftarrow -n_p$};
-\node[fdato, below=of e] (f) {610\,637 normales de largo 1, con $n_z\ge 0$};
+\node[fdato, below=of e] (f) {Normales de largo 1 con $n_z\ge 0$, 803\,099 en PL13 y 610\,637 en PL7};
 \foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
 \draw[ffl] (e) -- node[left, font=\tiny]{no} (f);
 \draw[ffl] (e) -- node[above, font=\tiny]{sí} (n);
@@ -471,8 +512,8 @@ punto aislado no describen bien la superficie.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.4\linewidth]{imagenes/m1_paso5_normales.png}
-\caption[Normales de PL7 como color]{Normales de PL7 como color. Elaboración propia.}
+\includegraphics[width=0.75\linewidth]{imagenes/m1_paso5_normales.png}
+\caption[Normales de PL13 y PL7 como color]{Normales de PL13 y PL7 como color. Elaboración propia.}
 \label{fig:m1-paso5}
 \end{figure}
 
@@ -481,10 +522,10 @@ punto aislado no describen bien la superficie.
 
 Se guarda la matriz $S$, descrita en la Ecuación~\ref{eq:sj}, con una fila por
 representante y sus nueve valores, la posición, el color y la normal. Se guarda
-en precisión simple, y en la prueba ocupa 22\,MB con 610\,637 filas. Junto a ella
-se escribe un archivo de metadatos con los parámetros usados, el centro restado y
-el número de puntos tras cada paso. La Tabla~\ref{tab:m1-metadatos} muestra su
-contenido en la prueba.
+en precisión simple. En PL13 ocupa 28{,}9\,MB con 803\,099 filas y en PL7
+22{,}0\,MB con 610\,637. Junto a ella se escribe un archivo de metadatos con los
+parámetros usados, el centro restado y el número de puntos tras cada paso. La
+Tabla~\ref{tab:m1-metadatos} muestra su contenido en las dos pruebas.
 
 \begin{algorithm}[H]
 \small
@@ -500,20 +541,20 @@ guardar $\ell$, $q$, $\lambda$, $c$ y los conteos en el archivo de metadatos\;
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Metadatos de PL7]{Metadatos de PL7. Elaboración propia.}
+\caption[Metadatos de PL13 y PL7]{Metadatos de PL13 y PL7. Elaboración propia.}
 \label{tab:m1-metadatos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.88\hsize}X>{\raggedright\arraybackslash\hsize=1.12\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Campo} & \textbf{Valor} & \textbf{Significado} \\
+\textbf{Campo} & \textbf{PL13} & \textbf{PL7} & \textbf{Significado} \\
 \midrule
-\texttt{voxel} & 0{,}05 & Lado del vóxel, en metros \\
-\texttt{q} & 20 & Vecinos del filtrado y de las normales \\
-\texttt{lambda} & 2 & Umbral del filtrado \\
-\texttt{offset\_utm} & 278\,800{,}97, 8\,667\,752{,}42 y 174{,}10 & Centro restado en el Paso~2 \\
-\texttt{n\_crudo} & 8\,590\,904 & Puntos tras la carga \\
-\texttt{n\_sor} & 8\,184\,419 & Puntos tras el filtrado \\
-\texttt{n\_voxel} & 610\,637 & Representantes tras la voxelización \\
-\texttt{segundos} & 14{,}4 & Tiempo total \\
+\texttt{voxel} & 0{,}05 & 0{,}05 & Lado del vóxel, en metros \\
+\texttt{q} & 20 & 20 & Vecinos del filtrado y de las normales \\
+\texttt{lambda} & 2 & 2 & Umbral del filtrado \\
+\texttt{offset\_utm} & 278\,788{,}49, 8\,667\,763{,}64 y 172{,}75 & 278\,800{,}97, 8\,667\,752{,}42 y 174{,}10 & Centro restado en el Paso~2 \\
+\texttt{n\_crudo} & 8\,239\,904 & 8\,590\,904 & Puntos tras la carga \\
+\texttt{n\_sor} & 8\,020\,796 & 8\,184\,419 & Puntos tras el filtrado \\
+\texttt{n\_voxel} & 803\,099 & 610\,637 & Representantes tras la voxelización \\
+\texttt{segundos} & 12{,}0 & 14{,}4 & Tiempo total \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -523,14 +564,18 @@ guardar $\ell$, $q$, $\lambda$, $c$ y los conteos en el archivo de metadatos\;
 \label{sec:u1-reproducibilidad}
 
 El programa no tiene pasos aleatorios, de modo que la misma entrada produce la
-misma salida. La prueba se ejecutó con la orden siguiente, con los valores por
-defecto del programa.
+misma salida. Las dos pruebas se ejecutaron con las órdenes siguientes, con los
+valores por defecto del programa.
 \begin{lstlisting}[style=comando]
+python preprocesar.py --input PL13_SCN0001.las \
+       --output PL13_SCN0001_preprocesado \
+       --voxel 0.05 --q 20 --lam 2
 python preprocesar.py --input PL7_SCN0001.las \
        --output PL7_SCN0001_preprocesado \
        --voxel 0.05 --q 20 --lam 2
 \end{lstlisting}
-Tardó 14{,}4 segundos en el equipo local de la Sección~\ref{sec:hardware-repo}.
+Tardaron 12{,}0 y 14{,}4 segundos en el equipo local de la
+Sección~\ref{sec:hardware-repo}.
 Una repetición se comprueba comparando los conteos del archivo de metadatos,
 \texttt{n\_crudo}, \texttt{n\_sor} y \texttt{n\_voxel}, con los de la
 Tabla~\ref{tab:m1-metadatos}. Deben coincidir exactamente.
@@ -543,8 +588,8 @@ preprocesamiento.
 El mismo programa preprocesó después el levantamiento completo en el clúster
 Khipu, con los mismos parámetros. Los 23 archivos LAS pasaron de
 589\,708\,290 puntos a 17\,807\,859 representantes. La suma de los tiempos por
-archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL7 en esa
-corrida coinciden con los de la prueba local.
+archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL13 y de PL7
+en esa corrida coinciden con los de las pruebas locales.
 
 % =====================================================================
 \FloatBarrier
