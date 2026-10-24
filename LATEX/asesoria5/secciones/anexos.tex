@@ -36,6 +36,15 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \end{tabularx}
 \end{table}
 
+\paragraph*{Visor 3D del proyecto.}
+El programa \texttt{visor\_3d.py}, descrito en la Sección~\ref{sec:visor}, genera
+una página web con Plotly que muestra un escaneo en sus distintas etapas: la
+entrada cruda, los puntos que descarta el filtrado SOR en rojo, la matriz $S$
+con su color real y con sus normales, y los descriptores de Sonata. Todas las
+etapas comparten la misma cámara, así que cambiar de botón no cambia el ángulo,
+y la página exporta cada etapa a PNG con el mismo encuadre. Las figuras de la
+data de entrada y preprocesada del Capítulo~3 se obtuvieron así.
+
 \paragraph*{Comandos en el clúster Khipu.}
 Los guiones se lanzan desde la carpeta del repositorio, con los archivos LAS en
 \texttt{datos\_crudos/}. La variable \texttt{REPO} al inicio de cada guion
