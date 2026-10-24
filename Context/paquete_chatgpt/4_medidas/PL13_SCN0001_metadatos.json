@@ -1,0 +1,18 @@
+{
+  "input": [
+    "datos_crudos/Post Procesado/Post Procesado GLS-2000/PL13'_SCN0001.las"
+  ],
+  "voxel": 0.05,
+  "q": 20,
+  "lambda": 2.0,
+  "prevoxel": 0.0,
+  "offset_utm": [
+    278788.48991956457,
+    8667763.638963725,
+    172.7498
+  ],
+  "n_crudo": 8239904,
+  "n_sor": 8020796,
+  "n_voxel": 803099,
+  "segundos": 15.8
+}

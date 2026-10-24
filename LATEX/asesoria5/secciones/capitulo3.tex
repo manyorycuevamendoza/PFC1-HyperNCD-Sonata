@@ -328,7 +328,9 @@ supera la media de toda la nube en más de $\lambda$ desviaciones estándar, el
 punto se descarta, según la Ecuación~\ref{eq:sor}. El filtrado se hace antes de
 voxelizar para que esos puntos no se promedien con los válidos. Es el paso más
 lento de la unidad, porque la búsqueda de vecinos recorre la nube completa antes
-de la reducción del Paso~4.
+de la reducción del Paso~4. Es también el único que descarta información de forma
+irreversible; la prueba que justifica su necesidad y sus dos parámetros está en la
+Sección~\ref{sec:param-p1}.
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
@@ -422,97 +424,6 @@ $S \leftarrow [\,P' \mid C' \mid n\,]$ en precisión simple\;
 guardar $S$\;
 guardar $\ell$, $q$, $\lambda$, $c$ y los conteos en el archivo de metadatos\;
 \end{algorithm}
-
-\FloatBarrier
-\subsection{Necesidad del Filtrado y Elección de sus Parámetros}
-\label{sec:u1-sor-ablacion}
-
-El Paso~3 es el único de la unidad que descarta información de forma
-irreversible, y es además el más lento. Eso obliga a responder dos preguntas
-antes de darlo por bueno. La primera es si la tarea hace falta: qué le ocurre a
-la salida de la unidad si el filtrado no se ejecuta. La segunda es por qué sus
-parámetros valen $q=20$ y $\lambda=2$ y no otros. Hoy esos dos valores son los
-que trae el programa por defecto, heredados del uso habitual de la
-implementación de Open3D, y no se eligieron a partir de ninguna medición propia.
-Mientras eso siga así, el filtrado es una decisión sin respaldo, por más que sus
-conteos se repitan.
-
-\paragraph*{Hipótesis.}
-El filtrado es necesario porque los puntos que descarta son puntos aislados, sin
-superficie bajo ellos. Si no se descartan, entran al promedio del vóxel del
-Paso~4 y desplazan al representante fuera de la superficie real, y entran
-después a la vecindad de la que el Paso~5 estima la normal, que queda mal
-orientada. El efecto no se queda en la Unidad~1: la posición y la normal son dos
-de las tres entradas del codificador de la Unidad~2, de modo que un
-representante desplazado produce un descriptor de una superficie que no existe.
-La hipótesis es, entonces, que omitir el filtrado degrada la salida de forma
-medible, y que esa degradación crece en las zonas ralas, lejos del escáner, que
-son justamente donde la Figura~\ref{fig:m1-paso3} concentra los descartes.
-
-\paragraph*{Diseño de la prueba.}
-La prueba se ejecuta sobre la misma sección, variando un solo factor cada vez y
-dejando fijos el vóxel $\ell=5$\,cm y el resto del procedimiento. Son tres
-condiciones. La primera es la comparación con y sin filtrado, que responde a la
-primera pregunta. La condición «sin filtrado» no requiere cambiar el programa:
-basta un $\lambda$ lo bastante grande para que ningún punto supere el umbral. La
-segunda barre el número de vecinos, $q\in\{10,\,20,\,30,\,40\}$ con $\lambda=2$
-fijo, y la tercera barre el umbral, $\lambda\in\{1{,}5,\,2,\,2{,}5,\,3\}$ con
-$q=20$ fijo. Cada corrida se mide con los mismos indicadores, de modo que las
-tres condiciones sean comparables entre sí.
-
-\paragraph*{Métricas de calidad.}
-La sección no tiene etiquetas, así que el acierto por clase no se puede medir
-todavía y el \emph{linear probing} de la Sección~\ref{sec:probing} queda fuera
-del alcance de esta prueba. Lo que sí se puede medir es si la superficie queda
-más limpia y si la salida de la unidad cambia. Se usan cuatro indicadores,
-recogidos en la Tabla~\ref{tab:sor-ablacion}. El primero es la rugosidad
-residual $r$: para cada representante se ajusta el plano de sus $q$ vecinos y se
-toma la distancia media al plano, en milímetros. Mide directamente cuánto se
-aparta la nube de una superficie local, de modo que un filtrado que limpia ruido
-debe bajarla. El segundo es la dispersión angular de las normales: el ángulo
-medio, en grados, entre la normal de cada representante y la normal media de sus
-$q$ vecinos. Un punto desplazado desorienta la normal, así que este indicador
-recoge el daño del Paso~5. El tercero mide si el cambio llega hasta los
-descriptores: se extraen los $f_{\mathrm{ssl}}$ de cada condición, se agrupan con
-el $k$-means de la Sección~\ref{sec:rama-ssl} y se comparan los dos
-agrupamientos con el ARI y el NMI (Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}). Un
-valor cercano a 1 indica que la condición no cambió nada corriente abajo, y un
-valor bajo, que el filtrado decide la representación que recibe el Módulo~4. El
-cuarto es el costo, el porcentaje de puntos descartados y el tiempo del paso,
-que es lo que se paga por el beneficio de los tres anteriores.
-
-\paragraph*{Criterio de decisión.}
-Los dos primeros indicadores se reportan además restringidos a las zonas ralas,
-separando los representantes según la densidad de su vecindad, porque la
-hipótesis predice que es allí donde se concentra la diferencia. El valor de $q$
-que se fija para el resto del proyecto es el menor que alcanza la meseta de $r$ y
-de la dispersión angular, es decir, aquel a partir del cual aumentar los vecinos
-ya no limpia más y solo cuesta tiempo. Si la comparación con y sin filtrado
-resulta indistinguible en los cuatro indicadores, la conclusión que corresponde
-no es mantener el paso, sino retirarlo del procedimiento y documentar por qué.
-Los resultados de esta prueba se reportan en la
-Sección~\ref{sec:res-sor-ablacion}.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Diseño de la prueba del filtrado SOR]{Diseño de la prueba del filtrado SOR: condiciones e indicadores. Elaboración propia.}
-\label{tab:sor-ablacion}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.70\hsize}X>{\raggedright\arraybackslash\hsize=1.30\hsize}X@{}}
-\toprule
-\textbf{Elemento} & \textbf{Definición} \\
-\midrule
-Condición 1 & Con filtrado ($q=20$, $\lambda=2$) frente a sin filtrado \\
-Condición 2 & $q\in\{10,\,20,\,30,\,40\}$, con $\lambda=2$ \\
-Condición 3 & $\lambda\in\{1{,}5,\,2,\,2{,}5,\,3\}$, con $q=20$ \\
-\midrule
-Rugosidad residual $r$ & Distancia media al plano ajustado sobre los $q$ vecinos, en mm; global y en zonas ralas \\
-Dispersión angular & Ángulo medio entre la normal de un punto y la media de las de sus vecinos, en grados; global y en zonas ralas \\
-ARI y NMI & Acuerdo entre el $k$-means de los $f_{\mathrm{ssl}}$ de cada condición y el de la condición de referencia \\
-Costo & Puntos descartados, en \%, y tiempo del paso, en segundos \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \FloatBarrier
 \subsection{Verificación y Reproducibilidad}
@@ -785,6 +696,238 @@ El Módulo~4 (Sección~\ref{sec:modulo4}) aún no se ha ejecutado. Concatena los
 dos descriptores según la Ec.~\eqref{eq:hibrido} y deja igual todo lo posterior
 (Ec.~\eqref{eq:afinidad}, $M=8$ vecinos), condición que hace interpretable la
 ablación.
+
+% =====================================================================
+\FloatBarrier
+\section{Justificación de los Parámetros del Procedimiento}
+\label{sec:parametros}
+
+Cada paso de las dos unidades fija algún valor: cuántos vecinos mirar, cuánto
+mide un vóxel, con cuántos bits guardar un número. Describir el paso no basta
+para darlo por bueno. Hay que responder, por cada valor, de dónde sale y qué le
+ocurre a la salida si se elige mayor o menor. Esta sección hace ese inventario
+y declara las pruebas que faltan. No contiene resultados: los de las pruebas ya
+ejecutadas están en la Sección~\ref{sec:res-parametros}.
+
+El inventario distingue cuatro orígenes, porque no todos los valores exigen la
+misma defensa:
+
+\begin{enumerate}
+\item \textbf{Impuesto.} El entorno no deja otra opción. No es una elección y
+no se prueba; se documenta su efecto.
+\item \textbf{Heredado.} Viene del método externo que se reutiliza, y
+cambiarlo rompería la correspondencia con los pesos preentrenados. Tampoco se
+prueba, pero por una razón distinta: la prueba no tendría sentido.
+\item \textbf{Indiferente.} Afecta al costo o al formato, no a la salida.
+Basta comprobar que la salida no cambia.
+\item \textbf{Sin justificar.} Es una elección libre que nadie midió. Estos son
+los que obligan a una prueba, y son los que la Tabla~\ref{tab:parametros}
+marca.
+\end{enumerate}
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption[Inventario de parámetros del procedimiento]{Inventario de parámetros del procedimiento, con su origen y la prueba que lo justifica. Elaboración propia.}
+\label{tab:parametros}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.62\hsize}X>{\raggedright\arraybackslash\hsize=0.78\hsize}X>{\raggedright\arraybackslash\hsize=0.44\hsize}X>{\raggedright\arraybackslash\hsize=0.62\hsize}X>{\raggedright\arraybackslash\hsize=0.54\hsize}X@{}}
+\toprule
+\textbf{Paso} & \textbf{Parámetro} & \textbf{Valor} & \textbf{Origen} & \textbf{Prueba} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Unidad 1, Módulo 1}}\\
+P1 Carga & Tamaño de bloque & $5\times10^{6}$ & Indiferente & P0 \\
+P1 Carga & Campos conservados & $x,y,z$ y $R,G,B$ & Heredado & --- \\
+P1 Carga & Escala del color & $/256$ & Indiferente & --- \\
+P2 Centrado & Centro restado & Centro de la caja & Indiferente & --- \\
+P3 SOR & Vecinos $q$ & 20 & \textbf{Sin justificar} & P1 \\
+P3 SOR & Umbral $\lambda$ & 2 & \textbf{Sin justificar} & P1 \\
+P3 SOR & Ejecutar el paso & Sí & \textbf{Sin justificar} & P1 \\
+P4 Vóxel & Lado $\ell$ & 5\,cm & \textbf{Sin justificar} & P2 \\
+P5 Normales & Vecinos $q$ & 20, el mismo del SOR & \textbf{Sin justificar} & P3 \\
+P5 Normales & Orientación & $n_z\ge 0$ & Indiferente & --- \\
+P6 Escritura & Precisión de $S$ & Simple & Indiferente & P4 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 3}}\\
+P2 Modelo & Tamaño de parche & 1024 puntos & \textbf{Sin justificar} & P5 \\
+P2 Modelo & FlashAttention & Desactivada & Impuesto & --- \\
+P3 Preparación & Rejilla $g$ & 2\,cm & Heredado & P2 \\
+P3 Preparación & Punto por celda & Uno al azar & Heredado & --- \\
+P4 Inferencia & Etapas del \emph{up-cast} & 3, 4 y 5 & Heredado & --- \\
+P5 Escritura & Precisión del \texttt{.npz} & Media & Indiferente & P4 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 4, y Unidad 3}}\\
+Fusión e hipergrafo & $\alpha$, $M$, $\tau$, $\epsilon$, $\epsilon_{\mathrm{sk}}$, $\gamma$ & Sección~\ref{sec:anexo-nomenclatura} & \textbf{Sin justificar} & OE2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los parámetros del Módulo~4 no se tratan aquí. Su justificación es el objetivo
+específico OE2, cuyas curvas de sensibilidad se describen en la
+Sección~\ref{sec:procedimiento}, y no puede adelantarse porque ese módulo
+todavía no se ha ejecutado.
+
+\FloatBarrier
+\subsection{Criterio Común de las Pruebas}
+\label{sec:param-criterio}
+
+Las cinco pruebas comparten método, para que sus resultados se puedan leer
+juntos. Cada una varía un solo parámetro sobre la misma sección, dejando fijos
+los demás, y mide la misma salida. Como la sección no tiene etiquetas, el
+acierto por clase no se puede medir y el \emph{linear probing} de la
+Sección~\ref{sec:probing} queda fuera del alcance; lo que se mide es si la
+superficie queda mejor descrita y si el cambio llega hasta los descriptores.
+Son cuatro indicadores, los mismos en todas las pruebas:
+
+\begin{enumerate}
+\item \textbf{Rugosidad residual $r$.} Para cada representante se ajusta el
+plano de sus 20 vecinos y se toma la distancia media al plano, en milímetros.
+Mide cuánto se aparta la nube de una superficie local: si un paso limpia ruido,
+$r$ baja; si destruye detalle, $r$ también baja, por eso nunca se lee sola.
+\item \textbf{Dispersión angular.} Ángulo medio, en grados, entre la normal de
+cada representante y la normal media de sus vecinos. Recoge el daño que un
+punto desplazado hace a la estimación del Paso~5.
+\item \textbf{ARI y NMI corriente abajo.} Se extraen los $f_{\mathrm{ssl}}$ de
+cada condición, se agrupan con el $k$-means de la Sección~\ref{sec:rama-ssl} y
+se comparan con el agrupamiento de la condición de referencia
+(Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}). Un valor cercano a 1 indica que el
+parámetro no cambia nada aguas abajo, y por tanto que discutirlo es ocioso; un
+valor bajo indica que decide la representación que recibe el Módulo~4.
+\item \textbf{Costo.} Puntos que quedan, tiempo del paso y memoria.
+\end{enumerate}
+
+Los dos primeros se reportan además restringidos a las zonas ralas, lejos del
+escáner, separando los representantes por densidad local, porque es allí donde
+se espera que las diferencias se concentren. El criterio de elección es el
+mismo en todas: se fija el valor más barato que alcanza la meseta de los
+indicadores, es decir, aquel a partir del cual gastar más ya no mejora la
+salida. Y en las tres pruebas que admiten la condición nula, si quitar el paso
+resulta indistinguible de ejecutarlo, lo que corresponde no es conservarlo sino
+retirarlo del procedimiento y documentar por qué.
+
+\FloatBarrier
+\subsection{Prueba P0. Invariancia al Tamaño de Bloque}
+\label{sec:param-p0}
+
+El tamaño de bloque de la carga existe para acotar la memoria, no para cambiar
+el resultado. La prueba lo comprueba: se preprocesa la misma sección con
+bloques de $1$, $5$ y $20$ millones de puntos y se verifica que los tres
+conteos del archivo de metadatos coincidan exactamente y que las matrices $S$
+sean iguales punto a punto. Si no coincidieran, el programa tendría una
+dependencia del bloque que habría que corregir antes de cualquier otra prueba.
+Es la única de las cinco cuyo resultado esperado es «ninguna diferencia».
+
+\FloatBarrier
+\subsection{Prueba P1. Necesidad del Filtrado y sus Parámetros}
+\label{sec:param-p1}
+
+El Paso~3 de la Unidad~1 es el único que descarta información de forma
+irreversible, y es además el más lento. Hoy $q=20$ y $\lambda=2$ son los valores
+que trae el programa por defecto, heredados del uso habitual de la
+implementación de Open3D, y no se eligieron a partir de ninguna medición propia.
+
+\paragraph*{Hipótesis.}
+El filtrado es necesario porque los puntos que descarta son puntos aislados,
+sin superficie bajo ellos. Si no se descartan, entran al promedio del vóxel del
+Paso~4 y desplazan al representante fuera de la superficie real, y entran
+después a la vecindad de la que el Paso~5 estima la normal, que queda mal
+orientada. El efecto no se queda en la Unidad~1: la posición y la normal son dos
+de las tres entradas del codificador de la Unidad~2, de modo que un
+representante desplazado produce un descriptor de una superficie que no existe.
+La hipótesis es que omitir el filtrado degrada la salida de forma medible, y que
+la degradación se concentra en las zonas ralas.
+
+\paragraph*{Condiciones.}
+Tres. La primera compara con y sin filtrado, y responde a si la tarea hace
+falta; la condición sin filtrado no requiere cambiar el programa, basta un
+$\lambda$ lo bastante grande para que ningún punto supere el umbral. La segunda
+barre $q\in\{10,\,20,\,30,\,40\}$ con $\lambda=2$. La tercera barre
+$\lambda\in\{1{,}5,\,2,\,2{,}5,\,3\}$ con $q=20$. Un $\lambda$ pequeño descarta
+mucho y se lleva superficie válida; uno grande deja pasar el ruido, de modo que
+el barrido recorre los dos modos de fallo.
+
+\FloatBarrier
+\subsection{Prueba P2. Tamaño del Vóxel y Rejilla de Sonata}
+\label{sec:param-p2}
+
+El vóxel de 5\,cm es el parámetro que más reduce la nube y el que fija la
+resolución de todo lo que viene después. Es también el que tiene un límite
+visible: dos superficies separadas por menos de su lado quedan representadas
+por los mismos representantes y dejan de distinguirse, como muestra la
+Sección~\ref{sec:res-unidad1}. Se eligió sin medición.
+
+El vóxel no se puede probar aparte de la rejilla $g$ de Sonata, porque las dos
+actúan sobre la misma nube en cadena y la más gruesa domina. Con $\ell=5$\,cm y
+$g=2$\,cm, la rejilla casi no elimina puntos y la resolución efectiva la fija la
+Unidad~1; con $\ell=2$\,cm las dos quedan al mismo nivel. Además $g=2$\,cm no es
+una elección libre: es el valor con que se preentrenó Sonata, de modo que
+alejarse de él entrega al codificador una nube distinta de las que vio al
+entrenarse.
+
+\paragraph*{Condiciones.}
+Se barre $\ell\in\{2,\,3,\,5,\,10\}$\,cm con $g=2$\,cm fijo, y para el mejor
+$\ell$ se comprueba además $g\in\{2,\,4\}$\,cm. A los cuatro indicadores comunes
+se añaden dos propios: el número de representantes, que determina si la sección
+cabe en la GPU, y la fracción de puntos retenidos por la rejilla de Sonata, que
+indica cuál de las dos resoluciones manda. La lectura decisiva es si el ARI
+contra la referencia cae al bajar de 5\,cm, porque eso significaría que la
+resolución elegida por comodidad está borrando estructura que el codificador sí
+distingue.
+
+\FloatBarrier
+\subsection{Prueba P3. Vecinos de las Normales}
+\label{sec:param-p3}
+
+El Paso~5 estima la normal con los mismos $q=20$ vecinos del filtrado, no
+porque se haya medido que 20 es el número adecuado, sino porque el programa usa
+un solo parámetro para las dos cosas. Son decisiones distintas: el filtrado
+necesita vecinos suficientes para que la media de distancias sea estable,
+mientras que la normal necesita una vecindad que cubra la superficie local sin
+cruzar a la contigua. Pocos vecinos dan una normal ruidosa; demasiados la
+promedian entre dos caras de una esquina y la dejan apuntando a ninguna parte.
+
+\paragraph*{Condiciones.}
+La prueba exige separar los dos parámetros en el programa, añadiendo uno propio
+para las normales, lo que es un cambio de código y no solo de configuración.
+Hecho eso, se barre el número de vecinos de la normal en
+$\{10,\,20,\,30,\,40\}$ con el filtrado fijo en $q=20$ y $\lambda=2$. El
+indicador que manda aquí es la dispersión angular, y se reporta por separado en
+zonas planas y en aristas, porque el modo de fallo de los dos extremos es
+opuesto y un promedio global los cancelaría.
+
+\FloatBarrier
+\subsection{Prueba P4. Precisión de Almacenamiento}
+\label{sec:param-p4}
+
+La matriz $S$ se guarda en precisión simple y los descriptores en precisión
+media, en ambos casos para reducir el tamaño en disco. La precisión media
+reserva unos tres dígitos decimales, de modo que la pregunta no es retórica: el
+archivo de descriptores de una sola sección ocupa cientos de megabytes, y el
+levantamiento tiene 23.
+
+\paragraph*{Condiciones.}
+Se vuelven a guardar los descriptores en precisión simple, opción que el
+programa ya ofrece, y se comparan las dos versiones con los indicadores
+corriente abajo, ARI y NMI, más el tamaño del archivo. Si el acuerdo es
+prácticamente perfecto, la precisión media queda justificada por el ahorro; si
+no, el ahorro se está pagando con la representación.
+
+\FloatBarrier
+\subsection{Prueba P5. Tamaño de Parche del Codificador}
+\label{sec:param-p5}
+
+El codificador agrupa los puntos en parches de 1024 y la atención de cada punto
+alcanza solo a los de su parche. El tamaño está fijado en el programa. Gobierna
+dos cosas a la vez: cuánto contexto ve cada punto y cuánta memoria consume la
+atención, que es el término que explica el consumo observado en la
+Sección~\ref{sec:res-unidad2}.
+
+\paragraph*{Condiciones.}
+Se barre el tamaño de parche en $\{512,\,1024,\,2048\}$ midiendo VRAM pico,
+tiempo y los indicadores corriente abajo. La prueba tiene un objetivo práctico
+además del metodológico: si un parche menor reduce la memoria sin cambiar el
+agrupamiento, es una alternativa a la división en bloques espaciales prevista
+para las secciones grandes.
 
 % =====================================================================
 \FloatBarrier

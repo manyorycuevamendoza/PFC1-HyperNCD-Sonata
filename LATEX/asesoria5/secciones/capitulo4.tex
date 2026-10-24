@@ -221,38 +221,6 @@ de metadatos en las dos pruebas.
 \end{table}
 
 \FloatBarrier
-\subsection{Prueba del Filtrado SOR}
-\label{sec:res-sor-ablacion}
-
-La prueba diseñada en la Sección~\ref{sec:u1-sor-ablacion} está pendiente de
-ejecución en el clúster Khipu. Sus resultados se reportarán en la
-Tabla~\ref{tab:sor-resultados}, con una fila por condición y los cuatro
-indicadores declarados. Hasta que se ejecute, los valores $q=20$ y $\lambda=2$
-usados en el resto de este capítulo son los que trae el programa por defecto y
-no están respaldados por una medición propia.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Resultados de la prueba del filtrado SOR]{Resultados de la prueba del filtrado SOR sobre PL13. Elaboración propia.}
-\label{tab:sor-resultados}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}lccccc@{}}
-\toprule
-\textbf{Condición} & \textbf{Descartados} & $r$ \textbf{(mm)} & \textbf{Disp.\ (\textdegree)} & \textbf{ARI} & \textbf{Tiempo} \\
-\midrule
-Sin filtrado            & 0\,\% & & & & \\
-$q=10$, $\lambda=2$     & & & & & \\
-$q=20$, $\lambda=2$     & 2{,}66\,\% & & & 1{,}00 & 9\,s \\
-$q=30$, $\lambda=2$     & & & & & \\
-$q=40$, $\lambda=2$     & & & & & \\
-$q=20$, $\lambda=1{,}5$ & & & & & \\
-$q=20$, $\lambda=2{,}5$ & & & & & \\
-$q=20$, $\lambda=3$     & & & & & \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\FloatBarrier
 \subsection{Reproducibilidad de la Unidad 1}
 \label{sec:res-u1-repro}
 
@@ -453,6 +421,64 @@ es de 110{,}6 sobre 1088 dimensiones. El valor descarta el colapso de la
 representación, que daría un rango cercano a 1, pero no sustituye al
 \emph{linear probing} de la Sección~\ref{sec:probing}, que requiere puntos
 etiquetados y queda pendiente.
+
+% =====================================================================
+\FloatBarrier
+\section{Pruebas de los Parámetros}
+\label{sec:res-parametros}
+
+Las pruebas declaradas en la Sección~\ref{sec:parametros} están pendientes de
+ejecución en el clúster Khipu. La Tabla~\ref{tab:param-estado} registra su
+estado. Hasta que se ejecuten, todos los valores usados en las dos secciones
+anteriores son los que trae el programa por defecto y ninguno está respaldado
+por una medición propia: los conteos de este capítulo demuestran que el
+procedimiento se repite, no que sus parámetros sean los adecuados.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Estado de las pruebas de parámetros]{Estado de las pruebas de parámetros. Elaboración propia.}
+\label{tab:param-estado}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+\textbf{Prueba} & \textbf{Parámetro que justifica} & \textbf{Estado} \\
+\midrule
+P0 & Tamaño de bloque de la carga & Pendiente \\
+P1 & Necesidad del filtrado, $q$ y $\lambda$ & Pendiente \\
+P2 & Lado del vóxel $\ell$ y rejilla $g$ & Pendiente \\
+P3 & Vecinos de las normales & Pendiente, requiere cambio de código \\
+P4 & Precisión de almacenamiento & Pendiente \\
+P5 & Tamaño de parche del codificador & Pendiente \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Cada prueba se reportará con el formato de la Tabla~\ref{tab:param-plantilla},
+una fila por condición y los cuatro indicadores comunes de la
+Sección~\ref{sec:param-criterio}. Se incluye ya la fila de la condición de
+referencia, con los valores que sí se midieron en la
+Sección~\ref{sec:res-unidad1}.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Formato de reporte de las pruebas de parámetros]{Formato de reporte de las pruebas de parámetros, con la prueba P1 como ejemplo. Elaboración propia.}
+\label{tab:param-plantilla}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}lccccc@{}}
+\toprule
+\textbf{Condición} & \textbf{Puntos} & $r$ \textbf{(mm)} & \textbf{Disp.\ (\textdegree)} & \textbf{ARI} & \textbf{Tiempo} \\
+\midrule
+Sin filtrado            & 8\,239\,904 & & & & \\
+$q=10$, $\lambda=2$     & & & & & \\
+$q=20$, $\lambda=2$ (ref.) & 8\,020\,796 & & & 1{,}00 & 9\,s \\
+$q=30$, $\lambda=2$     & & & & & \\
+$q=40$, $\lambda=2$     & & & & & \\
+$q=20$, $\lambda=1{,}5$ & & & & & \\
+$q=20$, $\lambda=2{,}5$ & & & & & \\
+$q=20$, $\lambda=3$     & & & & & \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 % =====================================================================
 \FloatBarrier

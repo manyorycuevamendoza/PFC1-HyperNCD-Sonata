@@ -1,0 +1,18 @@
+{
+  "input": [
+    "C:\\Users\\User\\Documents\\DATA\\PL7_SCN0001.las"
+  ],
+  "voxel": 0.05,
+  "q": 20,
+  "lambda": 2.0,
+  "prevoxel": 0.0,
+  "offset_utm": [
+    278800.9714135999,
+    8667752.423552454,
+    174.09519999999998
+  ],
+  "n_crudo": 8590904,
+  "n_sor": 8184419,
+  "n_voxel": 610637,
+  "segundos": 14.4
+}

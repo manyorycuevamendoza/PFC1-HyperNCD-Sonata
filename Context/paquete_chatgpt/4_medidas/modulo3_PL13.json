@@ -1,0 +1,20 @@
+{
+  "feats": "experimentacion\\datos\\modulo3_PL13\\PL13_feats.npz",
+  "n_rejilla": 796315,
+  "dim": 1088,
+  "varianza_pca_3": 0.2531,
+  "varianza_pca_10": 0.4342,
+  "rango_efectivo": 110.6,
+  "consulta": 625652,
+  "kmeans_k": 8,
+  "kmeans_tamanos": [
+    96835,
+    161418,
+    112804,
+    46961,
+    79436,
+    98247,
+    142162,
+    58452
+  ]
+}
