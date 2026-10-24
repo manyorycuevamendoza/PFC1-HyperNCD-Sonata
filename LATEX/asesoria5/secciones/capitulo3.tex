@@ -736,25 +736,25 @@ marca.
 \textbf{Paso} & \textbf{Parámetro} & \textbf{Valor} & \textbf{Origen} & \textbf{Prueba} \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Unidad 1, Módulo 1}}\\
-P1 Carga & Tamaño de bloque & $5\times10^{6}$ & Indiferente & P0 \\
-P1 Carga & Campos conservados & $x,y,z$ y $R,G,B$ & Heredado & --- \\
-P1 Carga & Escala del color & $/256$ & Indiferente & --- \\
-P2 Centrado & Centro restado & Centro de la caja & Indiferente & --- \\
-P3 SOR & Vecinos $q$ & 20 & \textbf{Sin justificar} & P1 \\
-P3 SOR & Umbral $\lambda$ & 2 & \textbf{Sin justificar} & P1 \\
-P3 SOR & Ejecutar el paso & Sí & \textbf{Sin justificar} & P1 \\
-P4 Vóxel & Lado $\ell$ & 5\,cm & \textbf{Sin justificar} & P2 \\
-P5 Normales & Vecinos $q$ & 20, el mismo del SOR & \textbf{Sin justificar} & P3 \\
-P5 Normales & Orientación & $n_z\ge 0$ & Indiferente & --- \\
-P6 Escritura & Precisión de $S$ & Simple & Indiferente & P4 \\
+Paso 1, carga & Tamaño de bloque & $5\times10^{6}$ & Indiferente & P0 \\
+Paso 1, carga & Campos conservados & $x,y,z$ y $R,G,B$ & Heredado & --- \\
+Paso 1, carga & Escala del color & $/256$ & Indiferente & --- \\
+Paso 2, centrado & Centro restado & Centro de la caja & Indiferente & --- \\
+Paso 3, SOR & Vecinos $q$ & 20 & \textbf{Sin justificar} & P1 \\
+Paso 3, SOR & Umbral $\lambda$ & 2 & \textbf{Sin justificar} & P1 \\
+Paso 3, SOR & Ejecutar el paso & Sí & \textbf{Sin justificar} & P1 \\
+Paso 4, vóxel & Lado $\ell$ & 5\,cm & \textbf{Sin justificar} & P2 \\
+Paso 5, normales & Vecinos $q$ & 20, el mismo del SOR & \textbf{Sin justificar} & P3 \\
+Paso 5, normales & Orientación & $n_z\ge 0$ & Indiferente & --- \\
+Paso 6, escritura & Precisión de $S$ & Simple & Indiferente & P4 \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 3}}\\
-P2 Modelo & Tamaño de parche & 1024 puntos & \textbf{Sin justificar} & P5 \\
-P2 Modelo & FlashAttention & Desactivada & Impuesto & --- \\
-P3 Preparación & Rejilla $g$ & 2\,cm & Heredado & P2 \\
-P3 Preparación & Punto por celda & Uno al azar & Heredado & --- \\
-P4 Inferencia & Etapas del \emph{up-cast} & 3, 4 y 5 & Heredado & --- \\
-P5 Escritura & Precisión del \texttt{.npz} & Media & Indiferente & P4 \\
+Paso 2, modelo & Tamaño de parche & 1024 puntos & \textbf{Sin justificar} & P5 \\
+Paso 2, modelo & FlashAttention & Desactivada & Impuesto & --- \\
+Paso 3, preparación & Rejilla $g$ & 2\,cm & Heredado & P2 \\
+Paso 3, preparación & Punto por celda & Uno al azar & Heredado & --- \\
+Paso 4, inferencia & Etapas del \emph{up-cast} & 3, 4 y 5 & Heredado & --- \\
+Paso 5, escritura & Precisión del \texttt{.npz} & Media & Indiferente & P4 \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 4, y Unidad 3}}\\
 Fusión e hipergrafo & $\alpha$, $M$, $\tau$, $\epsilon$, $\epsilon_{\mathrm{sk}}$, $\gamma$ & Sección~\ref{sec:anexo-nomenclatura} & \textbf{Sin justificar} & OE2 \\
@@ -766,6 +766,156 @@ Los parámetros del Módulo~4 no se tratan aquí. Su justificación es el objeti
 específico OE2, cuyas curvas de sensibilidad se describen en la
 Sección~\ref{sec:procedimiento}, y no puede adelantarse porque ese módulo
 todavía no se ha ejecutado.
+
+\FloatBarrier
+\subsection{Función de Cada Paso y Efecto de Omitirlo}
+\label{sec:param-funcion}
+
+Antes de discutir valores hay que justificar que cada paso exista. Para cada uno
+se responde qué hace, qué beneficio aporta a la salida y qué pasaría si no se
+ejecutara. Las cifras son las de las pruebas sobre PL13 y PL7 de las
+Secciones~\ref{sec:unidad1} y~\ref{sec:rama-ssl}. Cuando el beneficio todavía no
+se ha medido, se indica qué prueba lo mide.
+
+\subsubsection*{Unidad 1, Módulo 1}
+
+\paragraph*{Paso 1. Carga.}
+\textbf{Qué hace.} Lee el archivo LAS en bloques de cinco millones de puntos y
+conserva solo la posición y el color, con el color llevado de 16 bits al rango de
+0 a 255. \textbf{Qué aporta.} Acota la memoria, porque nunca se pide el archivo
+completo de una vez, y descarta los campos que ningún modelo usa, como la
+intensidad o la clase, que además viene vacía. Deja el color en la escala que
+espera Sonata, cuya rutina de preparación lo divide entre 255. \textbf{Sin este
+paso.} No hay datos que procesar, así que el paso es obligatorio. Lo discutible
+es cómo se hace. Sin la conversión del color, Sonata recibiría valores de hasta
+65\,535 donde espera valores de hasta 255, y su entrada quedaría fuera de la
+escala con que se entrenó. Sin la lectura por bloques, el resultado sería el
+mismo pero el pico de memoria crecería con el tamaño del archivo, lo que la
+prueba~P0 comprueba.
+
+\paragraph*{Paso 2. Centrado.}
+\textbf{Qué hace.} Resta a todos los puntos el centro de la caja que los contiene
+y guarda ese centro. \textbf{Qué aporta.} Conserva la precisión de las
+coordenadas. La matriz $S$ se guarda en precisión simple, que solo distingue
+valores separados por un salto que crece con el valor. Con la coordenada $y$ de
+PL13 en UTM, cercana a 8\,667\,748\,m, ese salto es de 1\,m, y con la $x$,
+cercana a 278\,772\,m, es de 3{,}1\,cm. Tras el centrado los valores no pasan de
+unos 30\,m y el salto baja a 0{,}000002\,m. Además, al guardar el centro, cualquier
+resultado puede devolverse a su posición real. \textbf{Sin este paso.} Las
+posiciones guardadas se redondearían a pasos de hasta un metro, mayores que el
+vóxel de 5\,cm, y la forma de molduras, arcos y columnas se perdería antes de
+llegar a los modelos. El paso no cambia la forma de la nube ni descarta puntos,
+así que no tiene costo que compensar.
+
+\paragraph*{Paso 3. Filtrado SOR.}
+\textbf{Qué hace.} Descarta los puntos cuya distancia media a sus $q=20$ vecinos
+supera la media de la nube en más de $\lambda=2$ desviaciones estándar. En PL13
+descarta 219\,108 puntos, el 2{,}66\,\%, y en PL7 406\,485, el 4{,}73\,\%.
+\textbf{Qué aporta.} Retira los puntos sueltos antes de que se mezclen con los
+válidos. Un punto aislado que llega al Paso~4 se promedia con los de su vóxel y
+desplaza al representante fuera de la superficie, y si llega al Paso~5 entra en
+la vecindad de la que se estima la normal. \textbf{Sin este paso.} Esos puntos
+llegarían a la matriz $S$ y, con ella, a la posición y la normal que recibe
+Sonata. El paso también tiene un costo observado. Es el más lento de la unidad y,
+como se ve en la Figura~\ref{fig:m1-paso3}, descarta sobre todo puntos de las
+zonas ralas lejos del escáner, aunque pertenezcan a superficies reales. Si el
+beneficio compensa ese costo todavía no se ha medido. Lo mide la prueba~P1, que
+compara con y sin filtrado.
+
+\paragraph*{Paso 4. Voxelización.}
+\textbf{Qué hace.} Divide el espacio en cubos de 5\,cm y sustituye los puntos de
+cada cubo por un representante con su posición y su color promedio. En PL13 deja
+803\,099 representantes de 8\,020\,796 puntos, y en PL7 610\,637 de 8\,184\,419.
+\textbf{Qué aporta.} Iguala la densidad, de modo que las zonas cercanas al
+escáner no pesen más que las lejanas, y reduce la nube a una décima parte o
+menos. Esa reducción es la que permite que la sección quepa en la GPU. Con los
+803\,099 representantes de PL13, Sonata ya usó 34{,}60\,GB de los 48\,GB de la
+A6000. \textbf{Sin este paso.} Sonata recibiría diez veces más puntos que en la
+prueba, y las zonas densas dominarían cualquier promedio posterior. Sonata aplica
+su propia rejilla de 2\,cm, que también iguala la densidad pero a una escala más
+fina, de modo que dejaría muchos más puntos. El costo del paso es que dos superficies a menos de 5\,cm una de otra
+dejan de distinguirse, como se ve en el cubo de PL7 de la
+Figura~\ref{fig:cubo-pl7}. Qué tamaño equilibra reducción y detalle lo mide la
+prueba~P2.
+
+\paragraph*{Paso 5. Normales.}
+\textbf{Qué hace.} Estima en cada representante la dirección perpendicular a la
+superficie a partir de sus 20 vecinos, y la orienta hacia arriba. \textbf{Qué
+aporta.} La normal es una de las tres entradas de Sonata, junto con la posición y
+el color, y el escáner no la mide. Sin ella el codificador no recibe sus nueve
+canales. La orientación común hace que dos superficies paralelas den la misma
+normal y no direcciones opuestas al azar. \textbf{Sin este paso.} El codificador
+preentrenado no podría ejecutarse con su entrada completa. Rellenar la normal con
+ceros le entregaría una entrada distinta de todas las que vio al entrenarse. Con
+pocos vecinos la normal sale ruidosa y con demasiados se promedia entre dos caras
+de una esquina. El número adecuado lo mide la prueba~P3.
+
+\paragraph*{Paso 6. Escritura.}
+\textbf{Qué hace.} Guarda la matriz $S$ y un archivo de metadatos con los
+parámetros, el centro restado y el número de puntos tras cada paso.
+\textbf{Qué aporta.} Separa la Unidad~1 de la Unidad~2, que corren en entornos
+distintos y, en las pruebas, en máquinas distintas. Los metadatos permiten
+comprobar que una repetición dio lo mismo y devolver resultados a coordenadas
+UTM. \textbf{Sin este paso.} Habría que preprocesar de nuevo cada vez que se
+ejecuta Sonata. Además, como los descriptores se asocian a los puntos de $S$ por
+el orden de sus filas, sin una matriz guardada no habría forma de asegurar que
+los descriptores y los puntos correspondan, según la
+Sección~\ref{sec:u1-reproducibilidad}.
+
+\subsubsection*{Unidad 2, Módulo 3}
+
+\paragraph*{Paso 1. Carga de la matriz.}
+\textbf{Qué hace.} Lee la matriz $S$ y la separa en posición, color y normal.
+\textbf{Qué aporta.} Entrega a Sonata sus tres entradas en el formato que espera.
+\textbf{Sin este paso.} No hay entrada para el codificador. Es un paso de formato,
+sin parámetros que discutir.
+
+\paragraph*{Paso 2. Carga del modelo.}
+\textbf{Qué hace.} Carga los pesos públicos de Sonata y fija el codificador en
+modo de inferencia, sin FlashAttention y con parches de 1024 puntos.
+\textbf{Qué aporta.} Los pesos son lo que el modelo aprendió sin etiquetas en su
+preentrenamiento, y son lo que el proyecto quiere aprovechar, porque la Catedral
+no tiene etiquetas. Al estar congelados, los descriptores de una sección son
+siempre los mismos, y basta calcularlos una vez. \textbf{Sin este paso.} Con pesos
+al azar, el codificador produciría vectores sin relación con la forma de la
+escena. Si se entrenaran, haría falta una tarea y unas etiquetas que no existen.
+FlashAttention está desactivada porque no está instalada en el clúster. Su falta
+es la explicación propuesta para la memoria medida, todavía sin comprobar. El tamaño de parche fija cuánto
+contexto ve cada punto y cuánta memoria se gasta, y lo mide la prueba~P5.
+
+\paragraph*{Paso 3. Preparación.}
+\textbf{Qué hace.} Traslada la nube, la muestrea con una rejilla de 2\,cm,
+guarda el índice inverso y divide el color entre 255. En PL13 retiene 796\,315 de
+803\,099 puntos, el 99{,}2\,\%. \textbf{Qué aporta.} Pone la nube en la escala y
+el formato con que Sonata se preentrenó. El índice inverso dice a qué celda de la
+rejilla pertenece cada punto de $S$, y es lo que permite devolver los
+descriptores a cada punto. \textbf{Sin este paso.} El codificador recibiría una
+nube en otra escala que la de su entrenamiento. Sin el índice inverso, el
+Módulo~4 no podría alinear $f_{\mathrm{ssl}}$ con los puntos de $S$ ni con
+$f_{\mathrm{sem}}$. Como la rejilla es más fina que el vóxel, casi no quita
+puntos. Su interacción con el vóxel la mide la prueba~P2.
+
+\paragraph*{Paso 4. Inferencia.}
+\textbf{Qué hace.} Pasa la nube por el codificador y devuelve sus descriptores a
+la resolución de la rejilla. En PL13 tardó 13{,}9 segundos y dejó 1088 valores
+por punto. \textbf{Qué aporta.} Produce $f_{\mathrm{ssl}}$, el descriptor que el
+proyecto quiere poner en lugar de $f_{\mathrm{geo}}$. La Figura~\ref{fig:sonata-pl13}
+muestra que agrupa partes iguales de la Catedral, como las nervaduras de
+distintas bóvedas. \textbf{Sin este paso.} No hay descriptor auto-supervisado y
+el aporte de la tesis no existe. Sin el retorno a la rejilla, los descriptores
+quedarían en el nivel más grueso del codificador, uno por cada grupo de muchos
+puntos, y no uno por punto.
+
+\paragraph*{Paso 5. Escritura.}
+\textbf{Qué hace.} Guarda los descriptores en precisión media, junto con las
+coordenadas, el índice inverso y el tamaño de rejilla. En PL13 el archivo ocupa
+680\,MB. \textbf{Qué aporta.} Sonata se ejecuta una vez por sección y HyperNCD lee
+sus descriptores en cada época, desde otro entorno, porque las dos bibliotecas
+necesitan versiones de CUDA que no conviven en un mismo proceso. La precisión
+media reduce el archivo a la mitad. \textbf{Sin este paso.} Habría que ejecutar
+Sonata en cada época del entrenamiento, con su costo de GPU, y en el mismo
+entorno que HyperNCD, lo que no es posible. Si la precisión media cambia los
+descriptores lo mide la prueba~P4.
 
 \FloatBarrier
 \subsection{Criterio Común de las Pruebas}
