@@ -822,6 +822,17 @@ zonas ralas lejos del escáner, aunque pertenezcan a superficies reales. Si el
 beneficio compensa ese costo todavía no se ha medido. Lo mide la prueba~P1, que
 compara con y sin filtrado.
 
+\textbf{Con más o menos vecinos.} El valor $q=20$ es el que trae el programa por
+defecto y no se eligió midiendo. Lo que se espera al cambiarlo es lo siguiente.
+Con pocos vecinos, por ejemplo 5, la distancia media de cada punto depende de
+muy pocos puntos y cambia mucho de uno a otro, de modo que el filtrado descarta
+o conserva casi al azar. Con muchos vecinos, por ejemplo 40, la distancia media
+mira más lejos, se vuelve más estable y más lenta de calcular, y un grupo pequeño
+de puntos sueltos juntos puede pasar por superficie. El umbral $\lambda$ actúa
+en sentido opuesto. Un $\lambda$ pequeño descarta mucho y se lleva superficie
+válida, y uno grande deja pasar el ruido. La prueba~P1 barre $q$ entre 10 y 40 y
+$\lambda$ entre 1{,}5 y 3 para medir cuál de estos efectos domina.
+
 \paragraph*{Paso 4. Voxelización.}
 \textbf{Qué hace.} Divide el espacio en cubos de 5\,cm y sustituye los puntos de
 cada cubo por un representante con su posición y su color promedio. En PL13 deja
@@ -838,6 +849,14 @@ dejan de distinguirse, como se ve en el cubo de PL7 de la
 Figura~\ref{fig:cubo-pl7}. Qué tamaño equilibra reducción y detalle lo mide la
 prueba~P2.
 
+\textbf{Con un vóxel mayor o menor.} El lado de 5\,cm tampoco se eligió midiendo.
+Un vóxel menor, por ejemplo de 2\,cm, conserva más detalle y separa superficies
+más próximas, pero deja muchos más representantes, porque sobre una superficie
+el número crece con el cuadrado de la razón entre los lados, y la sección podría
+no caber en la GPU. Cuántos más exactamente se medirá en la prueba. Un vóxel
+mayor, por ejemplo de 10\,cm, reduce mucho más la nube pero borra molduras y
+juntas que miden menos que su lado. La prueba~P2 barre 2, 3, 5 y 10\,cm.
+
 \paragraph*{Paso 5. Normales.}
 \textbf{Qué hace.} Estima en cada representante la dirección perpendicular a la
 superficie a partir de sus 20 vecinos, y la orienta hacia arriba. \textbf{Qué
@@ -846,9 +865,19 @@ el color, y el escáner no la mide. Sin ella el codificador no recibe sus nueve
 canales. La orientación común hace que dos superficies paralelas den la misma
 normal y no direcciones opuestas al azar. \textbf{Sin este paso.} El codificador
 preentrenado no podría ejecutarse con su entrada completa. Rellenar la normal con
-ceros le entregaría una entrada distinta de todas las que vio al entrenarse. Con
-pocos vecinos la normal sale ruidosa y con demasiados se promedia entre dos caras
-de una esquina. El número adecuado lo mide la prueba~P3.
+ceros le entregaría una entrada distinta de todas las que vio al entrenarse.
+
+\textbf{Con más o menos vecinos.} Las normales usan los mismos $q=20$ vecinos que
+el filtrado, no porque se haya medido que 20 es lo adecuado, sino porque el
+programa usa un solo parámetro para las dos cosas. Con pocos vecinos, por ejemplo
+5, el plano se ajusta a muy pocos puntos y cualquier error de medición del
+escáner lo inclina, así que la normal sale ruidosa. Con muchos vecinos, por
+ejemplo 40, la vecindad crece y en una esquina o una arista abarca dos caras a la
+vez, y la normal queda en una dirección intermedia que no corresponde a ninguna
+de las dos. En una pared plana, en cambio, más vecinos solo la vuelven más
+estable. Por eso el efecto se mide por separado en zonas planas y en aristas. La
+prueba~P3 separa los dos usos del parámetro y barre los vecinos de la normal
+entre 10 y 40.
 
 \paragraph*{Paso 6. Escritura.}
 \textbf{Qué hace.} Guarda la matriz $S$ y un archivo de metadatos con los
