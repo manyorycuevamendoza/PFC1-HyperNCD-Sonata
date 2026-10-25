@@ -29,6 +29,10 @@ def parse_args():
                     help="tamano de rejilla en metros (default: 0.02)")
     ap.add_argument("--fp32", action="store_true",
                     help="guardar en float32 en vez de float16")
+    ap.add_argument("--semilla", type=int, default=0,
+                    help="semilla aleatoria (default: 0). La rejilla de Sonata "
+                         "elige al azar un punto por celda; fijarla hace la "
+                         "corrida repetible")
     return ap.parse_args()
 
 
@@ -84,6 +88,9 @@ def upcast(point):
 
 def main():
     args = parse_args()
+    # GridSample (modo "train") usa np.random para elegir el punto de cada celda
+    np.random.seed(args.semilla)
+    torch.manual_seed(args.semilla)
 
     print(f"[1/4] leyendo {args.input}")
     t0 = time.time()
@@ -139,6 +146,7 @@ def main():
         inverse=inverse,
         grid_size=np.float32(args.grid),
         n_original=np.int64(n_original),
+        semilla=np.int64(args.semilla),
     )
     print(f"guardado -> {args.output}")
 

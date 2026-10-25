@@ -1108,6 +1108,99 @@ además del metodológico: si un parche menor reduce la memoria sin cambiar el
 agrupamiento, es una alternativa a la división en bloques espaciales prevista
 para las secciones grandes.
 
+\FloatBarrier
+\subsection{Replicación del Procedimiento}
+\label{sec:param-replicacion}
+
+Las pruebas anteriores solo valen si cada configuración se puede repetir y dar
+el mismo resultado. Esta subsección explica por qué el procedimiento de las
+Unidades~1 y~2 es replicable, qué hay que hacer para replicarlo con otra
+configuración y qué límites tiene esa replicación.
+
+\paragraph*{Por qué es replicable.}
+Hay cuatro razones. La primera es que ningún valor está escondido en el código.
+Cada parámetro de los dos programas es una opción de la línea de órdenes con un
+valor por defecto, de modo que una configuración queda descrita por completo con
+la orden que la ejecuta. La única excepción es el tamaño de parche del
+codificador, fijo en el programa, que la prueba~P5 convierte en opción. La
+segunda es que la Unidad~1 no tiene pasos aleatorios. La misma entrada con los
+mismos parámetros da los mismos puntos, y así se comprobó al preprocesar PL13 y
+PL7 en el equipo local y en Khipu, con conteos idénticos en las dos máquinas. La
+tercera es que cada corrida deja constancia de lo que hizo. La Unidad~1 escribe
+un archivo de metadatos con los parámetros, el centro restado, el número de
+puntos tras cada paso y el tiempo. La Unidad~2 guarda dentro del archivo de
+descriptores el tamaño de rejilla, el número de puntos de entrada y la semilla, y
+su registro anota el tiempo y la memoria. La cuarta es que el código y las
+versiones de las bibliotecas están en el repositorio y en el Anexo~A.
+
+\paragraph*{La única fuente de azar.}
+La rutina de preparación de Sonata elige al azar un punto cuando varios caen en
+la misma celda de la rejilla. Por eso dos corridas sobre la misma matriz $S$
+podían dar descriptores algo distintos en esas celdas. Para eliminar esa
+variación, el programa \texttt{extraer\_features.py} fija ahora una semilla
+aleatoria, con valor 0 por defecto, que se elige con la opción
+\texttt{--semilla} y queda guardada en el archivo. La prueba sobre PL13 de la
+Sección~\ref{sec:rama-ssl} se ejecutó antes de este cambio, sin semilla fija.
+Como la rejilla retuvo el 99{,}2\,\% de los puntos, la elección al azar afectó a
+pocas celdas. Que dos inferencias en la GPU con la misma semilla den
+exactamente los mismos valores todavía no se ha comprobado, y se comprobará
+repitiendo la extracción de PL13.
+
+\paragraph*{Cómo se replica una configuración.}
+Replicar una configuración consiste en cinco pasos, los mismos para cualquiera
+de las pruebas.
+\begin{enumerate}
+\item Fijar los valores de la configuración, uno por parámetro, a partir de la
+Tabla~\ref{tab:replica}.
+\item Ejecutar \texttt{preprocesar.py} con esos valores. En el clúster, el guion
+\texttt{preprocesar.sbatch} acepta el vóxel, los vecinos y el umbral como
+variables de entorno, sin tocar el código.
+\item Comprobar que los conteos del archivo de metadatos coinciden con los de una
+corrida anterior con los mismos valores. Si no coinciden, la configuración no se
+reprodujo y no tiene sentido seguir.
+\item Ejecutar \texttt{extraer\_features.py} sobre esa misma matriz $S$, con la
+rejilla, la precisión y la semilla de la configuración.
+\item Comparar los descriptores con los de la condición de referencia, con el
+ARI y el NMI de la Sección~\ref{sec:param-criterio}, y revisar las dos salidas en
+el visor de la Sección~\ref{sec:visor}, que además comprueba que descriptores y
+puntos correspondan.
+\end{enumerate}
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Cómo cambiar cada parte de la configuración]{Cómo cambiar cada parte de la configuración y qué comprobar después. Elaboración propia.}
+\label{tab:replica}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X@{}}
+\toprule
+\textbf{Qué cambia} & \textbf{Cómo se cambia} & \textbf{Qué se comprueba} \\
+\midrule
+Otro escaneo & \texttt{--input} con su archivo LAS & Conteos de su archivo de metadatos \\
+Tamaño de vóxel & \texttt{--voxel}, o \texttt{VOXEL} en el guion & \texttt{n\_voxel} y memoria en la GPU \\
+Vecinos del filtrado & \texttt{--q}, o \texttt{Q} en el guion & \texttt{n\_sor} \\
+Umbral del filtrado & \texttt{--lam}, o \texttt{LAM} en el guion & \texttt{n\_sor} \\
+Rejilla de Sonata & \texttt{--grid} & Puntos retenidos por la rejilla \\
+Precisión de los descriptores & \texttt{--fp32} & Tamaño del archivo, ARI y NMI \\
+Azar de la rejilla & \texttt{--semilla} & Descriptores idénticos con la misma semilla \\
+Otra máquina u otra versión de Open3D & Ninguna opción, mismos valores & Mismos conteos, aunque las filas salgan en otro orden \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph*{Límites de la replicación.}
+Hay tres. El primero es el orden de las filas. Otra versión de Open3D da los
+mismos puntos en otro orden, así que los descriptores siempre deben usarse con la
+misma matriz $S$ que entró a Sonata, según la
+Sección~\ref{sec:u1-reproducibilidad}. El segundo es la memoria. Una
+configuración que deje muchos más representantes, por ejemplo un vóxel menor,
+puede no caber en los 48\,GB de la GPU, y en ese caso la falta de memoria se
+reporta como resultado de la configuración y no se reduce la nube para que
+quepa. El tercero es el tamaño de la sección. Los seis escaneos que superan el
+millón de puntos tras la Unidad~1 todavía no se han pasado por Sonata, y si la
+memoria crece con el número de puntos no cabrán en una sola pasada. Su
+replicación depende entonces de la división en bloques prevista o de la
+prueba~P5.
+
 % =====================================================================
 \FloatBarrier
 \section{Unidad 3. Entrenamiento, Calibración y Evaluación}
