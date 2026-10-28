@@ -13,14 +13,15 @@
 #     de una A100 con solo 4,8 GB.
 #   - Baja los procesos de lectura de 8 a 2 (WORKERS). Con 8, el DataLoader
 #     puede bloquearse en el clúster sin dar error.
-#   - Mas tiempo (12 h) y salida sin buffer, para ver el avance en el log.
+#   - Mas tiempo (2 dias, el maximo de la cuenta) y salida sin buffer, para ver
+#     el avance en el log.
 
 #SBATCH --job-name=hyperncd-poss
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:rtxa6000:1
-#SBATCH --time=12:00:00
+#SBATCH --time=2-00:00:00
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=8
 
