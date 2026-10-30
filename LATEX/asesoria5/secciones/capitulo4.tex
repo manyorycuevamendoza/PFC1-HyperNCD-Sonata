@@ -1,91 +1,130 @@
 \chapter{RESULTADOS}
 \label{cap:resultados}
 
-Este capítulo presenta la salida del procedimiento descrito en el
-Capítulo~\ref{cap:metodo}. Las dos primeras secciones son un caso de prueba:
-recorren paso a paso, con la misma numeración del capítulo anterior, lo que
-produjo cada paso sobre escaneos reales de la Catedral de Lima. Su propósito no
-es demostrar que el sistema acierta, porque todavía no hay etiquetas con las que
-medirlo, sino que el procedimiento escrito es ejecutable y reproducible, y que
-cada paso entrega lo que la metodología declara que entrega. Las secciones
-siguientes recogen los resultados por objetivo específico, que dependen de las
-unidades aún no ejecutadas.
+Este capítulo sigue la estructura del Capítulo~\ref{cap:metodo}, como se
+indica al inicio de ese capítulo. Las Unidades~1 y~2 se ejecutaron sobre
+escaneos reales de la Catedral de Lima; su propósito no es demostrar que el
+sistema acierta, porque todavía no hay etiquetas con las que medirlo, sino que el
+procedimiento escrito es ejecutable y reproducible. Solo se reporta lo
+ejecutado; lo que aún no se ha ejecutado se indica en una línea.
 
 % =====================================================================
 \FloatBarrier
-\section{Caso de Prueba de la Unidad 1}
-\label{sec:res-unidad1}
+\section{Diagrama de Flujo General}
+\label{sec:res-flujo}
 
-El procedimiento de la Sección~\ref{sec:u1-procedimiento} se ejecutó sobre dos
-escaneos de la Catedral de Lima, PL13 y PL7, en el equipo local de la
-Sección~\ref{sec:hardware-repo}. PL13 es el escaneo principal, porque es el que
-después pasa por Sonata en la Sección~\ref{sec:res-unidad2}, de modo que todo el
-análisis sigue al mismo escaneo de principio a fin. PL7 se presenta al lado como
-segundo ejemplo, para mostrar que el procedimiento se comporta igual en otro
-escaneo. PL13 tiene 8\,239\,904 puntos, el 1{,}40\,\% del levantamiento, y PL7
-tiene 8\,590\,904, el 1{,}46\,\%.
+Responde a la Sección~\ref{sec:diagrama-flujo}. De las etapas de la
+Figura~\ref{fig:flujo} se han ejecutado E0, E1 y E2 (Tabla~\ref{tab:res-etapas});
+E3 a E5 y el bucle de repeticiones aún no.
 
-Los tres parámetros son los mismos en las dos pruebas, el tamaño de vóxel
-$\ell=5$\,cm, el número de vecinos $q=20$ y el umbral del filtrado $\lambda=2$.
-La prueba sobre PL13 tardó 12{,}0 segundos en total y la de PL7, 14{,}4. La
-Figura~\ref{fig:flujo-u1-cifras} resume la cadena de conteos de los seis pasos.
-Las figuras de nubes de esta sección se obtuvieron con el visor del proyecto
-(Anexo~A) y dibujan 200\,000 puntos tomados al azar, salvo donde se indique.
-
-\begin{figure}[!htbp]
+\begin{table}[!htbp]
 \centering
-\begin{tikzpicture}[
-  font=\scriptsize, node distance=3mm,
-  caja/.style={draw, rounded corners, text width=5.6cm, minimum height=0.75cm,
-               align=center, inner sep=2pt},
-  dat/.style={caja, trapezium, trapezium left angle=75, trapezium right angle=105,
-               trapezium stretches body, rounded corners=0pt, text width=5.0cm,
-               minimum width=6.0cm, fill=orange!18},
-  paso/.style={caja, fill=blue!12},
-  cifra/.style={font=\scriptsize\itshape, text=black!70, anchor=west},
-  fl/.style={-{Latex[length=1.8mm]}, thick}
-]
-\node[dat] (a) {\textbf{Entrada.} Archivo LAS};
-\node[paso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga por bloques y centrado};
-\node[paso, below=of b] (c) {\textbf{Paso 3.} Filtrado SOR, $q=20$ y $\lambda=2$};
-\node[paso, below=of c] (d) {\textbf{Paso 4.} Voxelización a 5\,cm};
-\node[paso, below=of d] (e) {\textbf{Paso 5.} Normales con $q=20$ vecinos};
-\node[dat, below=of e] (f) {\textbf{Paso 6. Salida.} Matriz $S$ y metadatos};
-\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[fl] (\u) -- (\v);
-\newcommand{\dospl}[2]{\makebox[1.7cm][r]{#1}\makebox[1.9cm][r]{#2}}
-\node[cifra, font=\scriptsize\bfseries\itshape] at ($(a.east)+(0.2,0.55)$) {\dospl{PL13}{PL7}};
-\node[cifra] at ($(a.east)+(0.2,0)$) {\dospl{8\,239\,904}{8\,590\,904}};
-\node[cifra] at ($(b.east)+(0.2,0)$) {\dospl{8\,239\,904}{8\,590\,904}};
-\node[cifra] at ($(c.east)+(0.2,0)$) {\dospl{8\,020\,796}{8\,184\,419}};
-\node[cifra] at ($(d.east)+(0.2,0)$) {\dospl{803\,099}{610\,637}};
-\node[cifra] at ($(e.east)+(0.2,0)$) {\dospl{803\,099}{610\,637}};
-\node[cifra] at ($(f.east)+(0.2,0)$) {\dospl{$803\,099\times 9$}{$610\,637\times 9$}};
-\end{tikzpicture}
-\caption[Conteos del preprocesamiento en PL13 y PL7]{Conteos del preprocesamiento en PL13 y PL7, paso a paso. Elaboración propia.}
-\label{fig:flujo-u1-cifras}
-\end{figure}
+\setstretch{1}\small
+\caption[Etapas ejecutadas del flujo general]{Etapas ejecutadas del flujo general y sección donde está su resultado. Elaboración propia.}
+\label{tab:res-etapas}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+\textbf{Etapa} & \textbf{Alcance ejecutado} & \textbf{Resultado} \\
+\midrule
+E0 & Recepción de los 23 archivos LAS, sin etiquetas & \S\ref{sec:res-u1-datos} \\
+E1 & Preprocesamiento de las 23 secciones & \S\ref{sec:res-u1-repro} \\
+E2 & Extracción con Sonata sobre PL13 & \S\ref{sec:res-unidad2} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La frontera de disco funciona en un sentido: el archivo \texttt{.npz} de PL13 se
+escribió desde el entorno de Sonata y el visor lo leyó fuera de él. Falta que lo
+lea el entorno de HyperNCD.
+
+% =====================================================================
+\FloatBarrier
+\section{Hardware y Repositorio}
+\label{sec:res-hardware}
+
+Responde a la Sección~\ref{sec:hardware-repo}. Las pruebas de la Unidad~1 sobre
+PL13 y PL7 corrieron en la laptop local; el preprocesamiento de las 23 secciones
+y la extracción con Sonata, en Khipu, esta última en una RTX~A6000 de 48\,GB.
+Todas se lanzaron con los programas y guiones del repositorio y las órdenes del
+\hyperref[sec:anexo-software]{Anexo~A}. Los tiempos de cada una están en su unidad.
+
+% =====================================================================
+\FloatBarrier
+\section{Diseño General del Sistema}
+\label{sec:res-diseno}
+
+Responde a la Sección~\ref{sec:diseno}.
 
 \FloatBarrier
-\subsection{Paso 1. Carga}
+\subsection{Estructura y Contrato de los Módulos}
+\label{sec:res-contrato}
 
-En PL13 se leen 8\,239\,904 puntos y en PL7 8\,590\,904, en dos bloques cada
-uno, en cerca de un segundo. La Figura~\ref{fig:m1-paso1} muestra los dos
-escaneos cargados. Es la data de entrada tal como la entrega el escáner, con su
-color real y sin ninguna corrección.
+Las salidas de los Módulos~1 y~3 tienen la forma que declara la
+Tabla~\ref{tab:contrato}: la matriz $S$ de 9 columnas
+(Tabla~\ref{tab:m1-metadatos}) y $f_{\mathrm{ssl}}$ de 1088 valores en la
+rejilla de 2\,cm, con un índice inverso de una entrada por fila de $S$
+(Tabla~\ref{tab:npz}). Los Módulos~2, 4 y~5 aún no se han ejecutado.
+
+\FloatBarrier
+\subsection{Visor 3D del Proyecto}
+\label{sec:res-visor}
+
+Al dibujar los descriptores de PL13 (Figura~\ref{fig:visor-pl13-etapas}), el
+visor verificó que el archivo \texttt{.npz} corresponde a la matriz $S$ de la que
+salió.
+
+% =====================================================================
+\FloatBarrier
+\section{Unidad 1. Preprocesamiento}
+\label{sec:res-unidad1}
+
+Responde a la Sección~\ref{sec:unidad1}.
+
+\FloatBarrier
+\subsection{Datos de Entrada y Ejecución}
+\label{sec:res-u1-datos}
+
+El procedimiento se ejecutó sobre dos escaneos de la Catedral de Lima, PL13 y
+PL7, en el equipo local de la Sección~\ref{sec:hardware-repo}. PL13 es el
+escaneo principal, porque es el que después pasa por Sonata en la
+Sección~\ref{sec:res-unidad2}, de modo que todo el análisis sigue al mismo
+escaneo de principio a fin. PL7 se presenta al lado como segundo ejemplo, para
+mostrar que el procedimiento se comporta igual en otro escaneo. PL13 es el
+1{,}40\,\% del levantamiento y PL7 el 1{,}46\,\%.
+
+Las dos pruebas usaron los valores por defecto de la
+Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}).
+Las figuras de nubes de esta sección dibujan 200\,000 puntos tomados al azar,
+salvo donde se indique.
+
+
+\FloatBarrier
+\subsection{Procedimiento}
+\label{sec:res-u1-procedimiento}
+
+Cada paso responde al paso del mismo número de la
+Sección~\ref{sec:u1-procedimiento}.
+
+\FloatBarrier
+\subsubsection*{Paso 1. Carga}
+
+Cada escaneo se lee en dos bloques, en cerca de un segundo (\texttt{n\_crudo}
+en la Tabla~\ref{tab:m1-metadatos}). Es la data de entrada tal como la entrega el
+escáner, con su color real y sin ninguna corrección
+(Figura~\ref{fig:m1-paso1}).
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{imagenes/m1_paso1_carga.png}
-\caption[PL13 y PL7 tras la carga]{PL13 y PL7 tras la carga. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[PL13 y PL7 tras la carga]{PL13 y PL7 tras la carga. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso1}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 2. Centrado}
+\subsubsection*{Paso 2. Centrado}
 
-La Tabla~\ref{tab:m1-centrado} muestra el efecto del centrado en las dos
-pruebas. Los dos escaneos son vecinos, sus centros están a unos 17\,m uno de
-otro, pero cada uno se centra en su propio origen. Este paso no lleva imagen
+Los dos escaneos son vecinos, sus centros están a unos 17\,m uno de otro, pero
+cada uno se centra en su propio origen (Tabla~\ref{tab:m1-centrado}). Este paso no lleva imagen
 porque la nube se ve igual antes y después, solo cambian los números de los
 ejes.
 
@@ -110,37 +149,36 @@ PL7  & $x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}
 \end{table}
 
 \FloatBarrier
-\subsection{Paso 3. Filtrado SOR}
+\subsubsection*{Paso 3. Filtrado SOR}
 
-En PL13 quedan 8\,020\,796 puntos y se descartan 219\,108, el 2{,}66\,\%. En
-PL7 quedan 8\,184\,419 y se descartan 406\,485, el 4{,}73\,\%. El filtrado es el
-paso más lento, cerca de nueve segundos en PL13 y doce en PL7.
+En PL13 se descartan 219\,108 puntos, el 2{,}66\,\%, y en PL7 406\,485, el
+4{,}73\,\% (\texttt{n\_sor} en la Tabla~\ref{tab:m1-metadatos}). El filtrado tardó
+cerca de nueve segundos en PL13 y doce en PL7.
 
-La Figura~\ref{fig:m1-paso3} marca en rojo los puntos descartados en los dos
-escaneos. En ambos se concentran en las zonas ralas, lejos del escáner. PL7
+En ambos escaneos los descartes se concentran en las zonas ralas, lejos del
+escáner (Figura~\ref{fig:m1-paso3}). PL7
 descarta casi el doble que PL13, y en la figura se ve que también tiene más
 zonas ralas.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{imagenes/m1_paso3_sor.png}
-\caption[PL13 y PL7 con los puntos descartados por el SOR en rojo]{PL13 y PL7 con los puntos descartados por el SOR en rojo. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[PL13 y PL7 con los puntos descartados por el SOR en rojo]{PL13 y PL7 con los puntos descartados por el SOR en rojo. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso3}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 4. Voxelización}
+\subsubsection*{Paso 4. Voxelización}
 
-En PL13 quedan 803\,099 representantes, el 10{,}01\,\% de los puntos que
-salieron del filtrado, y en PL7 610\,637, el 7{,}46\,\%. Las
-Figuras~\ref{fig:m1-paso4-pl13} y~\ref{fig:m1-paso4} muestran los dos escaneos
-completos antes y después. Las Figuras~\ref{fig:cubo-pl13} y~\ref{fig:cubo-pl7}
-muestran de cerca un cubo de 1\,m de lado de cada uno. En el cubo de PL13 los
+En PL13 quedan como representantes el 10{,}01\,\% de los puntos que salieron
+del filtrado, y en PL7 el 7{,}46\,\% (\texttt{n\_voxel} en la
+Tabla~\ref{tab:m1-metadatos})
+(Figuras~\ref{fig:m1-paso4-pl13} y~\ref{fig:m1-paso4}). De cerca
+(Figuras~\ref{fig:cubo-pl13} y~\ref{fig:cubo-pl7}), en el cubo de PL13 los
 37\,777 puntos de la entrada quedan en 1\,159 representantes, y en el de PL7 los
 48\,098 quedan en 921. En el cubo de PL7 la entrada contiene varias superficies
-paralelas separadas por pocos centímetros, que en la salida ya no se distinguen.
-Es el límite del vóxel de 5\,cm, que no separa superficies más próximas que su
-lado. En los cubos se dibujan todos los puntos, con el color aclarado por un
+paralelas separadas por pocos centímetros, que en la salida ya no se distinguen,
+como anticipa el \enlace{sec:u1-p4}{Paso~4}. En los cubos se dibujan todos los puntos, con el color aclarado por un
 factor de 2{,}2. Los dos cubos se eligieron con el mismo criterio, tener muchos
 puntos y superficies en varias orientaciones. El de PL13 va de $x=-3$ a $-2$\,m,
 de $y=7$ a $8$\,m y de $z=-8$ a $-7$\,m, y el de PL7 de $x=-19$ a $-18$\,m, de
@@ -150,94 +188,88 @@ escaneo.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo_pl13.png}
-\caption[PL13 antes y después de la voxelización]{PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[PL13 antes y después de la voxelización]{PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso4-pl13}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo.png}
-\caption[PL7 antes y después de la voxelización]{PL7 antes y después de la voxelización. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[PL7 antes y después de la voxelización]{PL7 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso4}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_cubo_pl13.png}
-\caption[Cubo de 1\,m de PL13 antes y después de la voxelización]{Cubo de 1\,m de PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[Cubo de 1\,m de PL13 antes y después de la voxelización]{Cubo de 1\,m de PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:cubo-pl13}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_cubo.png}
-\caption[Cubo de 1\,m de PL7 antes y después de la voxelización]{Cubo de 1\,m de PL7 antes y después de la voxelización. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[Cubo de 1\,m de PL7 antes y después de la voxelización]{Cubo de 1\,m de PL7 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:cubo-pl7}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 5. Normales}
+\subsubsection*{Paso 5. Normales}
 
-En la Figura~\ref{fig:m1-paso5} cada normal se usa como color, de modo que las
-superficies con la misma orientación toman el mismo tono. En las bóvedas el
+Las superficies con la misma orientación toman el mismo tono
+(Figura~\ref{fig:m1-paso5}). En las bóvedas el
 color cambia de forma gradual, siguiendo su curvatura. En las zonas ralas, lejos
-del escáner, aparecen manchas de colores mezclados, porque los 20 vecinos de un
-punto aislado no describen bien la superficie. Es la misma zona en la que el
+del escáner, aparecen manchas de colores mezclados. Es la misma zona en la que el
 filtrado del Paso~3 concentró sus descartes.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{imagenes/m1_paso5_normales.png}
-\caption[Normales de PL13 y PL7 como color]{Normales de PL13 y PL7 como color. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[Normales de PL13 y PL7 como color]{Normales de PL13 y PL7 como color. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso5}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 6. Escritura}
+\subsubsection*{Paso 6. Escritura}
 
-En PL13 la matriz $S$ ocupa 28{,}9\,MB con 803\,099 filas y en PL7 22{,}0\,MB
-con 610\,637. La Tabla~\ref{tab:m1-metadatos} muestra el contenido del archivo
-de metadatos en las dos pruebas.
+En PL13 la matriz $S$ ocupa 28{,}9\,MB y en PL7 22{,}0\,MB, junto a su archivo de metadatos (Tabla~\ref{tab:m1-metadatos}).
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Metadatos de PL13 y PL7]{Metadatos de PL13 y PL7. Elaboración propia.}
+\caption[Metadatos de PL13 y PL7]{Metadatos de PL13 y PL7. Los campos se describen en el Paso~6 de la Sección~\ref{sec:u1-procedimiento}. Elaboración propia.}
 \label{tab:m1-metadatos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Campo} & \textbf{PL13} & \textbf{PL7} & \textbf{Significado} \\
+\textbf{Campo} & \textbf{PL13} & \textbf{PL7} \\
 \midrule
-\texttt{voxel} & 0{,}05 & 0{,}05 & Lado del vóxel, en metros \\
-\texttt{q} & 20 & 20 & Vecinos del filtrado y de las normales \\
-\texttt{lambda} & 2 & 2 & Umbral del filtrado \\
-\texttt{offset\_utm} & 278\,788{,}49, 8\,667\,763{,}64 y 172{,}75 & 278\,800{,}97, 8\,667\,752{,}42 y 174{,}10 & Centro restado en el Paso~2 \\
-\texttt{n\_crudo} & 8\,239\,904 & 8\,590\,904 & Puntos tras la carga \\
-\texttt{n\_sor} & 8\,020\,796 & 8\,184\,419 & Puntos tras el filtrado \\
-\texttt{n\_voxel} & 803\,099 & 610\,637 & Representantes tras la voxelización \\
-\texttt{segundos} & 12{,}0 & 14{,}4 & Tiempo total \\
+\texttt{voxel} & 0{,}05 & 0{,}05 \\
+\texttt{q} & 20 & 20 \\
+\texttt{lambda} & 2 & 2 \\
+\texttt{offset\_utm} & \multicolumn{2}{l}{Columna \emph{Centro} de la Tabla~\ref{tab:m1-centrado}} \\
+\texttt{n\_crudo} & 8\,239\,904 & 8\,590\,904 \\
+\texttt{n\_sor} & 8\,020\,796 & 8\,184\,419 \\
+\texttt{n\_voxel} & 803\,099 & 610\,637 \\
+\texttt{segundos} & 12{,}0 & 14{,}4 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \FloatBarrier
-\subsection{Reproducibilidad de la Unidad 1}
+\subsection{Verificación y Reproducibilidad}
 \label{sec:res-u1-repro}
 
-Las dos pruebas se ejecutaron con las órdenes siguientes, con los valores por
-defecto del programa.
+Responde a la Sección~\ref{sec:u1-reproducibilidad}. PL13 se ejecutó con la
+orden de esa sección y PL7 con la siguiente.
 \begin{lstlisting}[style=comando]
-python preprocesar.py --input PL13_SCN0001.las \
-       --output PL13_SCN0001_preprocesado \
-       --voxel 0.05 --q 20 --lam 2
 python preprocesar.py --input PL7_SCN0001.las \
        --output PL7_SCN0001_preprocesado \
        --voxel 0.05 --q 20 --lam 2
 \end{lstlisting}
 
 El mismo programa preprocesó después el levantamiento completo en el clúster
-Khipu, con los mismos parámetros. Los 23 archivos LAS pasaron de
-589\,708\,290 puntos a 17\,807\,859 representantes. La suma de los tiempos por
+Khipu, con los mismos parámetros. Los 23 archivos LAS
+(Sección~\ref{sec:u1-datos}) quedaron en 17\,807\,859 representantes. La suma de los tiempos por
 archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL13 y de PL7
 en esa corrida coinciden exactamente con los de las pruebas locales de la
 Tabla~\ref{tab:m1-metadatos}, que es la comprobación de repetición descrita en
@@ -246,359 +278,212 @@ máquinas distintas.
 
 % =====================================================================
 \FloatBarrier
-\section{Caso de Prueba de la Unidad 2}
+\section{Unidad 2. Extracción de Descriptores y Fusión}
 \label{sec:res-unidad2}
 
-El procedimiento de la Sección~\ref{sec:rama-ssl} se ejecutó sobre el escaneo
-PL13, en el clúster Khipu, con una GPU NVIDIA RTX~A6000 de 48\,GB. En el clúster
-el archivo se llama \texttt{PL13'\_SCN0001.las}, con apóstrofo, y el guion de
-lanzamiento lo quita al nombrar la salida, que queda como
-\texttt{PL13\_SCN0001}. La entrada fue la matriz $S$ que entrega la Unidad~1
-para ese escaneo, generada en Khipu con los mismos parámetros de la
-Sección~\ref{sec:res-unidad1}: 8\,239\,904 puntos crudos, 8\,020\,796 tras el
-filtrado y 803\,099 representantes tras la voxelización, en 15{,}8 segundos. La
-matriz tiene 803\,099 filas de 9 columnas. La
-Figura~\ref{fig:flujo-sonata-cifras} resume los cinco pasos con los valores
-medidos.
-
-\begin{figure}[!htbp]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize, node distance=3mm,
-  caja/.style={draw, rounded corners, text width=5.6cm, minimum height=0.75cm,
-               align=center, inner sep=2pt},
-  dat/.style={caja, trapezium, trapezium left angle=75, trapezium right angle=105,
-               trapezium stretches body, rounded corners=0pt, text width=5.0cm,
-               minimum width=6.0cm, fill=orange!18},
-  paso/.style={caja, fill=blue!12},
-  cong/.style={caja, fill=purple!14},
-  cifra/.style={font=\scriptsize\itshape, text=black!70, anchor=west},
-  fl/.style={-{Latex[length=1.8mm]}, thick}
-]
-\node[dat] (a) {\textbf{Entrada.} Matriz $S$ de \texttt{PL13\_SCN0001}};
-\node[paso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga de $S$ y de los pesos};
-\node[paso, below=of b] (c) {\textbf{Paso 3.} Centrado y rejilla de 2\,cm};
-\node[cong, below=of c] (d) {\textbf{Paso 4.} Codificador PTv3 congelado};
-\node[dat, below=of d] (e) {\textbf{Paso 5. Salida.} Archivo \texttt{.npz} con $f_{\mathrm{ssl}}$};
-\foreach \u/\v in {a/b, b/c, c/d, d/e} \draw[fl] (\u) -- (\v);
-\node[cifra] at ($(a.east)+(0.2,0)$) {803\,099 puntos $\times$ 9};
-\node[cifra] at ($(b.east)+(0.2,0)$) {108{,}46 millones de parámetros};
-\node[cifra] at ($(c.east)+(0.2,0)$) {796\,315 puntos, el 99{,}2\,\%};
-\node[cifra] at ($(d.east)+(0.2,0)$) {13{,}9\,s y 34{,}60\,GB de VRAM};
-\node[cifra] at ($(e.east)+(0.2,0)$) {$796\,315\times 1088$, 680\,MB};
-\end{tikzpicture}
-\caption[Conteos de la extracción con Sonata en PL13]{Conteos de la extracción con Sonata en PL13, paso a paso. Elaboración propia.}
-\label{fig:flujo-sonata-cifras}
-\end{figure}
+Responde a la Sección~\ref{sec:unidad2}.
 
 \FloatBarrier
-\subsection{Paso 1. Carga de la matriz}
+\subsection{Rama Semántica}
 
-Se leen 803\,099 filas en 0{,}3 segundos. La Figura~\ref{fig:m3-paso1} muestra
-esa entrada, que es la salida del Paso~6 de la Unidad~1.
+Responde a la Sección~\ref{sec:rama-sem}. No se ha ejecutado.
+
+\FloatBarrier
+\subsection{Rama Auto-supervisada Congelada}
+\label{sec:res-rama-ssl}
+
+Responde a la Sección~\ref{sec:rama-ssl}. Se ejecutó sobre PL13 en Khipu. En el clúster
+el archivo se llama \texttt{PL13'\_SCN0001.las}, con apóstrofo, y el guion de
+lanzamiento lo quita al nombrar la salida, que queda como
+\texttt{PL13\_SCN0001}. La entrada fue la matriz $S$ de PL13 generada en Khipu
+(Sección~\ref{sec:res-u1-repro}), en 15{,}8 segundos.
+
+
+\FloatBarrier
+\subsubsection*{Paso 1. Carga de la matriz}
+
+Se leen 803\,099 filas en 0{,}3 segundos; es la salida del Paso~6 de la
+Unidad~1 (Figura~\ref{fig:m3-paso1}).
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.4\linewidth]{imagenes/m3_paso1_entrada.png}
-\caption[Matriz $S$ de PL13, entrada de Sonata]{Matriz $S$ de PL13, entrada de Sonata. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[Matriz $S$ de PL13, entrada de Sonata]{Matriz $S$ de PL13, entrada de Sonata. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m3-paso1}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 2. Carga del modelo}
+\subsubsection*{Paso 2. Carga del modelo}
 
 El modelo cargado tiene 108{,}46 millones de parámetros, cifra que imprime la
-función de carga de Sonata. Los pesos se leyeron del disco sin conexión a
-internet, como exige el nodo de GPU.
+función de carga de Sonata.
 
 \FloatBarrier
-\subsection{Paso 3. Preparación}
+\subsubsection*{Paso 3. Preparación}
 
-Tras el muestreo con la rejilla de 2\,cm quedan 796\,315 de los 803\,099 puntos,
-el 99{,}2\,\%. La diferencia es tan pequeña que a simple vista no se distingue,
-por eso este paso no lleva imagen. La causa es que el vóxel de 5\,cm de la
+La rejilla retiene casi todos los puntos (Tabla~\ref{tab:salidas-p2}). La
+diferencia no se distingue a simple vista, por eso este paso no lleva imagen. La
+causa es que el vóxel de 5\,cm de la
 Unidad~1 ya dejó la nube más gruesa que la rejilla de Sonata, de modo que casi
 toda celda contiene un solo punto.
 
 \FloatBarrier
-\subsection{Paso 4. Inferencia}
+\subsubsection*{Paso 4. Inferencia}
 
-La inferencia corrió en una GPU RTX~A6000 de 48\,GB, sin FlashAttention. Tardó
-13{,}9 segundos, procesó 57\,397 puntos por segundo y usó un máximo de
-34{,}60\,GB de memoria. La Figura~\ref{fig:visor-pl13-etapas} muestra el
-resultado: los 1088 valores de cada punto se proyectan sobre sus tres
-componentes principales y se usan como color, de modo que un mismo color indica
-descriptores parecidos. Cada panel dibuja 100\,000 puntos al azar, por eso la
+El tiempo, el rendimiento y la memoria de la inferencia están en la
+Tabla~\ref{tab:salidas-p2}. La Figura~\ref{fig:visor-pl13-etapas} muestra los
+descriptores con la primera vista de la Sección~\ref{sec:revision-descriptores}.
+Cada panel dibuja 100\,000 puntos al azar, por eso la
 reducción de la Unidad~1 no se aprecia entre los dos primeros; se aprecia en la
 Figura~\ref{fig:m1-paso4-pl13}.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.8\linewidth]{imagenes/visor_pl13_entrada_m1_m3.png}
-\caption[PL13 en sus tres etapas]{PL13 crudo, tras la Unidad~1 y con los descriptores de Sonata. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[PL13 en sus tres etapas]{PL13 crudo, tras la Unidad~1 y con los descriptores de Sonata. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:visor-pl13-etapas}
 \end{figure}
 
 \FloatBarrier
-\subsection{Paso 5. Escritura}
+\subsubsection*{Paso 5. Escritura}
 
-El archivo \texttt{.npz} ocupa 680\,MB. La Tabla~\ref{tab:npz} detalla su
-contenido en esta prueba.
+El contenido del archivo \texttt{.npz} está en la Tabla~\ref{tab:npz} y su
+tamaño en la Tabla~\ref{tab:salidas-p2}. Tiene cinco
+campos y no seis porque esta extracción se hizo antes de que el programa
+guardara la semilla.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Archivo de descriptores de PL13]{Archivo de descriptores de PL13. Elaboración propia.}
+\caption[Archivo de descriptores de PL13]{Archivo de descriptores de PL13. Los campos se describen en el Paso~5 de la Sección~\ref{sec:rama-ssl}. Elaboración propia.}
 \label{tab:npz}
-\begin{tabularx}{\linewidth}{@{}ll>{\raggedright\arraybackslash\hsize=1.00\hsize}X@{}}
+\begin{tabular}{@{}ll@{}}
 \toprule
-\textbf{Campo} & \textbf{Forma} & \textbf{Contenido} \\
+\textbf{Campo} & \textbf{Valor en PL13} \\
 \midrule
-\texttt{feat} & $796\,315\times 1088$ & Descriptores $f_{\mathrm{ssl}}$ en precisión media \\
-\texttt{coord} & $796\,315\times 3$ & Posición de cada punto de la rejilla \\
-\texttt{inverse} & $803\,099$ & Celda de la rejilla de cada punto de $S$ \\
-\texttt{grid\_size} & 1 valor & Lado de la rejilla, 0{,}02\,m \\
-\texttt{n\_original} & 1 valor & Número de puntos de $S$, 803\,099 \\
+\texttt{feat} & $796\,315\times 1088$, precisión media \\
+\texttt{coord} & $796\,315\times 3$ \\
+\texttt{inverse} & $803\,099$ entradas \\
+\texttt{grid\_size} & 0{,}02\,m \\
+\texttt{n\_original} & 803\,099 \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \FloatBarrier
-\subsection{Observables Medidos}
+\subsubsection*{Observables}
 \label{sec:res-observables}
 
-La Tabla~\ref{tab:salidas-p2} compara los seis observables declarados en la
-Sección~\ref{sec:rama-ssl} con lo medido en PL13.
+Responde a la Sección~\ref{sec:observables} (Tabla~\ref{tab:salidas-p2}).
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Observables de Sonata en PL13: esperado y medido]{Observables de Sonata en PL13: esperado y medido. Elaboración propia.}
+\caption[Observables de Sonata en PL13: esperado y medido]{Observables de Sonata en PL13: esperado y medido. Para qué sirve cada uno se explica en la Sección~\ref{sec:observables}. Elaboración propia.}
 \label{tab:salidas-p2}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=1.01\hsize}X>{\raggedright\arraybackslash\hsize=1.41\hsize}Xl>{\raggedright\arraybackslash\hsize=0.58\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xll@{}}
 \toprule
-\textbf{Observable} & \textbf{Para qué sirve} & \textbf{Esperado} & \textbf{Medido} \\
+\textbf{Observable} & \textbf{Esperado} & \textbf{Medido} \\
 \midrule
-Dimensión de $f_{\mathrm{ssl}}$ & Fija la entrada del Módulo~4 & 1088 & 1088 \\
-Puntos retenidos tras el muestreo por rejilla & Determina el tamaño del almacenamiento y la resolución efectiva & Por medir & 796\,315 de 803\,099, el 99{,}2\,\% \\
-VRAM pico & Verifica la cota analítica de memoria & Cota de 4{,}2\,GB & 34{,}60\,GB \\
-Tiempo de inferencia por sección & Sustituye a la estimación de costo & Por medir & 13{,}9\,s \\
-Rendimiento en puntos por segundo & Permite extrapolar a otras secciones & Por medir & 57\,397 \\
-Tamaño del archivo de descriptores & Dimensiona el almacenamiento del proyecto & Por medir & 680\,MB \\
+Dimensión de $f_{\mathrm{ssl}}$ & 1088 & 1088 \\
+Puntos retenidos tras el muestreo por rejilla & --- & 796\,315 de 803\,099, el 99{,}2\,\% \\
+VRAM pico & Cota de 4{,}2\,GB & 34{,}60\,GB \\
+Tiempo de inferencia por sección & --- & 13{,}9\,s \\
+Rendimiento en puntos por segundo & --- & 57\,397 \\
+Tamaño del archivo de descriptores & --- & 680\,MB \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La memoria medida es unas ocho veces la cota analítica, que se calculó para una
-sección de $3\times10^{5}$ puntos y no para los 796\,315 de esta prueba. La
-diferencia entre ambas no está explicada, y una causa posible es que, sin
-FlashAttention, la atención se guarde completa en memoria. Esa explicación no se
-ha verificado. Por eso la medición reemplaza a la cota. PL13 usó el 72\,\% de
-los 48\,GB de la GPU con 803\,099 puntos, de modo que la mitigación por bloques
-espaciales prevista en la Sección~\ref{sec:rama-ssl} deja de ser hipotética para
-los escaneos más grandes del levantamiento.
+La memoria es el observable que más se aparta de lo esperado. La cota de
+4{,}2\,GB se calculó para una sección de $3\times10^{5}$ puntos, y PL13 entró a
+Sonata con 796\,315, unas 2{,}7 veces más, por lo que las dos cifras no se
+comparan directamente. Lo que sí indica la medición es cuánto margen queda: una
+sección de unos $8\times10^{5}$ puntos ocupa el 72\,\% de los 48\,GB de la GPU.
+Ese es el dato con que se planificarán las secciones mayores, en lugar de la
+cota.
 
 \FloatBarrier
-\subsection{Revisión de los Descriptores}
+\subsubsection*{Revisión de los descriptores}
 \label{sec:res-descriptores}
 
-Con el procedimiento de revisión de la Sección~\ref{sec:rama-ssl}, la
-Figura~\ref{fig:sonata-pl13} muestra las otras dos vistas de los descriptores,
-desde la misma cámara que la Figura~\ref{fig:visor-pl13-etapas}, cuyo tercer
-panel ya muestra las componentes principales: la similitud con un punto de
-consulta y los ocho grupos de $k$-means.
+Responde a la Sección~\ref{sec:revision-descriptores}. La primera vista, las
+componentes principales, es el tercer panel de la
+Figura~\ref{fig:visor-pl13-etapas}; las otras dos están en la
+Figura~\ref{fig:sonata-pl13}, desde la misma cámara.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.6\linewidth]{imagenes/visor_pl13_descriptores_m3_sin_pca.png}
-\caption[Similitud y $k$-means de los descriptores de PL13]{Similitud y $k$-means de los descriptores de PL13. Elaboración propia con el visor del proyecto (Anexo~A).}
+\caption[Similitud y $k$-means de los descriptores de PL13]{Similitud y $k$-means de los descriptores de PL13. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:sonata-pl13}
 \end{figure}
 
 Sobre la misma muestra, las tres primeras componentes principales explican el
 25{,}3\,\% de la varianza, las diez primeras el 43{,}4\,\% y el rango efectivo
-es de 110{,}6 sobre 1088 dimensiones. El valor descarta el colapso de la
-representación, que daría un rango cercano a 1, pero no sustituye al
-\emph{linear probing} de la Sección~\ref{sec:probing}, que requiere puntos
-etiquetados y queda pendiente.
+es de 110{,}6 sobre 1088 dimensiones. Esto significa dos cosas. La primera es que
+el color de la vista de componentes principales, que usa solo tres, muestra una
+cuarta parte de la información de los descriptores; dos puntos del mismo color
+pueden diferir en el resto. La segunda es que los descriptores no han colapsado:
+el rango efectivo valdría 1 si todos apuntaran en la misma dirección
+(Sección~\ref{sec:revision-descriptores}), y equivale aquí a unas 110
+direcciones independientes.
+
+\FloatBarrier
+\subsection{Punto de Fusión}
+
+Responde a la Sección~\ref{sec:fusion}. No se ha ejecutado.
 
 % =====================================================================
 \FloatBarrier
-\section{Pruebas de los Parámetros}
+\section{Justificación de los Parámetros del Procedimiento}
 \label{sec:res-parametros}
 
-Las pruebas declaradas en la Sección~\ref{sec:parametros} están pendientes de
-ejecución en el clúster Khipu. La Tabla~\ref{tab:param-estado} registra su
-estado. Hasta que se ejecuten, todos los valores usados en las dos secciones
-anteriores son los que trae el programa por defecto y ninguno está respaldado
-por una medición propia: los conteos de este capítulo demuestran que el
-procedimiento se repite, no que sus parámetros sean los adecuados.
+Responde a la Sección~\ref{sec:parametros}. Las pruebas P0 a P5 aún no se han
+ejecutado, de modo que los valores usados en las Secciones~\ref{sec:res-unidad1}
+y~\ref{sec:res-unidad2} son los que trae el programa por defecto. Lo ejecutado
+de esta sección son dos comprobaciones.
 
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Estado de las pruebas de parámetros]{Estado de las pruebas de parámetros. Elaboración propia.}
-\label{tab:param-estado}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xl@{}}
-\toprule
-\textbf{Prueba} & \textbf{Parámetro que justifica} & \textbf{Estado} \\
-\midrule
-P0 & Tamaño de bloque de la carga & Pendiente \\
-P1 & Necesidad del filtrado, $q$ y $\lambda$ & Pendiente \\
-P2 & Lado del vóxel $\ell$ y rejilla $g$ & Pendiente \\
-P3 & Vecinos de las normales & Pendiente, requiere cambio de código \\
-P4 & Precisión de almacenamiento & Pendiente \\
-P5 & Tamaño de parche del codificador & Pendiente \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\paragraph*{Efecto de cada paso.} Los efectos que la
+Sección~\ref{sec:param-funcion} atribuye a cada paso se observan en las salidas:
+el descarte del filtrado en las zonas ralas (Figura~\ref{fig:m1-paso3}), la
+pérdida de superficies próximas por el vóxel (Figura~\ref{fig:cubo-pl7}), las
+normales ruidosas de las zonas ralas (Figura~\ref{fig:m1-paso5}) y la retención
+casi total de la rejilla de Sonata (Tabla~\ref{tab:salidas-p2}).
 
-Cada prueba se reportará con el formato de la Tabla~\ref{tab:param-plantilla},
-una fila por condición y los cuatro indicadores comunes de la
-Sección~\ref{sec:param-criterio}. Se incluye ya la fila de la condición de
-referencia, con los valores que sí se midieron en la
-Sección~\ref{sec:res-unidad1}.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Formato de reporte de las pruebas de parámetros]{Formato de reporte de las pruebas de parámetros, con la prueba P1 como ejemplo. Elaboración propia.}
-\label{tab:param-plantilla}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}lccccc@{}}
-\toprule
-\textbf{Condición} & \textbf{Puntos} & $r$ \textbf{(mm)} & \textbf{Disp.\ (\textdegree)} & \textbf{ARI} & \textbf{Tiempo} \\
-\midrule
-Sin filtrado            & 8\,239\,904 & & & & \\
-$q=10$, $\lambda=2$     & & & & & \\
-$q=20$, $\lambda=2$ (ref.) & 8\,020\,796 & & & 1{,}00 & 9\,s \\
-$q=30$, $\lambda=2$     & & & & & \\
-$q=40$, $\lambda=2$     & & & & & \\
-$q=20$, $\lambda=1{,}5$ & & & & & \\
-$q=20$, $\lambda=2{,}5$ & & & & & \\
-$q=20$, $\lambda=3$     & & & & & \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\paragraph*{Replicación.} Responde a la Sección~\ref{sec:param-replicacion}. La
+replicación de la configuración de referencia está en la
+Sección~\ref{sec:res-u1-repro}.
 
 % =====================================================================
 \FloatBarrier
-\section{Resultados por Objetivo Específico}
+\section{Unidad 3. Entrenamiento, Calibración y Evaluación}
+\label{sec:res-unidad3}
 
-Los resultados se organizan según los objetivos específicos: \textbf{dos
-resultados computacionales} (OE1 y OE2) y una \textbf{salida analítica} (OE3) que
-los integra. El punto de partida contra el que se comparan es la línea base
-reproducida en la Sección~\ref{sec:linea-base}.
+Responde a la Sección~\ref{sec:unidad3}. Esta unidad aún no se ha ejecutado.
+Lo único hecho es la verificación del entorno de la
+Sección~\ref{sec:entorno-computo}: con MinkowskiEngine compilado, una corrida de
+HyperNCD en Khipu llegó hasta la carga del primer lote.
 
-\subsection{Resultado de OE1: modelo híbrido funcional}
+% =====================================================================
+\FloatBarrier
+\section{Riesgos y Mitigación}
 
-Un modelo híbrido verificado de extremo a extremo sobre una sección de control:
-la sustitución de $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ opera dentro del
-módulo de prototipos sin romper el razonamiento por hipergrafo y sin degradar el
-mIoU \emph{known} respecto de la línea base de la Tabla~\ref{tab:base}. El
-entregable incluye la \emph{prueba de funcionamiento} y no solo el código:
-inferencia completa, dimensiones documentadas de ambas ramas y verificación de la
-compatibilidad de resolución entre el \emph{encoder} PTv3 y la rejilla de
-Minkowski.
+Responde a la Sección~\ref{sec:riesgos}.
 
-\subsection{Resultado de OE2: configuración calibrada}
+\paragraph*{(i) Disponibilidad de la nube anotada.} El riesgo se materializó: los
+23 archivos LAS llegaron sin etiquetas (Sección~\ref{sec:u1-datos}), así que se
+aplica la mitigación prevista.
 
-Curvas de sensibilidad de $\alpha$, $M$ y $\epsilon$ sobre la sección de
-referencia y una configuración fijada que se aplica sin reajuste al resto de
-secciones (Tabla~\ref{tab:sensibilidad}). La lectura esperada es identificar cuál
-de los tres parámetros domina el comportamiento del híbrido; en particular, el
-valor de $\alpha$ que maximiza el mIoU \emph{novel} indica cuánto peso conserva
-la componente geométrica una vez que el descriptor manual ha sido reemplazado.
+\paragraph*{(ii) Acceso y configuración del clúster.} Verificado: la Unidad~2
+corrió en la GPU asignada (Sección~\ref{sec:res-hardware}).
 
-\begin{table}[H]
-\centering
-\caption{Sensibilidad de la configuración del híbrido sobre la sección de
-referencia.}
-\label{tab:sensibilidad}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Parámetro} & \textbf{Rango explorado} & \textbf{Valor fijado} & \textbf{mIoU \emph{novel}} \\
-\midrule
-$\alpha$   & $[0,\,1]$            & & \\
-$M$        & $\{4,\,8,\,16\}$     & & \\
-$\epsilon$ & \emph{[por definir]} & & \\
-\bottomrule
-\end{tabular}
-\end{table}
+% =====================================================================
+\FloatBarrier
+\section{Resumen de los Resultados Preliminares}
 
-\subsection{Salida analítica de OE3: comparación y ablación}
-
-El resultado central es un incremento medible del mIoU sobre las clases novedosas
-respecto de HyperNCD sin modificar, sin degradación de las clases conocidas. La
-Tabla~\ref{tab:comparativa} organiza la comparación y la ablación de las tres
-variantes del descriptor, aislando la contribución del \emph{encoder}.
-
-\begin{table}[H]
-\centering
-\caption{Comparación y ablación de las tres variantes del descriptor. Cada fila
-reporta además el vector completo de IoU por clase, no solo el agregado
-(Sección~\ref{sec:metricas}).}
-\label{tab:comparativa}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Variante del descriptor} & \textbf{mIoU \emph{novel}} & \textbf{mIoU \emph{known}} & $\Delta$\textbf{mIoU} & $G$ \\
-\midrule
-$[f_{\mathrm{sem}};f_{\mathrm{geo}}]$ (línea base) & & & & 0 \\
-$[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ (propuesto) & & & & \\
-$[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ (Plan~B) & & & & \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Entregables}
-
-\begin{enumerate}
-\item Línea base reproducida con desviación estándar reportada y análisis de sus
-causas, junto con el resultado negativo del Módulo~1
-(Sección~\ref{sec:linea-base}).
-\item Implementación del modelo híbrido, con prueba de funcionamiento y
-repositorio público (OE1).
-\item Curvas de sensibilidad de $\alpha$, $M$ y $\epsilon$ y configuración fijada
-(OE2).
-\item Tablas comparativas, ablación de tres variantes, valores de $G$ y frontera
-de operación declarada (OE3).
-\end{enumerate}
-
-\section{Discusión}
-
-\paragraph*{Lectura de la métrica.} Un valor de $G$ (Ec.~\eqref{eq:G}) no se
-reporta solo. Se acompaña de los tres términos que lo componen y del análisis de
-dominancia de la Ec.~\eqref{eq:dominante}, que indica qué clase concreta explica el agregado
-y si la ganancia es homogénea entre secciones o está concentrada en una tipología
-de elemento. Una mejora que provenga de una sola clase abundante no es el mismo
-resultado que una mejora repartida, aunque el mIoU coincida.
-
-\paragraph*{Atribución.} La comparación del \emph{linear probing}
-(Ec.~\eqref{eq:probe}) antes de la formación de prototipos con el mIoU final
-determina si la ganancia se origina en la representación o en el razonamiento por
-hipergrafo. Esa separación es posible porque el \emph{pipeline} es secuencial; si
-el sistema fuese unificado, habría que discutir la adecuación misma de la métrica
-elegida antes de interpretar el resultado.
-
-\paragraph*{Frontera de operación.} Barriendo densidad de puntos, tamaño de
-sección y número de clases novedosas se determina empíricamente la frontera entre
-el rango favorable y el desfavorable declarados en el alcance, y se contrasta con
-el comportamiento observado en la línea base.
-
-\paragraph*{Realimentación.} Si el análisis muestra que la mejora no se sostiene,
-el ajuste se realiza sobre OE1 (esquema de fusión) y OE2 (calibración), no sobre
-este capítulo, porque OE3 es salida analítica y no trabajo computacional independiente.
-
-\paragraph*{Valor para el usuario.} Cada punto de mIoU adicional sobre clases
-novedosas es trabajo manual de corrección que deja de realizarse. Los usuarios
-están conformes con la precisión que obtienen hoy por vía manual, de modo que la
-propuesta de valor no es igualarla sino automatizarla a una precisión suficiente;
-sin mejora demostrada sobre el estado del arte, la herramienta no tiene caso.
-
-\paragraph*{Contribución esperada al estado del arte.} La contribución no es una
-arquitectura nueva, sino establecer si un hallazgo demostrado en régimen
-supervisado, la nocividad del \emph{geometric shortcut}, se transfiere al
-régimen de descubrimiento de clases novedosas, donde la calidad de la
-representación es más crítica porque no hay supervisión sobre las clases
-objetivo. Bajo el Plan~B descrito en la Sección~\ref{sec:riesgos}, incluso un
-resultado nulo o negativo, documentado con ablación, constituye un hallazgo
-reportable.
+Responde a la Sección~\ref{sec:conclusion-metodo}. Las Unidades~1 y~2 se
+ejecutaron paso a paso sobre escaneos reales y cada paso entregó la salida que
+declara la metodología; la Unidad~1 se reprodujo en otra máquina
+(Sección~\ref{sec:res-u1-repro}). Son resultados preliminares: muestran que el
+procedimiento funciona y se repite, no todavía que mejore la segmentación.

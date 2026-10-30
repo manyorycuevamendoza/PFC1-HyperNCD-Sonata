@@ -6,10 +6,10 @@ para repetirlo. Primero presenta el diagrama de flujo general, el hardware y el
 repositorio donde está el código. Después describe cada unidad de trabajo: qué
 se ejecuta, con qué entrada y qué salida produce. Las unidades se descomponen en
 pasos numerados, y ese es el único contenido del capítulo: aquí no se reporta
-ningún valor medido. El Capítulo~\ref{cap:resultados} recorre los mismos pasos,
-con la misma numeración, sobre un caso de prueba real y muestra la salida de
-cada uno. La correspondencia entre ambos capítulos es lo que permite comprobar
-que la metodología descrita es la que se ejecutó.
+ningún valor medido. El Capítulo~\ref{cap:resultados} tiene la misma estructura:
+cada sección 3.$x$ de este capítulo tiene su resultado en la sección 4.$x$, con
+los mismos títulos y los mismos pasos, de modo que cada paso del método se
+comprueba con la salida que produjo.
 
 % =====================================================================
 \FloatBarrier
@@ -25,37 +25,60 @@ las etapas E2 y E3 se repiten tres veces (Sección~\ref{sec:repeticiones}).
 \begin{figure}[!htbp]
 \centering\setstretch{1}
 \begin{tikzpicture}[
-  font=\scriptsize, node distance=3mm,
-  base/.style={draw, align=center, inner sep=2pt, minimum height=0.65cm},
-  term/.style={base, ellipse, fill=black!6, minimum width=1.8cm},
-  dato/.style={base, trapezium, trapezium left angle=72, trapezium right angle=108,
-               fill=orange!18, text width=5.0cm},
-  proc/.style={base, rectangle, rounded corners=1pt, fill=blue!12, text width=5.2cm},
-  cong/.style={proc, fill=purple!14},
-  disco/.style={draw, cylinder, shape border rotate=90, aspect=0.12, fill=black!8,
-                minimum width=4.2cm, minimum height=0.75cm, inner sep=1pt, align=center},
-  dec/.style={base, diamond, aspect=2.6, fill=yellow!22, text width=2.4cm, inner sep=0pt},
-  fl/.style={-{Latex[length=1.6mm]}, thick},
-  et/.style={font=\tiny, text=black!70}
+  font=\scriptsize,
+  et/.style={align=center, text width=3.2cm, anchor=north},
+  logo/.style={inner sep=0pt},
+  fl/.style={-{Latex[length=1.8mm]}, thick},
+  bucle/.style={-{Latex[length=1.6mm]}, thick, dashed, black!60},
+  vb/.style={font=\tiny, text=black!70}
 ]
-\node[term] (ini) {Inicio};
-\node[dato, below=of ini] (p0) {\textbf{E0.} 23 archivos LAS del levantamiento};
-\node[proc, below=of p0] (p1) {\textbf{E1.} Preprocesar la sección y obtener la matriz $S$};
-\node[cong, below=of p1] (p2) {\textbf{E2.} Sonata congelado sobre $S$};
-\node[disco, below=of p2] (c) {$f_{\mathrm{ssl}}$ en disco (\texttt{.npz})};
-\node[proc, below=of c] (p3) {\textbf{E3.} Fusión y entrenamiento de HyperNCD};
-\node[dec, below=of p3] (d1) {¿3 repeticiones?};
-\node[dec, below=of d1] (d2) {¿Quedan secciones?};
-\node[proc, below=of d2] (p4) {\textbf{E4.} Métricas y análisis de dominancia};
-\node[dato, below=of p4] (p5) {\textbf{E5.} $\Delta$mIoU, brecha $G$ y ablación};
-\node[term, below=of p5] (fin) {Fin};
-\foreach \a/\b in {ini/p0,p0/p1,p1/p2,p2/c,c/p3,p3/d1,p4/p5,p5/fin} \draw[fl] (\a) -- (\b);
-\draw[fl] (d1) -- node[et, right, pos=0.4]{sí} (d2);
-\draw[fl] (d2) -- node[et, right, pos=0.4]{no} (p4);
-\draw[fl] (d1.east) -- node[et, above, pos=0.25]{no} ++(1.6,0) |- (p2.east);
-\draw[fl] (d2.west) -- node[et, above, pos=0.25]{sí} ++(-1.6,0) |- (p1.west);
+% Fila 1, de izquierda a derecha
+\node[logo] (i0) at (0,0)
+  {\adjustbox{trim=0 0 {.6667\width} {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
+\node[et] at (0,-1.25) {\textbf{E0.} 23 archivos LAS};
+\node[logo] (i1) at (3.7,0)
+  {\includegraphics[height=1cm]{imagenes/logos/open3d.png}\hspace{1mm}\includegraphics[height=1cm]{imagenes/logos/numpy.png}};
+\node[et] at (3.7,-1.25) {\textbf{E1.} SOR, vóxel y normales};
+\node[logo] (i2) at (7.4,0)
+  {\adjustbox{trim={.3333\width} 0 {.3333\width} {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
+\node[et] at (7.4,-1.25) {Matriz $S$};
+\node[logo] (i3) at (11.1,0)
+  {\includegraphics[height=1cm]{imagenes/logos/pytorch.png}};
+\node[et, text width=2.6cm] (e2) at (11.1,-1.25) {\textbf{E2.} Sonata congelado};
+% Fila 2, de derecha a izquierda
+\node[logo] (i4) at (11.1,-4.2)
+  {\adjustbox{trim={.6667\width} 0 0 {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
+\node[et] at (11.1,-5.45) {$f_{\mathrm{ssl}}$};
+\node[logo] (i5) at (7.4,-4.2) {\begin{tikzpicture}
+  \draw[thick, fill=black!6] (0,0) -- (0,1.4) -- (0.75,1.4) -- (1.1,1.05) -- (1.1,0) -- cycle;
+  \draw[thick] (0.75,1.4) -- (0.75,1.05) -- (1.1,1.05);
+  \node[font=\scriptsize\ttfamily] at (0.55,0.5) {.npz};
+\end{tikzpicture}};
+\node[et] at (7.4,-5.45) {Frontera de disco};
+\node[logo] (i6) at (3.7,-4.2)
+  {\adjustbox{trim={.6\width} 0 0 {.18\height}, clip, height=2cm}{\includegraphics{imagenes/m4_paso4_hiperarista.png}}};
+\node[et] at (3.7,-5.45) {\textbf{E3.} HyperNCD con\\$S_b=\alpha S_g+(1-\alpha)S_s$};
+\node[logo] (i7) at (0,-4.2)
+  {\adjustbox{trim={.755\width} {.21\height} 0 {.16\height}, clip, height=2cm}{\includegraphics{imagenes/m4_paso5_escena.png}}};
+\node[et] (e4) at (0,-5.45) {\textbf{E4.} mIoU por sección};
+% Fila 3
+\node[logo] (i8) at (0,-8.4)
+  {\adjustbox{trim=0 0 {.8\width} 0, clip, height=2.4cm}{\includegraphics{imagenes/m4_curvas.png}}};
+\node[et] at (0,-9.75) {\textbf{E5.} $\Delta$mIoU, brecha $G$ y ablación};
+% Flujo
+\draw[fl] (i0) -- (i1);
+\draw[fl] (i1) -- (i2);
+\draw[fl] (i2) -- (i3);
+\draw[fl] (i3.east) -- (12.9,0) -- (12.9,-4.2) -- (i4.east);
+\draw[fl] (i4) -- (i5);
+\draw[fl] (i5) -- (i6);
+\draw[fl] (i6) -- (i7);
+\draw[fl] (e4.south) -- (i8.north);
+% Bucles
+\draw[bucle] (i6.north) -- (3.7,-2.3) -- node[vb, above, pos=0.5]{$\times 3$ repeticiones} (11.1,-2.3) -- (e2.south);
+\draw[bucle] (i7.west) -- (-1.6,-4.2) -- (-1.6,1.5) -- node[vb, above, pos=0.5]{$\times 23$ secciones} (3.7,1.5) -- (i1.north);
 \end{tikzpicture}
-\caption[Flujo general del proyecto]{Flujo general del proyecto. Elaboración propia.}
+\caption[Flujo general del proyecto]{Flujo general del proyecto. Las imágenes de E3 a E5 provienen de la escena simulada de la Sección~\ref{sec:m4-simulado}. Elaboración propia.}
 \label{fig:flujo}
 \end{figure}
 
@@ -91,11 +114,14 @@ Contiene el programa de preprocesamiento (\texttt{preprocesar.py}), el programa
 que extrae y guarda los descriptores de Sonata (\texttt{extraer\_features.py}),
 el código de HyperNCD y de Sonata en dos carpetas, la carpeta
 \texttt{experimentacion} con las herramientas para revisar y medir las salidas
-(el visor \texttt{visor\_3d.py} y el programa \texttt{visualizar\_features.py}), un
-guion de instalación que
-crea un entorno para cada método, porque sus dependencias son incompatibles, y
-un guion por paso para lanzarlo en el clúster. Los archivos LAS y las salidas no
-se guardan en el repositorio; se copian aparte.
+(el visor \texttt{visor\_3d.py} y el programa \texttt{visualizar\_features.py}), el
+guion de instalación \texttt{setup.sh}, que crea un entorno para cada método
+porque sus dependencias son incompatibles, la guía \texttt{SETUP\_KHIPU.md} con
+los pasos de instalación en el clúster, y un guion por paso para lanzarlo en el
+clúster. Los archivos LAS y las salidas no se guardan en el repositorio; se
+copian aparte. Los pesos de Sonata se descargan del repositorio
+\texttt{facebook/sonata} de Hugging
+Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 
 % =====================================================================
 \FloatBarrier
@@ -113,6 +139,9 @@ Las dos ramas están en paralelo porque ninguna consume la salida de la otra:
 parten de la misma nube preparada y solo se encuentran en el Módulo~4. Esa
 independencia permite ejecutar el Módulo~3 una sola vez, guardar su salida y
 reutilizarla en todas las épocas del Módulo~2.
+
+Las herramientas, el módulo en que interviene cada una y los entornos con sus
+versiones se recogen en la Tabla~\ref{tab:herramientas} del \hyperref[sec:anexo-software]{Anexo~A}.
 
 \FloatBarrier
 \subsection{Estructura y Contrato de los Módulos}
@@ -146,13 +175,6 @@ el índice inverso (Sección~\ref{sec:gridsample}), que se almacena junto con la
 características para que el Módulo~4 reciba los dos descriptores alineados punto
 a punto.
 
-\FloatBarrier
-\subsection{Herramientas por Módulo}
-\label{sec:herramientas}
-
-Las herramientas, el módulo en que interviene cada una y los entornos con sus versiones se
-recogen en la Tabla~\ref{tab:herramientas} del Anexo~A.
-
 % Estilos de los diagramas de flujo de los pasos largos.
 \tikzset{
   fdato/.style={draw, trapezium, trapezium left angle=72, trapezium right angle=108,
@@ -181,13 +203,10 @@ Sonata vistos de tres formas. Todas las etapas comparten las coordenadas, la
 escala y la cámara. Al cambiar de botón el ángulo no se mueve, así que las etapas
 se comparan desde el mismo punto de vista. La página permite girar, acercar y
 exportar la vista a PNG. El visor también puede recortar un cubo y dibujar todos
-sus puntos. Todas las figuras de nubes de este capítulo se obtuvieron así.
+sus puntos.
 
-El visor también comprueba que los datos de cada etapa correspondan entre sí.
-Los descriptores de Sonata se asocian a los puntos de $S$ por el orden de las
-filas, y el visor verifica que cada punto caiga en su celda antes de dibujar. Si
-no corresponden, se detiene con un aviso, como se explica en la
-Sección~\ref{sec:u1-reproducibilidad}.
+El visor también comprueba, antes de dibujar, que los descriptores correspondan
+a la matriz $S$ (\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}).
 
 % =====================================================================
 \FloatBarrier
@@ -197,9 +216,8 @@ Sección~\ref{sec:u1-reproducibilidad}.
 La primera unidad convierte un escaneo en bruto, en formato LAS, en la matriz
 $S$ que entra a los modelos de la Unidad~2. Corresponde al Módulo~1, descrito en
 la Sección~\ref{sec:modulo1}, y está en el programa \texttt{preprocesar.py} del
-repositorio. Esta sección describe el procedimiento. Su ejecución sobre dos
-escaneos reales de la Catedral de Lima, con los conteos y las figuras de cada
-paso, se presenta en la Sección~\ref{sec:res-unidad1}.
+repositorio. Esta sección describe el procedimiento; su ejecución sobre dos
+escaneos reales se presenta en la Sección~\ref{sec:res-unidad1}.
 
 \FloatBarrier
 \subsection{Datos de Entrada y Ejecución}
@@ -224,21 +242,20 @@ se acumula en memoria antes del filtrado, por lo que debe caber en la RAM del
 nodo.
 
 \paragraph*{Paralelismo.}
-Las secciones son independientes, ninguna usa datos de otra. El programa no
-reparte una sección entre procesos ni lee varios archivos a la vez. El guion de
-lanzamiento \texttt{preprocesar.sbatch} recorre los archivos de uno en uno dentro
-de un solo trabajo del clúster, con 16 núcleos, 64\,GB de memoria, sin GPU y un
-límite de cuatro horas. El único paralelismo es el interno de las operaciones de
-Open3D sobre esos 16 núcleos. Si un archivo ya tiene su \texttt{.npy}, el guion
-lo salta, de modo que un trabajo interrumpido se retoma sin repetir lo hecho.
-Como las secciones son independientes, también podrían lanzarse como trabajos
+El programa no reparte una sección entre procesos ni lee varios archivos a la
+vez. El guion de lanzamiento \texttt{preprocesar.sbatch} recorre los archivos de
+uno en uno dentro de un solo trabajo del clúster, con los recursos de la
+Sección~\ref{sec:hardware-repo} y un límite de cuatro horas. El único
+paralelismo es el interno de las operaciones de Open3D. Si un archivo ya tiene su
+\texttt{.npy}, el guion lo salta, de modo que un trabajo interrumpido se retoma
+sin repetir lo hecho. Como las secciones son independientes
+(Sección~\ref{sec:repeticiones}), también podrían lanzarse como trabajos
 separados, uno por archivo.
 
 \paragraph*{Comandos en el clúster.}
 Los comandos para lanzar cada paso en Khipu, revisar los descriptores y generar
-el visor están en el Anexo~A. Cada trabajo escribe su registro en
-\texttt{logs/}, con los conteos tras cada paso, que son los que se comparan al
-verificar una repetición (Sección~\ref{sec:u1-reproducibilidad}).
+el visor están en el \hyperref[sec:anexo-software]{Anexo~A}. Cada trabajo escribe su registro en
+\texttt{logs/}, con los conteos tras cada paso.
 
 \FloatBarrier
 \subsection{Procedimiento}
@@ -249,8 +266,7 @@ en este orden, que resume la Figura~\ref{fig:flujo-u1}. Cada paso se describe a
 continuación; los cortos llevan pseudocódigo y los largos, diagrama de flujo.
 Los parámetros son tres, el tamaño de vóxel $\ell$, el número de vecinos $q$ y
 el umbral del filtrado $\lambda$, con valores por defecto $\ell=5$\,cm, $q=20$ y
-$\lambda=2$. La Sección~\ref{sec:res-unidad1} recorre estos mismos seis pasos
-con el resultado de cada uno sobre dos escaneos reales.
+$\lambda=2$.
 
 \begin{figure}[!htbp]
 \centering
@@ -278,6 +294,7 @@ con el resultado de cada uno sobre dos escaneos reales.
 
 \FloatBarrier
 \subsubsection*{Paso 1. Carga}
+\phantomsection\label{sec:u1-p1}
 
 El archivo se abre con \texttt{laspy} y se lee en bloques de cinco millones de
 puntos, para no pedir toda la memoria de una vez, como se explica en la
@@ -291,15 +308,17 @@ máximo de 65\,535, y se divide entre 256 para llevarlo al rango de 0 a 255.
 \caption{Paso 1 del Módulo~1, carga.}
 \KwIn{archivo LAS de $N$ puntos}
 \KwOut{posiciones $P\in\mathbb{R}^{N\times 3}$ y colores $C\in[0,255]^{N\times 3}$}
-\ForEach{bloque de $5\times 10^{6}$ puntos del archivo}{
-  añadir a $P$ las columnas $x$, $y$ y $z$ del bloque\;
-  añadir a $C$ las columnas $R$, $G$ y $B$ del bloque\;
+$P \leftarrow \emptyset$, \ $C \leftarrow \emptyset$\;
+\ForEach{bloque $B$ de $5\times 10^{6}$ puntos del archivo}{
+  $P \leftarrow \begin{bmatrix} P \\ B_{x,y,z} \end{bmatrix}$\;
+  $C \leftarrow \begin{bmatrix} C \\ B_{R,G,B} \end{bmatrix}$\;
 }
 \lIf{el color usa 16 bits}{$C \leftarrow C/256$}
 \end{algorithm}
 
 \FloatBarrier
 \subsubsection*{Paso 2. Centrado}
+\phantomsection\label{sec:u1-p2}
 
 Las coordenadas vienen en metros sobre el mapa, en el sistema UTM, con valores
 de cientos de miles y de millones. Con números tan grandes se pierde precisión
@@ -321,6 +340,7 @@ guardar $c$ para los metadatos\;
 
 \FloatBarrier
 \subsubsection*{Paso 3. Filtrado SOR}
+\phantomsection\label{sec:u1-p3}
 
 El escaneo trae puntos sueltos que no pertenecen a ninguna superficie. Para cada
 punto se mide la distancia media a sus $q$ vecinos más cercanos. Si esa distancia
@@ -351,6 +371,7 @@ Sección~\ref{sec:param-p1}.
 
 \FloatBarrier
 \subsubsection*{Paso 4. Voxelización}
+\phantomsection\label{sec:u1-p4}
 
 El escáner mide muchos más puntos cerca de él que lejos. Para igualar la
 densidad, el espacio se divide en cubos de lado $\ell$ y los puntos de cada
@@ -375,6 +396,7 @@ mismos representantes y dejan de distinguirse.
 
 \FloatBarrier
 \subsubsection*{Paso 5. Normales}
+\phantomsection\label{sec:u1-p5}
 
 La normal indica hacia dónde mira la superficie en cada punto, y el escáner no
 la mide. Se estima con los $q$ vecinos de cada representante, según la
@@ -404,6 +426,7 @@ las zonas ralas, lejos del escáner.
 
 \FloatBarrier
 \subsubsection*{Paso 6. Escritura}
+\phantomsection\label{sec:u1-p6}
 
 Se guarda la matriz $S$, descrita en la Ecuación~\ref{eq:sj}, con una fila por
 representante y sus nueve valores, la posición, el color y la normal, en
@@ -413,7 +436,7 @@ precisión simple. Junto a ella se escribe un archivo de metadatos en
 umbral del filtrado; \texttt{offset\_utm}, el centro restado en el Paso~2;
 \texttt{n\_crudo}, \texttt{n\_sor} y \texttt{n\_voxel}, los puntos que quedan
 tras la carga, tras el filtrado y tras la voxelización; y \texttt{segundos}, el
-tiempo total. Los tres conteos son los que permiten verificar una repetición.
+tiempo total.
 
 \begin{algorithm}[H]
 \small
@@ -437,6 +460,10 @@ python preprocesar.py --input PL13_SCN0001.las \
        --output PL13_SCN0001_preprocesado \
        --voxel 0.05 --q 20 --lam 2
 \end{lstlisting}
+El programa tiene además dos opciones que no cambian el procedimiento descrito:
+\texttt{--chunk}, el tamaño de bloque del Paso~1, con valor por defecto
+$5\times10^{6}$, y \texttt{--prevoxel}, un vóxel previo al filtrado para nubes
+muy densas, desactivado por defecto (valor 0) y no usado en este proyecto.
 Una repetición se comprueba comparando los conteos del archivo de metadatos,
 \texttt{n\_crudo}, \texttt{n\_sor} y \texttt{n\_voxel}, con los de la corrida de
 referencia. Deben coincidir exactamente.
@@ -460,9 +487,10 @@ fusión concatena.
 
 \FloatBarrier
 \subsection{Rama Semántica}
+\label{sec:rama-sem}
 
-La rama semántica (Módulo~2, Sección~\ref{sec:modulo2}) es un módulo entrenado,
-por lo que se ejecuta en cada época. Aún no se ha ejecutado.
+La rama semántica es el Módulo~2 (Sección~\ref{sec:modulo2}). Es un módulo
+entrenado, por lo que se ejecuta en cada época.
 
 \FloatBarrier
 \subsection{Rama Auto-supervisada Congelada}
@@ -474,9 +502,7 @@ sola vez por sección y su salida se escribe en disco para reutilizarla en todas
 las épocas. Recibe la matriz $S$ que entrega la Unidad~1 y entrega un archivo
 \texttt{.npz} con los descriptores. Realiza cinco pasos, que resume la
 Figura~\ref{fig:flujo-sonata}. Cada paso se describe a continuación; los cortos
-llevan pseudocódigo y los largos, diagrama de flujo. La
-Sección~\ref{sec:res-unidad2} recorre estos mismos cinco pasos con el resultado
-de cada uno sobre un escaneo real.
+llevan pseudocódigo y los largos, diagrama de flujo.
 
 \begin{figure}[!htbp]
 \centering
@@ -504,6 +530,7 @@ de cada uno sobre un escaneo real.
 
 \FloatBarrier
 \subsubsection*{Paso 1. Carga de la matriz}
+\phantomsection\label{sec:u2-p1}
 
 El programa lee la matriz $S$ que dejó la Unidad~1 y la separa en tres partes,
 la posición, el color y la normal. Son las tres entradas que espera Sonata. La
@@ -522,8 +549,11 @@ $\mathit{normal} \leftarrow$ columnas 7 a 9 de $S$\;
 
 \FloatBarrier
 \subsubsection*{Paso 2. Carga del modelo}
+\phantomsection\label{sec:u2-p2}
 
-El programa carga los pesos públicos de Sonata. Se descargan una sola vez, desde
+El programa carga los pesos públicos de Sonata, del repositorio
+\texttt{facebook/sonata} indicado en la Sección~\ref{sec:hardware-repo}. Se
+descargan una sola vez, desde
 el nodo de acceso del clúster, y quedan guardados en disco, porque los nodos con
 GPU no tienen salida a internet. El modelo se pasa a la GPU en modo de
 inferencia, de modo que sus pesos no cambian. FlashAttention se desactiva porque
@@ -542,6 +572,7 @@ cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
 
 \FloatBarrier
 \subsubsection*{Paso 3. Preparación}
+\phantomsection\label{sec:u2-p3}
 
 El programa aplica la rutina de preparación de Sonata. Primero traslada la nube,
 de modo que el centro de la caja en $x$ e $y$ y el punto más bajo en $z$ quedan
@@ -569,25 +600,15 @@ $g=2$\,cm, el mismo con que se preentrenó Sonata.
 
 \FloatBarrier
 \subsubsection*{Paso 4. Inferencia}
+\phantomsection\label{sec:u2-p4}
 
 El programa pasa la nube preparada por el codificador PTv3 de Sonata, sin
 calcular gradientes. Las operaciones y sus fórmulas están en la
-Sección~\ref{sec:codificador-ptv3}, y el detalle de cada etapa en el Anexo~C.
+Sección~\ref{sec:codificador-ptv3}, y el detalle de cada etapa en el \hyperref[sec:arq-sonata]{Anexo~C}.
 La inferencia tiene cuatro subpasos, que resume la Figura~\ref{fig:m3-inferencia}.
-\begin{enumerate}
-\item \textbf{\emph{Embedding}.} Cada punto pasa de 9 a 48
-valores (Ec.~\eqref{eq:embedding}).
-\item \textbf{Serialización y parches.} Los puntos se ordenan con curvas de
-orden Z y de Hilbert y la secuencia se corta en parches de 1024 puntos
-(Sección~\ref{sec:serializacion}).
-\item \textbf{Etapas.} Cinco etapas con 3, 3, 3, 12 y 3 bloques
-(Ec.~\eqref{eq:bloque}). En cada bloque, cada punto atiende a los demás de su
-parche (Ec.~\eqref{eq:atencion}). Entre etapas, el \emph{pooling}
-(Ec.~\eqref{eq:pooling}) lleva la celda de 2 a 4, 8, 16 y 32\,cm y los canales
-de 48 a 96, 192, 384 y 512.
-\item \textbf{\emph{Up-cast}.} Se concatenan las etapas 3, 4 y 5 y se devuelven a
-la rejilla de lado $g$ (Ec.~\eqref{eq:upcast}): cada punto queda con 1088 valores.
-\end{enumerate}
+Las cinco etapas tienen 3, 3, 3, 12 y 3 bloques; entre etapas, el
+\emph{pooling} lleva la celda de 2 a 4, 8, 16 y 32\,cm y los canales de 48 a 96,
+192, 384 y 512.
 Dentro de la GPU los parches y las cabezas de atención se calculan a la vez; las
 etapas, en cambio, van en orden, porque cada una usa la salida de la anterior.
 
@@ -608,14 +629,17 @@ etapas, en cambio, van en orden, porque cada una usa la salida de la anterior.
 
 \FloatBarrier
 \subsubsection*{Paso 5. Escritura}
+\phantomsection\label{sec:u2-p5}
 
 El programa guarda en un archivo \texttt{.npz} todo lo que necesita la
-Unidad~2 para usar los descriptores sin volver a ejecutar Sonata. Son cinco
+Unidad~2 para usar los descriptores sin volver a ejecutar Sonata. Son seis
 campos: \texttt{feat}, los descriptores $f_{\mathrm{ssl}}$ de 1088 valores por
 punto de la rejilla, en precisión media para reducir el tamaño a la mitad;
 \texttt{coord}, la posición de cada punto de la rejilla; \texttt{inverse}, la
 celda de la rejilla a la que pertenece cada punto de $S$; \texttt{grid\_size},
-el lado $g$ de la rejilla; y \texttt{n\_original}, el número de puntos de $S$.
+el lado $g$ de la rejilla; \texttt{n\_original}, el número de puntos de $S$; y
+\texttt{semilla}, la semilla del muestreo del Paso~3
+(Sección~\ref{sec:param-replicacion}).
 
 \begin{algorithm}[H]
 \small
@@ -623,11 +647,12 @@ el lado $g$ de la rejilla; y \texttt{n\_original}, el número de puntos de $S$.
 \KwIn{$f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$ y $g$}
 \KwOut{archivo \texttt{.npz} en disco}
 convertir $f_{\mathrm{ssl}}$ a precisión media\;
-guardar $f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$, $g$ y $N$ en un archivo comprimido\;
+guardar $f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$, $g$, $N$ y la semilla en un archivo comprimido\;
 \end{algorithm}
 
 \FloatBarrier
 \subsubsection*{Observables}
+\label{sec:observables}
 
 El diseño declara por adelantado qué debe medir cada corrida de esta rama, de
 modo que el resultado se pueda contrastar con lo previsto. Son seis observables:
@@ -640,28 +665,15 @@ estimación de costo; el rendimiento en puntos por segundo, que permite
 extrapolar a otras secciones; y el tamaño del archivo de descriptores, que
 dimensiona el almacenamiento del proyecto. Los valores salen del registro que
 imprime \texttt{extraer\_features.py} en la misma corrida, salvo el tamaño del
-archivo, que se lee del disco. La Sección~\ref{sec:res-unidad2} los compara con
-lo medido.
+archivo, que se lee del disco.
 
 Si la memoria crece con el número de puntos, los escaneos más grandes del
 levantamiento podrían no caber en una sola pasada. Para ellos se prevé dividir
 la sección en bloques espaciales con un margen de solape y procesar cada bloque
 por separado.
 
-\subsubsection*{Configuración de las rejillas}
-
-La resolución con que trabaja el codificador la fija la Unidad~1 siempre que la
-rejilla de Sonata sea más fina que el vóxel, porque entonces casi no elimina
-puntos. El tamaño de la rejilla de Sonata es una opción del programa,
-\texttt{--grid}, igual que el vóxel lo es de \texttt{preprocesar.py}.
-
-Más adelante se harán pruebas con otras combinaciones de rejilla, por ejemplo
-con vóxeles de 2, 3 y 5\,cm en la Unidad~1. En cada una se medirán los puntos
-retenidos, la memoria, el tiempo y la calidad de los descriptores. El objetivo
-es ver cómo la resolución afecta al agrupamiento del Módulo~4 y elegir el
-tamaño con datos, no por defecto.
-
 \subsubsection*{Revisión de los descriptores}
+\label{sec:revision-descriptores}
 
 Los descriptores no traen etiquetas, así que su calidad todavía no se puede
 medir con una métrica de acierto. Se revisan con el visor
@@ -958,411 +970,123 @@ $\gamma$ cuando una clase tenga pocos puntos.
 \section{Justificación de los Parámetros del Procedimiento}
 \label{sec:parametros}
 
-Cada paso de las dos unidades fija algún valor: cuántos vecinos mirar, cuánto
-mide un vóxel, con cuántos bits guardar un número. Describir el paso no basta
-para darlo por bueno. Hay que responder, por cada valor, de dónde sale y qué le
-ocurre a la salida si se elige mayor o menor. Esta sección hace ese inventario
-y declara las pruebas que faltan. No contiene resultados: los de las pruebas ya
-ejecutadas están en la Sección~\ref{sec:res-parametros}.
-
-El inventario distingue cuatro orígenes, porque no todos los valores exigen la
-misma defensa:
-
-\begin{enumerate}
-\item \textbf{Impuesto.} El entorno no deja otra opción. No es una elección y
-no se prueba; se documenta su efecto.
-\item \textbf{Heredado.} Viene del método externo que se reutiliza, y
-cambiarlo rompería la correspondencia con los pesos preentrenados. Tampoco se
-prueba, pero por una razón distinta: la prueba no tendría sentido.
-\item \textbf{Indiferente.} Afecta al costo o al formato, no a la salida.
-Basta comprobar que la salida no cambia.
-\item \textbf{Sin justificar.} Es una elección libre que nadie midió. Estos son
-los que obligan a una prueba, y son los que la Tabla~\ref{tab:parametros}
-marca.
-\end{enumerate}
+Cada paso fija algún valor: cuántos vecinos mirar, cuánto mide un vóxel, con
+qué precisión guardar un número. Esta sección explica de dónde sale cada valor,
+qué aporta cada paso y cómo se comprobará que los valores elegidos son
+adecuados. La Tabla~\ref{tab:parametros} resume los valores. Los que dicen
+«falta medirlo» se usan hoy por defecto y son los que comprueban las pruebas P0
+a P5 de la Sección~\ref{sec:param-criterio}.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
 \setlength{\tabcolsep}{4pt}
-\caption[Inventario de parámetros del procedimiento]{Inventario de parámetros del procedimiento, con su origen y la prueba que lo justifica. Elaboración propia.}
+\caption[Parámetros del procedimiento]{Parámetros del procedimiento, de dónde sale cada valor y qué prueba lo comprueba. Elaboración propia.}
 \label{tab:parametros}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.62\hsize}X>{\raggedright\arraybackslash\hsize=0.78\hsize}X>{\raggedright\arraybackslash\hsize=0.44\hsize}X>{\raggedright\arraybackslash\hsize=0.62\hsize}X>{\raggedright\arraybackslash\hsize=0.54\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=0.65\hsize}X>{\raggedright\arraybackslash\hsize=1.55\hsize}Xl@{}}
 \toprule
-\textbf{Paso} & \textbf{Parámetro} & \textbf{Valor} & \textbf{Origen} & \textbf{Prueba} \\
+\textbf{Parámetro} & \textbf{Valor} & \textbf{Por qué este valor} & \textbf{Prueba} \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Unidad 1, Módulo 1}}\\
-Paso 1, carga & Tamaño de bloque & $5\times10^{6}$ & Indiferente & P0 \\
-Paso 1, carga & Campos conservados & $x,y,z$ y $R,G,B$ & Heredado & --- \\
-Paso 1, carga & Escala del color & $/256$ & Indiferente & --- \\
-Paso 2, centrado & Centro restado & Centro de la caja & Indiferente & --- \\
-Paso 3, SOR & Vecinos $q$ & 20 & \textbf{Sin justificar} & P1 \\
-Paso 3, SOR & Umbral $\lambda$ & 2 & \textbf{Sin justificar} & P1 \\
-Paso 3, SOR & Ejecutar el paso & Sí & \textbf{Sin justificar} & P1 \\
-Paso 4, vóxel & Lado $\ell$ & 5\,cm & \textbf{Sin justificar} & P2 \\
-Paso 5, normales & Vecinos $q$ & 20, el mismo del SOR & \textbf{Sin justificar} & P3 \\
-Paso 5, normales & Orientación & $n_z\ge 0$ & Indiferente & --- \\
-Paso 6, escritura & Precisión de $S$ & Simple & Indiferente & P4 \\
+\multicolumn{4}{@{}l}{\textit{Unidad 1}}\\
+Tamaño de bloque (Paso~1) & $5\times10^{6}$ & Solo limita la memoria; no cambia el resultado & P0 \\
+Escala del color (Paso~1) & $/256$ & Sonata espera color de 0 a 255 & --- \\
+Vecinos $q$ del filtrado (Paso~3) & 20 & Valor por defecto de Open3D; falta medirlo & P1 \\
+Umbral $\lambda$ (Paso~3) & 2 & Valor por defecto de Open3D; falta medirlo & P1 \\
+Lado del vóxel $\ell$ (Paso~4) & 5\,cm & Valor inicial; falta medirlo & P2 \\
+Vecinos de las normales (Paso~5) & 20 & Comparte el $q$ del filtrado; falta medirlo & P3 \\
+Precisión de $S$ (Paso~6) & Simple & Solo afecta al tamaño en disco & P4 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 3}}\\
-Paso 2, modelo & Tamaño de parche & 1024 puntos & \textbf{Sin justificar} & P5 \\
-Paso 2, modelo & FlashAttention & Desactivada & Impuesto & --- \\
-Paso 3, preparación & Rejilla $g$ & 2\,cm & Heredado & P2 \\
-Paso 3, preparación & Punto por celda & Uno al azar & Heredado & --- \\
-Paso 4, inferencia & Etapas del \emph{up-cast} & 3, 4 y 5 & Heredado & --- \\
-Paso 5, escritura & Precisión del \texttt{.npz} & Media & Indiferente & P4 \\
+\multicolumn{4}{@{}l}{\textit{Unidad 2}}\\
+Tamaño de parche (Paso~2) & 1024 & Valor inicial; falta medirlo & P5 \\
+FlashAttention (Paso~2) & No & No está instalada en el clúster & --- \\
+Rejilla $g$ (Paso~3) & 2\,cm & Es la de preentrenamiento de Sonata & P2 \\
+Etapas del \emph{up-cast} (Paso~4) & 3, 4 y 5 & Las define Sonata & --- \\
+Precisión del \texttt{.npz} (Paso~5) & Media & Solo afecta al tamaño en disco & P4 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Unidad 2, Módulo 4, y Unidad 3}}\\
-Fusión e hipergrafo & $\alpha$, $M$, $\tau$, $\epsilon$, $\epsilon_{\mathrm{sk}}$, $\gamma$ & Sección~\ref{sec:anexo-nomenclatura} & \textbf{Sin justificar} & OE2 \\
+\multicolumn{4}{@{}l}{\textit{Módulo 4 y Unidad 3}}\\
+$\alpha$, $M$, $\tau$, $\epsilon$, $\epsilon_{\mathrm{sk}}$, $\gamma$ & \hyperref[sec:anexo-nomenclatura]{Anexo~B} & Se calibran en el objetivo OE2 & OE2 \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-Los parámetros del Módulo~4 no se tratan aquí. Su justificación es el objetivo
-específico OE2, cuyas curvas de sensibilidad se describen en la
-Sección~\ref{sec:procedimiento}, y no puede adelantarse porque ese módulo
-todavía no se ha ejecutado.
 
 \FloatBarrier
 \subsection{Función de Cada Paso y Efecto de Omitirlo}
 \label{sec:param-funcion}
 
-Antes de discutir valores hay que justificar que cada paso exista. Para cada uno
-se responde qué hace, qué beneficio aporta a la salida y qué pasaría si no se
-ejecutara. Las cifras son las de las pruebas sobre PL13 y PL7 de las
-Secciones~\ref{sec:unidad1} y~\ref{sec:rama-ssl}. Cuando el beneficio todavía no
-se ha medido, se indica qué prueba lo mide.
+Antes de discutir valores hay que justificar que cada paso exista. La
+Tabla~\ref{tab:funcion} lo resume; el título de cada paso enlaza con su
+descripción.
 
-\subsubsection*{Unidad 1, Módulo 1}
-
-\paragraph*{Paso 1. Carga.}
-\textbf{Qué hace.} Lee el archivo LAS en bloques de cinco millones de puntos y
-conserva solo la posición y el color, con el color llevado de 16 bits al rango de
-0 a 255. \textbf{Qué aporta.} Acota la memoria, porque nunca se pide el archivo
-completo de una vez, y descarta los campos que ningún modelo usa, como la
-intensidad o la clase, que además viene vacía. Deja el color en la escala que
-espera Sonata, cuya rutina de preparación lo divide entre 255. \textbf{Sin este
-paso.} No hay datos que procesar, así que el paso es obligatorio. Lo discutible
-es cómo se hace. Sin la conversión del color, Sonata recibiría valores de hasta
-65\,535 donde espera valores de hasta 255, y su entrada quedaría fuera de la
-escala con que se entrenó. Sin la lectura por bloques, el resultado sería el
-mismo pero el pico de memoria crecería con el tamaño del archivo, lo que la
-prueba~P0 comprueba.
-
-\paragraph*{Paso 2. Centrado.}
-\textbf{Qué hace.} Resta a todos los puntos el centro de la caja que los contiene
-y guarda ese centro. \textbf{Qué aporta.} Conserva la precisión de las
-coordenadas. La matriz $S$ se guarda en precisión simple, que solo distingue
-valores separados por un salto que crece con el valor. Con la coordenada $y$ de
-PL13 en UTM, cercana a 8\,667\,748\,m, ese salto es de 1\,m, y con la $x$,
-cercana a 278\,772\,m, es de 3{,}1\,cm. Tras el centrado los valores no pasan de
-unos 30\,m y el salto baja a 0{,}000002\,m. Además, al guardar el centro, cualquier
-resultado puede devolverse a su posición real. \textbf{Sin este paso.} Las
-posiciones guardadas se redondearían a pasos de hasta un metro, mayores que el
-vóxel de 5\,cm, y la forma de molduras, arcos y columnas se perdería antes de
-llegar a los modelos. El paso no cambia la forma de la nube ni descarta puntos,
-así que no tiene costo que compensar.
-
-\paragraph*{Paso 3. Filtrado SOR.}
-\textbf{Qué hace.} Descarta los puntos cuya distancia media a sus $q=20$ vecinos
-supera la media de la nube en más de $\lambda=2$ desviaciones estándar. En PL13
-descarta 219\,108 puntos, el 2{,}66\,\%, y en PL7 406\,485, el 4{,}73\,\%.
-\textbf{Qué aporta.} Retira los puntos sueltos antes de que se mezclen con los
-válidos. Un punto aislado que llega al Paso~4 se promedia con los de su vóxel y
-desplaza al representante fuera de la superficie, y si llega al Paso~5 entra en
-la vecindad de la que se estima la normal. \textbf{Sin este paso.} Esos puntos
-llegarían a la matriz $S$ y, con ella, a la posición y la normal que recibe
-Sonata. El paso también tiene un costo observado. Es el más lento de la unidad y,
-como se ve en la Figura~\ref{fig:m1-paso3}, descarta sobre todo puntos de las
-zonas ralas lejos del escáner, aunque pertenezcan a superficies reales. Si el
-beneficio compensa ese costo todavía no se ha medido. Lo mide la prueba~P1, que
-compara con y sin filtrado.
-
-\textbf{Con más o menos vecinos.} El valor $q=20$ es el que trae el programa por
-defecto y no se eligió midiendo. Lo que se espera al cambiarlo es lo siguiente.
-Con pocos vecinos, por ejemplo 5, la distancia media de cada punto depende de
-muy pocos puntos y cambia mucho de uno a otro, de modo que el filtrado descarta
-o conserva casi al azar. Con muchos vecinos, por ejemplo 40, la distancia media
-mira más lejos, se vuelve más estable y más lenta de calcular, y un grupo pequeño
-de puntos sueltos juntos puede pasar por superficie. El umbral $\lambda$ actúa
-en sentido opuesto. Un $\lambda$ pequeño descarta mucho y se lleva superficie
-válida, y uno grande deja pasar el ruido. La prueba~P1 barre $q$ entre 10 y 40 y
-$\lambda$ entre 1{,}5 y 3 para medir cuál de estos efectos domina.
-
-\paragraph*{Paso 4. Voxelización.}
-\textbf{Qué hace.} Divide el espacio en cubos de 5\,cm y sustituye los puntos de
-cada cubo por un representante con su posición y su color promedio. En PL13 deja
-803\,099 representantes de 8\,020\,796 puntos, y en PL7 610\,637 de 8\,184\,419.
-\textbf{Qué aporta.} Iguala la densidad, de modo que las zonas cercanas al
-escáner no pesen más que las lejanas, y reduce la nube a una décima parte o
-menos. Esa reducción es la que permite que la sección quepa en la GPU. Con los
-803\,099 representantes de PL13, Sonata ya usó 34{,}60\,GB de los 48\,GB de la
-A6000. \textbf{Sin este paso.} Sonata recibiría diez veces más puntos que en la
-prueba, y las zonas densas dominarían cualquier promedio posterior. Sonata aplica
-su propia rejilla de 2\,cm, que también iguala la densidad pero a una escala más
-fina, de modo que dejaría muchos más puntos. El costo del paso es que dos superficies a menos de 5\,cm una de otra
-dejan de distinguirse, como se ve en el cubo de PL7 de la
-Figura~\ref{fig:cubo-pl7}. Qué tamaño equilibra reducción y detalle lo mide la
-prueba~P2.
-
-\textbf{Con un vóxel mayor o menor.} El lado de 5\,cm tampoco se eligió midiendo.
-Un vóxel menor, por ejemplo de 2\,cm, conserva más detalle y separa superficies
-más próximas, pero deja muchos más representantes, porque sobre una superficie
-el número crece con el cuadrado de la razón entre los lados, y la sección podría
-no caber en la GPU. Cuántos más exactamente se medirá en la prueba. Un vóxel
-mayor, por ejemplo de 10\,cm, reduce mucho más la nube pero borra molduras y
-juntas que miden menos que su lado. La prueba~P2 barre 2, 3, 5 y 10\,cm.
-
-\paragraph*{Paso 5. Normales.}
-\textbf{Qué hace.} Estima en cada representante la dirección perpendicular a la
-superficie a partir de sus 20 vecinos, y la orienta hacia arriba. \textbf{Qué
-aporta.} La normal es una de las tres entradas de Sonata, junto con la posición y
-el color, y el escáner no la mide. Sin ella el codificador no recibe sus nueve
-canales. La orientación común hace que dos superficies paralelas den la misma
-normal y no direcciones opuestas al azar. \textbf{Sin este paso.} El codificador
-preentrenado no podría ejecutarse con su entrada completa. Rellenar la normal con
-ceros le entregaría una entrada distinta de todas las que vio al entrenarse.
-
-\textbf{Con más o menos vecinos.} Las normales usan los mismos $q=20$ vecinos que
-el filtrado, no porque se haya medido que 20 es lo adecuado, sino porque el
-programa usa un solo parámetro para las dos cosas. Con pocos vecinos, por ejemplo
-5, el plano se ajusta a muy pocos puntos y cualquier error de medición del
-escáner lo inclina, así que la normal sale ruidosa. Con muchos vecinos, por
-ejemplo 40, la vecindad crece y en una esquina o una arista abarca dos caras a la
-vez, y la normal queda en una dirección intermedia que no corresponde a ninguna
-de las dos. En una pared plana, en cambio, más vecinos solo la vuelven más
-estable. Por eso el efecto se mide por separado en zonas planas y en aristas. La
-prueba~P3 separa los dos usos del parámetro y barre los vecinos de la normal
-entre 10 y 40.
-
-\paragraph*{Paso 6. Escritura.}
-\textbf{Qué hace.} Guarda la matriz $S$ y un archivo de metadatos con los
-parámetros, el centro restado y el número de puntos tras cada paso.
-\textbf{Qué aporta.} Separa la Unidad~1 de la Unidad~2, que corren en entornos
-distintos y, en las pruebas, en máquinas distintas. Los metadatos permiten
-comprobar que una repetición dio lo mismo y devolver resultados a coordenadas
-UTM. \textbf{Sin este paso.} Habría que preprocesar de nuevo cada vez que se
-ejecuta Sonata. Además, como los descriptores se asocian a los puntos de $S$ por
-el orden de sus filas, sin una matriz guardada no habría forma de asegurar que
-los descriptores y los puntos correspondan, según la
-Sección~\ref{sec:u1-reproducibilidad}.
-
-\subsubsection*{Unidad 2, Módulo 3}
-
-\paragraph*{Paso 1. Carga de la matriz.}
-\textbf{Qué hace.} Lee la matriz $S$ y la separa en posición, color y normal.
-\textbf{Qué aporta.} Entrega a Sonata sus tres entradas en el formato que espera.
-\textbf{Sin este paso.} No hay entrada para el codificador. Es un paso de formato,
-sin parámetros que discutir.
-
-\paragraph*{Paso 2. Carga del modelo.}
-\textbf{Qué hace.} Carga los pesos públicos de Sonata y fija el codificador en
-modo de inferencia, sin FlashAttention y con parches de 1024 puntos.
-\textbf{Qué aporta.} Los pesos son lo que el modelo aprendió sin etiquetas en su
-preentrenamiento, y son lo que el proyecto quiere aprovechar, porque la Catedral
-no tiene etiquetas. Al estar congelados, los descriptores de una sección son
-siempre los mismos, y basta calcularlos una vez. \textbf{Sin este paso.} Con pesos
-al azar, el codificador produciría vectores sin relación con la forma de la
-escena. Si se entrenaran, haría falta una tarea y unas etiquetas que no existen.
-FlashAttention está desactivada porque no está instalada en el clúster. Su falta
-es la explicación propuesta para la memoria medida, todavía sin comprobar. El tamaño de parche fija cuánto
-contexto ve cada punto y cuánta memoria se gasta, y lo mide la prueba~P5.
-
-\paragraph*{Paso 3. Preparación.}
-\textbf{Qué hace.} Traslada la nube, la muestrea con una rejilla de 2\,cm,
-guarda el índice inverso y divide el color entre 255. En PL13 retiene 796\,315 de
-803\,099 puntos, el 99{,}2\,\%. \textbf{Qué aporta.} Pone la nube en la escala y
-el formato con que Sonata se preentrenó. El índice inverso dice a qué celda de la
-rejilla pertenece cada punto de $S$, y es lo que permite devolver los
-descriptores a cada punto. \textbf{Sin este paso.} El codificador recibiría una
-nube en otra escala que la de su entrenamiento. Sin el índice inverso, el
-Módulo~4 no podría alinear $f_{\mathrm{ssl}}$ con los puntos de $S$ ni con
-$f_{\mathrm{sem}}$. Como la rejilla es más fina que el vóxel, casi no quita
-puntos. Su interacción con el vóxel la mide la prueba~P2.
-
-\paragraph*{Paso 4. Inferencia.}
-\textbf{Qué hace.} Pasa la nube por el codificador y devuelve sus descriptores a
-la resolución de la rejilla. En PL13 tardó 13{,}9 segundos y dejó 1088 valores
-por punto. \textbf{Qué aporta.} Produce $f_{\mathrm{ssl}}$, el descriptor que el
-proyecto quiere poner en lugar de $f_{\mathrm{geo}}$. La Figura~\ref{fig:sonata-pl13}
-muestra que agrupa partes iguales de la Catedral, como las nervaduras de
-distintas bóvedas. \textbf{Sin este paso.} No hay descriptor auto-supervisado y
-el aporte de la tesis no existe. Sin el retorno a la rejilla, los descriptores
-quedarían en el nivel más grueso del codificador, uno por cada grupo de muchos
-puntos, y no uno por punto.
-
-\paragraph*{Paso 5. Escritura.}
-\textbf{Qué hace.} Guarda los descriptores en precisión media, junto con las
-coordenadas, el índice inverso y el tamaño de rejilla. En PL13 el archivo ocupa
-680\,MB. \textbf{Qué aporta.} Sonata se ejecuta una vez por sección y HyperNCD lee
-sus descriptores en cada época, desde otro entorno, porque las dos bibliotecas
-necesitan versiones de CUDA que no conviven en un mismo proceso. La precisión
-media reduce el archivo a la mitad. \textbf{Sin este paso.} Habría que ejecutar
-Sonata en cada época del entrenamiento, con su costo de GPU, y en el mismo
-entorno que HyperNCD, lo que no es posible. Si la precisión media cambia los
-descriptores lo mide la prueba~P4.
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption[Qué aporta cada paso y qué pasaría sin él]{Qué aporta cada paso y qué pasaría sin él. Elaboración propia.}
+\label{tab:funcion}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.6\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
+\toprule
+\textbf{Paso} & \textbf{Qué aporta} & \textbf{Sin este paso} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Unidad 1}}\\
+\hyperref[sec:u1-p1]{1. Carga} & Limita la memoria y deja el color en la escala de Sonata & Sonata recibiría color hasta 65\,535 en vez de 255 \\
+\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión: en UTM, la precisión simple redondea $y$ a pasos de 1\,m; centrada, a micrómetros & Molduras y aristas se perderían por redondeo \\
+\hyperref[sec:u1-p3]{3. Filtrado SOR} & Retira puntos sueltos antes de que se promedien en el vóxel o tuerzan una normal & Sonata recibiría posiciones y normales de superficies que no existen \\
+\hyperref[sec:u1-p4]{4. Voxelización} & Iguala la densidad y reduce la nube para que quepa en la GPU & Las zonas cercanas al escáner dominarían y la nube no cabría \\
+\hyperref[sec:u1-p5]{5. Normales} & Da a Sonata su tercera entrada, que el escáner no mide & Sonata no tendría su entrada completa \\
+\hyperref[sec:u1-p6]{6. Escritura} & Separa las dos unidades y permite verificar repeticiones & Habría que preprocesar cada vez que corre Sonata \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Unidad 2}}\\
+\hyperref[sec:u2-p2]{2. Modelo} & Aporta lo que Sonata aprendió sin etiquetas & Con pesos al azar, los descriptores no dirían nada de la escena \\
+\hyperref[sec:u2-p3]{3. Preparación} & Pone la nube en la escala de Sonata y guarda el índice inverso & No se podrían devolver los descriptores a cada punto \\
+\hyperref[sec:u2-p4]{4. Inferencia} & Produce $f_{\mathrm{ssl}}$, el descriptor que reemplaza a $f_{\mathrm{geo}}$ & No existe el aporte de la tesis \\
+\hyperref[sec:u2-p5]{5. Escritura} & Sonata corre una vez por sección y HyperNCD lee el archivo en cada época & Habría que correr Sonata en cada época, en un entorno incompatible \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \FloatBarrier
-\subsection{Criterio Común de las Pruebas}
+\subsection{Pruebas de los Parámetros}
 \label{sec:param-criterio}
+\phantomsection\label{sec:param-p0}\phantomsection\label{sec:param-p1}%
+\phantomsection\label{sec:param-p2}\phantomsection\label{sec:param-p3}%
+\phantomsection\label{sec:param-p4}\phantomsection\label{sec:param-p5}%
 
-Las cinco pruebas comparten método, para que sus resultados se puedan leer
-juntos. Cada una varía un solo parámetro sobre la misma sección, dejando fijos
-los demás, y mide la misma salida. Como la sección no tiene etiquetas, el
-acierto por clase no se puede medir y el \emph{linear probing} de la
-Sección~\ref{sec:probing} queda fuera del alcance; lo que se mide es si la
-superficie queda mejor descrita y si el cambio llega hasta los descriptores.
-Son cuatro indicadores, los mismos en todas las pruebas:
-
+Cada prueba cambia un solo parámetro sobre la misma sección, deja fijos los
+demás y mide la salida con cuatro indicadores:
 \begin{enumerate}
-\item \textbf{Rugosidad residual $r$.} Para cada representante se ajusta el
-plano de sus 20 vecinos y se toma la distancia media al plano, en milímetros.
-Mide cuánto se aparta la nube de una superficie local: si un paso limpia ruido,
-$r$ baja; si destruye detalle, $r$ también baja, por eso nunca se lee sola.
-\item \textbf{Dispersión angular.} Ángulo medio, en grados, entre la normal de
-cada representante y la normal media de sus vecinos. Recoge el daño que un
-punto desplazado hace a la estimación del Paso~5.
-\item \textbf{ARI y NMI corriente abajo.} Se extraen los $f_{\mathrm{ssl}}$ de
-cada condición, se agrupan con el $k$-means de la Sección~\ref{sec:rama-ssl} y
-se comparan con el agrupamiento de la condición de referencia
-(Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}). Un valor cercano a 1 indica que el
-parámetro no cambia nada aguas abajo, y por tanto que discutirlo es ocioso; un
-valor bajo indica que decide la representación que recibe el Módulo~4.
-\item \textbf{Costo.} Puntos que quedan, tiempo del paso y memoria.
+\item \textbf{Rugosidad $r$}: distancia media de cada punto al plano de sus
+vecinos. Baja si se limpia ruido, pero también si se borra detalle, por eso no
+se lee sola.
+\item \textbf{Dispersión angular}: cuánto difiere cada normal de las de sus
+vecinos.
+\item \textbf{ARI y NMI} (Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}): cuánto se
+parecen los grupos de $k$-means de los descriptores a los de la configuración
+de referencia. Cerca de 1, el parámetro no cambia lo que recibe el Módulo~4.
+\item \textbf{Costo}: puntos que quedan, tiempo y memoria.
 \end{enumerate}
+Se elige el valor más barato a partir del cual los indicadores dejan de mejorar.
+Si quitar un paso no cambia nada, se retira del procedimiento. La
+Tabla~\ref{tab:pruebas} resume las seis pruebas.
 
-Los dos primeros se reportan además restringidos a las zonas ralas, lejos del
-escáner, separando los representantes por densidad local, porque es allí donde
-se espera que las diferencias se concentren. El criterio de elección es el
-mismo en todas: se fija el valor más barato que alcanza la meseta de los
-indicadores, es decir, aquel a partir del cual gastar más ya no mejora la
-salida. Y en las tres pruebas que admiten la condición nula, si quitar el paso
-resulta indistinguible de ejecutarlo, lo que corresponde no es conservarlo sino
-retirarlo del procedimiento y documentar por qué.
-
-\FloatBarrier
-\subsection{Prueba P0. Invariancia al Tamaño de Bloque}
-\label{sec:param-p0}
-
-El tamaño de bloque de la carga existe para acotar la memoria, no para cambiar
-el resultado. La prueba lo comprueba: se preprocesa la misma sección con
-bloques de $1$, $5$ y $20$ millones de puntos y se verifica que los tres
-conteos del archivo de metadatos coincidan exactamente y que las matrices $S$
-sean iguales punto a punto. Si no coincidieran, el programa tendría una
-dependencia del bloque que habría que corregir antes de cualquier otra prueba.
-Es la única de las cinco cuyo resultado esperado es «ninguna diferencia».
-
-\FloatBarrier
-\subsection{Prueba P1. Necesidad del Filtrado y sus Parámetros}
-\label{sec:param-p1}
-
-El Paso~3 de la Unidad~1 es el único que descarta información de forma
-irreversible, y es además el más lento. Hoy $q=20$ y $\lambda=2$ son los valores
-que trae el programa por defecto, heredados del uso habitual de la
-implementación de Open3D, y no se eligieron a partir de ninguna medición propia.
-
-\paragraph*{Hipótesis.}
-El filtrado es necesario porque los puntos que descarta son puntos aislados,
-sin superficie bajo ellos. Si no se descartan, entran al promedio del vóxel del
-Paso~4 y desplazan al representante fuera de la superficie real, y entran
-después a la vecindad de la que el Paso~5 estima la normal, que queda mal
-orientada. El efecto no se queda en la Unidad~1: la posición y la normal son dos
-de las tres entradas del codificador de la Unidad~2, de modo que un
-representante desplazado produce un descriptor de una superficie que no existe.
-La hipótesis es que omitir el filtrado degrada la salida de forma medible, y que
-la degradación se concentra en las zonas ralas.
-
-\paragraph*{Condiciones.}
-Tres. La primera compara con y sin filtrado, y responde a si la tarea hace
-falta; la condición sin filtrado no requiere cambiar el programa, basta un
-$\lambda$ lo bastante grande para que ningún punto supere el umbral. La segunda
-barre $q\in\{10,\,20,\,30,\,40\}$ con $\lambda=2$. La tercera barre
-$\lambda\in\{1{,}5,\,2,\,2{,}5,\,3\}$ con $q=20$. Un $\lambda$ pequeño descarta
-mucho y se lleva superficie válida; uno grande deja pasar el ruido, de modo que
-el barrido recorre los dos modos de fallo.
-
-\FloatBarrier
-\subsection{Prueba P2. Tamaño del Vóxel y Rejilla de Sonata}
-\label{sec:param-p2}
-
-El vóxel de 5\,cm es el parámetro que más reduce la nube y el que fija la
-resolución de todo lo que viene después. Es también el que tiene un límite
-visible: dos superficies separadas por menos de su lado quedan representadas
-por los mismos representantes y dejan de distinguirse, como muestra la
-Sección~\ref{sec:res-unidad1}. Se eligió sin medición.
-
-El vóxel no se puede probar aparte de la rejilla $g$ de Sonata, porque las dos
-actúan sobre la misma nube en cadena y la más gruesa domina. Con $\ell=5$\,cm y
-$g=2$\,cm, la rejilla casi no elimina puntos y la resolución efectiva la fija la
-Unidad~1; con $\ell=2$\,cm las dos quedan al mismo nivel. Además $g=2$\,cm no es
-una elección libre: es el valor con que se preentrenó Sonata, de modo que
-alejarse de él entrega al codificador una nube distinta de las que vio al
-entrenarse.
-
-\paragraph*{Condiciones.}
-Se barre $\ell\in\{2,\,3,\,5,\,10\}$\,cm con $g=2$\,cm fijo, y para el mejor
-$\ell$ se comprueba además $g\in\{2,\,4\}$\,cm. A los cuatro indicadores comunes
-se añaden dos propios: el número de representantes, que determina si la sección
-cabe en la GPU, y la fracción de puntos retenidos por la rejilla de Sonata, que
-indica cuál de las dos resoluciones manda. La lectura decisiva es si el ARI
-contra la referencia cae al bajar de 5\,cm, porque eso significaría que la
-resolución elegida por comodidad está borrando estructura que el codificador sí
-distingue.
-
-\FloatBarrier
-\subsection{Prueba P3. Vecinos de las Normales}
-\label{sec:param-p3}
-
-El Paso~5 estima la normal con los mismos $q=20$ vecinos del filtrado, no
-porque se haya medido que 20 es el número adecuado, sino porque el programa usa
-un solo parámetro para las dos cosas. Son decisiones distintas: el filtrado
-necesita vecinos suficientes para que la media de distancias sea estable,
-mientras que la normal necesita una vecindad que cubra la superficie local sin
-cruzar a la contigua. Pocos vecinos dan una normal ruidosa; demasiados la
-promedian entre dos caras de una esquina y la dejan apuntando a ninguna parte.
-
-\paragraph*{Condiciones.}
-La prueba exige separar los dos parámetros en el programa, añadiendo uno propio
-para las normales, lo que es un cambio de código y no solo de configuración.
-Hecho eso, se barre el número de vecinos de la normal en
-$\{10,\,20,\,30,\,40\}$ con el filtrado fijo en $q=20$ y $\lambda=2$. El
-indicador que manda aquí es la dispersión angular, y se reporta por separado en
-zonas planas y en aristas, porque el modo de fallo de los dos extremos es
-opuesto y un promedio global los cancelaría.
-
-\FloatBarrier
-\subsection{Prueba P4. Precisión de Almacenamiento}
-\label{sec:param-p4}
-
-La matriz $S$ se guarda en precisión simple y los descriptores en precisión
-media, en ambos casos para reducir el tamaño en disco. La precisión media
-reserva unos tres dígitos decimales, de modo que la pregunta no es retórica: el
-archivo de descriptores de una sola sección ocupa cientos de megabytes, y el
-levantamiento tiene 23.
-
-\paragraph*{Condiciones.}
-Se vuelven a guardar los descriptores en precisión simple, opción que el
-programa ya ofrece, y se comparan las dos versiones con los indicadores
-corriente abajo, ARI y NMI, más el tamaño del archivo. Si el acuerdo es
-prácticamente perfecto, la precisión media queda justificada por el ahorro; si
-no, el ahorro se está pagando con la representación.
-
-\FloatBarrier
-\subsection{Prueba P5. Tamaño de Parche del Codificador}
-\label{sec:param-p5}
-
-El codificador agrupa los puntos en parches de 1024 y la atención de cada punto
-alcanza solo a los de su parche. El tamaño está fijado en el programa. Gobierna
-dos cosas a la vez: cuánto contexto ve cada punto y cuánta memoria consume la
-atención, que es el término que explica el consumo observado en la
-Sección~\ref{sec:res-unidad2}.
-
-\paragraph*{Condiciones.}
-Se barre el tamaño de parche en $\{512,\,1024,\,2048\}$ midiendo VRAM pico,
-tiempo y los indicadores corriente abajo. La prueba tiene un objetivo práctico
-además del metodológico: si un parche menor reduce la memoria sin cambiar el
-agrupamiento, es una alternativa a la división en bloques espaciales prevista
-para las secciones grandes.
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption[Pruebas de los parámetros]{Pruebas de los parámetros. Elaboración propia.}
+\label{tab:pruebas}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
+\toprule
+\textbf{Prueba} & \textbf{Qué cambia} & \textbf{Valores} & \textbf{Qué se espera ver} \\
+\midrule
+P0 & Tamaño de bloque & 1, 5 y 20 millones & Ninguna diferencia en $S$ \\
+P1 & Filtrado: con o sin, $q$ y $\lambda$ & Sin filtrado; $q$ de 10 a 40; $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
+P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm; $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
+P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en paredes y en aristas; requiere separar este valor del $q$ del filtrado en el código \\
+P4 & Precisión del \texttt{.npz} & Media y simple & Si la precisión media cambia los descriptores (ARI) \\
+P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria sin cambiar los descriptores \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \FloatBarrier
 \subsection{Replicación del Procedimiento}
@@ -1374,20 +1098,23 @@ Unidades~1 y~2 es replicable, qué hay que hacer para replicarlo con otra
 configuración y qué límites tiene esa replicación.
 
 \paragraph*{Por qué es replicable.}
-Hay cuatro razones. La primera es que ningún valor está escondido en el código.
-Cada parámetro de los dos programas es una opción de la línea de órdenes con un
-valor por defecto, de modo que una configuración queda descrita por completo con
-la orden que la ejecuta. La única excepción es el tamaño de parche del
-codificador, fijo en el programa, que la prueba~P5 convierte en opción. La
-segunda es que la Unidad~1 no tiene pasos aleatorios. La misma entrada con los
-mismos parámetros da los mismos puntos, y así se comprobó al preprocesar PL13 y
-PL7 en el equipo local y en Khipu, con conteos idénticos en las dos máquinas. La
-tercera es que cada corrida deja constancia de lo que hizo. La Unidad~1 escribe
-un archivo de metadatos con los parámetros, el centro restado, el número de
-puntos tras cada paso y el tiempo. La Unidad~2 guarda dentro del archivo de
-descriptores el tamaño de rejilla, el número de puntos de entrada y la semilla, y
-su registro anota el tiempo y la memoria. La cuarta es que el código y las
-versiones de las bibliotecas están en el repositorio y en el Anexo~A.
+Hay cuatro razones, y cada una remite a la sección donde ya está descrita.
+\begin{enumerate}
+\item Ningún valor está escondido en el código. Cada parámetro de los dos
+programas es una opción de la línea de órdenes con un valor por defecto
+(\enlace{sec:u1-reproducibilidad}{Unidad~1} y Tabla~\ref{tab:replica}). La única
+excepción es el tamaño de parche del codificador, fijo en el programa, que la
+\enlace{sec:param-p5}{prueba~P5} convierte en opción.
+\item La Unidad~1 no tiene pasos aleatorios
+(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}); la
+comprobación en dos máquinas está en la Sección~\ref{sec:res-u1-repro}.
+\item Cada corrida deja constancia de lo que hizo: los metadatos de la
+\enlace{sec:unidad1}{Unidad~1} (Paso~6) y los campos del archivo de
+descriptores de la \enlace{sec:rama-ssl}{Unidad~2} (Paso~5).
+\item El código, la instalación y los pesos están en el
+\enlace{sec:hardware-repo}{repositorio}, y las versiones de las bibliotecas en
+el \hyperref[sec:anexo-software]{Anexo~A}.
+\end{enumerate}
 
 \paragraph*{La única fuente de azar.}
 La rutina de preparación de Sonata elige al azar un punto cuando varios caen en
@@ -1395,12 +1122,9 @@ la misma celda de la rejilla. Por eso dos corridas sobre la misma matriz $S$
 podían dar descriptores algo distintos en esas celdas. Para eliminar esa
 variación, el programa \texttt{extraer\_features.py} fija ahora una semilla
 aleatoria, con valor 0 por defecto, que se elige con la opción
-\texttt{--semilla} y queda guardada en el archivo. La prueba sobre PL13 de la
-Sección~\ref{sec:rama-ssl} se ejecutó antes de este cambio, sin semilla fija.
-Como la rejilla retuvo el 99{,}2\,\% de los puntos, la elección al azar afectó a
-pocas celdas. Que dos inferencias en la GPU con la misma semilla den
-exactamente los mismos valores todavía no se ha comprobado, y se comprobará
-repitiendo la extracción de PL13.
+\texttt{--semilla} y queda guardada en el archivo. Que dos inferencias en la GPU
+con la misma semilla den exactamente los mismos valores se comprueba repitiendo
+una extracción y comparando los dos archivos.
 
 \paragraph*{Cómo se replica una configuración.}
 Replicar una configuración consiste en cinco pasos, los mismos para cualquiera
@@ -1408,17 +1132,19 @@ de las pruebas.
 \begin{enumerate}
 \item Fijar los valores de la configuración, uno por parámetro, a partir de la
 Tabla~\ref{tab:replica}.
-\item Ejecutar \texttt{preprocesar.py} con esos valores. En el clúster, el guion
-\texttt{preprocesar.sbatch} acepta el vóxel, los vecinos y el umbral como
-variables de entorno, sin tocar el código.
-\item Comprobar que los conteos del archivo de metadatos coinciden con los de una
-corrida anterior con los mismos valores. Si no coinciden, la configuración no se
-reprodujo y no tiene sentido seguir.
+\item Ejecutar \texttt{preprocesar.py} con esos valores, con la orden de la
+\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}. En el clúster se
+usa \texttt{preprocesar.sbatch}, que acepta el vóxel, los vecinos y el umbral
+como variables de entorno (\hyperref[sec:anexo-software]{Anexo~A}).
+\item Comprobar los conteos del archivo de metadatos como indica la
+\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}. Si no coinciden,
+la configuración no se reprodujo y no tiene sentido seguir.
 \item Ejecutar \texttt{extraer\_features.py} sobre esa misma matriz $S$, con la
-rejilla, la precisión y la semilla de la configuración.
+rejilla, la precisión y la semilla de la configuración, con la orden del
+\hyperref[sec:anexo-software]{Anexo~A}.
 \item Comparar los descriptores con los de la condición de referencia, con el
-ARI y el NMI de la Sección~\ref{sec:param-criterio}, y revisar las dos salidas en
-el visor de la Sección~\ref{sec:visor}, que además comprueba que descriptores y
+ARI y el NMI del \enlace{sec:param-criterio}{criterio común}, y revisar las dos
+salidas en el \enlace{sec:visor}{visor}, que además comprueba que descriptores y
 puntos correspondan.
 \end{enumerate}
 
@@ -1444,18 +1170,15 @@ Otra máquina u otra versión de Open3D & Ninguna opción, mismos valores & Mism
 \end{table}
 
 \paragraph*{Límites de la replicación.}
-Hay tres. El primero es el orden de las filas. Otra versión de Open3D da los
-mismos puntos en otro orden, así que los descriptores siempre deben usarse con la
-misma matriz $S$ que entró a Sonata, según la
-Sección~\ref{sec:u1-reproducibilidad}. El segundo es la memoria. Una
+Hay tres. El primero es el orden de las filas
+(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}). El segundo es la memoria. Una
 configuración que deje muchos más representantes, por ejemplo un vóxel menor,
 puede no caber en los 48\,GB de la GPU, y en ese caso la falta de memoria se
 reporta como resultado de la configuración y no se reduce la nube para que
-quepa. El tercero es el tamaño de la sección. Los seis escaneos que superan el
-millón de puntos tras la Unidad~1 todavía no se han pasado por Sonata, y si la
-memoria crece con el número de puntos no cabrán en una sola pasada. Su
-replicación depende entonces de la división en bloques prevista o de la
-prueba~P5.
+quepa. El tercero es el tamaño de la sección: si la memoria crece con el número
+de puntos, las secciones más grandes no cabrán en una sola pasada y su
+replicación depende de la división en bloques de la
+Sección~\ref{sec:observables} o de la \enlace{sec:param-p5}{prueba~P5}.
 
 % =====================================================================
 \FloatBarrier
@@ -1514,9 +1237,10 @@ simultánea.
 Cada configuración se ejecuta tres veces sobre cada sección y se reporta la
 media y la desviación entre repeticiones. La razón no es solo la variabilidad
 del entrenamiento. El submuestreo que precede al codificador elige al azar el
-punto representante de cada vóxel, por lo que dos ejecuciones sobre la misma
-sección no producen la misma $f_{\mathrm{ssl}}$. Las tres repeticiones abarcan
-por ello el procedimiento completo, E2 y E3, y no solo el entrenamiento.
+punto representante de cada celda, y esa elección la fija la semilla
+(\enlace{sec:param-replicacion}{replicación del procedimiento}). Cada
+repetición usa una semilla distinta, de modo que las tres abarcan el
+procedimiento completo, E2 y E3, y no solo el entrenamiento.
 
 Como las secciones son independientes, pueden repartirse entre varias GPU. Con
 $n_{\mathrm{gpu}}$ unidades y $n_{\mathrm{sec}}$ secciones, la aceleración frente
@@ -1543,8 +1267,8 @@ Sección~\ref{sec:metricas-hibrido}.
 Antes de ejecutar el procedimiento fue necesario dejar operativo el entorno de
 HyperNCD en el clúster Khipu, porque su repositorio no declara todas sus
 dependencias. Lo difícil fue compilar MinkowskiEngine contra CUDA~11.8 con un
-compilador GNU compatible. Con el entorno listo, una corrida llegó hasta la
-carga del primer lote.
+compilador GNU compatible. La prueba del entorno consiste en lanzar una
+corrida de entrenamiento y comprobar hasta qué etapa llega.
 
 % =====================================================================
 \FloatBarrier
@@ -1570,6 +1294,7 @@ degradación, documentado con ablación es reportable.
 % =====================================================================
 \FloatBarrier
 \section{Conclusión del Marco Metodológico}
+\label{sec:conclusion-metodo}
 
 Las tres unidades preparan la nube, extraen los dos descriptores y los evalúan
 aislando una sola variable, el descriptor que entra al módulo de prototipos. Así,
