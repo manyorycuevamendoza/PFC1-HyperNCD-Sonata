@@ -16,6 +16,13 @@ import yaml
 import pickle
 from utils.voxelizer import Voxelizer
 
+# Carpeta donde se guardan los caches de regiones (.pkl). Por defecto, dentro del
+# repo; se puede cambiar con la variable de entorno HYPERNCD_CACHE.
+CACHE_ROOT = os.environ.get(
+    "HYPERNCD_CACHE",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "region_save"),
+)
+
 
 def get_dataset(name):
     if name == "SemanticKITTI":
@@ -117,7 +124,7 @@ class SemanticKITTIRestrictedDataset(torch.utils.data.Dataset):
 
 
         import os
-        if os.path.exists("/home/zzh/3D/Hyper/region_save/KITTI/" + str(self.data_splits)+"/" + str(t) + '.pkl'):
+        if os.path.exists(CACHE_ROOT + "/KITTI/" + str(self.data_splits)+"/" + str(t) + '.pkl'):
             pass
         else:
 
@@ -149,7 +156,7 @@ class SemanticKITTIRestrictedDataset(torch.utils.data.Dataset):
             else:
                 region_id = None
 
-            save_path = "/home/zzh/3D/Hyper/region_save/KITTI/" + str(self.data_splits) + "/" + str(t) + '.pkl'
+            save_path = CACHE_ROOT + "/KITTI/" + str(self.data_splits) + "/" + str(t) + '.pkl'
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
             with open(save_path, "wb") as f:
@@ -196,7 +203,7 @@ class SemanticKITTIRestrictedDataset(torch.utils.data.Dataset):
             sup_label = np.zeros_like(labels) - 1
 
             if self.superpoint:
-                fr = open('/home/zzh/3D/Hyper/region_save/KITTI/' + str(self.data_splits)+"/" + str(t) + '.pkl', "rb")
+                fr = open(CACHE_ROOT + '/KITTI/' + str(self.data_splits)+"/" + str(t) + '.pkl', "rb")
                 superpoint = pickle.load(fr)
                 fr.close()
                 if superpoint is not None:
@@ -528,7 +535,7 @@ class SemanticPOSSRestrictedDataset(torch.utils.data.Dataset):
         # 新增
         import os
         if os.path.exists(
-                "/home/zzh/3D/Hyper/region_save/POSS-update/" + str(self.data_splits) + "/" + str(t) + '.pkl'):
+                CACHE_ROOT + "/POSS-update/" + str(self.data_splits) + "/" + str(t) + '.pkl'):
             pass
         else:
 
@@ -559,7 +566,7 @@ class SemanticPOSSRestrictedDataset(torch.utils.data.Dataset):
                 region_id = clustering.labels_
             else:
                 region_id = None
-            save_path = "/home/zzh/3D/Hyper/region_save/POSS-update/" + str(self.data_splits) + "/" + str(t) + '.pkl'
+            save_path = CACHE_ROOT + "/POSS-update/" + str(self.data_splits) + "/" + str(t) + '.pkl'
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
             with open(save_path, "wb") as f:
@@ -605,7 +612,7 @@ class SemanticPOSSRestrictedDataset(torch.utils.data.Dataset):
             sup_label = np.zeros_like(labels) - 1
 
             if self.superpoint:
-                fr = open("/home/zzh/3D/Hyper/region_save/POSS-update/" + str(self.data_splits)+"/" + str(t) + '.pkl', "rb")
+                fr = open(CACHE_ROOT + "/POSS-update/" + str(self.data_splits)+"/" + str(t) + '.pkl', "rb")
                 superpoint = pickle.load(fr)
                 fr.close()
                 if superpoint is not None:

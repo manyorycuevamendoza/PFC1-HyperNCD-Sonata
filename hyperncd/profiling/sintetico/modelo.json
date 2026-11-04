@@ -1,0 +1,65 @@
+{
+  "pasos_con_flops": [
+    {
+      "gflops_sparse_fwd": 5964.659,
+      "gflops_sparse_total_est": 17893.976,
+      "gflops_densas": 296.043,
+      "gflops_total": 18190.019,
+      "time": 1793660536.7302835,
+      "epoch": 0,
+      "step": 4,
+      "batch_s": 3.8259,
+      "data_wait_s": 0.0038,
+      "n_puntos": 479067,
+      "vram_alloc_pico_MB": 16482.4,
+      "vram_reservada_pico_MB": 18522.0,
+      "gflops_por_s": 4754.441830680363
+    },
+    {
+      "gflops_sparse_fwd": 5950.316,
+      "gflops_sparse_total_est": 17850.949,
+      "gflops_densas": 295.359,
+      "gflops_total": 18146.307,
+      "time": 1793660540.5384262,
+      "epoch": 0,
+      "step": 5,
+      "batch_s": 3.8018,
+      "data_wait_s": 0.0063,
+      "n_puntos": 479113,
+      "vram_alloc_pico_MB": 16462.3,
+      "vram_reservada_pico_MB": 18522.0,
+      "gflops_por_s": 4773.083013309485
+    },
+    {
+      "gflops_sparse_fwd": 5956.596,
+      "gflops_sparse_total_est": 17869.789,
+      "gflops_densas": 296.119,
+      "gflops_total": 18165.908,
+      "time": 1793660544.3653972,
+      "epoch": 0,
+      "step": 6,
+      "batch_s": 3.8195,
+      "data_wait_s": 0.0075,
+      "n_puntos": 479140,
+      "vram_alloc_pico_MB": 16486.3,
+      "vram_reservada_pico_MB": 18680.0,
+      "gflops_por_s": 4756.095824060741
+    }
+  ],
+  "parametros": 37851968,
+  "parametros_entrenables": 37851968,
+  "gpu": "NVIDIA RTX PRO 4000 Blackwell",
+  "torch": "2.7.1+cu128",
+  "cuda": "12.8",
+  "batch_size": 4,
+  "num_workers": 4,
+  "torch_threads": 24,
+  "omp_num_threads": "16",
+  "convs_dispersas": 65,
+  "epocas_s": [
+    30.68,
+    30.13,
+    30.06
+  ],
+  "fit_s": 91.87
+}

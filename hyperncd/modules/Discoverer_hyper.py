@@ -16,7 +16,7 @@ import yaml
 from scipy.optimize import linear_sum_assignment
 from torch import optim
 from torch.utils.data import DataLoader
-from torchmetrics.functional import jaccard_index
+from torchmetrics.functional.classification import multiclass_jaccard_index
 from tqdm import tqdm
 from torch import nn
 
@@ -810,7 +810,7 @@ class Discoverer(pl.LightningModule):
         gt_labels = real_labels
         avail_labels = torch.unique(gt_labels).long()
         _, pred_labels = torch.max(torch.softmax(preds.detach(), dim=1), dim=1)
-        IoU = jaccard_index(gt_labels, pred_labels, reduction="none")
+        IoU = multiclass_jaccard_index(pred_labels, gt_labels, num_classes=preds.shape[1], average="none")
         IoU = IoU[avail_labels]
 
         self.log("valid/loss", loss, on_epoch=True, sync_dist=True, rank_zero_only=True)

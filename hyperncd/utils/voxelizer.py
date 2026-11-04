@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import linalg
-import collections
+import collections.abc
 
 def M(axis, theta):
     return linalg.expm(np.cross(np.eye(3), axis/linalg.norm(axis)*theta))
@@ -45,7 +45,7 @@ class Voxelizer:
         # 1. Random rotation
         rot_mat = np.eye(3)
         if self.use_augmentation and self.rotation_augmentation_bound is not None:
-            if isinstance(self.rotation_augmentation_bound, collections.Iterable):
+            if isinstance(self.rotation_augmentation_bound, collections.abc.Iterable):
                 rot_mats = []
                 for axis_ind, rot_bound in enumerate(self.rotation_augmentation_bound):
                     theta = 0

@@ -58,6 +58,8 @@ parser.add_argument("--project", default="NCDPC", type=str, help="wandb project"
 parser.add_argument("--entity", default="15893788198-", type=str, help="wandb entity")
 parser.add_argument("--offline", default=False, action="store_true", help="disable wandb")
 parser.add_argument("--pretrained", type=str, help="pretrained checkpoint path")
+parser.add_argument("--resume", type=str, default=None, help="checkpoint (.ckpt) desde el que reanudar el entrenamiento")
+parser.add_argument("--ckpt_every_steps", default=200, type=int, help="guardar last.ckpt cada N pasos de entrenamiento")
 parser.add_argument("--epochs", type=int, default=10, help="training epochs")
 parser.add_argument("--set_deterministic", default=False, action="store_true")
 parser.add_argument("--alpha", default=1, type=float, help="parameters for the loss function")
@@ -75,6 +77,9 @@ parser.add_argument("--use_imbalanced_region", default=False, action="store_true
 parser.add_argument("--use_gt", default=False, action="store_true", help="")
 parser.add_argument("--exp_path", default=None, help="")
 parser.add_argument("--dbscan", type=float, default=0.5)
+parser.add_argument("--profile", default=False, action="store_true",
+                    help="perfilar tiempos, VRAM y FLOPs (ver utils/profiling.py)")
+parser.add_argument("--profile_dir", default="profiling", type=str, help="carpeta de salida del perfilado")
 
 
 def main(args):
@@ -137,26 +142,40 @@ def main(args):
         mode='max',
         save_top_k=1,
         save_last=True,
-        save_weights_only=True,
+        save_weights_only=False,
         dirpath=args.checkpoint_dir,
         filename=f'{args.dataset}_S{args.split}_best-{{epoch}}-{{step}}',
         verbose=True
+    )
+
+    # Guarda last.ckpt cada N pasos, para poder reanudar sin perder la época entera
+    step_checkpoint_callback = ModelCheckpoint(
+        save_top_k=0,
+        save_last=True,
+        save_weights_only=False,
+        every_n_train_steps=args.ckpt_every_steps,
+        dirpath=args.checkpoint_dir,
     )
 
     loggers = [wandb_logger, csv_logger] if wandb_logger is not None else [csv_logger]
 
     model = Discoverer(label_mapping, label_mapping_inv, unknown_label, **args.__dict__)
     lr_monitor = LearningRateMonitor(logging_interval='step')
+    callbacks = [mIoU_callback, checkpoint_callback, step_checkpoint_callback, lr_monitor]
+    if args.profile:
+        from utils.profiling import ResourceProfilerCallback
+        callbacks.append(ResourceProfilerCallback(args.profile_dir))
     trainer = pl.Trainer(
         max_epochs=args.epochs,
         logger=loggers,
-        gpus=1,
+        accelerator="gpu",
+        devices=1,
         num_sanity_val_steps=0,
         # precision=16,  # 启用混合精度训练
         # accelerator='ddp',  # 使用 DDP 加速器进行多 GPU 训练
-        callbacks=[mIoU_callback, checkpoint_callback, lr_monitor],
+        callbacks=callbacks,
     )
-    trainer.fit(model)
+    trainer.fit(model, ckpt_path=args.resume)
 
 
 if __name__ == "__main__":

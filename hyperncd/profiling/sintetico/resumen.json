@@ -1,0 +1,129 @@
+{
+  "hardware": {
+    "gpu": "NVIDIA RTX PRO 4000 Blackwell",
+    "nucleos_cuda": 8960,
+    "vram_total_MB": 24467,
+    "reloj_sm_medio_MHz": 2051,
+    "pico_fp32_teorico_TFLOPs": 36.8
+  },
+  "software": {
+    "torch": "2.7.1+cu128",
+    "cuda": "12.8"
+  },
+  "config": {
+    "batch_size": 4,
+    "num_workers": 4,
+    "torch_threads": 24,
+    "omp_num_threads": "16",
+    "puntos_por_paso": 479187
+  },
+  "modelo": {
+    "parametros": 37851968,
+    "parametros_entrenables": 37851968,
+    "convs_dispersas": 65
+  },
+  "flops_por_paso_GFLOP": {
+    "sparse_forward": 5957.2,
+    "sparse_fwd_bwd_estimado": 17871.6,
+    "densas_fwd_bwd": 295.8,
+    "total": 18167.4
+  },
+  "rendimiento": {
+    "s_por_paso": {
+      "media": 3.64,
+      "mediana": 3.63,
+      "p95": 3.82,
+      "max": 3.83
+    },
+    "espera_datos_s": {
+      "media": 0.01,
+      "mediana": 0.01,
+      "p95": 0.01,
+      "max": 0.01
+    },
+    "TFLOPs_por_s": 4.98,
+    "uso_del_pico_fp32_pct": 13.6,
+    "epocas_s": [
+      30.68,
+      30.13,
+      30.06
+    ],
+    "fit_total_s": 91.87
+  },
+  "gpu": {
+    "util_sm_pct": {
+      "media": 93.72,
+      "mediana": 99.0,
+      "p95": 100.0,
+      "max": 100.0
+    },
+    "util_memoria_pct": {
+      "media": 69.93,
+      "mediana": 73.0,
+      "p95": 91.0,
+      "max": 98.0
+    },
+    "vram_proceso_MB": {
+      "media": 13554.73,
+      "mediana": 17668.0,
+      "p95": 18788.0,
+      "max": 19128.0
+    },
+    "vram_alloc_pico_torch_MB": 16659,
+    "vram_reservada_pico_torch_MB": 18772,
+    "potencia_W": {
+      "media": 140.5,
+      "mediana": 144.9,
+      "p95": 145.5,
+      "max": 148.4
+    },
+    "temp_C": {
+      "media": 77.9,
+      "mediana": 80.0,
+      "p95": 83.0,
+      "max": 83.0
+    }
+  },
+  "cpu": {
+    "cpu_proceso_pct_100_1nucleo": {
+      "media": 121.33,
+      "mediana": 100.6,
+      "p95": 177.2,
+      "max": 246.7
+    },
+    "hilos": {
+      "media": 272.7,
+      "mediana": 275.0,
+      "p95": 276.0,
+      "max": 286.0
+    },
+    "procesos": {
+      "media": 10.02,
+      "mediana": 11.0,
+      "p95": 11.0,
+      "max": 15.0
+    },
+    "rss_MB": {
+      "media": 13082.72,
+      "mediana": 16180.5,
+      "p95": 16436.0,
+      "max": 23432.0
+    },
+    "cpu_sistema_pct": {
+      "media": 8.05,
+      "mediana": 6.6,
+      "p95": 11.8,
+      "max": 43.6
+    },
+    "ram_sistema_MB": {
+      "media": 11424.4,
+      "mediana": 11410.5,
+      "p95": 11622.0,
+      "max": 11741.0
+    }
+  },
+  "muestras": {
+    "recursos": 95,
+    "pasos": 24
+  }
+}
