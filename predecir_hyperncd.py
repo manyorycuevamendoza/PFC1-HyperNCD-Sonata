@@ -254,8 +254,19 @@ def main():
     }
     ruta_json = salida.with_suffix(".json")
     ruta_json.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Guardar tabla CSV de conteo por clase para incluir directo en tablas de la tesis
+    ruta_csv = salida.with_suffix(".csv")
+    lineas_csv = ["clase_id,tipo,puntos,porcentaje"]
+    for c, cnt in zip(clases_unicas, conteos):
+        tipo = "conocida" if int(c) < info_ckpt["num_labeled"] else "novedosa"
+        pct = 100.0 * int(cnt) / n_original
+        lineas_csv.append(f"{int(c)},{tipo},{int(cnt)},{pct:.4f}")
+    ruta_csv.write_text("\n".join(lineas_csv) + "\n", encoding="utf-8")
+
     print(f"guardado -> {salida}")
     print(f"resumen  -> {ruta_json}")
+    print(f"tabla    -> {ruta_csv}")
 
 
 if __name__ == "__main__":
