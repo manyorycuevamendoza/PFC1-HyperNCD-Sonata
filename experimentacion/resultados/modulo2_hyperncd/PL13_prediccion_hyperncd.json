@@ -1,12 +1,12 @@
 {
   "input": "/content/PFC1-HyperNCD-Sonata/experimentacion/datos/modulo3_PL13/PL13_SCN0001.npy",
-  "ckpt": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/split0_full/SemanticPOSS_S0_best-epoch=0-step=1244.ckpt",
+  "ckpt": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt",
   "ckpt_info": {
     "num_labeled": 9,
     "num_unlabeled": 4,
     "split": 0,
-    "epoch": 0,
-    "global_step": 1244
+    "epoch": 8,
+    "global_step": 11196
   },
   "voxel_size": 0.05,
   "n_original": 803099,
@@ -15,23 +15,23 @@
   "dim_fsem": 96,
   "dtype": "float16",
   "vram_pico_gb": 1.904,
-  "t_lectura_s": 0.154,
-  "t_forward_s": 1.046,
-  "voxeles_por_s": 529215.1,
-  "puntos_clases_conocidas": 14084,
-  "puntos_clases_novedosas": 789015,
+  "t_lectura_s": 0.025,
+  "t_forward_s": 1.076,
+  "voxeles_por_s": 514569.9,
+  "puntos_clases_conocidas": 17556,
+  "puntos_clases_novedosas": 785543,
   "conteo_por_clase": {
-    "0": 3087,
-    "1": 2175,
-    "2": 4773,
-    "3": 1524,
-    "4": 2103,
-    "5": 63,
-    "7": 49,
-    "8": 310,
-    "9": 15955,
-    "10": 767873,
-    "11": 292,
-    "12": 4895
+    "0": 9035,
+    "1": 589,
+    "2": 114,
+    "3": 6200,
+    "4": 1074,
+    "6": 462,
+    "7": 42,
+    "8": 40,
+    "9": 662786,
+    "10": 1389,
+    "11": 16883,
+    "12": 104485
   }
 }
