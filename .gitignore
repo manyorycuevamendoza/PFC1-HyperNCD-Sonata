@@ -38,7 +38,9 @@ region_save/
 # Experimentacion: datos pesados y vistas 3D (se regeneran con los scripts)
 experimentacion/datos/
 experimentacion/resultados/*.html
+experimentacion/resultados/modulo2_hyperncd/*.html
 
 # Entorno local y archivos que superan el limite de GitHub
 .venv/
 Context/DATA.zip
+experimentacion/resultados/modulo4_real/*.html
