@@ -1,0 +1,19 @@
+% Checkpoint 13 - Pregunta 1 (5.2)
+% Requiere en el preámbulo: \usepackage{graphicx}
+% Las imágenes deben estar en la misma carpeta que este .tex (cp13/): ejer1a.jpg y ejer1_b.jpg
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{ejer1a.jpg}\\[2pt]
+    \textbf{(a)} Echo Request y Echo Reply (Type 8 / Type 0).
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{ejer1\_b.jpg}\\[2pt]
+    \textbf{(b)} Sondas de traceroute y respuestas Time Exceeded (Type 11).
+  \end{minipage}
+\end{figure}
+
+Un atacante externo puede combinar dos tipos de mensajes ICMP para mapear la topología interna de una red. Primero, mediante un barrido de IPs con Echo Request (Type 8), envía una solicitud a cada dirección del rango objetivo, y los equipos activos responden con Echo Reply (Type 0), lo que revela qué hosts existen y son accesibles; esto se observa en la captura de ping (ejer1a.jpg), donde las diez solicitudes enviadas a 143.89.209.9 recibieron respuesta. Segundo, mediante el trazado de ruta con paquetes de TTL creciente (1, 2, 3, \ldots), cada router en el que el TTL llega a cero descarta el paquete y devuelve un mensaje Time Exceeded (Type 11) que contiene su propia dirección IP; en la captura de tracert (ejer1\_b.jpg) aparecen así los saltos 10.100.224.1, 10.3.2.14 y 10.228.3.34, y además los mensajes Type 3, Code 13 desde 10.128.128.128 revelan un dispositivo que filtra el tráfico en la ruta. Al ordenar estas direcciones, el atacante reconstruye el camino y los routers internos, y ubica los puntos donde se aplica filtrado. En conjunto, el barrido indica qué hosts existen y el trazado indica cómo están conectados, de modo que ambos permiten construir un mapa de la red objetivo.

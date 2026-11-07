@@ -38,3 +38,7 @@ el suelo con un polígono casi horizontal, y la vista de planta para los muros.
 
 Cuando termines, avísame. Con suelo, muros y bóveda ya hay 3 clases y un mIoU útil.
 No hace falta etiquetar el 100 % de los puntos.
+
+## Pre-etiquetas con M4 (mejor que las de reglas)
+
+`prelabel_m4/` usa los grupos de M4 K=8 (`[f_sem ; f_ssl]`) mapeados a clases: verde=suelo; azul, rojo, rosa y cian=muro; naranja, morado y café=bóveda/cúpula; lo que M4 no cubre (5 %)=otro. Mismo formato que `prelabel/`. Columnas: ningún grupo las separa, hay que marcarlas a mano.
