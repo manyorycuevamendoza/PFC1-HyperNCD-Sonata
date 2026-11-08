@@ -69,7 +69,11 @@ Corrida local del 4 de noviembre de 2026, en la ThinkStation (no en Khipu).
 
 El `f_sem` de la Catedral se saca en **Google Colab** con `colab_runner.ipynb`
 (MinkowskiEngine no corre en la laptop). Los pesos están en Drive, en
-`PFC1_HyperNCD_Sonata/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/`.
+`PFC1_HyperNCD_Sonata/m2/entrada/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/`.
+  Organización del Drive: una carpeta por módulo (`m1`, `m2`, `m3`, `m4`, cada una con
+  `entrada` y `salida`) y `entornos/` para los entornos compilados. Las celdas de
+  `colab_runner.ipynb` y `colab_sonata_adaptacion.ipynb` crean esa estructura y acomodan los
+  archivos viejos sin pisar nada.
 
 - **Checkpoint correcto:** `split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt`
   (mIoU de validación 0.38370). Hay que ponerlo **a mano** en `CKPT_PATH` de la celda 5.
