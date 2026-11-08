@@ -38,8 +38,10 @@ echo "      python $(python -V 2>&1 | cut -d' ' -f2) | torch $TV | cu$CU | nvcc 
 
 # 2. Dependencias de Pointcept
 echo "[2/7] Dependencias..."
-pip install -q addict yapf einops h5py plyfile termcolor tensorboardX tensorboard SharedArray \
-    ftfy regex tqdm scipy pyyaml packaging peft transformers torch-geometric
+pip install -q addict yapf einops h5py plyfile termcolor tensorboardX tensorboard wandb SharedArray \
+    ftfy regex tqdm scipy pyyaml packaging torch-geometric
+# transformers/peft recientes exigen PyTorch >= 2.6; sonata-env trae 2.5.0, asi que se fijan versiones compatibles
+pip install -q "transformers==4.46.3" "peft==0.13.2"
 pip install -q torch-cluster -f "https://data.pyg.org/whl/torch-${TV}+cu${CU}.html" \
   || { echo "No hay rueda de torch-cluster; compilando (~10 min)..."; \
        TORCH_CUDA_ARCH_LIST="$ARCHS" FORCE_CUDA=1 pip install -q --no-build-isolation torch-cluster; }
@@ -63,13 +65,17 @@ python "$AQUI/adaptar.py" parchear --pointcept "$POINTCEPT"
 python "$AQUI/adaptar.py" datos
 python "$AQUI/adaptar.py" pesos
 
-# 6. Comprobacion de modulos (sin GPU: un fallo por falta de driver aqui es normal; el job lo re-verifica)
+# 6. Comprobacion de modulos (si alguno falla, el script se detiene)
 echo "[6/7] Importando modulos..."
 export PYTHONPATH="$POINTCEPT:$AQUI/stubs"
+FALLOS=0
 for m in torch spconv.pytorch torch_scatter pointops torch_cluster torch_geometric peft transformers timm addict pointcept.models pointcept.datasets; do
-  if (cd "$POINTCEPT" && python -c "import $m" 2>/tmp/err_$$); then echo "   OK  $m"; else echo "   FALLA $m: $(tail -1 /tmp/err_$$)"; fi
+  if (cd "$POINTCEPT" && python -c "import $m" 2>/tmp/err_$$); then echo "   OK  $m"; else echo "   FALLA $m: $(tail -1 /tmp/err_$$)"; FALLOS=$((FALLOS+1)); fi
 done
 rm -f /tmp/err_$$
+if [ "$FALLOS" -gt 0 ]; then
+  echo "ERROR: $FALLOS modulo(s) no se pueden importar. Corrigelos y vuelve a correr este script."; exit 1
+fi
 
 # 7. Config de prueba + claves de los pesos
 echo "[7/7] Verificando que los pesos de Sonata encajan en el modelo de Pointcept..."
