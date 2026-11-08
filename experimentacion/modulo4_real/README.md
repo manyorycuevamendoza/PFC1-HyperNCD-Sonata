@@ -7,6 +7,26 @@ por punto original y corre las fórmulas del Módulo 4 de `modulo4_simulado/`
 Regiones = celdas de 0,75 m (DBSCAN daría una sola región en una nave conectada).
 Solo PL13 tiene M2 y M3 a la vez; PL7 no tiene `f_ssl` aquí.
 
+## Observaciones del autor (cualitativas, a partir del visor 3D)
+
+> Captura del visor de M4 en PL13 (K = 8). La variante exacta (original o adaptado) **no quedó
+> registrada**; confirmar antes de citarla. No hay medida numérica de esto todavía.
+
+1. **Lo que funciona.** El descriptor distingue morfologías con rigor. Los anillos de la cúpula salen
+   como grupos separados y coherentes (naranja y marrón). Aunque sean grupos distintos, siguen siendo
+   parte de la misma cúpula: es una separación aceptable y **no se quiere perder esa propiedad**.
+2. **Lo que falla: sobre-segmentación de superficies curvas.** Los techos curvos (bóvedas) se parten
+   en varios grupos, con muchos parches pequeños (azules y de otros colores) mezclados. Son una sola
+   estructura, pero como su orientación cambia, el método los trata como geometrías muy lejanas y las
+   asigna a clases distintas.
+3. **Hipótesis (sin verificar).** (a) las regiones son celdas fijas de 0,75 m que cortan la superficie
+   de forma arbitraria; (b) el descriptor depende de la orientación y la curvatura local (normales),
+   que cambian a lo largo de una bóveda; (c) nada obliga a que regiones vecinas y parecidas compartan
+   grupo (no hay restricción de continuidad espacial).
+
+**Para la tesis:** incluir esto como limitación observada de M4 y como motivación de la mejora de
+continuidad espacial. Ideas para probarlo, en `ESTADO_DEL_PROYECTO.md` ("Ideas para mejorar M4").
+
 ## Cómo correrlo
 
 ```

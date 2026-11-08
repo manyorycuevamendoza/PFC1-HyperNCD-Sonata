@@ -1,0 +1,42 @@
+{
+  "id": "m4_m2e0_m3orig",
+  "etapa": "M4",
+  "titulo": "Modulo 4 en PL13: f_sem epoca 0 + f_ssl original",
+  "descripcion": "Fusion F=[f_sem ; f_ssl] con el f_sem malo de la epoca 0.",
+  "estado": "hecho (referencia)",
+  "fecha": "2026-11-06",
+  "entradas": [
+    "m2_epoca0",
+    "m3_original"
+  ],
+  "parametros": {
+    "celda_m": 0.75,
+    "K": [
+      4,
+      8
+    ]
+  },
+  "hardware": "Laptop CPU",
+  "costo": {
+    "s": 52
+  },
+  "metricas": {
+    "acuerdo_M3_M4_ari_K4": 0.87,
+    "estabilidad_M4_K4": 0.95,
+    "fuente": "ESTADO_DEL_PROYECTO"
+  },
+  "resultados": {
+    "documento": "experimentacion/modulo4_real/README.md",
+    "json": [
+      "experimentacion/resultados/modulo4_real_m2_epoch0/modulo4_real_PL13.json"
+    ],
+    "imagenes": [
+      "experimentacion/resultados/modulo4_real_m2_epoch0/mapas_K4.png"
+    ],
+    "visores": [
+      "experimentacion/resultados/modulo4_real_m2_epoch0/visor_modulo4_PL13.html"
+    ]
+  },
+  "datos_pesados": [],
+  "notas": "Con este f_sem M4 era casi una copia de M3."
+}

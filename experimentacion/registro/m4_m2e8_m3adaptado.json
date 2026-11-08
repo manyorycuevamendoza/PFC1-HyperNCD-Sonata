@@ -1,0 +1,44 @@
+{
+  "id": "m4_m2e8_m3adaptado",
+  "etapa": "M4",
+  "titulo": "Modulo 4 en PL13: f_sem epoca 8 + f_ssl adaptado",
+  "descripcion": "Misma fusion, cambiando solo el f_ssl por el adaptado.",
+  "estado": "hecho",
+  "fecha": "2026-11-08",
+  "entradas": [
+    "m2_epoca8",
+    "m3_adaptado_e30"
+  ],
+  "parametros": {
+    "celda_m": 0.75,
+    "K": [
+      4,
+      8
+    ]
+  },
+  "hardware": "Laptop CPU",
+  "costo": {
+    "s": 48
+  },
+  "metricas": {
+    "estabilidad_M3_K4": 0.567,
+    "estabilidad_M4_K4": 0.493,
+    "acuerdo_M3_M4_ari_K4": 0.411
+  },
+  "resultados": {
+    "documento": "experimentacion/adaptacion_sonata/README.md",
+    "json": [
+      "experimentacion/adaptacion_sonata/resultados/m4_adaptado/modulo4_real_PL13.json",
+      "experimentacion/adaptacion_sonata/resultados/m4_comparacion/comparacion_m4_PL13.json"
+    ],
+    "imagenes": [
+      "experimentacion/adaptacion_sonata/resultados/m4_comparacion/comparacion_m4_PL13.png"
+    ],
+    "visores": [
+      "experimentacion/adaptacion_sonata/resultados/m4_adaptado/visor_modulo4_PL13.html",
+      "experimentacion/adaptacion_sonata/resultados/visor/visor_adaptacion_PL13.html"
+    ]
+  },
+  "datos_pesados": [],
+  "notas": "La estabilidad baja en 3 de 4 casos frente al f_ssl original; sin etiquetas no se sabe si acierta mas."
+}

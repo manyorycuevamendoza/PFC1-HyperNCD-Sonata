@@ -1,0 +1,28 @@
+{
+  "id": "m2_epoca0",
+  "etapa": "M2",
+  "titulo": "HyperNCD f_sem con el checkpoint de la epoca 0 (casi sin entrenar)",
+  "descripcion": "Primer f_sem de PL7 y PL13. Casi todos los puntos caian en una sola cabeza. Se conserva para comparar.",
+  "estado": "descartado como base; se conserva",
+  "fecha": "2026-11-06",
+  "entradas": [],
+  "parametros": {
+    "checkpoint": "split0_full ... epoch=0"
+  },
+  "hardware": "Colab",
+  "costo": {},
+  "metricas": {},
+  "resultados": {
+    "documento": "ESTADO_DEL_PROYECTO.md",
+    "json": [],
+    "imagenes": [],
+    "visores": []
+  },
+  "datos_pesados": [
+    {
+      "que": "PL13_fsem.npz y PL7_fsem.npz de la epoca 0",
+      "donde": "cache/m2_epoch0/ (local)"
+    }
+  ],
+  "notas": "Con este f_sem el Modulo 4 era casi una copia de M3 (ver m4_m2e0_m3orig)."
+}

@@ -93,6 +93,19 @@ python "$AQUI/adaptar.py" config --pointcept "$POINTCEPT" --salida "$POINTCEPT/$
     --epocas "$EPOCAS" --loop "$LOOP" --batch "$BATCH" --max-puntos "$MAX_PUNTOS" \
     --lr "$LR" --workers "$WORKERS" --save-freq "$SAVE_FREQ" --amp bfloat16
 
+# Registro de recursos (GPU, VRAM, RAM) cada 30 s, para la tabla de hardware de la tesis.
+# Queda en runs/<RUN>/recursos.csv (se agrega al final si se reanuda).
+(
+  echo "fecha,gpu_util_pct,vram_usada_MB,vram_total_MB,potencia_W,temp_C"
+  while true; do
+    nvidia-smi --query-gpu=timestamp,utilization.gpu,memory.used,memory.total,power.draw,temperature.gpu \
+               --format=csv,noheader,nounits
+    sleep 30
+  done
+) >> "$RUNDIR/recursos.csv" 2>/dev/null &
+MONITOR_PID=$!
+trap 'kill $MONITOR_PID 2>/dev/null' EXIT
+
 # ---------- 1. Entrenar ----------
 if [ -f "$RUNDIR/.entrenado" ]; then
   echo "[1/3] Entrenamiento ya terminado en este RUN: se salta."

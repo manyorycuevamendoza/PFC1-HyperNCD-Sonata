@@ -25,7 +25,11 @@ puntos de la Catedral de Lima (objetivo OE2).
 ├── sonata_adaptacion/             adaptar Sonata a la Catedral en Khipu (preparar + sbatch)
 ├── colab_runner.ipynb             M2 en Colab          colab_sonata_adaptacion.ipynb   M3 en Colab
 ├── experimentacion/               M4, visores 3D, etiquetado, resultados (cada carpeta con su README)
+│   ├── registro/                  un .json por experimento (qué es, de qué viene, parámetros, costo, métricas)
+│   ├── visor/index.html           VISOR: pestañas M1–M4, lista de experimentos y modo comparar (doble clic)
+│   └── adaptacion_sonata/         experimento: Sonata original vs adaptado (comparación M3, M4 y costo)
 ├── documentacion/
+│   ├── drive_indice.md            qué hay en cada carpeta del Drive
 │   ├── prompts/                   prompts listos para pegar (p. ej. pruebas de parámetros en Khipu)
 │   ├── contexto/                  defensa de M1 y M3 y muestras de datos
 │   ├── tesis_latex/               texto de la tesis
@@ -34,6 +38,18 @@ puntos de la Catedral de Lima (objetivo OE2).
 ├── hyperncd/ · sonata/            código de terceros (no tocar)
 └── data/ · cache/ · logs/ · datos_crudos/    datos de trabajo (NO van a git)
 ```
+
+## Ver los experimentos
+
+Abre `experimentacion/visor/index.html` (doble clic, sin servidor). Tiene una pestaña por etapa
+(M1 a M4), la lista de experimentos de cada una con su procedencia (qué M2 y qué M3 usó un M4),
+y un modo **comparar** que pone dos experimentos lado a lado y resalta lo que cambia. Los visores
+3D pesados se cargan solo al pulsar su botón.
+
+**Regla del proyecto:** todo experimento nuevo se registra en `experimentacion/registro/` (ver su
+`LEEME.md`) con su documento y con la ruta de sus datos pesados; luego
+`python experimentacion/registro/registrar.py` actualiza el índice. Lo que no esté registrado no
+aparece en el visor ni se considera parte del trabajo.
 
 ## Dónde están los datos
 

@@ -31,6 +31,7 @@ raíz/
 ├── colab_runner.ipynb              M2  en Google Colab
 ├── colab_sonata_adaptacion.ipynb   M3  adaptación de Sonata en Google Colab
 ├── experimentacion/                M4, visores, etiquetado y resultados (cada subcarpeta con su README)
+│   ├── registro/ y visor/          registro de experimentos (.json) y visor con pestañas por etapa y modo comparar
 ├── hyperncd/, sonata/              código de terceros (clonados; no tocar)
 ├── documentacion/                  contexto/ (muestras de datos y defensa), tesis_latex/, papers/, prompts/, historico/
 └── data/, cache/, logs/            datos de trabajo y salidas de Slurm (no van a git)
@@ -131,26 +132,25 @@ están en `experimentacion/resultados/modulo4_real_m2_epoch0/`.
 **Sin etiquetas no se puede decir qué variante acierta más.**
 Visor 3D: `experimentacion/resultados/modulo4_real/visor_modulo4_PL13.html`.
 
-### Adaptación de Sonata a la Catedral (en curso)
+### Adaptación de Sonata a la Catedral (hecha; falta evaluarla con etiquetas)
 
 Objetivo: continuar el preentrenamiento auto-supervisado de Sonata (sin etiquetas) con los 21
 escaneos de la Catedral **menos PL7 y PL13**, sacar el `f_ssl` adaptado de PL7 y PL13 y compararlo
 contra el Sonata original con el recorte etiquetado de PL13. Se hace con Pointcept
 (`configs/sonata/pretrain-sonata-v1m1-0-base.py`), no con la carpeta `sonata/` del repo (solo inferencia).
 
-- **Colab (L4, 22,5 GB):** el entrenamiento corre, pero la primera corrida **no es válida**: Pointcept
-  recalcula `loop = epoch // eval_epoch` y pisaba el `LOOP` del cuaderno, así que cada época hizo 10
-  iteraciones (21 escenas ÷ lote 2) y en total unas 300. La pérdida solo pasó de 8,22 a 8,13, y no sirve
-  para comparar. Corregido en `colab_sonata_adaptacion.ipynb` con `epoch = EPOCHS * LOOP` y
-  `eval_epoch = EPOCHS`; hay que reentrenar (con `LOOP = 5` son ~50 iteraciones por época).
-- **Khipu:** `sonata_adaptacion/` (preparar + sbatch en un solo job: entrenar, exportar y extraer PL7 y PL13).
-  Escrito pero **todavía sin correr en Khipu**. Comandos en `SETUP_KHIPU.md`.
-- **Atención SDPA:** se parcha Pointcept para no depender de flash-attn (no está en Khipu y no hay en T4).
-  Es equivalente matemáticamente a la atención original, pero no se comparó numéricamente.
-- **Qué falta para saber si ayuda:** reentrenar, extraer `f_ssl` adaptado de PL13, correr M4 con él y medir
-  mIoU contra las etiquetas del recorte. La pérdida de entrenamiento no dice si el descriptor mejoró.
-- **Elegir la época:** no hay `model_best.pth` (sin etiquetas no hay métrica). Se guardan checkpoints cada
-  `save_freq` épocas y se elige por mIoU en el recorte.
+- **Colab (L4, 22,5 GB):** la primera corrida fue inválida por un error de `loop` (10 iteraciones por época). Corregido,
+  se reentrenó: 30 épocas × 52 iteraciones, ~103 min, `f_ssl` adaptado de PL7 y PL13 extraído (con parche SDPA).
+- **Khipu:** `sonata_adaptacion/` (preparar + sbatch en un solo job). Escrito, **sin correr todavía**. Comandos en `SETUP_KHIPU.md`.
+- **Resultado (PL13, sin etiquetas)** — detalle y figuras en `experimentacion/adaptacion_sonata/`:
+  el descriptor adaptado es bastante distinto del original (coseno medio 0,54; rango efectivo 110 → 81; ARI de
+  k-means 0,21). En el Módulo 4 la estabilidad baja en 3 de 4 casos (M3/M4 con K = 4 y 8) y sube solo en M3 con K = 8.
+  **No hay evidencia de mejora**, pero tampoco se puede decir que empeora: sin etiquetas no se mide acierto.
+- **Falta un control:** el original se extrajo en Khipu y el adaptado en Colab (otra atención y semilla).
+  Hay que extraer PL13 con los pesos originales en Colab para separar el efecto de la adaptación del del entorno.
+- **Costo:** 103 min de L4 + 42 min de una corrida inválida; 13,3 GB de checkpoints. El costo de extracción del adaptado
+  queda por medir (ver `experimentacion/adaptacion_sonata/README.md`).
+- **Elegir la época:** no hay `model_best.pth` (sin etiquetas no hay métrica). Se guardaron épocas 5 a 30; se elige por mIoU en el recorte.
 
 ### Etiquetado de un recorte de PL13 (en curso)
 
@@ -162,9 +162,38 @@ a quien etiquete es `etiquetado_PL13.zip`. Las etiquetas devueltas
 (`clase_N_*.ply`, con el campo `idx`) se leen contra
 `PL13_recorte_indices.npy`. Los `.ply` y `.npy` no van a git.
 
+## Recordatorios para la tesis
+
+- [ ] **Sobre-segmentación de superficies curvas en M4** (bóvedas partidas en varios grupos, mientras los anillos
+  de la cúpula sí se separan bien). Está anotado en `experimentacion/modulo4_real/README.md`. Escribirlo como limitación
+  observada y como motivación de la mejora de continuidad espacial.
+- [ ] La adaptación de Sonata **no mostró mejora** sin etiquetas y falta el control con pesos originales
+  (`experimentacion/adaptacion_sonata/README.md`). Reportar como resultado negativo/inconcluso, no omitirlo.
+- [ ] Declarar el uso de herramientas de IA donde la universidad lo pida.
+
+Todo lo que quedó abierto para Tesis 2 está reunido en `experimentacion/tesis2/README.md`.
+
+## Ideas para mejorar M4 (por probar)
+
+Orden de menor a mayor esfuerzo. Las referencias se citaron de memoria: **verificarlas antes de citarlas**.
+
+1. **Medir el problema sin etiquetas.** *Fragmentación*: componentes conexos por grupo, y fracción de pares de regiones
+   vecinas con grupos distintos. Da un número antes/después de cada mejora.
+2. **Restricción de continuidad espacial (rápido).** Agrupar con conectividad: clustering jerárquico (Ward) restringido al
+   grafo de regiones vecinas, o suavizar etiquetas sobre ese grafo (potencial de Potts con *graph cuts*, Boykov et al. 2001;
+   CRF denso, Krähenbühl y Koltun 2011). Se suma al M4 como una arista de hipergrafo por adyacencia.
+3. **Regiones que sigan la superficie en vez de celdas de 0,75 m.** Crecimiento de regiones con restricción de suavidad
+   (Rabbani et al. 2006, ISPRS), segmentación por grafo (Felzenszwalb y Huttenlocher 2004), parches localmente convexos
+   (LCCP, Stein et al. 2014) o supervóxeles (VCCS, Papon et al. 2013). Una bóveda queda en una sola región.
+4. **Sobre-segmentar y luego fusionar** (superpoints): *Superpoint Graph* (Landrieu y Simonovsky, CVPR 2018) y
+   *Superpoint Transformer* (Robert et al., ICCV 2023) agrupan en piezas geométricamente simples y razonan sobre sus relaciones.
+5. **Descriptores menos sensibles a la orientación.** Quitar o ponderar menos las normales, o usar medidas de tipo de
+   superficie (planar, cilíndrica) en vez de dirección.
+6. **Jerarquía.** Dejar K alto y fusionar grupos vecinos parecidos hasta un umbral, en vez de fijar K de antemano.
+
 ## Pendiente
 
-1. **Reentrenar la adaptación de Sonata** (Colab o Khipu) con el `loop` corregido, y extraer `f_ssl` adaptado.
+1. **Control de la adaptación** (extraer PL13 con pesos originales en Colab), completar el costo y **medir mIoU** original vs adaptado con el recorte etiquetado.
 2. **Etiquetar el recorte de PL13** (en curso, ver arriba) y calcular mIoU y matriz de
    confusión de cada variante de M4. Es lo que falta para poder comparar M2, M3 y M4 de verdad.
 3. **Probar más fusiones de M2 y M3 en M4:** pesos por rama, PCA de `f_ssl` a 96 dim.,

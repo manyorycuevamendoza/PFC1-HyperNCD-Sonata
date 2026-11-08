@@ -50,3 +50,6 @@ experimentacion/resultados/modulo4_real_m2_epoch0/*.html
 sonata_adaptacion/datos_pointcept/
 sonata_adaptacion/pesos_base/
 sonata_adaptacion/runs/
+experimentacion/adaptacion_sonata/resultados/visor/*.html
+experimentacion/adaptacion_sonata/resultados/m4_original/*.html
+experimentacion/adaptacion_sonata/resultados/m4_adaptado/*.html

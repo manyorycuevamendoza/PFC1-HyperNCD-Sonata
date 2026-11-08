@@ -1,0 +1,49 @@
+{
+  "id": "m3_original",
+  "etapa": "M3",
+  "titulo": "Sonata original (encoder congelado) sobre PL13",
+  "descripcion": "f_ssl de 1088 dimensiones con los pesos de Meta, sin adaptar.",
+  "estado": "hecho",
+  "fecha": "2026-10-19",
+  "entradas": [
+    "m1_preproceso"
+  ],
+  "parametros": {
+    "pesos": "facebook/sonata",
+    "grid_m": 0.02,
+    "dim": 1088,
+    "atencion": "densa (sin flash-attn)"
+  },
+  "hardware": "Khipu RTX A6000 (48 GB)",
+  "costo": {
+    "forward_s": 13.9,
+    "vram_pico_gb": 34.6,
+    "fuente": "CONTEXTO_DEFENSA (sin log en el repo)"
+  },
+  "metricas": {
+    "filas_rejilla": 796315,
+    "varianza_pca3": 0.2531,
+    "varianza_pca10": 0.4342,
+    "rango_efectivo": 110.6
+  },
+  "resultados": {
+    "documento": "experimentacion/README.md",
+    "json": [
+      "experimentacion/resultados/modulo3_PL13.json"
+    ],
+    "imagenes": [
+      "experimentacion/resultados/modulo3_PL13.png",
+      "experimentacion/resultados/informe/lamina_PL13_descriptores_M3.png"
+    ],
+    "visores": [
+      "experimentacion/resultados/visor_PL13.html"
+    ]
+  },
+  "datos_pesados": [
+    {
+      "que": "PL13_feats.npz (680 MB)",
+      "donde": "experimentacion/datos/modulo3_PL13/ (local); Khipu cache/"
+    }
+  ],
+  "notas": "Codigo: extraer_features.py / extraer_features.sbatch."
+}

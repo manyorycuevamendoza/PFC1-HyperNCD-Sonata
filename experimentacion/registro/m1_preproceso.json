@@ -1,0 +1,39 @@
+{
+  "id": "m1_preproceso",
+  "etapa": "M1",
+  "titulo": "Preprocesamiento de los 23 escaneos (SOR + voxel 5 cm + normales)",
+  "descripcion": "Convierte cada .las en un .npy de 9 columnas (X Y Z R G B Nx Ny Nz). PL7 y PL13 son los escaneos de prueba.",
+  "estado": "hecho",
+  "fecha": "2026-10-08",
+  "entradas": [],
+  "parametros": {
+    "voxel_m": 0.05,
+    "q": 20,
+    "lam": 2.0
+  },
+  "hardware": "Khipu (CPU, 16 nucleos)",
+  "costo": {
+    "min_total_23_escaneos": 18,
+    "fuente": "CONTEXTO_DEFENSA (sin log en el repo)"
+  },
+  "metricas": {},
+  "resultados": {
+    "documento": "documentacion/contexto/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md",
+    "json": [],
+    "imagenes": [
+      "experimentacion/resultados/informe/lamina_PL13_entrada_M1_M3.png",
+      "experimentacion/resultados/informe/lamina_PL7_entrada_M1.png"
+    ],
+    "visores": [
+      "experimentacion/resultados/visor_PL13_m1.html",
+      "experimentacion/resultados/visor_PL7.html"
+    ]
+  },
+  "datos_pesados": [
+    {
+      "que": "data/*.npy (23 escaneos, ~626 MB)",
+      "donde": "Khipu ~/PFC1-HyperNCD-Sonata/data/ ; Drive m1/salida/data_m1.tar.gz"
+    }
+  ],
+  "notas": "Codigo: preprocesar.py / preprocesar.sbatch."
+}

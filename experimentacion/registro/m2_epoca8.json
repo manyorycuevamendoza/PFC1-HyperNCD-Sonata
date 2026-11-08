@@ -1,0 +1,44 @@
+{
+  "id": "m2_epoca8",
+  "etapa": "M2",
+  "titulo": "HyperNCD f_sem con el checkpoint de la epoca 8 (SemanticPOSS split0_run4)",
+  "descripcion": "f_sem de 96 dimensiones por voxel en PL7 y PL13. Modelo entrenado en calles, aplicado a una catedral.",
+  "estado": "hecho",
+  "fecha": "2026-11-06",
+  "entradas": [
+    "m1_preproceso"
+  ],
+  "parametros": {
+    "checkpoint": "split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt",
+    "dim": 96
+  },
+  "hardware": "Colab (MinkowskiEngine)",
+  "costo": {},
+  "metricas": {
+    "mIoU_validacion_SemanticPOSS": 0.3837,
+    "puntos_en_cabeza_novedosa_0_PL13": 0.82
+  },
+  "resultados": {
+    "documento": "ESTADO_DEL_PROYECTO.md",
+    "json": [
+      "experimentacion/resultados/modulo2_hyperncd/modulo2_PL13.json"
+    ],
+    "imagenes": [
+      "experimentacion/resultados/modulo2_hyperncd/modulo2_PL13.png"
+    ],
+    "visores": [
+      "experimentacion/resultados/modulo2_hyperncd/visor_PL13_m2.html"
+    ]
+  },
+  "datos_pesados": [
+    {
+      "que": "PL13_fsem.npz, PL7_fsem.npz",
+      "donde": "cache/ (local); Drive m2/salida/resultados_m2/"
+    },
+    {
+      "que": "checkpoint .ckpt",
+      "donde": "Drive m2/entrada/datos_m2_descomprimidos/"
+    }
+  ],
+  "notas": "El 82 % de los puntos de PL13 sigue en la cabeza novedosa 0: mejoro frente a la epoca 0 pero sigue concentrado."
+}

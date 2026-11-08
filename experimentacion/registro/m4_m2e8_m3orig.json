@@ -1,0 +1,43 @@
+{
+  "id": "m4_m2e8_m3orig",
+  "etapa": "M4",
+  "titulo": "Modulo 4 en PL13: f_sem epoca 8 + f_ssl original",
+  "descripcion": "Fusion con el f_sem de la epoca 8. Es la referencia actual del Modulo 4.",
+  "estado": "hecho",
+  "fecha": "2026-11-06",
+  "entradas": [
+    "m2_epoca8",
+    "m3_original"
+  ],
+  "parametros": {
+    "celda_m": 0.75,
+    "K": [
+      4,
+      8
+    ]
+  },
+  "hardware": "Laptop CPU",
+  "costo": {
+    "s": 52
+  },
+  "metricas": {
+    "estabilidad_M3_K4": 0.629,
+    "estabilidad_M4_K4": 0.552,
+    "acuerdo_M3_M4_ari_K4": 0.46
+  },
+  "resultados": {
+    "documento": "experimentacion/modulo4_real/README.md",
+    "json": [
+      "experimentacion/resultados/modulo4_real/modulo4_real_PL13.json"
+    ],
+    "imagenes": [
+      "experimentacion/resultados/modulo4_real/mapas_K4.png",
+      "experimentacion/resultados/modulo4_real/acuerdo_K4.png"
+    ],
+    "visores": [
+      "experimentacion/resultados/modulo4_real/visor_modulo4_PL13.html"
+    ]
+  },
+  "datos_pesados": [],
+  "notas": "Sin etiquetas: mide estabilidad y acuerdo, no acierto."
+}

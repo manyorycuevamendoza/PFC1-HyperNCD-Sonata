@@ -1,0 +1,63 @@
+{
+  "puntos_comparados": 200000,
+  "puntos_originales": 803099,
+  "filas_rejilla": {
+    "original": 796315,
+    "adaptado": 796309
+  },
+  "coseno_crudo": {
+    "media": 0.5433111786842346,
+    "p5": 0.38219383358955383,
+    "min": 0.13468797504901886
+  },
+  "coseno_centrado": {
+    "media": 0.5427210927009583,
+    "p5": 0.3459656238555908,
+    "min": 0.07622148841619492
+  },
+  "cambio_relativo_L2": {
+    "media": 1.0240392684936523,
+    "p95": 1.208778738975525
+  },
+  "original": {
+    "var_pca3": 0.25348013639450073,
+    "var_pca10": 0.4343537390232086,
+    "rango_efectivo": 110.52088165283203,
+    "kmeans_estabilidad_ari": 0.6095343704603563,
+    "kmeans_tamanos": [
+      27395,
+      34253,
+      28104,
+      27185,
+      26158,
+      15320,
+      13618,
+      27967
+    ]
+  },
+  "adaptado": {
+    "var_pca3": 0.22508594393730164,
+    "var_pca10": 0.4766747057437897,
+    "rango_efectivo": 81.3050537109375,
+    "kmeans_estabilidad_ari": 0.4920881576591957,
+    "kmeans_tamanos": [
+      18776,
+      27468,
+      23813,
+      27274,
+      30063,
+      28077,
+      13876,
+      30653
+    ]
+  },
+  "kmeans_K": 8,
+  "acuerdo_ari_original_vs_adaptado": 0.21104200520577712,
+  "PL7_adaptado_solo": {
+    "var_pca3": 0.23113346099853516,
+    "var_pca10": 0.48891937732696533,
+    "rango_efectivo": 78.21659088134766,
+    "filas_rejilla": 604779,
+    "dim": 1088
+  }
+}

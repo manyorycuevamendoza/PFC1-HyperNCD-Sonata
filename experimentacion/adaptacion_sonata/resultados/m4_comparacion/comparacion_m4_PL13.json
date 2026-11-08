@@ -1,0 +1,74 @@
+{
+  "K4": {
+    "M3": {
+      "estabilidad_original": 0.6288781338126691,
+      "estabilidad_adaptado": 0.5669968610627806,
+      "silueta_fssl_original": 0.16745269298553467,
+      "silueta_fssl_adaptado": 0.14991986751556396,
+      "ari_original_vs_adaptado": 0.24834051212951297,
+      "nmi_original_vs_adaptado": 0.27968124956024537
+    },
+    "M4": {
+      "estabilidad_original": 0.5524844135595907,
+      "estabilidad_adaptado": 0.49284581131858035,
+      "silueta_fssl_original": 0.11437413096427917,
+      "silueta_fssl_adaptado": 0.09109196066856384,
+      "ari_original_vs_adaptado": 0.3308920715498681,
+      "nmi_original_vs_adaptado": 0.40627529770389065
+    },
+    "acuerdo_M3_M4": {
+      "original": 0.4597087605211986,
+      "adaptado": 0.41132053932911217
+    },
+    "acuerdo_M2_M4": {
+      "original": 0.1747233234197411,
+      "adaptado": 0.18793834996485134
+    },
+    "control_sin_cambio": {
+      "M2_estab": [
+        0.5281142521112078,
+        0.5281142521112078
+      ],
+      "M4_base_estab": [
+        0.6412198485060502,
+        0.6412198485060502
+      ]
+    }
+  },
+  "K8": {
+    "M3": {
+      "estabilidad_original": 0.6284290768271376,
+      "estabilidad_adaptado": 0.6836984017692004,
+      "silueta_fssl_original": 0.14078335464000702,
+      "silueta_fssl_adaptado": 0.15892590582370758,
+      "ari_original_vs_adaptado": 0.2493074691999469,
+      "nmi_original_vs_adaptado": 0.3694294530225612
+    },
+    "M4": {
+      "estabilidad_original": 0.7053679700552538,
+      "estabilidad_adaptado": 0.6071966077270713,
+      "silueta_fssl_original": 0.1034039631485939,
+      "silueta_fssl_adaptado": 0.12046589702367783,
+      "ari_original_vs_adaptado": 0.3363358419643693,
+      "nmi_original_vs_adaptado": 0.45629314148062733
+    },
+    "acuerdo_M3_M4": {
+      "original": 0.5420603237082267,
+      "adaptado": 0.5259610131101948
+    },
+    "acuerdo_M2_M4": {
+      "original": 0.1929392414079673,
+      "adaptado": 0.11406488097975355
+    },
+    "control_sin_cambio": {
+      "M2_estab": [
+        0.761374391014677,
+        0.761374391014677
+      ],
+      "M4_base_estab": [
+        0.8160444322176371,
+        0.8160444322176371
+      ]
+    }
+  }
+}

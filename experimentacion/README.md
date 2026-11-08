@@ -19,6 +19,10 @@ experimentacion/
 │   └── visualizar_features.sbatch   lo mismo, como trabajo en Khipu
 ├── modulo4_simulado/          M4 sobre una escena sintética con verdad conocida (ver su README)
 ├── modulo4_real/              M4 real sobre PL13: une f_sem (M2) y f_ssl (M3) (ver su README)
+├── tesis2/                    pendientes, hipótesis y experimentos por hacer para Tesis 2 (ver su README)
+├── registro/                  un .json por experimento + registrar.py (valida e indexa); ver su LEEME.md
+├── visor/index.html          visor con pestañas M1–M4 y modo comparar (abre con doble clic)
+├── adaptacion_sonata/         experimento: Sonata original vs adaptado a la Catedral (M3 y M4, costo; ver su README)
 │   ├── correr_modulo4_real.py   regiones, afinidad, hipergrafo, Sinkhorn; compara M2, M3, M4 base y M4
 │   ├── graficar_modulo4_real.py mapas por variante y acuerdo entre variantes
 │   └── visor_modulo4_real.py    visor 3D con botones por variante
@@ -29,7 +33,8 @@ experimentacion/
 │   └── componer_lamina.py     une capturas del visor en una lámina con títulos
 ├── datos/                     ← NO va a git (pesado). Ver "Datos" abajo.
 │   ├── modulo1_PL7/
-│   └── modulo3_PL13/
+│   ├── modulo3_PL7/            f_ssl adaptado de PL7
+│   └── modulo3_PL13/           f_ssl original y adaptado de PL13
 └── resultados/
     ├── visor_PL7.html          vista 3D de PL7: crudo y Módulo 1   (NO va a git)
     ├── visor_PL7_denso.html    lo mismo con 610 637 puntos por etapa (NO va a git)
