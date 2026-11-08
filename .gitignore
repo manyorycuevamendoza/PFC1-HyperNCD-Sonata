@@ -45,3 +45,8 @@ experimentacion/resultados/modulo2_hyperncd/*.html
 Context/DATA.zip
 experimentacion/resultados/modulo4_real/*.html
 experimentacion/resultados/modulo4_real_m2_epoch0/*.html
+
+# Adaptacion de Sonata en Khipu (datos, pesos y corridas pesadas)
+sonata_adaptacion/datos_pointcept/
+sonata_adaptacion/pesos_base/
+sonata_adaptacion/runs/
