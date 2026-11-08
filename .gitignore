@@ -32,7 +32,7 @@ slurm-*.out
 *.out
 *.toc
 *.synctex.gz
-LATEX/**/main.pdf
+documentacion/tesis_latex/**/main.pdf
 region_save/
 
 # Experimentacion: datos pesados y vistas 3D (se regeneran con los scripts)
@@ -42,7 +42,7 @@ experimentacion/resultados/modulo2_hyperncd/*.html
 
 # Entorno local y archivos que superan el limite de GitHub
 .venv/
-Context/DATA.zip
+documentacion/contexto/DATA.zip
 experimentacion/resultados/modulo4_real/*.html
 experimentacion/resultados/modulo4_real_m2_epoch0/*.html
 

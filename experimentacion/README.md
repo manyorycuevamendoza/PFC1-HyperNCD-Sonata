@@ -124,7 +124,7 @@ Las capturas de `resultados/informe/` se exportaron con la cámara por defecto y
 Matplotlib dibuja 3D en la CPU proyectando sobre un plano: con cientos de miles
 de puntos es lento, resuelve mal qué punto tapa a cuál y entrega una imagen fija
 con un ángulo decidido de antemano. Por eso la figura del cubo de la tesis
-(`LATEX/asesoria5/imagenes/prueba_pl7_cubo.png`) muestra solo 1 m. El visor usa
+(`documentacion/tesis_latex/asesoria5/imagenes/prueba_pl7_cubo.png`) muestra solo 1 m. El visor usa
 Plotly (WebGL, GPU del navegador): gira con fluidez con 100 000 puntos por
 etapa, mantiene la misma cámara entre etapas y es un solo archivo que cualquiera
 abre sin Python. Por eso **todas** las figuras de nubes de la tesis salen del visor.

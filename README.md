@@ -1,107 +1,100 @@
-# PFC1 — HyperNCD + Sonata
+# PFC1 — HyperNCD + Sonata (Catedral de Lima)
 
-Proyecto de tesis: integrar el *encoder* auto-supervisado de **Sonata** en el
-módulo de prototipos de **HyperNCD** (sustituir el descriptor geométrico
-analítico `f_geo` por `f_ssl`), conservando íntegro el razonamiento por
-hipergrafo. Corresponde al objetivo **OE2** del plan de tesis.
+Tesis: integrar el *encoder* auto-supervisado **Sonata** (`f_ssl`) en el módulo de prototipos de
+**HyperNCD** (`f_sem`), conservando el razonamiento por hipergrafo, y medirlo sobre nubes de
+puntos de la Catedral de Lima (objetivo OE2).
 
-## Repos originales
+**¿Qué está hecho y qué falta?** → [`ESTADO_DEL_PROYECTO.md`](ESTADO_DEL_PROYECTO.md)
+**¿Cómo se prepara Khipu?** → [`SETUP_KHIPU.md`](SETUP_KHIPU.md)
 
-- **HyperNCD** (CVPR 2026): https://github.com/2490o/HyperNCD
-  Paper: https://arxiv.org/abs/2606.07280
-- **Sonata** (CVPR 2025 Highlight): https://github.com/facebookresearch/sonata
-  Paper: https://arxiv.org/abs/2503.16429
-  Codebase completo de preentrenamiento (por si necesitas reproducir el
-  pretraining, no solo inferencia): https://github.com/Pointcept/Pointcept
+## Los cinco módulos y dónde vive cada uno
 
-HyperNCD no trae su propio archivo de dependencias: su README remite al setup
-de **NOPS** (https://github.com/LuigiRiz/NOPS), que es el paper base de la
-línea (Riz et al. 2023, ya citado en tu Capítulo I).
+| Módulo | Qué hace | Dónde corre | Código |
+|---|---|---|---|
+| **M1** Preprocesamiento | SOR, voxel 5 cm, normales → `.npy` de 9 columnas | Khipu (CPU) | `preprocesar.py`, `preprocesar.sbatch` |
+| **M2** HyperNCD | `f_sem` (96 dim.) | Colab (MinkowskiEngine no corre en la laptop); entrenar en Khipu | `predecir_hyperncd.py`, `colab_runner.ipynb`, `hyperncd_*.sbatch`, `hyperncd/` |
+| **M3** Sonata | `f_ssl` (1088 dim.), con encoder congelado o adaptado | Khipu (GPU) o Colab | `extraer_features.py` / `.sbatch`, `sonata_adaptacion/`, `colab_sonata_adaptacion.ipynb`, `sonata/` |
+| **M4** Fusión e hipergrafo | `F = [f_sem ; f_ssl]`, regiones, Sinkhorn | Laptop | `experimentacion/modulo4_real/` (real), `modulo4_simulado/` |
+| **M5** Evaluación | mIoU sobre la Catedral | — | pendiente |
 
-## ⚠️ Importante: son dos entornos distintos, no uno
+## Mapa de carpetas
 
-Las dos pilas de CUDA/PyTorch son incompatibles entre sí — no vas a poder
-instalar ambos repos en el mismo `conda env`:
+```
+├── README.md · ESTADO_DEL_PROYECTO.md · SETUP_KHIPU.md     empieza por aquí
+├── preprocesar.* · extraer_features.* · predecir_hyperncd.py · hyperncd_*.sbatch · demo_sonata.sbatch
+├── sonata_adaptacion/             adaptar Sonata a la Catedral en Khipu (preparar + sbatch)
+├── colab_runner.ipynb             M2 en Colab          colab_sonata_adaptacion.ipynb   M3 en Colab
+├── experimentacion/               M4, visores 3D, etiquetado, resultados (cada carpeta con su README)
+├── documentacion/
+│   ├── prompts/                   prompts listos para pegar (p. ej. pruebas de parámetros en Khipu)
+│   ├── contexto/                  defensa de M1 y M3 y muestras de datos
+│   ├── tesis_latex/               texto de la tesis
+│   ├── papers/                    artículos de referencia
+│   └── historico/                 documentos viejos (no se mantienen)
+├── hyperncd/ · sonata/            código de terceros (no tocar)
+└── data/ · cache/ · logs/ · datos_crudos/    datos de trabajo (NO van a git)
+```
 
-| | HyperNCD (vía NOPS) | Sonata |
+## Dónde están los datos
+
+Nada de esto está en git. Viven en Khipu, en `~/PFC1-HyperNCD-Sonata/`:
+
+| Carpeta | Qué hay | Cómo se genera |
 |---|---|---|
-| Python | 3.8 | según `environment.yml` (recomendado 3.10) |
-| CUDA | 11.3 | 12.4 |
-| PyTorch | 1.10.1 | 2.5.0 |
-| Backbone | MinkowskiEngine (MinkowskiUNet-34C) | Point Transformer V3 (spconv) |
-| Otras deps clave | PyTorch Lightning 1.4.8, torchmetrics 0.7.2, SciPy 1.7.3, wandb | torch-scatter, flash-attention, huggingface_hub, timm, open3d |
+| `datos_crudos/` | los 23 `.las` originales de la Catedral | se suben a mano |
+| **`data/`** | **23 escaneos ya preprocesados**: `<escaneo>.npy` (9 columnas: X Y Z R G B Nx Ny Nz) y `<escaneo>.json` (parámetros). ~626 MB en total | `sbatch preprocesar.sbatch` (M1) |
+| `cache/` | salidas de M3: `<escaneo>_feats.npz` (`f_ssl`) | `sbatch extraer_features.sbatch` |
+| `logs/` | salidas de Slurm (`<job>_<id>.out/.err`) | automático |
 
-`setup.sh` crea **dos** entornos conda separados: `hyperncd-env` y
-`sonata-env`. La integración real que pide tu OE2
-(`F_i = [f_sem(x^i); f_ssl(x^i)]`) no se puede hacer importando ambos
-paquetes en el mismo proceso: la forma práctica es correr Sonata congelado en
-`sonata-env`, cachear sus features a disco (una pasada por sección, como ya
-dice tu propuesta), y cargar ese cache desde `hyperncd-env` al construir el
-hipergrafo. Esto además resuelve por diseño la diferencia de resolución
-PTv3 / rejilla de Minkowski: el *up-cast* se hace una sola vez al cachear, no
-en cada paso de entrenamiento.
+Escaneos de prueba: `PL7_SCN0001` y `PL13_SCN0001`. Los demás son `PL1`…`PL18`, `Piso_*`,
+`Campanario_Stonex`, `Capilla_Veracruz`, `capilla_secreta` e `iglesia_*_stonex`.
 
-## Uso
+En Google Drive (`PFC1_HyperNCD_Sonata/`) hay una carpeta por módulo: `m1/salida/data_m1.tar.gz`
+es una copia de `data/`, y `m2/`, `m3/`, `m4/` guardan entradas y salidas de cada módulo.
+Para crearla en Khipu: `tar -czf data_m1.tar.gz data` y bajarla con `scp`
+(comandos en `experimentacion/VER_RESULTADOS_SONATA.md`).
+
+## Primera vez en Khipu
 
 ```bash
-bash setup.sh
+git clone git@github.com:manyorycuevamendoza/PFC1-HyperNCD-Sonata.git
+cd PFC1-HyperNCD-Sonata && mkdir -p logs
+ls data/*.npy | wc -l        # debe dar 23; si no, corre antes: sbatch preprocesar.sbatch
 ```
 
-El script pregunta si estás en tu laptop o en Khipu, clona ambos repos (si no
-existen ya) y crea los dos entornos conda. La instalación de MinkowskiEngine
-(compilación desde código, requiere la CUDA toolkit 11.3 del sistema) y la
-de Sonata en "package mode" quedan con instrucciones impresas en pantalla
-porque dependen de la CUDA que tengas disponible en cada máquina.
+Si ya lo tienes clonado: `git pull` y sigue. El entorno de Sonata (`sonata-env`) y el de
+HyperNCD (`hyperncd-env`) ya existen; si no, `SETUP_KHIPU.md` explica cómo crearlos.
 
-Estructura resultante:
+## Comandos de ejecución (desde la raíz del repo en Khipu)
 
+```bash
+sbatch preprocesar.sbatch                                              # M1: .las -> data/*.npy
+sbatch extraer_features.sbatch data/PL13_SCN0001.npy cache/PL13_SCN0001_feats.npz   # M3: f_ssl
+sbatch hyperncd_train_poss.sbatch                                      # M2: línea base en SemanticPOSS
+bash sonata_adaptacion/preparar_khipu.sh                               # M3 adaptado: preparar (1 vez, login node)
+PRUEBA=1 sbatch --time=00:30:00 sonata_adaptacion/sonata_adaptacion.sbatch   # prueba de 1 época
+sbatch sonata_adaptacion/sonata_adaptacion.sbatch                      # entrenamiento completo
+squeue -u $USER                                                        # ver tus trabajos
+tail -n 40 logs/<job>_<id>.out                                         # ver el avance
 ```
-PFC1-HyperNCD-Sonata/
-├── hyperncd/                    (clon de github.com/2490o/HyperNCD)
-├── sonata/                      (clon de github.com/facebookresearch/sonata)
-├── setup.sh
-├── khipu_job_example.sbatch
-└── README.md
-```
 
-## En tu laptop
+- **M2 sobre la Catedral:** abre `colab_runner.ipynb` en Colab (los checkpoints están en Drive, `m2/entrada/`).
+- **M3 adaptado en Colab:** `colab_sonata_adaptacion.ipynb`, celdas 1 → 8.
+- **M4 (laptop):** `python experimentacion/modulo4_real/correr_modulo4_real.py` (ver su README).
 
-Sirve para leer/editar código y probar Sonata en modo demo si tu laptop tiene
-GPU NVIDIA. Entrenar HyperNCD de verdad (SemanticKITTI/SemanticPOSS o tus
-secciones de la Catedral) muy probablemente necesita más VRAM de la que trae
-una laptop — para eso está Khipu.
+## Dos entornos distintos (no se pueden mezclar)
 
-## En Khipu (cluster Slurm de UTEC)
+| | HyperNCD | Sonata |
+|---|---|---|
+| Python / CUDA / PyTorch | 3.8 / 11.3 / 1.10.1 | 3.10 / 12.4 / 2.5.0 |
+| Backbone | MinkowskiEngine | Point Transformer V3 (spconv) |
 
-`khipu_job_example.sbatch` es una plantilla, **no una copia exacta** de la
-configuración real de Khipu (esta sesión no tiene acceso a Khipu ni a tus
-credenciales). Antes de lanzarla:
+Por eso Sonata corre aparte, guarda `f_ssl` en disco (`cache/`) y M4 lo lee de ahí.
+`pointcept-env` (adaptación) es una copia de `sonata-env` con lo necesario para entrenar.
 
-1. Corre `sinfo` para ver el nombre real de la partición GPU.
-2. Corre `module avail` para ver los módulos de CUDA/Anaconda disponibles y
-   ajusta los `module load` del script.
-3. Ajusta `--gres=gpu:*`, `--time` y `--mem` según lo que tengas asignado
-   (tu propuesta ya nota que la config de GPU del clúster cambió
-   recientemente, así que verifica antes de fijar tiempos).
+## Referencias
 
-## Citas
-
-```bibtex
-@inproceedings{riz2023nops,
-  author    = {Riz, Luigi and Saltori, Cristiano and Ricci, Elisa and Poiesi, Fabio},
-  title     = {Novel Class Discovery for {3D} Point Cloud Semantic Segmentation},
-  booktitle = {CVPR},
-  year      = {2023}
-}
-@article{wu2025sonata,
-  author  = {Wu, Xiaoyang and others},
-  title   = {Sonata: Self-Supervised Learning of Reliable Point Representations},
-  journal = {arXiv preprint arXiv:2503.16429},
-  year    = {2025}
-}
-@inproceedings{zhang2026hyperncd,
-  title     = {Geometric-Aware Hypergraph Reasoning for Novel Class Discovery in Point Cloud Segmentation},
-  booktitle = {CVPR},
-  year      = {2026}
-}
-```
+- HyperNCD (CVPR 2026): https://github.com/2490o/HyperNCD · https://arxiv.org/abs/2606.07280
+- Sonata (CVPR 2025): https://github.com/facebookresearch/sonata · https://arxiv.org/abs/2503.16429
+- Pointcept (entrenamiento de Sonata): https://github.com/Pointcept/Pointcept
+- NOPS (base de HyperNCD): Riz et al., *Novel Class Discovery for 3D Point Cloud Semantic Segmentation*, CVPR 2023

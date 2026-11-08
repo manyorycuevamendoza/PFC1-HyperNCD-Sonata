@@ -1,4 +1,4 @@
-# Estado del proyecto (actualizado el 6 de noviembre de 2026)
+# Estado del proyecto (actualizado el 8 de noviembre de 2026)
 
 Mapa de qué módulos están hechos, dónde está el código, los datos y los
 resultados de cada uno, y qué falta. Para el detalle de cada módulo, ver los
@@ -10,25 +10,48 @@ documentos enlazados.
 |---|---|---|---|---|
 | **M1** Preprocesamiento | SOR, voxelización 5 cm, normales | Hecho (los 23 escaneos en Khipu; PL7 y PL13 de prueba) | `preprocesar.py`, `preprocesar.sbatch` | `experimentacion/resultados/informe/` |
 | **M2** HyperNCD | Descriptor semántico `f_sem` y descubrimiento de clases | Línea base en SemanticPOSS y **`f_sem` ya extraído en PL7 y PL13** con el checkpoint de la época 8 (Colab). Ver "M2 en Colab" | `hyperncd/`, `predecir_hyperncd.py`, `colab_runner.ipynb` | `experimentacion/resultados/modulo2_hyperncd/`, `cache/PL*_fsem.npz` |
-| **M3** Sonata | Descriptores `f_ssl` (1088 dim.) con encoder congelado | Hecho (PL13 en Khipu) | `extraer_features.py`, `extraer_features.sbatch`, `sonata/` | `experimentacion/resultados/modulo3_PL13.json` y `.png` |
+| **M3** Sonata | Descriptores `f_ssl` (1088 dim.) con encoder congelado | Hecho con Sonata original (PL13 en Khipu). **Adaptación a la Catedral: en curso**, ver "Adaptación de Sonata" | `extraer_features.py`, `extraer_features.sbatch`, `sonata_adaptacion/`, `colab_sonata_adaptacion.ipynb`, `sonata/` | `experimentacion/resultados/modulo3_PL13.json` y `.png` |
 | **M4** Fusión e hipergrafo | `F = [f_sem ; f_ssl]`, regiones, prototipos, Sinkhorn | Simulado **y corrido sobre PL13 real** (sin etiquetas aún: solo comparación entre variantes). Ver "M4 real" | `experimentacion/modulo4_simulado/`, `experimentacion/modulo4_real/` | `experimentacion/resultados/modulo4_real/` |
 | **M5** Evaluación | mIoU sobre la Catedral | No empezado | — | — |
 
-Fuente del estado de M1–M5: `Context/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md`
+Fuente del estado de M1–M5: `documentacion/contexto/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md`
 (sección 1). Si algo cambia, actualiza esta tabla.
+
+## Mapa de carpetas
+
+```
+raíz/
+├── ESTADO_DEL_PROYECTO.md, README.md, SETUP_KHIPU.md   guías (empieza por esta)
+├── preprocesar.py / .sbatch        M1  preprocesamiento (corre en Khipu)
+├── predecir_hyperncd.py            M2  inferencia de HyperNCD (la usa colab_runner.ipynb)
+├── hyperncd_*.sbatch               M2  entrenamiento e instalación en Khipu
+├── extraer_features.py / .sbatch   M3  f_ssl con Sonata (acepta --pesos adaptados)
+├── demo_sonata.sbatch              M3  demo de Sonata
+├── sonata_adaptacion/              M3  adaptación auto-supervisada de Sonata en Khipu
+├── colab_runner.ipynb              M2  en Google Colab
+├── colab_sonata_adaptacion.ipynb   M3  adaptación de Sonata en Google Colab
+├── experimentacion/                M4, visores, etiquetado y resultados (cada subcarpeta con su README)
+├── hyperncd/, sonata/              código de terceros (clonados; no tocar)
+├── documentacion/                  contexto/ (muestras de datos y defensa), tesis_latex/, papers/, prompts/, historico/
+└── data/, cache/, logs/            datos de trabajo y salidas de Slurm (no van a git)
+```
+
+Los scripts de Khipu y los cuadernos de Colab se quedan en la raíz a propósito: sus rutas
+(`sbatch extraer_features.sbatch`, `python extraer_features.py ...`) están escritas en las
+guías y en los cuadernos. Moverlos exige cambiar todo eso a la vez.
 
 ## Dónde está cada cosa
 
 ### Módulo 1 y Módulo 3 (PL7 y PL13)
 
 - **Código:** `preprocesar.py` (M1), `extraer_features.py` (M3).
-- **Documentación:** `Context/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md` (procedimiento
+- **Documentación:** `documentacion/contexto/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md` (procedimiento
   paso a paso, cifras y código completo) y `experimentacion/README.md`
   (cómo generar las figuras y qué datos van con cuál).
 - **Escaneos completos:** no están en git ni en esta máquina. Viven en Khipu,
   en `~/PFC1-HyperNCD-Sonata/datos_crudos/` (los 23 `.las`). El `.npy` y el
   `.npz` de PL13 están en Khipu en `data/` y `cache/`.
-- **Muestras locales:** `Context/DATA/` (100 puntos de PL7 en CSV y su JSON).
+- **Muestras locales:** `documentacion/contexto/DATA/` (100 puntos de PL7 en CSV y su JSON).
 - **Visor 3D:** `experimentacion/visor_3d.py`. Genera un `.html` por escaneo
   (no van a git) y se exportan PNG con el botón de cámara del propio visor.
 - **Figuras para la tesis:** `experimentacion/resultados/informe/`
@@ -37,8 +60,6 @@ Fuente del estado de M1–M5: `Context/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md`
   `experimentacion/figuras_informe/componer_lamina.py`.
 - **Medidas de Sonata:** `experimentacion/resultados/modulo3_PL13.json`
   (generado por `experimentacion/modulo3_sonata/visualizar_features.py`).
-- **Paquete para compartir:** `Context/paquete_chatgpt/` (contexto, código,
-  imágenes, medidas y borrador de la tesis) y su `.zip`.
 
 ### Módulo 4 simulado
 
@@ -110,6 +131,27 @@ están en `experimentacion/resultados/modulo4_real_m2_epoch0/`.
 **Sin etiquetas no se puede decir qué variante acierta más.**
 Visor 3D: `experimentacion/resultados/modulo4_real/visor_modulo4_PL13.html`.
 
+### Adaptación de Sonata a la Catedral (en curso)
+
+Objetivo: continuar el preentrenamiento auto-supervisado de Sonata (sin etiquetas) con los 21
+escaneos de la Catedral **menos PL7 y PL13**, sacar el `f_ssl` adaptado de PL7 y PL13 y compararlo
+contra el Sonata original con el recorte etiquetado de PL13. Se hace con Pointcept
+(`configs/sonata/pretrain-sonata-v1m1-0-base.py`), no con la carpeta `sonata/` del repo (solo inferencia).
+
+- **Colab (L4, 22,5 GB):** el entrenamiento corre, pero la primera corrida **no es válida**: Pointcept
+  recalcula `loop = epoch // eval_epoch` y pisaba el `LOOP` del cuaderno, así que cada época hizo 10
+  iteraciones (21 escenas ÷ lote 2) y en total unas 300. La pérdida solo pasó de 8,22 a 8,13, y no sirve
+  para comparar. Corregido en `colab_sonata_adaptacion.ipynb` con `epoch = EPOCHS * LOOP` y
+  `eval_epoch = EPOCHS`; hay que reentrenar (con `LOOP = 5` son ~50 iteraciones por época).
+- **Khipu:** `sonata_adaptacion/` (preparar + sbatch en un solo job: entrenar, exportar y extraer PL7 y PL13).
+  Escrito pero **todavía sin correr en Khipu**. Comandos en `SETUP_KHIPU.md`.
+- **Atención SDPA:** se parcha Pointcept para no depender de flash-attn (no está en Khipu y no hay en T4).
+  Es equivalente matemáticamente a la atención original, pero no se comparó numéricamente.
+- **Qué falta para saber si ayuda:** reentrenar, extraer `f_ssl` adaptado de PL13, correr M4 con él y medir
+  mIoU contra las etiquetas del recorte. La pérdida de entrenamiento no dice si el descriptor mejoró.
+- **Elegir la época:** no hay `model_best.pth` (sin etiquetas no hay métrica). Se guardan checkpoints cada
+  `save_freq` épocas y se elige por mIoU en el recorte.
+
 ### Etiquetado de un recorte de PL13 (en curso)
 
 La Catedral no tiene etiquetas (el `.las` trae `classification = 0`). Para medir mIoU se
@@ -122,18 +164,19 @@ a quien etiquete es `etiquetado_PL13.zip`. Las etiquetas devueltas
 
 ## Pendiente
 
-1. **Etiquetar el recorte de PL13** (en curso, ver arriba) y calcular mIoU y matriz de
+1. **Reentrenar la adaptación de Sonata** (Colab o Khipu) con el `loop` corregido, y extraer `f_ssl` adaptado.
+2. **Etiquetar el recorte de PL13** (en curso, ver arriba) y calcular mIoU y matriz de
    confusión de cada variante de M4. Es lo que falta para poder comparar M2, M3 y M4 de verdad.
-2. **Probar más fusiones de M2 y M3 en M4:** pesos por rama, PCA de `f_ssl` a 96 dim.,
+3. **Probar más fusiones de M2 y M3 en M4:** pesos por rama, PCA de `f_ssl` a 96 dim.,
    fusión tardía de afinidades, confianza de M2 por región, dos hipergrafos.
-3. **M2 sobre el resto de escaneos** (hoy solo PL7 y PL13) y mejorar M2 en la Catedral
+4. **M2 sobre el resto de escaneos** (hoy solo PL7 y PL13) y mejorar M2 en la Catedral
    (el modelo viene de calles).
-4. **Documentar** la línea base de HyperNCD: mIoU por clase y comparación con el paper.
-5. **Pruebas de parámetros** de M1 y M3 (P0 a P5). El procedimiento está en
-   `experimentacion/PROMPT_PRUEBAS_PARAMETROS.md`, pero no existe todavía la
+5. **Documentar** la línea base de HyperNCD: mIoU por clase y comparación con el paper.
+6. **Pruebas de parámetros** de M1 y M3 (P0 a P5). El procedimiento está en
+   `documentacion/prompts/PROMPT_PRUEBAS_PARAMETROS.md`, pero no existe todavía la
    carpeta `experimentacion/pruebas_parametros/` ni sus scripts
    (`medir_calidad.py`, `comparar_features.py`). Necesitan los escaneos completos y la GPU de Khipu.
-6. **M5**: evaluación sobre la Catedral.
+7. **M5**: evaluación sobre la Catedral.
 
 ## Advertencias para no perder trabajo
 

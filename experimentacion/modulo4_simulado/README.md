@@ -107,7 +107,7 @@ un buen descriptor.
   doble clic para abrirlo).
 - `figuras_pasos.py`: una figura por paso para la tesis, `paso2_regiones.png`,
   `paso3_afinidad.png` y `paso4_hiperarista.png`. Las copias de la tesis están en
-  `LATEX/asesoria5/imagenes/m4_*.png`, recortadas de blanco.
+  `documentacion/tesis_latex/asesoria5/imagenes/m4_*.png`, recortadas de blanco.
 - `caso_ss_sg.py`: recalcula la tabla del caso concreto de S_g y S_s.
 
 La tesis lo documenta paso a paso en el Capítulo 3, sección "Prueba Simulada

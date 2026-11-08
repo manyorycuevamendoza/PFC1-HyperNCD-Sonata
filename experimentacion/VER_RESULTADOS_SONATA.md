@@ -111,5 +111,5 @@ pasa por el **Módulo 1** (limpieza y reducción) y luego por **Sonata**
 
 **Módulo 1** → **Módulo 3** (Sonata) → **Módulo 4** (HyperNCD: regiones,
 prototipos e hipergrafo para descubrir clases nuevas). Las mismas imágenes
-están en `LATEX/asesoria5/secciones/capitulo3.tex` (secciones "Visor 3D del
+están en `documentacion/tesis_latex/asesoria5/secciones/capitulo3.tex` (secciones "Visor 3D del
 Proyecto", "Entrada y Salida de la Prueba" y "Rama Auto-supervisada Congelada").
