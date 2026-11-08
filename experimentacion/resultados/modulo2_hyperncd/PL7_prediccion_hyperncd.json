@@ -1,0 +1,38 @@
+{
+  "input": "/content/PFC1-HyperNCD-Sonata/experimentacion/datos/modulo1_PL7/PL7_SCN0001_preprocesado.npy",
+  "ckpt": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt",
+  "ckpt_info": {
+    "num_labeled": 9,
+    "num_unlabeled": 4,
+    "split": 0,
+    "epoch": 8,
+    "global_step": 11196
+  },
+  "voxel_size": 0.05,
+  "n_original": 610637,
+  "n_rejilla_me": 458750,
+  "pct_retenido": 75.13,
+  "dim_fsem": 96,
+  "dtype": "float16",
+  "vram_pico_gb": 1.61,
+  "t_lectura_s": 0.02,
+  "t_forward_s": 0.937,
+  "voxeles_por_s": 489616.2,
+  "puntos_clases_conocidas": 18193,
+  "puntos_clases_novedosas": 592444,
+  "conteo_por_clase": {
+    "0": 5605,
+    "1": 113,
+    "2": 412,
+    "3": 8991,
+    "4": 2297,
+    "5": 33,
+    "6": 4,
+    "7": 25,
+    "8": 713,
+    "9": 497110,
+    "10": 2117,
+    "11": 6950,
+    "12": 86267
+  }
+}

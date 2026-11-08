@@ -17,6 +17,14 @@ experimentacion/
 │   ├── visualizar_features.py   medidas de f_ssl (rango efectivo, varianza PCA,
 │   │                            k-means) en .json + imagen Matplotlib de 4 vistas
 │   └── visualizar_features.sbatch   lo mismo, como trabajo en Khipu
+├── modulo4_simulado/          M4 sobre una escena sintética con verdad conocida (ver su README)
+├── modulo4_real/              M4 real sobre PL13: une f_sem (M2) y f_ssl (M3) (ver su README)
+│   ├── correr_modulo4_real.py   regiones, afinidad, hipergrafo, Sinkhorn; compara M2, M3, M4 base y M4
+│   ├── graficar_modulo4_real.py mapas por variante y acuerdo entre variantes
+│   └── visor_modulo4_real.py    visor 3D con botones por variante
+├── etiquetado/                recorte de PL13 para etiquetar a mano en CloudCompare
+│   ├── LEEME_etiquetar.md       pasos y nombres de archivo (clase_N_*.ply)
+│   └── prelabel/                pre-etiquetas automáticas para corregir (no van a git)
 ├── figuras_informe/
 │   └── componer_lamina.py     une capturas del visor en una lámina con títulos
 ├── datos/                     ← NO va a git (pesado). Ver "Datos" abajo.
@@ -29,6 +37,10 @@ experimentacion/
     ├── visor_PL13.html         vista 3D de PL13: crudo, M1 y M3    (NO va a git)
     ├── modulo3_PL13.json       medidas de f_ssl (visualizar_features.py)
     ├── modulo3_PL13.png        4 vistas Matplotlib (visualizar_features.py)
+    ├── modulo2_hyperncd/       salidas de M2 hechas en Colab (PL7 y PL13): JSON, PNG y visores
+    │                           (los .html NO van a git). Checkpoint: split0_run4 epoch=8
+    ├── modulo4_real/           M4 real en PL13: JSON de métricas, mapas, visor .html (NO va a git)
+    ├── modulo4_real_m2_epoch0/ lo mismo con el f_sem del checkpoint malo (época 0), para comparar
     └── informe/                capturas del visor y láminas para la tesis
         ├── PL7_*.png, PL13_*.png             una captura por etapa, mismo ángulo
         ├── lamina_PL7_cubo.png               → tesis: imagenes/visor_pl7_cubo.png

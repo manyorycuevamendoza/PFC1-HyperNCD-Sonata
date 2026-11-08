@@ -101,6 +101,31 @@ squeue -u $USER
 
 El log queda en `logs/hyperncd-poss_<JOBID>.out`.
 
+## Adaptación de Sonata a la Catedral (auto-supervisada, sin etiquetas)
+
+Carpeta `sonata_adaptacion/`. Entrena sobre los escaneos de `data/` **menos PL7 y PL13**,
+exporta los pesos y saca el `f_ssl` adaptado de PL7 y PL13. Todo lo que necesita internet o
+CPU se hace en el login node, y la GPU solo se usa para entrenar.
+
+```bash
+cd ~/PFC1-HyperNCD-Sonata && git pull
+bash sonata_adaptacion/preparar_khipu.sh        # login node, una vez (~20-40 min, sin GPU)
+mkdir -p logs
+PRUEBA=1 sbatch --time=00:30:00 sonata_adaptacion/sonata_adaptacion.sbatch   # prueba de 1 época
+sbatch sonata_adaptacion/sonata_adaptacion.sbatch                            # corrida completa
+```
+
+- La prueba corta mide memoria y velocidad (mira `Remain` en el log) y recorre todo el camino
+  (entrenar, exportar, extraer PL13). Si da `OutOfMemory`, baja `BATCH` o `MAX_PUNTOS`.
+- Antes de gastar GPU, el job comprueba entorno, datos, pesos y espacio en disco y se corta
+  en segundos si falta algo.
+- Cada etapa se salta si ya está hecha: si se corta por tiempo, se manda el mismo comando y
+  reanuda desde `model_last.pth`.
+- Cada variante lleva su `RUN=nombre` (carpeta `sonata_adaptacion/runs/<RUN>/`).
+- Los checkpoints pesan ~2 GB cada uno: `SAVE_FREQ` (por defecto 10) controla cuántos quedan.
+- Resultados: `sonata_adaptacion/runs/<RUN>/sonata_catedral.pth` y
+  `cache/PL*_adaptado_<RUN>_feats.npz`.
+
 ## Entorno de Sonata (aparte, no relacionado a estos pasos)
 
 `sonata-env` se crea independiente siguiendo `sonata/environment.yml` (ver

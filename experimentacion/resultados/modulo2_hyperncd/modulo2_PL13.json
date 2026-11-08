@@ -1,0 +1,20 @@
+{
+  "feats": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/resultados_m2/PL13_fsem.npz",
+  "n_rejilla": 553521,
+  "dim": 96,
+  "varianza_pca_3": 0.9235,
+  "varianza_pca_10": 0.965,
+  "rango_efectivo": 2.1,
+  "consulta": 504542,
+  "kmeans_k": 8,
+  "kmeans_tamanos": [
+    12736,
+    82339,
+    24387,
+    33345,
+    109462,
+    114496,
+    150554,
+    26202
+  ]
+}
