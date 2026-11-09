@@ -30,6 +30,7 @@ raíz/
 ├── sonata_adaptacion/              M3  adaptación auto-supervisada de Sonata en Khipu
 ├── colab_runner.ipynb              M2  en Google Colab
 ├── colab_sonata_adaptacion.ipynb   M3  adaptación de Sonata en Google Colab
+├── colab_pipeline_etiquetado.ipynb M1→M4  pipeline completo con evaluación con etiquetas (escena `listo`)
 ├── experimentacion/                M4, visores, etiquetado y resultados (cada subcarpeta con su README)
 │   ├── registro/ y visor/          registro de experimentos (.json) y visor con pestañas por etapa y modo comparar
 ├── hyperncd/, sonata/              código de terceros (clonados; no tocar)
@@ -161,6 +162,13 @@ pre-etiquetas automáticas en `prelabel/` para que solo se corrijan. El paquete 
 a quien etiquete es `etiquetado_PL13.zip`. Las etiquetas devueltas
 (`clase_N_*.ply`, con el campo `idx`) se leen contra
 `PL13_recorte_indices.npy`. Los `.ply` y `.npy` no van a git.
+
+## Escena etiquetada nueva (`listo`, 8 de noviembre de 2026)
+
+19 `.las` con una pieza por clase (arco, columna, cúpula, pared, techo, otro): una escena de 3,38 M de puntos con
+etiquetas reales. **No está dentro de PL7 ni PL13** (a ~10 m). Herramientas en `experimentacion/evaluacion_etiquetada/`,
+cuaderno `colab_pipeline_etiquetado.ipynb` y guía `documentacion/ejecutar_pipeline_colab.md`. **Falta correrlo en Colab**
+(M2 y M3 no se han probado con ella); con esto se podrá medir mIoU de M2, M3 y M4, original contra adaptado.
 
 ## Recordatorios para la tesis
 
