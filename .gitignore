@@ -57,3 +57,7 @@ experimentacion/adaptacion_sonata/resultados/m4_adaptado/*.html
 # Escena etiquetada: datos bajados de Drive y visores (se regeneran)
 experimentacion/escena_*/datos/
 experimentacion/escena_*/visor/*.html
+
+# ArCH: copias de trabajo para el visor y visor 3D (se regeneran con los scripts)
+experimentacion/arch_entrenamiento/datos_visor/
+experimentacion/arch_entrenamiento/visor/*.html

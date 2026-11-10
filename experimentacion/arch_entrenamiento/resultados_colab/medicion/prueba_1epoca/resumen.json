@@ -1,0 +1,17 @@
+{
+ "nombre": "prueba_1epoca",
+ "comando": "/content/miniconda3/envs/hyperncd-env/bin/python train.py -s 0 --dataset ArCH --offline --use_scheduler --batch_size 4 --num_workers 0 --lam 1 --lam_region 1 --gamma 1 --alpha 1 --gamma_decrease 0.5 --smooth_bound 10 --ak_bound 0.005 --dbscan 0.5 --log_dir /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/logs --ckpt_every_steps 100 --epochs 1 --comment prueba_1epoca --checkpoint_dir /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/checkpoints",
+ "codigo_salida": 0,
+ "duracion_s": 151.5,
+ "duracion_min": 2.5,
+ "gpu": "Tesla T4",
+ "ram_proceso_pico_GB": 4.906,
+ "ram_sistema_pico_GB": 5.287,
+ "ram_sistema_total_GB": 12.671,
+ "gpu_mem_pico_MB": 7883.0,
+ "gpu_mem_total_MB": 15360.0,
+ "gpu_uso_medio_pct": 56.9,
+ "cpu_medio_pct": 76.2,
+ "muestras": 31,
+ "cada_s": 5.0
+}

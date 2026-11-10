@@ -1,0 +1,3 @@
+t_s,ram_proceso_GB,ram_sistema_usada_GB,ram_sistema_total_GB,gpu_mem_usada_MB,gpu_mem_total_MB,gpu_uso_pct,cpu_pct
+0.3,0.014,1.075,12.671,0.0,15360.0,0.0,100.0
+10.3,0.0,1.168,12.671,0.0,15360.0,0.0,37.9

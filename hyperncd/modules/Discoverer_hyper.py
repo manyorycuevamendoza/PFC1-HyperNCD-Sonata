@@ -16,7 +16,15 @@ import yaml
 from scipy.optimize import linear_sum_assignment
 from torch import optim
 from torch.utils.data import DataLoader
-from torchmetrics.functional.classification import multiclass_jaccard_index
+try:
+    from torchmetrics.functional.classification import multiclass_jaccard_index
+except ImportError:
+    # torchmetrics 0.7.2 (el que fija SETUP_KHIPU.md y usa Colab) no trae multiclass_jaccard_index;
+    # su jaccard_index con reduction="none" da el IoU por clase. Solo se usan las clases presentes.
+    from torchmetrics.functional import jaccard_index as _jaccard_index
+
+    def multiclass_jaccard_index(preds, target, num_classes, average="none"):
+        return _jaccard_index(preds, target, num_classes=num_classes, reduction="none")
 from tqdm import tqdm
 from torch import nn
 

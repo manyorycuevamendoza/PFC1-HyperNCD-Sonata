@@ -1,0 +1,17 @@
+{
+ "nombre": "conversion_ArCH",
+ "comando": "python /content/PFC1-HyperNCD-Sonata/experimentacion/arch_entrenamiento/convertir_arch.py --entrada /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/datos/ArCH_labelled --salida /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/tiles",
+ "codigo_salida": 0,
+ "duracion_s": 10.3,
+ "duracion_min": 0.2,
+ "gpu": "Tesla T4",
+ "ram_proceso_pico_GB": 0.014,
+ "ram_sistema_pico_GB": 1.168,
+ "ram_sistema_total_GB": 12.671,
+ "gpu_mem_pico_MB": 0.0,
+ "gpu_mem_total_MB": 15360.0,
+ "gpu_uso_medio_pct": 0.0,
+ "cpu_medio_pct": 69.0,
+ "muestras": 2,
+ "cada_s": 10.0
+}

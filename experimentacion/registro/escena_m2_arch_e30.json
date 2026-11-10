@@ -1,0 +1,64 @@
+{
+  "id": "escena_m2_arch_e30",
+  "etapa": "M2",
+  "titulo": "Escena etiquetada: HyperNCD entrenado en ArCH (f_sem)",
+  "descripcion": "El M2 de ArCH aplicado a la capilla etiquetada con el mismo codigo de inferencia y las mismas metricas que escena_m2 (M2 de SemanticPOSS, epoca 8). Se midio con el checkpoint 'best' (epoca 20) y con 'last' (epoca 30): dan casi lo mismo.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-10",
+  "entradas": [
+    "escena_m1",
+    "m2_arch_entrenamiento"
+  ],
+  "parametros": {
+    "checkpoint_best": "ArCH_S0_best-epoch=20-step=860.ckpt",
+    "checkpoint_last": "last.ckpt (epoca 30)",
+    "voxel_m": 0.05,
+    "cabezas": 9
+  },
+  "hardware": "Colab T4 (prediccion); metricas en laptop CPU",
+  "costo": {
+    "forward_s": 1.68,
+    "vram_pico_gb": 3.198,
+    "prediccion_total_s": 42.7,
+    "ram_proceso_pico_GB": 4.486
+  },
+  "metricas": {
+    "cabeza_dominante_pct_last": 44.6,
+    "cabeza_dominante_pct_best": 44.5,
+    "cabezas_mayores_1pct": 9,
+    "NMI_last": 0.191,
+    "NMI_last_sin_otro": 0.439,
+    "ARI_last_sin_otro": 0.461,
+    "mIoU_1a1_last": 0.183,
+    "mIoU_1a1_last_sin_otro": 0.355,
+    "mIoU_1a1_best_sin_otro": 0.336,
+    "referencia_semposs_e8": {
+      "cabeza_dominante_pct": 98.4,
+      "NMI": 0.018,
+      "NMI_sin_otro": 0.027,
+      "mIoU_1a1": 0.114,
+      "mIoU_1a1_sin_otro": 0.077
+    },
+    "puntos_novedosos_pct_last": 12.6
+  },
+  "resultados": {
+    "documento": "experimentacion/arch_entrenamiento/README.md",
+    "json": [
+      "experimentacion/arch_entrenamiento/resultados/m2_capilla/resultados.json",
+      "experimentacion/arch_entrenamiento/resultados/m2_capilla/capilla_etiquetada_last_fsem.json"
+    ],
+    "imagenes": [
+      "experimentacion/arch_entrenamiento/resultados/m2_capilla/m2_dominio.png",
+      "experimentacion/arch_entrenamiento/resultados/m2_capilla/m2_cabezas.png",
+      "experimentacion/arch_entrenamiento/resultados/m2_capilla/m2_cabeza_x_clase.png"
+    ],
+    "visores": []
+  },
+  "datos_pesados": [
+    {
+      "que": "f_sem de la capilla con M2-ArCH (best y last, ~150 MB c/u)",
+      "donde": "Drive arch/entrenamiento/predicciones/; local experimentacion/arch_entrenamiento/resultados_colab/predicciones/ (no va a git)"
+    }
+  ],
+  "notas": "El colapso por dominio desaparece (98,4 % -> 44,6 % en la cabeza dominante; NMI 0,02 -> 0,19, y 0,03 -> 0,44 sin 'otro'). Pero ahora solo el 12,6 % de los puntos cae en las 3 cabezas novedosas, asi que M4 con la regla anterior solo agruparia ese 12,6 %: para comparar con el M4 anterior hay que agrupar todos los puntos (opcion --todos). El rango efectivo de f_sem bajo (1,7) NO indica colapso (ver m2_dominio). M4 con este M2 todavia NO esta corrido."
+}

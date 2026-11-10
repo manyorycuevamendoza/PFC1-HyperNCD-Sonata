@@ -29,7 +29,13 @@ from pathlib import Path
 import numpy as np
 
 RAIZ = Path(__file__).resolve().parents[2]
-NCAB = 13
+NCAB = 13          # cabezas totales (conocidas + nuevas); se ajusta con fijar_cabezas() segun el modelo
+NL = 9             # cabezas conocidas
+
+
+def fijar_cabezas(n_conocidas, n_nuevas):
+    global NCAB, NL
+    NL, NCAB = int(n_conocidas), int(n_conocidas) + int(n_nuevas)
 
 
 # ------------------------------------------------------------------ metricas
@@ -74,7 +80,8 @@ def desde_cruce(T):
     return dict(NMI=float(nmi), ARI=float(ari), mIoU=float(iou.mean()), IoU_por_clase=iou.tolist())
 
 
-def resumen_cabezas(h, nl=9):
+def resumen_cabezas(h, nl=None):
+    nl = NL if nl is None else nl
     c = np.bincount(h, minlength=NCAB).astype(np.float64)
     p = c / c.sum()
     return dict(cabeza_dominante=int(c.argmax()), pct_dominante=float(100 * p.max()),
@@ -102,6 +109,7 @@ def correr_modelo(ckpt, coord, voxel):
     if ckpt not in _modelo:
         _modelo[ckpt] = cargar_modelo_hyperncd(ckpt)
     modelo, info = _modelo[ckpt]
+    fijar_cabezas(info["num_labeled"], info["num_unlabeled"])
     dc, um, inv = cuantizar_coordenadas(np.ascontiguousarray(coord, np.float32), voxel)
     with torch.no_grad():
         bc = ME.utils.batched_coordinates([dc]).int().cuda()
@@ -172,10 +180,12 @@ def main():
 
     for s in a.semposs:                                   # ---- SemanticPOSS: varios escaneos, media y desviacion
         nombre, carpeta, _, _ = spec(s)
-        por_scan, Tacum = [], np.zeros((NCAB, 13), np.int64)
+        por_scan, Tacum = [], None
         for stem, xyz, y in leer_semposs(carpeta, a.n_scans):
             f, pl, inv, info = correr_modelo(a.ckpt, xyz, a.voxel)
             r = evaluar_escena(f"{nombre}/{stem}", pl[inv], f, y, cfg_clases)
+            if Tacum is None:
+                Tacum = np.zeros((NCAB, 13), np.int64)
             Tacum += np.array(r["todas"]["cruce_cabeza_x_clase"], np.int64)
             por_scan.append(r)
             print(f"  {nombre}/{stem}: dominante {r['pct_dominante']:.1f} % | rango {r['rango_efectivo']:.1f} | NMI {r['todas']['NMI']:.3f}", flush=True)
@@ -222,6 +232,7 @@ def main():
     for s in a.fsem:                                      # ---- f_sem ya calculado
         nombre, ruta, ry, rj = spec(s)
         z = np.load(ruta)
+        fijar_cabezas(z["logits_lab"].shape[1], z["logits_unlab"].shape[1])
         h = z["pred_label"][z["inverse"]].astype(np.int64)
         y, cl, ign = cargar_y(ry, rj, len(h))
         r = evaluar_escena(nombre, h, z["feat"], y, cl, ign)
@@ -269,10 +280,10 @@ def graficar(resultados, clases_por_escena, sal, etiqueta):
     cmap = plt.get_cmap("tab20")
     for k in range(NCAB):
         v = np.array([r["distribucion_pct"][k] for r in resultados])
-        ax.bar(range(len(resultados)), v, bottom=base, color=cmap(k), label=f"cabeza {k}" + (" (nov.)" if k >= 9 else ""))
+        ax.bar(range(len(resultados)), v, bottom=base, color=cmap(k), label=f"cabeza {k}" + (" (nov.)" if k >= NL else ""))
         base += v
     ax.set_xticks(range(len(resultados))); ax.set_xticklabels(nombres, rotation=60, ha="right", fontsize=8)
-    ax.set_ylabel("% de puntos"); ax.set_title(f"Reparto de puntos entre las 13 cabezas · {etiqueta}")
+    ax.set_ylabel("% de puntos"); ax.set_title(f"Reparto de puntos entre las {NCAB} cabezas · {etiqueta}")
     ax.legend(ncol=2, fontsize=7, bbox_to_anchor=(1.01, 1), loc="upper left"); fig.tight_layout(); fig.savefig(sal / "m2_cabezas.png", dpi=130); plt.close(fig)
 
     con_T = [r for r in resultados if "todas" in r and r["nombre"] in clases_por_escena]

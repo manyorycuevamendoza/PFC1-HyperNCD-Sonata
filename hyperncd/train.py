@@ -174,7 +174,7 @@ def main(args):
     if args.profile:
         from utils.profiling import ResourceProfilerCallback
         callbacks.append(ResourceProfilerCallback(args.profile_dir))
-    trainer = pl.Trainer(
+    trainer_kw = dict(
         max_epochs=args.epochs,
         logger=loggers,
         accelerator="gpu",
@@ -184,7 +184,16 @@ def main(args):
         # accelerator='ddp',  # 使用 DDP 加速器进行多 GPU 训练
         callbacks=callbacks,
     )
-    trainer.fit(model, ckpt_path=args.resume)
+    # PL nuevo: fit(ckpt_path=...). PL 1.4.x (Colab, SETUP_KHIPU.md): Trainer(resume_from_checkpoint=...).
+    import inspect
+    fit_nuevo = "ckpt_path" in inspect.signature(pl.Trainer.fit).parameters
+    if args.resume and not fit_nuevo:
+        trainer_kw["resume_from_checkpoint"] = args.resume
+    trainer = pl.Trainer(**trainer_kw)
+    if fit_nuevo:
+        trainer.fit(model, ckpt_path=args.resume)
+    else:
+        trainer.fit(model)
 
 
 if __name__ == "__main__":

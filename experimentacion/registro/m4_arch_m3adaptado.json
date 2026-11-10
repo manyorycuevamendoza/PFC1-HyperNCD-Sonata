@@ -1,0 +1,57 @@
+{
+  "id": "m4_arch_m3adaptado",
+  "etapa": "M4",
+  "titulo": "Escena etiquetada: M4 con M2 de ArCH + Sonata adaptado",
+  "descripcion": "Igual que m4_arch_m3original pero con f_ssl de Sonata adaptado a la Catedral.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-10",
+  "entradas": [
+    "escena_m2_arch_e30",
+    "escena_m3_adaptado"
+  ],
+  "parametros": {
+    "celda_m": 0.75,
+    "K": [
+      6,
+      8,
+      12
+    ],
+    "todos_los_puntos": true,
+    "semillas": 3
+  },
+  "hardware": "Laptop CPU (RTX 3050 sin usar)",
+  "costo": {
+    "s": 68
+  },
+  "metricas": {
+    "mIoU_1a1_sin_otro_K8_M3": 0.351,
+    "mIoU_1a1_sin_otro_K8_M4": 0.474,
+    "mIoU_1a1_sin_otro_K8_M4_base": 0.529,
+    "referencia_semposs_K8_1a1": {
+      "M3": 0.356,
+      "M4": 0.361,
+      "M4_base": 0.321
+    }
+  },
+  "resultados": {
+    "documento": "experimentacion/arch_entrenamiento/README.md",
+    "json": [
+      "experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/evaluacion.json",
+      "experimentacion/arch_entrenamiento/resultados/m4_capilla/comparacion_m2.json"
+    ],
+    "imagenes": [
+      "experimentacion/arch_entrenamiento/resultados/m4_capilla/comparacion_m2.png",
+      "experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/evaluacion_miou.png"
+    ],
+    "visores": [
+      "experimentacion/arch_entrenamiento/visor/visor_escena_m2_arch.html"
+    ]
+  },
+  "datos_pesados": [
+    {
+      "que": "grupos por punto de M4 (grupos_PL13.npz) y f_ssl de la capilla",
+      "donde": "local arch_entrenamiento/resultados/m4_capilla/m4_*/ y escena_capilla_etiquetada/datos/m3/salida/ (no van a git); f_ssl en Drive m3/salida/capilla_etiquetada/"
+    }
+  ],
+  "notas": "Una corrida, una semilla, una escena. M4 agrupa TODOS los puntos (--todos), porque el M2 de ArCH marca solo 12,6 % como novedosos; el texto 'solo los que M2 marca como novedosos' de evaluacion.md ya no aplica. mIoU con asignacion 1 a 1 y K=8, sin 'otro'. Con M2 sano, la linea base M4_base (f_sem + f_geo) sube de 32,1 a 52,9 y alcanza a M4 (50,6) y a M3 (52,5): la ventaja de f_ssl sobre f_geo que se veia antes dependia del M2 colapsado. El Sonata adaptado sigue siendo peor que el original en M3 (35,1 contra 52,5); con M2 de ArCH M4 adaptado mejora (47,4 contra 36,1) pero queda por debajo de M4_base."
+}

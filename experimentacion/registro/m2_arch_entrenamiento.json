@@ -1,0 +1,72 @@
+{
+  "id": "m2_arch_entrenamiento",
+  "etapa": "M2",
+  "titulo": "HyperNCD (M2) entrenado desde cero en ArCH, 30 epocas",
+  "descripcion": "Misma receta de HyperNCD, pero con patrimonio arquitectonico (ArCH, 17 escenas en tiles de 10 m, voxel 5 cm) en vez de SemanticPOSS. 6 clases conocidas (moldings, floor, door_window, wall, stairs, roof) y 3 novedosas (arch, column, vault). Solo geometria (features = unos), batch 4, sin preentrenar.",
+  "estado": "hecho (1 corrida, 1 semilla)",
+  "fecha": "2026-11-10",
+  "entradas": [],
+  "parametros": {
+    "dataset": "ArCH",
+    "epocas": 30,
+    "batch": 4,
+    "tiles_train": 163,
+    "tiles_valid": 29,
+    "novedosas": [
+      "arch",
+      "column",
+      "vault"
+    ],
+    "dbscan_eps_m": 0.5,
+    "num_workers": 0,
+    "mejor_checkpoint": "epoca 20 (indice 21 en el .ckpt), step 860",
+    "ultimo": "epoca 30, step 1230"
+  },
+  "hardware": "Colab T4 (16 GB)",
+  "costo": {
+    "entrenamiento_min": 75.0,
+    "min_por_epoca": 2.5,
+    "ram_proceso_pico_GB": 4.906,
+    "ram_sistema_pico_GB": 5.373,
+    "gpu_mem_pico_MB": 9505,
+    "gpu_uso_medio_pct": 62.8,
+    "cpu_medio_pct": 74.7
+  },
+  "metricas": {
+    "mIoU_validacion_ArCH_mejor": 0.4893,
+    "mIoU_validacion_ArCH_ultima": 0.4847,
+    "mejor_epoca": 20,
+    "IoU_wall": 0.798,
+    "IoU_roof": 0.887,
+    "IoU_vault_novedosa": 0.721,
+    "IoU_arch_novedosa": 0.161,
+    "IoU_column_novedosa": 0.557
+  },
+  "resultados": {
+    "documento": "experimentacion/arch_entrenamiento/README.md",
+    "json": [
+      "experimentacion/arch_entrenamiento/resultados/entrenamiento/resumen.json",
+      "experimentacion/arch_entrenamiento/resultados/entrenamiento/medicion_corrida_completa.json"
+    ],
+    "imagenes": [
+      "experimentacion/arch_entrenamiento/resultados/entrenamiento/curvas.png",
+      "experimentacion/arch_entrenamiento/resultados/entrenamiento/recursos_entrenamiento.png"
+    ],
+    "visores": []
+  },
+  "datos_pesados": [
+    {
+      "que": "checkpoints (best epoca 20 / last epoca 30)",
+      "donde": "Drive arch/entrenamiento/checkpoints/ArCH/corrida_completa/"
+    },
+    {
+      "que": "tiles .npz de ArCH (163 Training + 29 Test)",
+      "donde": "Drive arch/tiles/"
+    },
+    {
+      "que": "zip de Colab con logs, mediciones y predicciones",
+      "donde": "local experimentacion/arch_entrenamiento/resultados_colab/ (no va a git); Drive arch/entrenamiento/"
+    }
+  ],
+  "notas": "mIoU de validacion = sobre las 2 escenas Test de ArCH (dominio de entrenamiento), NO sobre la capilla. Una semilla. Las clases finas (arch 0,16; door_window 0,05) quedan bajas. Hay que citar ArCH (Politecnico di Torino, CC BY-NC-SA 4.0)."
+}

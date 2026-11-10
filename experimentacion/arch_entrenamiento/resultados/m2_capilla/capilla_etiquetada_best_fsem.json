@@ -1,0 +1,36 @@
+{
+  "input": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/m1/salida/capilla_etiquetada/capilla_etiquetada.npy",
+  "ckpt": "/content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/checkpoints/ArCH/corrida_completa/ArCH_S0_best-epoch=20-step=860.ckpt",
+  "ckpt_info": {
+    "num_labeled": 6,
+    "num_unlabeled": 3,
+    "split": 0,
+    "epoch": 21,
+    "global_step": 861
+  },
+  "voxel_size": 0.05,
+  "n_original": 1135946,
+  "n_rejilla_me": 927988,
+  "pct_retenido": 81.69,
+  "dim_fsem": 96,
+  "dtype": "float16",
+  "gpu": "Tesla T4",
+  "capacidad_cuda": "7.5",
+  "vram_pico_gb": 3.198,
+  "t_lectura_s": 0.155,
+  "t_forward_s": 1.641,
+  "voxeles_por_s": 565489.0,
+  "puntos_clases_conocidas": 1010851,
+  "puntos_clases_novedosas": 125095,
+  "conteo_por_clase": {
+    "0": 137721,
+    "1": 139801,
+    "2": 66488,
+    "3": 505785,
+    "4": 46526,
+    "5": 114530,
+    "6": 49554,
+    "7": 61696,
+    "8": 13845
+  }
+}

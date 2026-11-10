@@ -16,6 +16,8 @@ Generado por `registrar.py`; no editar a mano. Visor: `experimentacion/visor/ind
 | `m2_epoca0` — HyperNCD f_sem con el checkpoint de la epoca 0 (casi sin entrenar) | 2026-11-06 | descartado como base; se conserva | Colab | - |
 | `m2_epoca8` — HyperNCD f_sem con el checkpoint de la epoca 8 (SemanticPOSS split0_run4) | 2026-11-06 | hecho | Colab (MinkowskiEngine) | m1_preproceso |
 | `escena_m2` — Escena etiquetada: HyperNCD (f_sem), epoca 8 | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab | escena_m1 |
+| `escena_m2_arch_e30` — Escena etiquetada: HyperNCD entrenado en ArCH (f_sem) | 2026-11-10 | hecho (1 corrida, 1 escena) | Colab T4 (prediccion); metricas en laptop CPU | escena_m1, m2_arch_entrenamiento |
+| `m2_arch_entrenamiento` — HyperNCD (M2) entrenado desde cero en ArCH, 30 epocas | 2026-11-10 | hecho (1 corrida, 1 semilla) | Colab T4 (16 GB) | - |
 
 ## M3
 
@@ -35,3 +37,5 @@ Generado por `registrar.py`; no editar a mano. Visor: `experimentacion/visor/ind
 | `m4_m2e8_m3adaptado` — Modulo 4 en PL13: f_sem epoca 8 + f_ssl adaptado | 2026-11-08 | hecho | Laptop CPU | m2_epoca8, m3_adaptado_e30 |
 | `escena_m4_m3adaptado` — Escena etiquetada: M4 con Sonata adaptado | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab (CPU) | escena_m2, escena_m3_adaptado |
 | `escena_m4_m3original` — Escena etiquetada: M4 con Sonata original | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab (CPU) | escena_m2, escena_m3_original |
+| `m4_arch_m3adaptado` — Escena etiquetada: M4 con M2 de ArCH + Sonata adaptado | 2026-11-10 | hecho (1 corrida, 1 escena) | Laptop CPU (RTX 3050 sin usar) | escena_m2_arch_e30, escena_m3_adaptado |
+| `m4_arch_m3original` — Escena etiquetada: M4 con M2 de ArCH + Sonata original | 2026-11-10 | hecho (1 corrida, 1 escena) | Laptop CPU (RTX 3050 sin usar) | escena_m2_arch_e30, escena_m3_original |

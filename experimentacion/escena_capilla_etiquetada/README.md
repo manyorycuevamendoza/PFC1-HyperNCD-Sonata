@@ -78,7 +78,12 @@ python experimentacion/evaluacion_etiquetada/generar_visor_escena.py --datos exp
 Las herramientas están en `experimentacion/evaluacion_etiquetada/` (ver su README). Cómo correr los cuadernos de Colab: `documentacion/ejecutar_pipeline_colab.md`.
 Qué checkpoint y qué pesos se usaron: `documentacion/modelos_y_pesos.md` (M2 época 8; Sonata original de Meta y adaptado `sonata_catedral.pth`; verificado en los logs).
 
+## Actualización 10-nov-2026: M2 entrenado en ArCH
+
+Todo lo de arriba usa el M2 de SemanticPOSS (época 8), que colapsa en la capilla. Se entrenó un M2 nuevo con ArCH y se midió aquí con las mismas métricas: la cabeza dominante baja de 98,4 % a 44,6 % y el NMI sube de 0,02 a 0,19 (0,44 sin `otro`). Resultados, tablas e imágenes en `../arch_entrenamiento/` (registros `m2_arch_entrenamiento` y `escena_m2_arch_e30`). **Las tablas de M2, M3 y M4 de más arriba siguen siendo del M2 anterior (SemanticPOSS).** M4 con el M2 de ArCH ya se corrió (con `--todos`) y cambia la lectura del punto 1: M4 base (`f_sem` + `f_geo`) pasa de 32,1 a 52,9 y alcanza a M4 (50,6) y a M3 (52,5). Tabla, conclusiones y límites en `../arch_entrenamiento/README.md` (registros `m4_arch_m3original` y `m4_arch_m3adaptado`; comparación en `../arch_entrenamiento/resultados/m4_capilla/comparacion_m2.png`).
+
 ## Pendiente de este experimento
+
 
 1. **Sonda lineal de Sonata** (celda 10 del cuaderno 2): el protocolo del paper, para separar "¿el descriptor sirve?" de "¿M4 lo aprovecha?".
 2. **Control de la adaptación** (celda 12) y repetir la adaptación con lote mayor (ver `experimentacion/tesis2/README.md`).

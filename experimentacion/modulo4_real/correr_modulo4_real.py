@@ -118,6 +118,10 @@ def main():
     ap.add_argument("--k", type=int, nargs="+", default=[4, 8])
     ap.add_argument("--min-puntos", type=int, default=30)
     ap.add_argument("--semillas", type=int, default=3)
+    ap.add_argument("--todos", action="store_true",
+                    help="agrupa TODOS los puntos, no solo los que M2 marca como novedosos. Necesario para comparar "
+                         "con el M2 de SemanticPOSS (que marcaba ~99 %% como novedoso) cuando el M2 nuevo (p. ej. ArCH) "
+                         "solo marca ~13 %%")
     args = ap.parse_args()
     sal = Path(args.salida)
     sal.mkdir(parents=True, exist_ok=True)
@@ -139,6 +143,11 @@ def main():
     pred_m2 = z2["pred_label"][inv2]
     nov_pt = z2["es_novedosa"][inv2] == 1
     print(f"puntos {len(xyz):,}  novedosos segun M2 {nov_pt.mean():.1%}", flush=True)
+    if args.todos:
+        nov_pt = np.ones(len(xyz), bool)
+        print("--todos: se agrupan todos los puntos", flush=True)
+    NH = int(z2["logits_lab"].shape[1] + z2["logits_unlab"].shape[1])   # cabezas de M2 (13 en SemanticPOSS, 9 en ArCH)
+    NH = max(NH, int(pred_m2.max()) + 1)
 
     # regiones solo con puntos novedosos (como el Modulo 4: las conocidas ya tienen cabeza)
     idx = np.flatnonzero(nov_pt)
@@ -161,7 +170,7 @@ def main():
 
     # clase de M2 dominante por region y distribucion de clases de M2 por punto
     clases_m2 = np.unique(pred_m2[idx])
-    cm2 = np.zeros((R, 13))
+    cm2 = np.zeros((R, NH))
     np.add.at(cm2, (reg, pred_m2[idx]), 1)
     m2_reg = cm2.argmax(1)
 
@@ -209,7 +218,7 @@ def main():
         # clase de M2 x grupo de cada variante (puntos), solo clases con >= 0,5 % de puntos
         tabla = {}
         for nombre, lab in res.items():
-            T = np.zeros((13, K))
+            T = np.zeros((NH, K))
             np.add.at(T, (m2_reg, lab), tam)
             tabla[nombre] = T
         salida["K"][K]["tabla_m2"] = {n: T.astype(int).tolist() for n, T in tabla.items()}

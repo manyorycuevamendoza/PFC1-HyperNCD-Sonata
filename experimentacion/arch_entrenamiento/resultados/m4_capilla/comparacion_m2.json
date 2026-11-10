@@ -1,0 +1,482 @@
+[
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 34.1,
+  "mIoU_mayoria_pct": 34.2,
+  "ARI": 0.352,
+  "NMI": 0.318
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 53.4,
+  "mIoU_mayoria_pct": 48.2,
+  "ARI": 0.559,
+  "NMI": 0.557
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 32.1,
+  "mIoU_mayoria_pct": 29.9,
+  "ARI": 0.288,
+  "NMI": 0.255
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 52.5,
+  "mIoU_mayoria_pct": 48.9,
+  "ARI": 0.561,
+  "NMI": 0.545
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 35.7,
+  "mIoU_mayoria_pct": 34.2,
+  "ARI": 0.376,
+  "NMI": 0.33
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 51.1,
+  "mIoU_mayoria_pct": 51.4,
+  "ARI": 0.478,
+  "NMI": 0.479
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 33.9,
+  "mIoU_mayoria_pct": 28.7,
+  "ARI": 0.304,
+  "NMI": 0.256
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 29.6,
+  "mIoU_mayoria_pct": 26.8,
+  "ARI": 0.283,
+  "NMI": 0.339
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 34.5,
+  "mIoU_mayoria_pct": 33.1,
+  "ARI": 0.3,
+  "NMI": 0.33
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 50.4,
+  "mIoU_mayoria_pct": 48.2,
+  "ARI": 0.506,
+  "NMI": 0.517
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 31.8,
+  "mIoU_mayoria_pct": 35.2,
+  "ARI": 0.279,
+  "NMI": 0.261
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 46.4,
+  "mIoU_mayoria_pct": 48.3,
+  "ARI": 0.404,
+  "NMI": 0.478
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 49.0,
+  "mIoU_mayoria_pct": 49.1,
+  "ARI": 0.497,
+  "NMI": 0.483
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 52.5,
+  "mIoU_mayoria_pct": 47.3,
+  "ARI": 0.551,
+  "NMI": 0.545
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 52.9,
+  "mIoU_mayoria_pct": 50.6,
+  "ARI": 0.501,
+  "NMI": 0.487
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 8,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 50.6,
+  "mIoU_mayoria_pct": 50.8,
+  "ARI": 0.527,
+  "NMI": 0.525
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 52.3,
+  "mIoU_mayoria_pct": 48.3,
+  "ARI": 0.512,
+  "NMI": 0.485
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 53.8,
+  "mIoU_mayoria_pct": 47.5,
+  "ARI": 0.536,
+  "NMI": 0.525
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 51.3,
+  "mIoU_mayoria_pct": 48.1,
+  "ARI": 0.504,
+  "NMI": 0.441
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 6,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 54.0,
+  "mIoU_mayoria_pct": 48.2,
+  "ARI": 0.542,
+  "NMI": 0.505
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 43.4,
+  "mIoU_mayoria_pct": 47.6,
+  "ARI": 0.479,
+  "NMI": 0.466
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 46.6,
+  "mIoU_mayoria_pct": 51.4,
+  "ARI": 0.402,
+  "NMI": 0.491
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 46.1,
+  "mIoU_mayoria_pct": 51.0,
+  "ARI": 0.474,
+  "NMI": 0.457
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "original",
+  "K": 12,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 46.1,
+  "mIoU_mayoria_pct": 51.9,
+  "ARI": 0.409,
+  "NMI": 0.503
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 34.1,
+  "mIoU_mayoria_pct": 34.2,
+  "ARI": 0.352,
+  "NMI": 0.318
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 35.6,
+  "mIoU_mayoria_pct": 37.3,
+  "ARI": 0.323,
+  "NMI": 0.341
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 32.1,
+  "mIoU_mayoria_pct": 29.9,
+  "ARI": 0.288,
+  "NMI": 0.255
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 36.1,
+  "mIoU_mayoria_pct": 33.4,
+  "ARI": 0.292,
+  "NMI": 0.352
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 35.7,
+  "mIoU_mayoria_pct": 34.2,
+  "ARI": 0.376,
+  "NMI": 0.33
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 35.8,
+  "mIoU_mayoria_pct": 29.8,
+  "ARI": 0.327,
+  "NMI": 0.347
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 33.9,
+  "mIoU_mayoria_pct": 28.7,
+  "ARI": 0.304,
+  "NMI": 0.256
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 35.3,
+  "mIoU_mayoria_pct": 35.4,
+  "ARI": 0.342,
+  "NMI": 0.343
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 34.5,
+  "mIoU_mayoria_pct": 33.1,
+  "ARI": 0.3,
+  "NMI": 0.33
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 29.3,
+  "mIoU_mayoria_pct": 38.0,
+  "ARI": 0.283,
+  "NMI": 0.356
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 31.8,
+  "mIoU_mayoria_pct": 35.2,
+  "ARI": 0.279,
+  "NMI": 0.261
+ },
+ {
+  "M2": "SemanticPOSS",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 35.3,
+  "mIoU_mayoria_pct": 38.7,
+  "ARI": 0.345,
+  "NMI": 0.385
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 49.0,
+  "mIoU_mayoria_pct": 49.1,
+  "ARI": 0.497,
+  "NMI": 0.483
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 35.1,
+  "mIoU_mayoria_pct": 35.0,
+  "ARI": 0.317,
+  "NMI": 0.337
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 52.9,
+  "mIoU_mayoria_pct": 50.6,
+  "ARI": 0.501,
+  "NMI": 0.487
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 8,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 47.4,
+  "mIoU_mayoria_pct": 40.6,
+  "ARI": 0.492,
+  "NMI": 0.483
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 52.3,
+  "mIoU_mayoria_pct": 48.3,
+  "ARI": 0.512,
+  "NMI": 0.485
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 35.5,
+  "mIoU_mayoria_pct": 35.0,
+  "ARI": 0.314,
+  "NMI": 0.341
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 51.3,
+  "mIoU_mayoria_pct": 48.1,
+  "ARI": 0.504,
+  "NMI": 0.441
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 6,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 48.2,
+  "mIoU_mayoria_pct": 40.7,
+  "ARI": 0.504,
+  "NMI": 0.489
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M2",
+  "mIoU_1a1_pct": 43.4,
+  "mIoU_mayoria_pct": 47.6,
+  "ARI": 0.479,
+  "NMI": 0.466
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M3",
+  "mIoU_1a1_pct": 37.0,
+  "mIoU_mayoria_pct": 41.0,
+  "ARI": 0.359,
+  "NMI": 0.382
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M4_base",
+  "mIoU_1a1_pct": 46.1,
+  "mIoU_mayoria_pct": 51.0,
+  "ARI": 0.474,
+  "NMI": 0.457
+ },
+ {
+  "M2": "ArCH",
+  "sonata": "adaptado",
+  "K": 12,
+  "metodo": "M4",
+  "mIoU_1a1_pct": 44.8,
+  "mIoU_mayoria_pct": 50.0,
+  "ARI": 0.492,
+  "NMI": 0.492
+ }
+]

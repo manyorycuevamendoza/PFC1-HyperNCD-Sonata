@@ -1,0 +1,47 @@
+{
+ "epocas": 30,
+ "mejor_epoca": 20,
+ "mIoU_mejor": 0.4893133044242859,
+ "mIoU_ultima": 0.4846673011779785,
+ "IoU_por_clase_mejor": {
+  "moldings": 0.341943621635437,
+  "floor": 0.6751935482025146,
+  "door_window": 0.0534058697521686,
+  "wall": 0.7982231974601746,
+  "stairs": 0.2097412347793579,
+  "roof": 0.88681960105896,
+  "arch": 0.1612138450145721,
+  "column": 0.5565983057022095,
+  "vault": 0.7206807732582092
+ },
+ "IoU_por_clase_ultima": {
+  "moldings": 0.3336115181446075,
+  "floor": 0.6680296063423157,
+  "door_window": 0.0680791288614273,
+  "wall": 0.7946568131446838,
+  "stairs": 0.2424435913562774,
+  "roof": 0.8898695111274719,
+  "arch": 0.1627542376518249,
+  "column": 0.4775680005550384,
+  "vault": 0.7249932289123535
+ },
+ "loss_train_primera": 4.9039306640625,
+ "loss_train_ultima": 2.6431760787963867,
+ "medicion": {
+  "nombre": "corrida_completa",
+  "comando": "/content/miniconda3/envs/hyperncd-env/bin/python train.py -s 0 --dataset ArCH --offline --use_scheduler --batch_size 4 --num_workers 0 --lam 1 --lam_region 1 --gamma 1 --alpha 1 --gamma_decrease 0.5 --smooth_bound 10 --ak_bound 0.005 --dbscan 0.5 --log_dir /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/logs --ckpt_every_steps 100 --epochs 30 --comment corrida_completa --checkpoint_dir /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/checkpoints",
+  "codigo_salida": 0,
+  "duracion_s": 4497.8,
+  "duracion_min": 75.0,
+  "gpu": "Tesla T4",
+  "ram_proceso_pico_GB": 4.906,
+  "ram_sistema_pico_GB": 5.373,
+  "ram_sistema_total_GB": 12.671,
+  "gpu_mem_pico_MB": 9505.0,
+  "gpu_mem_total_MB": 15360.0,
+  "gpu_uso_medio_pct": 62.8,
+  "cpu_medio_pct": 74.7,
+  "muestras": 893,
+  "cada_s": 5.0
+ }
+}

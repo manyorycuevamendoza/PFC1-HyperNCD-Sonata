@@ -38,4 +38,15 @@ Con la época 4 y con `last` la capilla sigue colapsada (98,2 %; con 80 000 punt
 3. **La densidad de puntos sola no lo explica**: submuestrear la capilla a 80 000 puntos (época 8) sigue dando 92 % en una cabeza.
 4. **Corrección:** el rango efectivo bajo no es señal de colapso. En SemanticPOSS también es bajo (4 a 5) y ahí el modelo funciona. Lo que delata el colapso son el reparto de cabezas y el NMI.
 
+## Seguimiento: M2 entrenado en ArCH (10-nov-2026)
+
+Para probar la hipótesis del dominio se entrenó HyperNCD con patrimonio (ArCH) y se midió en la **misma capilla** con este mismo script. Detalle en `../arch_entrenamiento/README.md`.
+
+| M2 | Cabeza dominante | Cabezas > 1 % | NMI | NMI sin «otro» | mIoU 1 a 1 sin «otro» |
+|---|---|---|---|---|---|
+| SemanticPOSS, época 8 | 98,4 % | 1 | 0,018 | 0,027 | 0,077 |
+| **ArCH**, época 30 | **44,6 %** | 9 | 0,191 | **0,439** | **0,355** |
+
+El colapso desaparece al cambiar el dominio de entrenamiento: apoya que la causa era la brecha de dominio y no el pipeline. Límite: una corrida, una semilla, y no se separó qué parte del dominio pesa (patrimonio contra calle, escala, etc.).
+
 **Límites.** "Dominio" agrupa varias cosas que no separamos: escala de la escena, contenido (edificio contra calle) y patrón de un LiDAR real (anillos, caída con la distancia), que el submuestreo al azar no imita. El experimento apoya la hipótesis de la brecha de dominio; no mide cuál de esos factores pesa más. Falta, por ejemplo, reescalar o recortar la capilla, o ajustar M2 con pocas etiquetas de la Catedral.

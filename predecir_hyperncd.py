@@ -24,6 +24,7 @@ import sys
 import time
 from pathlib import Path
 
+import distutils.version  # noqa: F401  (torch 1.10 + setuptools nuevo: tensorboard lo necesita al cargar el .ckpt)
 import numpy as np
 import torch
 

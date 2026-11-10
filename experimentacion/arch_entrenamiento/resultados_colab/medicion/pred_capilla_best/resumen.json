@@ -1,0 +1,17 @@
+{
+ "nombre": "pred_capilla_best",
+ "comando": "/content/miniconda3/envs/hyperncd-env/bin/python predecir_hyperncd.py --input /content/drive/MyDrive/PFC1_HyperNCD_Sonata/m1/salida/capilla_etiquetada/capilla_etiquetada.npy --ckpt /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/checkpoints/ArCH/corrida_completa/ArCH_S0_best-epoch=20-step=860.ckpt --output /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/entrenamiento/predicciones/capilla_etiquetada_best_fsem.npz",
+ "codigo_salida": 0,
+ "duracion_s": 42.7,
+ "duracion_min": 0.7,
+ "gpu": "Tesla T4",
+ "ram_proceso_pico_GB": 4.484,
+ "ram_sistema_pico_GB": 5.006,
+ "ram_sistema_total_GB": 12.671,
+ "gpu_mem_pico_MB": 5281.0,
+ "gpu_mem_total_MB": 15360.0,
+ "gpu_uso_medio_pct": 6.5,
+ "cpu_medio_pct": 67.2,
+ "muestras": 15,
+ "cada_s": 3.0
+}
