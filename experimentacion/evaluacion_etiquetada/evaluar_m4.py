@@ -30,6 +30,8 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 
+from metricas import desde_cruce, evaluar_T
+
 VARIANTES = ["M2", "M3", "M4_base", "M4"]
 
 
@@ -53,30 +55,95 @@ def iou_por_clase(T, asignacion, C):
 
 
 def metricas(grupo, verdad, K, clases):
-    C = len(clases)
-    T = tabla_cruce(grupo, verdad, K, C)
-    out = {}
-    # mayoria
-    may = T.argmax(1)
-    iou, acc = iou_por_clase(T, may, C)
-    # 1 a 1
-    fila, col = linear_sum_assignment(-T)
-    uno = np.full(K, -1)
-    uno[fila] = col
-    iou1, acc1 = iou_por_clase(T, uno, C)
-    presentes = T.sum(0) > 0
-    sin_fondo = presentes & (np.array(clases) != "otro")
-    for nombre, v, a in (("mayoria", iou, acc), ("uno_a_uno", iou1, acc1)):
-        out[nombre] = {
-            "mIoU": float(v[presentes].mean()),
-            "mIoU_sin_otro": float(v[sin_fondo].mean()) if sin_fondo.any() else None,
-            "exactitud": float(a),
-            "iou_por_clase": {c: float(x) for c, x in zip(clases, v)},
-        }
-    out["ARI"] = float(adjusted_rand_score(verdad, grupo))
-    out["NMI"] = float(normalized_mutual_info_score(verdad, grupo))
-    out["cruce_grupos_x_clases"] = T.tolist()
-    return out
+    return evaluar_T(tabla_cruce(grupo, verdad, K, len(clases)), clases)
+
+
+def escribir_salidas(resultado, sal, ignorar=()):
+    """Escribe evaluacion.json, por_clase.csv, evaluacion.md y evaluacion_miou.png a partir del dict `resultado`."""
+    sal = Path(sal)
+    sal.mkdir(parents=True, exist_ok=True)
+    ignorar = list(ignorar)
+    clases = resultado["clases"]
+    total = np.array([resultado["puntos_por_clase"][c] for c in clases])
+    referencia = resultado["referencia_todo_a_la_mayoritaria"]
+    (sal / "evaluacion.json").write_text(json.dumps(resultado, indent=1, ensure_ascii=False))
+
+    # CSV largo: una fila por (variante de M3, K, modulo, asignacion, clase). Lo leen las tablas y el visor.
+    cols = ["puntos_reales", "TP", "FP", "FN", "TN", "IoU", "precision", "recall", "F1", "FPR", "FNR"]
+    filas = ["m3,K,modulo,asignacion,clase," + ",".join(cols)]
+    for nombre, bloque in resultado["variantes"].items():
+        for K, mods in bloque["K"].items():
+            for var, m in mods.items():
+                for asign in ("mayoria", "uno_a_uno"):
+                    for c, d in m[asign]["por_clase"].items():
+                        filas.append(f"{nombre},{K},{var},{asign},{c}," + ",".join("" if d[k] is None else f"{d[k]:.6g}" for k in cols))
+    (sal / "por_clase.csv").write_text("\n".join(filas) + "\n", encoding="utf-8")
+
+    # ---- tabla legible ----
+    md = ["# Evaluación con etiquetas", "",
+          f"Clases: {', '.join(f'{c} ({n:,})' for c, n in zip(clases, total))}",
+          (f"**Clases ignoradas en la evaluación:** {', '.join(ignorar)}" if ignorar else ""), "",
+          f"**Referencia (todo a '{referencia['clase']}'):** mIoU {referencia['mIoU']:.3f}, "
+          f"exactitud {referencia['exactitud']:.3f}. Un mIoU que no supere esto no dice nada.", ""]
+    for nombre, bloque in resultado["variantes"].items():
+        md += [f"## M3 = {nombre}", "",
+               f"Puntos evaluados: {bloque['puntos_evaluados']:,} ({bloque['cobertura_total']:.1%} de los etiquetados; "
+               "solo los que M2 marca como novedosos).", "",
+               "| K | Variante | mIoU (mayoría) | mIoU sin 'otro' | mAcc | allAcc | mIoU 1 a 1 | ARI | NMI |",
+               "|---|---|---|---|---|---|---|---|---|"]
+        for K in sorted(bloque["K"]):
+            for var in VARIANTES:
+                if var not in bloque["K"][K]:
+                    continue
+                m = bloque["K"][K][var]
+                sf = m["mayoria"]["mIoU_sin_otro"]
+                md.append(f"| {K} | {var} | {m['mayoria']['mIoU']:.3f} | {'-' if sf is None else f'{sf:.3f}'} | "
+                          f"{m['mayoria']['mAcc']:.3f} | {m['mayoria']['allAcc']:.3f} | {m['uno_a_uno']['mIoU']:.3f} | {m['ARI']:.3f} | {m['NMI']:.3f} |")
+        md.append("")
+        # tabla por clase (con falsos positivos y negativos) para el K mas cercano al numero de clases
+        Kc = min((K for K in bloque["K"] if K >= sum(1 for n in total if n > 0)), default=max(bloque["K"]))
+        md += [f"### Por clase (K = {Kc}, asignación por mayoría): falsos positivos y negativos", "",
+               "| Módulo | Clase | Puntos reales | TP | FP | FN | IoU | Precisión | Recall | F1 | FPR | FNR |",
+               "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        fm = lambda x: "-" if x is None else f"{x:.3f}"
+        for var in VARIANTES:
+            if var not in bloque["K"][Kc]:
+                continue
+            for c, d in bloque["K"][Kc][var]["mayoria"]["por_clase"].items():
+                if d["puntos_reales"] == 0:
+                    continue
+                md.append(f"| {var} | {c} | {d['puntos_reales']:,} | {d['TP']:,} | {d['FP']:,} | {d['FN']:,} | {fm(d['IoU'])} | "
+                          f"{fm(d['precision'])} | {fm(d['recall'])} | {fm(d['F1'])} | {fm(d['FPR'])} | {fm(d['FNR'])} |")
+        md.append("")
+    (sal / "evaluacion.md").write_text("\n".join(md), encoding="utf-8")
+    print("\n".join(md))
+
+    # ---- figura: mIoU por variante y K, una barra por M3 ----
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    nombres = list(resultado["variantes"])
+    Ks = sorted({K for b in resultado["variantes"].values() for K in b["K"]})
+    fig, ejes = plt.subplots(1, len(Ks), figsize=(5.2 * len(Ks), 4.6), squeeze=False)
+    ancho = 0.8 / max(1, len(nombres))
+    for j, K in enumerate(Ks):
+        ax = ejes[0, j]
+        for i, n in enumerate(nombres):
+            vals = [resultado["variantes"][n]["K"].get(K, {}).get(v, {}).get("mayoria", {}).get("mIoU", 0) for v in VARIANTES]
+            ax.bar(np.arange(len(VARIANTES)) + i * ancho, vals, ancho, label=f"M3 {n}")
+        ax.axhline(referencia["mIoU"], color="k", ls="--", lw=1, label="todo a la mayoritaria")
+        ax.set_xticks(np.arange(len(VARIANTES)) + ancho * (len(nombres) - 1) / 2)
+        ax.set_xticklabels(VARIANTES)
+        ax.set_title(f"K = {K}")
+        ax.set_ylabel("mIoU (asignación por mayoría)")
+        ax.set_ylim(0, 1)
+        if j == 0:
+            ax.legend(fontsize=8)
+    fig.suptitle("Módulo 4 con etiquetas: mIoU por variante")
+    fig.tight_layout()
+    fig.savefig(sal / "evaluacion_miou.png", dpi=130)
+    print("figura ->", sal / "evaluacion_miou.png")
+
 
 
 def main():
@@ -125,58 +192,7 @@ def main():
             grupo_pt = z[clave][reg][ok]
             bloque["K"].setdefault(K, {})[var] = metricas(grupo_pt, verdad_pt[ok], int(grupo_pt.max()) + 1, clases)
         resultado["variantes"][nombre] = bloque
-    (sal / "evaluacion.json").write_text(json.dumps(resultado, indent=1, ensure_ascii=False))
-
-    # ---- tabla legible ----
-    md = ["# Evaluación con etiquetas", "",
-          f"Clases: {', '.join(f'{c} ({n:,})' for c, n in zip(clases, total))}",
-          (f"**Clases ignoradas en la evaluación:** {', '.join(a.ignorar)}" if a.ignorar else ""), "",
-          f"**Referencia (todo a '{referencia['clase']}'):** mIoU {referencia['mIoU']:.3f}, "
-          f"exactitud {referencia['exactitud']:.3f}. Un mIoU que no supere esto no dice nada.", ""]
-    for nombre, bloque in resultado["variantes"].items():
-        md += [f"## M3 = {nombre}", "",
-               f"Puntos evaluados: {bloque['puntos_evaluados']:,} ({bloque['cobertura_total']:.1%} de los etiquetados; "
-               "solo los que M2 marca como novedosos).", "",
-               "| K | Variante | mIoU (mayoría) | mIoU sin 'otro' | Exactitud | mIoU 1 a 1 | ARI | NMI |",
-               "|---|---|---|---|---|---|---|---|"]
-        for K in sorted(bloque["K"]):
-            for var in VARIANTES:
-                if var not in bloque["K"][K]:
-                    continue
-                m = bloque["K"][K][var]
-                sf = m["mayoria"]["mIoU_sin_otro"]
-                md.append(f"| {K} | {var} | {m['mayoria']['mIoU']:.3f} | {'-' if sf is None else f'{sf:.3f}'} | "
-                          f"{m['mayoria']['exactitud']:.3f} | {m['uno_a_uno']['mIoU']:.3f} | {m['ARI']:.3f} | {m['NMI']:.3f} |")
-        md.append("")
-    (sal / "evaluacion.md").write_text("\n".join(md), encoding="utf-8")
-    print("\n".join(md))
-
-    # ---- figura: mIoU por variante y K, una barra por M3 ----
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    nombres = list(resultado["variantes"])
-    Ks = sorted({K for b in resultado["variantes"].values() for K in b["K"]})
-    fig, ejes = plt.subplots(1, len(Ks), figsize=(5.2 * len(Ks), 4.6), squeeze=False)
-    ancho = 0.8 / max(1, len(nombres))
-    for j, K in enumerate(Ks):
-        ax = ejes[0, j]
-        for i, n in enumerate(nombres):
-            vals = [resultado["variantes"][n]["K"].get(K, {}).get(v, {}).get("mayoria", {}).get("mIoU", 0) for v in VARIANTES]
-            ax.bar(np.arange(len(VARIANTES)) + i * ancho, vals, ancho, label=f"M3 {n}")
-        ax.axhline(referencia["mIoU"], color="k", ls="--", lw=1, label="todo a la mayoritaria")
-        ax.set_xticks(np.arange(len(VARIANTES)) + ancho * (len(nombres) - 1) / 2)
-        ax.set_xticklabels(VARIANTES)
-        ax.set_title(f"K = {K}")
-        ax.set_ylabel("mIoU (asignación por mayoría)")
-        ax.set_ylim(0, 1)
-        if j == 0:
-            ax.legend(fontsize=8)
-    fig.suptitle("Módulo 4 con etiquetas: mIoU por variante")
-    fig.tight_layout()
-    fig.savefig(sal / "evaluacion_miou.png", dpi=130)
-    print("figura ->", sal / "evaluacion_miou.png")
-
+    escribir_salidas(resultado, sal, a.ignorar)
 
 if __name__ == "__main__":
     main()

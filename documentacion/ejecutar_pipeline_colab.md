@@ -70,6 +70,20 @@ m4/salida/<ESCENA>/        m4_<variante>/, evaluacion/, evaluacion_sin_otro/, lo
 
 `logs/` guarda lo que imprime cada módulo (tiempos y VRAM), útil para la tabla de costo computacional.
 
+## 4b. Bajar lo necesario a la laptop (cuadros, comparativas y visor)
+
+1. **En Colab** (cuaderno 2, celda 10): arma `paquete_<ESCENA>.zip` y lo **descarga solo** a tu carpeta Descargas. Incluye M1 (nube y
+   etiquetas), M2 (`f_sem`), M4 de cada variante de M3, las evaluaciones y los logs. **No incluye** los `f_ssl` (~2,4 GB cada uno).
+2. **En la laptop**, desde la raíz del repo:
+
+```bash
+python experimentacion/evaluacion_etiquetada/traer_resultados.py
+```
+
+   Toma el `paquete_*.zip` más reciente de Descargas y lo deja en `experimentacion/datos/escena_<ESCENA>/` (no va a git), con la misma
+   estructura que el Drive. Si tienes **Google Drive para escritorio**, sirve sin zip:
+   `python experimentacion/evaluacion_etiquetada/traer_resultados.py --drive-desktop "G:/Mi unidad/PFC1_HyperNCD_Sonata"`.
+
 ## 5. Cómo leer la evaluación
 
 - Los grupos de M4 no tienen nombre: se reporta mIoU asignando cada grupo a su clase mayoritaria y también 1 a 1 (húngara).

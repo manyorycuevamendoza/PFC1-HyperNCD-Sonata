@@ -53,3 +53,7 @@ sonata_adaptacion/runs/
 experimentacion/adaptacion_sonata/resultados/visor/*.html
 experimentacion/adaptacion_sonata/resultados/m4_original/*.html
 experimentacion/adaptacion_sonata/resultados/m4_adaptado/*.html
+
+# Escena etiquetada: datos bajados de Drive y visores (se regeneran)
+experimentacion/escena_*/datos/
+experimentacion/escena_*/visor/*.html
