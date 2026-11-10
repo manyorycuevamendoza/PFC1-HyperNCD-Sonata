@@ -1,0 +1,45 @@
+{
+  "id": "escena_m3_original",
+  "etapa": "M3",
+  "titulo": "Escena etiquetada: Sonata original",
+  "entradas": [
+    "escena_m1"
+  ],
+  "descripcion": "f_ssl con los pesos de Meta (facebook/sonata). Mejor descriptor de la escena.",
+  "parametros": {
+    "pesos": "facebook/sonata",
+    "atencion": "SDPA"
+  },
+  "hardware": "Colab L4",
+  "costo": {
+    "forward_s": 26.6,
+    "vram_pico_gb": 10.49
+  },
+  "metricas": {
+    "mIoU_sin_otro_K8_1a1": 0.5339,
+    "mIoU_sin_otro_K6_1a1": 0.5114
+  },
+  "notas": "mIoU de un agrupamiento por regiones (ver README del experimento).",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-09",
+  "datos_pesados": [
+    {
+      "que": "paquete de resultados y f_ssl",
+      "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+  ],
+  "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+      "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+      "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+  }
+}

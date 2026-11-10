@@ -47,6 +47,50 @@
    "notas": "Codigo: preprocesar.py / preprocesar.sbatch."
   },
   {
+   "id": "escena_m1",
+   "etapa": "M1",
+   "titulo": "Escena etiquetada `listo`: preprocesamiento",
+   "entradas": [],
+   "descripcion": "19 .las unidos (3,38 M de puntos) -> SOR y voxel de 5 cm -> 1,14 M de puntos con etiqueta (clase por vecino mas cercano, mediana 1,2 cm).",
+   "parametros": {
+    "voxel_m": 0.05,
+    "q": 20,
+    "lam": 2.0
+   },
+   "hardware": "Colab (CPU)",
+   "costo": {
+    "s": 9.3
+   },
+   "metricas": {
+    "puntos_crudo": 3380661,
+    "puntos_tras_M1": 1135946,
+    "sesgo_de_clases": "ninguno visible (parte antes/despues casi igual)"
+   },
+   "notas": "otro.las contiene toda la escena; la clase especifica gana sobre otro.",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
+  },
+  {
    "id": "m2_epoca0",
    "etapa": "M2",
    "titulo": "HyperNCD f_sem con el checkpoint de la epoca 0 (casi sin entrenar)",
@@ -117,6 +161,51 @@
     }
    ],
    "notas": "El 82 % de los puntos de PL13 sigue en la cabeza novedosa 0: mejoro frente a la epoca 0 pero sigue concentrado."
+  },
+  {
+   "id": "escena_m2",
+   "etapa": "M2",
+   "titulo": "Escena etiquetada: HyperNCD (f_sem), epoca 8",
+   "entradas": [
+    "escena_m1"
+   ],
+   "descripcion": "Mismo checkpoint que PL7/PL13. El f_sem esta casi colapsado: 98,4 % de los puntos en la cabeza 9.",
+   "parametros": {
+    "checkpoint": "split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt"
+   },
+   "hardware": "Colab",
+   "costo": {
+    "forward_s": 1.781,
+    "vram_pico_gb": 3.198
+   },
+   "metricas": {
+    "cabeza_dominante_pct": 98.4,
+    "rango_efectivo_fsem": 3.43,
+    "mIoU_punto_a_punto_sin_otro": 0.0937
+   },
+   "notas": "M2 no discrimina las clases de la capilla.",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
   },
   {
    "id": "m3_original",
@@ -231,6 +320,96 @@
     }
    ],
    "notas": "Control pendiente: extraer PL13 en Colab con los pesos originales para separar el efecto de la adaptacion del del entorno. Datos de lote e iteraciones tomados de la salida guardada del cuaderno de Drive (lote 1, LOOP 5)."
+  },
+  {
+   "id": "escena_m3_adaptado",
+   "etapa": "M3",
+   "titulo": "Escena etiquetada: Sonata adaptado a la Catedral",
+   "entradas": [
+    "escena_m1"
+   ],
+   "descripcion": "f_ssl con sonata_catedral.pth (30 epocas, lote 1). Empeora frente al original.",
+   "parametros": {
+    "pesos": "m3/pesos/sonata_catedral.pth",
+    "atencion": "SDPA"
+   },
+   "hardware": "Colab L4",
+   "costo": {
+    "forward_s": 27.0,
+    "vram_pico_gb": 10.49
+   },
+   "metricas": {
+    "mIoU_sin_otro_K8_1a1": 0.3563,
+    "mIoU_sin_otro_K6_1a1": 0.3576
+   },
+   "notas": "No esta demostrado por que empeora; hipotesis: lote 1.",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
+  },
+  {
+   "id": "escena_m3_original",
+   "etapa": "M3",
+   "titulo": "Escena etiquetada: Sonata original",
+   "entradas": [
+    "escena_m1"
+   ],
+   "descripcion": "f_ssl con los pesos de Meta (facebook/sonata). Mejor descriptor de la escena.",
+   "parametros": {
+    "pesos": "facebook/sonata",
+    "atencion": "SDPA"
+   },
+   "hardware": "Colab L4",
+   "costo": {
+    "forward_s": 26.6,
+    "vram_pico_gb": 10.49
+   },
+   "metricas": {
+    "mIoU_sin_otro_K8_1a1": 0.5339,
+    "mIoU_sin_otro_K6_1a1": 0.5114
+   },
+   "notas": "mIoU de un agrupamiento por regiones (ver README del experimento).",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
   },
   {
    "id": "m4_m2e0_m3orig",
@@ -360,6 +539,101 @@
    },
    "datos_pesados": [],
    "notas": "La estabilidad baja en 3 de 4 casos frente al f_ssl original; sin etiquetas no se sabe si acierta mas."
+  },
+  {
+   "id": "escena_m4_m3adaptado",
+   "etapa": "M4",
+   "titulo": "Escena etiquetada: M4 con Sonata adaptado",
+   "entradas": [
+    "escena_m2",
+    "escena_m3_adaptado"
+   ],
+   "descripcion": "Misma fusion con el f_ssl adaptado.",
+   "parametros": {
+    "celda_m": 0.75,
+    "K": [
+     6,
+     8,
+     12
+    ]
+   },
+   "hardware": "Colab (CPU)",
+   "costo": {},
+   "metricas": {
+    "mIoU_sin_otro_K8_1a1_M4": 0.3607
+   },
+   "notas": "Peor que con el original.",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
+  },
+  {
+   "id": "escena_m4_m3original",
+   "etapa": "M4",
+   "titulo": "Escena etiquetada: M4 con Sonata original",
+   "entradas": [
+    "escena_m2",
+    "escena_m3_original"
+   ],
+   "descripcion": "Fusion [f_sem ; f_ssl]. Supera a la linea base [f_sem ; f_geo] pero no a M3 solo.",
+   "parametros": {
+    "celda_m": 0.75,
+    "K": [
+     6,
+     8,
+     12
+    ]
+   },
+   "hardware": "Colab (CPU)",
+   "costo": {
+    "s": 80
+   },
+   "metricas": {
+    "mIoU_sin_otro_K8_1a1_M4": 0.5247,
+    "mIoU_sin_otro_K8_1a1_M4_base": 0.3207
+   },
+   "notas": "f_sem aporta casi nada porque M2 esta colapsado.",
+   "estado": "hecho (1 corrida, 1 escena)",
+   "fecha": "2026-11-09",
+   "datos_pesados": [
+    {
+     "que": "paquete de resultados y f_ssl",
+     "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+   ],
+   "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+     "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+     "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+   }
   }
  ]
 }

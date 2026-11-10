@@ -63,7 +63,8 @@ def main():
     ap.add_argument("--bloque", type=float, default=4.0, help="lado (m) de los bloques espaciales")
     ap.add_argument("--n-train", type=int, default=120_000)
     ap.add_argument("--n-test", type=int, default=60_000)
-    ap.add_argument("--n-knn-train", type=int, default=60_000)
+    ap.add_argument("--n-knn-train", type=int, default=40_000)
+    ap.add_argument("--n-knn-test", type=int, default=15_000)
     ap.add_argument("--semilla", type=int, default=0)
     a = ap.parse_args()
     rng = np.random.default_rng(a.semilla)
@@ -98,7 +99,7 @@ def main():
                 te = te_idx[validos[te_idx]]
                 ntr = a.n_knn_train if tipo == "knn" else a.n_train
                 tr = rng.choice(tr, min(len(tr), ntr), replace=False)
-                te = rng.choice(te, min(len(te), a.n_test), replace=False)
+                te = rng.choice(te, min(len(te), a.n_knn_test if tipo == "knn" else a.n_test), replace=False)
                 Xtr = feat[inv[tr]].astype(np.float32)
                 Xte = feat[inv[te]].astype(np.float32)
                 p = entrenar_y_probar(Xtr, y_all[tr], Xte, y_all[te], tipo, len(cl), a.semilla)

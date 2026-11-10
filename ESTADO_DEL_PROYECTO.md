@@ -167,10 +167,11 @@ a quien etiquete es `etiquetado_PL13.zip`. Las etiquetas devueltas
 
 ## Escena etiquetada nueva (`listo`, 8 de noviembre de 2026)
 
-19 `.las` con una pieza por clase (arco, columna, cúpula, pared, techo, otro): una escena de 3,38 M de puntos con
-etiquetas reales. **No está dentro de PL7 ni PL13** (a ~10 m). Herramientas en `experimentacion/evaluacion_etiquetada/`,
-cuadernos `colab_1_m1_m2.ipynb` y `colab_2_m3_m4.ipynb` y guía `documentacion/ejecutar_pipeline_colab.md`. **Falta correrlo en Colab**
-(M2 y M3 no se han probado con ella); con esto se podrá medir mIoU de M2, M3 y M4, original contra adaptado.
+19 `.las` con una pieza por clase (arco, columna, cúpula, pared, techo, otro): una escena de 3,38 M de puntos con etiquetas reales.
+**No está dentro de PL7 ni PL13** (a ~10 m). **Ya se corrió M1 a M4**: todo está en `experimentacion/escena_capilla_etiquetada/` (README con resultados).
+Resultado clave (sin `otro`, K = 8, 1 a 1, mIoU %): M3 original **53,4**, M3 adaptado 35,6, M4 original **52,5**, M4 base 32,1, M2 34,1 (referencia 7,9).
+O sea: `f_ssl` supera a `f_geo` (+20 puntos), el Sonata adaptado empeora y `f_sem` aporta casi nada (M2 colapsado: 98,4 % en una cabeza).
+Faltan los grupos por punto de M3/M4 para el visor y la sonda lineal de Sonata (ambos en el cuaderno 2). Una escena, una corrida.
 
 ## Recordatorios para la tesis
 

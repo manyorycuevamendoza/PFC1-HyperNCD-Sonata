@@ -172,7 +172,7 @@ function colores() {
   else if (v === "gt") { for (let i = 0; i < n; i++) col[i] = GT[i] === 255 ? FONDO : COL[GT[i]]; CL.forEach((c, i) => leyenda.push([COL[i], c])); }
   else if (v === "cabeza") { for (let i = 0; i < n; i++) col[i] = PAL[CAB[i]]; for (let h = 0; h < 13; h++) leyenda.push([PAL[h], "cabeza " + h + (h >= D.nl ? " (novedosa)" : " (conocida)")]); }
   else if (v === "novel") { for (let i = 0; i < n; i++) col[i] = NOV[i] ? "#e07b39" : "#2b7bba"; leyenda.push(["#e07b39", "novedoso"], ["#2b7bba", "conocido"]); }
-  else if (v === "pred") { const p = clasePred(); if (!p) return null; for (let i = 0; i < n; i++) col[i] = p[i] === 255 ? FONDO : COL[p[i]]; CL.forEach((c, i) => leyenda.push([COL[i], "predicha: " + c])); }
+  else if (v === "pred") { const p = clasePred(); if (!p) return null; for (let i = 0; i < n; i++) col[i] = p[i] === 255 ? FONDO : COL[p[i]]; CL.forEach((c, i) => leyenda.push([COL[i], "predicha: " + c])); leyenda.push([FONDO, "sin clase: grupo sin asignar (cuenta como error; NO es «otro»)"]); }
   else if (v === "grupos") { const g = GR[S.variante + "|" + S.K + "|" + S.mod]; if (!g) return null; for (let i = 0; i < n; i++) col[i] = g[i] === 255 ? FONDO : PAL[g[i] % PAL.length]; for (let k = 0; k < +S.K; k++) leyenda.push([PAL[k % PAL.length], "grupo " + k]); }
   else if (v === "acierto" || v === "clase") { const p = clasePred(); if (!p) return null;
     if (v === "acierto") { for (let i = 0; i < n; i++) col[i] = GT[i] === 255 ? FONDO : (GT[i] === p[i] ? VERDE : ROJO); leyenda.push([VERDE, "bien clasificado"], [ROJO, "mal clasificado"], [FONDO, "sin etiqueta / ignorado"]); }
@@ -180,10 +180,100 @@ function colores() {
       leyenda.push([VERDE, "TP: de la clase y predicho bien"], [NARANJA, "FN: es de la clase y se predijo otra cosa"], [ROJO, "FP: se predijo la clase y no lo es"], [GRIS, "el resto"]); } }
   return {col, leyenda};
 }
+function compararGrafico() {
+  const d = D.eval[S.modo], Kl = Object.keys(d.variantes[D.variantes[0]].K), mods = ["M2", "M3", "M4_base", "M4"];
+  const x = []; Kl.forEach(K => mods.forEach(m => x.push("K=" + K + " · " + m)));
+  const trazas = D.variantes.map((v, i) => ({type: "bar", name: "M3 " + v, x, marker: {color: i ? "#e07b39" : "#7a8ca5"},
+    y: Kl.flatMap(K => mods.map(m => 100 * d.variantes[v].K[K][m].uno_a_uno.mIoU))}));
+  const ref = 100 * d.referencia_todo_a_la_mayoritaria.mIoU;
+  Plotly.purge("g");
+  Plotly.newPlot("g", trazas, {barmode: "group", margin: {t: 60, b: 110, l: 55, r: 20},
+    title: "mIoU (%) por módulo y K · asignación 1 a 1 · " + (S.modo === "todas" ? "todas las clases" : "sin «otro»") + "<br><sup>línea punteada: referencia «todo a una clase»</sup>",
+    shapes: [{type: "line", xref: "x", x0: -0.5, x1: x.length - 0.5, y0: ref, y1: ref, line: {dash: "dash", color: "#000", width: 1}}],
+    yaxis: {title: "mIoU %", range: [0, 70]}, xaxis: {tickangle: -45}, legend: {orientation: "h", y: 1.12}}, {displaylogo: false, responsive: true});
+}
 let ocultar = false;
+// ---------- Lado a lado: 4 paneles 3D con la misma camara ----------
+const KsEval = Object.keys(D.eval.todas.variantes[D.variantes[0]].K);
+function paneles() {
+  const v0 = D.variantes[0], v1 = D.variantes[1] || D.variantes[0], K = KsEval.includes(String(S.K)) ? String(S.K) : KsEval[0];
+  const gt = {t: "Clase real", d: "etiquetas", tipo: "gt"};
+  const g = (t, d, v, mod) => ({t, d, tipo: "g", id: v + "|" + K + "|" + mod, v, mod, K});
+  return S.comp === "m3"
+    ? [gt, {t: "M2 · HyperNCD", d: "solo f_sem", tipo: "m2"}, g("M3 · Sonata " + v0, "solo f_ssl", v0, "M3"), g("M3 · Sonata " + v1, "solo f_ssl", v1, "M3")]
+    : [gt, g("M4 base · f_geo", "f_sem + f_geo, línea base", v0, "M4_base"), g("M4 · Sonata " + v0, "f_sem + f_ssl", v0, "M4"), g("M4 · Sonata " + v1, "f_sem + f_ssl", v1, "M4")];
+}
+function metricaPanel(pn) {
+  if (pn.tipo === "gt") return null;
+  if (pn.tipo === "m2") return D.etapas.M2.como_clasificador_punto_a_punto[S.modo][S.asig];
+  return D.eval[S.modo].variantes[pn.v].K[pn.K][pn.mod][S.asig];
+}
+function predPanel(pn) {
+  const p = new Uint8Array(n).fill(255);
+  if (pn.tipo === "gt") { for (let i = 0; i < n; i++) p[i] = GT[i]; return p; }
+  if (pn.tipo === "m2") { const as = D.asig_m2[S.modo][S.asig]; for (let i = 0; i < n; i++) { const c = as[CAB[i]]; p[i] = c >= 0 ? c : 255; } return p; }
+  const gr = GR[pn.id]; if (!gr) return null; const as = D.asig_g[pn.id][S.modo][S.asig];
+  for (let i = 0; i < n; i++) { if (gr[i] === 255) continue; const c = as[gr[i]]; p[i] = c >= 0 ? c : 255; } return p;
+}
+function colorPanel(pn, p) {
+  const col = new Array(n), v = S.vista, c = CL.indexOf(S.clase);
+  if (pn.tipo === "gt") { if (v === "clase") { for (let i = 0; i < n; i++) col[i] = GT[i] === c ? VERDE : GRIS; } else { for (let i = 0; i < n; i++) col[i] = GT[i] === 255 ? FONDO : COL[GT[i]]; } return col; }
+  if (v === "grupos") { if (pn.tipo === "m2") { for (let i = 0; i < n; i++) col[i] = PAL[CAB[i]]; } else { const gr = GR[pn.id]; for (let i = 0; i < n; i++) col[i] = gr[i] === 255 ? FONDO : PAL[gr[i] % PAL.length]; } return col; }
+  if (v === "acierto") { for (let i = 0; i < n; i++) col[i] = GT[i] === 255 ? FONDO : (GT[i] === p[i] ? VERDE : ROJO); return col; }
+  if (v === "clase") { for (let i = 0; i < n; i++) { const a = GT[i] === c, b = p[i] === c; col[i] = a && b ? VERDE : a ? NARANJA : b ? ROJO : GRIS; } return col; }
+  for (let i = 0; i < n; i++) col[i] = p[i] === 255 ? FONDO : COL[p[i]]; return col;
+}
+function ladoAlado() {
+  const el = document.getElementById("g"), P = paneles(), pos = [[0, .5, .5, 1], [.5, 1, .5, 1], [0, .5, 0, .5], [.5, 1, 0, .5]];
+  const idx = []; for (let i = 0; i < n; i += 2) if (!(ocultar && GT[i] === OTRO)) idx.push(i);
+  const trazas = [], anot = [], escenas = {}, faltan = [];
+  const cam = {eye: {x: 1.25, y: -1.25, z: 0.95}, up: {x: 0, y: 0, z: 1}};
+  P.forEach((pn, k) => {
+    const p = predPanel(pn), sc = k ? "scene" + (k + 1) : "scene", q = pos[k], m = metricaPanel(pn);
+    escenas[sc] = {domain: {x: [q[0], q[1]], y: [q[2], q[3]]}, aspectmode: "data", camera: cam, xaxis: {visible: false}, yaxis: {visible: false}, zaxis: {visible: false}};
+    let t = pn.t + "<br>" + (m ? `mIoU ${f3(m.mIoU)}` : pn.d);
+    if (!p) { faltan.push(pn.t); t = pn.t + "<br>(faltan los grupos)"; }
+    anot.push({text: "<b>" + t + "</b>", xref: "paper", yref: "paper", x: (q[0] + q[1]) / 2, y: q[3] - 0.005, showarrow: false, yanchor: "top", font: {size: 12}});
+    if (!p) return;
+    const col = colorPanel(pn, p);
+    trazas.push({type: "scatter3d", mode: "markers", scene: sc, x: idx.map(i => XYZ[3*i]), y: idx.map(i => XYZ[3*i+1]), z: idx.map(i => XYZ[3*i+2]),
+      marker: {size: S.tam, color: idx.map(i => col[i])}, hoverinfo: "skip"});
+  });
+  let ley = [];
+  if (S.vista === "grupos") ley = [[PAL[0], "cada color = un grupo (no hay clases)"]];
+  else if (S.vista === "acierto") ley = [[VERDE, "bien clasificado"], [ROJO, "mal clasificado"], [FONDO, "sin etiqueta / ignorado"]];
+  else if (S.vista === "clase") ley = [[VERDE, "TP"], [NARANJA, "FN (es de la clase y se predijo otra)"], [ROJO, "FP (se predijo la clase y no lo es)"], [GRIS, "el resto"]];
+  else ley = CL.map((c, i) => [COL[i], c]).concat([[FONDO, "sin clase: grupo sin asignar (cuenta como error; NO es «otro»)"]]);
+  let h = ley.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join("");
+  if (faltan.length) h = "<div class='aviso'><b>Faltan los puntos agrupados de:</b> " + faltan.join("; ") + ". Aparecen vacíos; las métricas sí están. Hay que volver a correr M4 en Colab (ver el README del experimento).</div>" + h;
+  document.getElementById("ley").innerHTML = h;
+  Plotly.purge(el);
+  Plotly.newPlot(el, trazas, Object.assign({margin: {l: 0, r: 0, t: 0, b: 0}, annotations: anot, showlegend: false}, escenas), {displaylogo: false, responsive: true});
+  let busy = false;   // sincroniza la camara de los 4 paneles
+  el.on("plotly_relayout", ev => {
+    if (busy) return; const k = Object.keys(ev).find(x => /^scene\d*\.camera$/.test(x)); if (!k) return;
+    busy = true; const up = {}; Object.keys(escenas).forEach(s => { if (s + ".camera" !== k) up[s + ".camera"] = ev[k]; });
+    Plotly.relayout(el, up).then(() => { busy = false; }, () => { busy = false; });
+  });
+}
+function metricasLado() {
+  const P = paneles().filter(p => p.tipo !== "gt"); const R = P.map(metricaPanel);
+  let h = `<div class="sup">K = ${S.K} · ${S.modo === "todas" ? "todas las clases" : "sin «otro»"} · asignación ${S.asig === "uno_a_uno" ? "1 a 1" : "por mayoría"}. Referencia «todo a una clase»: ${f3(D.eval[S.modo].referencia_todo_a_la_mayoritaria.mIoU)}.</div>`;
+  const cab = P.map((p, i) => `<th title="${p.t}">${["A", "B", "C"][i]}</th>`).join("");
+  h += "<div class='sup'>" + P.map((p, i) => `<b>${["A", "B", "C"][i]}</b> = ${p.t} (${p.d})`).join("<br>") + "</div>";
+  h += `<table><tr><th></th>${cab}</tr>` + [["mIoU", "mIoU"], ["mAcc", "mAcc"], ["allAcc", "allAcc"]].map(([k, t]) => `<tr><td>${t}</td>` + R.map(r => `<td>${f3(r[k])}</td>`).join("") + "</tr>").join("") + "</table>";
+  h += "<h3>IoU por clase (%)</h3><table><tr><th>Clase</th>" + cab + "</tr>";
+  for (const c of Object.keys(R[0].por_clase)) { if (!R[0].por_clase[c].puntos_reales) continue; const v = R.map(r => r.por_clase[c].IoU), mx = Math.max(...v);
+    h += `<tr><td>${c}</td>` + v.map(x => `<td class="${x === mx ? "ok" : ""}">${f3(x)}</td>`).join("") + "</tr>"; }
+  h += "</table><h3>Errores por clase (miles de puntos)</h3><table><tr><th>Clase</th>" + P.map((p, i) => `<th>${["A", "B", "C"][i]} FP</th><th>FN</th>`).join("") + "</tr>";
+  for (const c of Object.keys(R[0].por_clase)) { if (!R[0].por_clase[c].puntos_reales) continue;
+    h += `<tr><td>${c}</td>` + R.map(r => `<td>${(r.por_clase[c].FP / 1000).toFixed(0)}</td><td>${(r.por_clase[c].FN / 1000).toFixed(0)}</td>`).join("") + "</tr>"; }
+  return h + "</table><div class='sup'>FP: se predijo la clase y no lo es. FN: es de la clase y se predijo otra. En verde, el mejor IoU de cada fila.</div>";
+}
 function dibujar() {
   const r = colores(); const el = document.getElementById("g");
-  if (!r) { document.getElementById("ley").innerHTML = "<div class='aviso'>No hay grupos por punto de M3/M4 en este visor (faltan <code>m4_&lt;variante&gt;/grupos_PL13.npz</code>). Las métricas de la derecha sí están.</div>"; return; }
+  if (el.data && (el.data.length !== 1 || el.data[0].type !== "scatter3d")) Plotly.purge(el);
+  if (!r) { document.getElementById("ley").innerHTML = "<div class='aviso'><b>Esta vista necesita los puntos agrupados de M3/M4, que todavía no están en el visor.</b> No se guardaron en Drive (el cuaderno se detuvo antes). Las <b>métricas de abajo sí están completas</b>; para ver los puntos hay que volver a correr M4 en Colab y regenerar el visor (ver el README del experimento). Las pestañas M1 y M2 sí muestran los puntos.</div>"; return; }
   document.getElementById("ley").innerHTML = r.leyenda.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join("");
   const idx = []; for (let i = 0; i < n; i++) if (!(ocultar && GT[i] === OTRO)) idx.push(i);
   const x = idx.map(i => XYZ[3*i]), y = idx.map(i => XYZ[3*i+1]), z = idx.map(i => XYZ[3*i+2]), c = idx.map(i => r.col[i]);
@@ -195,9 +285,19 @@ const sel = (id, opts, val, fn) => `<label>${id}</label><select onchange="${fn}(
 const VISTAS = {m1: [["rgb", "Color real"], ["nz", "Normal vertical"], ["gt", "Clase real (etiqueta)"]],
   m2: [["cabeza", "Cabeza predicha por HyperNCD"], ["novel", "Novedoso / conocido"], ["pred", "Clase predicha (cabeza → clase)"], ["clase", "TP / FP / FN de una clase"]],
   m3: [["grupos", "Grupos de M3 (solo f_ssl)"], ["pred", "Clase predicha"], ["acierto", "Aciertos"], ["clase", "TP / FP / FN de una clase"]],
-  m4: [["grupos", "Grupos del módulo"], ["pred", "Clase predicha"], ["acierto", "Aciertos"], ["clase", "TP / FP / FN de una clase"]]};
+  m4: [["grupos", "Grupos del módulo"], ["pred", "Clase predicha"], ["acierto", "Aciertos"], ["clase", "TP / FP / FN de una clase"]],
+  lado: [["pred", "Clase predicha"], ["acierto", "Aciertos (verde) y errores (rojo)"], ["clase", "TP / FP / FN de una clase"], ["grupos", "Grupos"]]};
+S.comp = "m4";
 function controles() {
   let h = "";
+  if (S.tab === "lado") {
+    h += sel("Qué comparar", [["m4", "Fusión M4: real · base f_geo · Sonata original · Sonata adaptado"], ["m3", "Descriptor: real · M2 · M3 original · M3 adaptado"]], S.comp, "cambiar('comp')");
+    h += sel("Vista", VISTAS.lado, S.vista, "cambiar('vista')") + sel("K (grupos)", KsEval.map(k => [k, "K = " + k]), KsEval.includes(String(S.K)) ? String(S.K) : KsEval[0], "cambiar('K')");
+    h += sel("Asignar grupos a clases", [["uno_a_uno", "1 a 1 (húngaro)"], ["mayoria", "Por mayoría"]], S.asig, "cambiar('asig')") + sel("Evaluación", [["todas", "Todas las clases"], ["sin_otro", "Sin «otro»"]], S.modo, "cambiar('modo')");
+    if (S.vista === "clase") h += sel("Clase", CL.map(c => [c, c]), S.clase, "cambiar('clase')");
+    h += `<label><input type="checkbox" ${ocultar ? "checked" : ""} onchange="ocultar=this.checked;ladoAlado()"> Ocultar los puntos de «otro»</label>`;
+    h += `<label>Tamaño del punto</label><input type="range" min="0.5" max="5" step="0.1" value="${S.tam}" oninput="S.tam=+this.value;ladoAlado()">`;
+    document.getElementById("ctl").innerHTML = h; return; }
   if (S.tab === "comparar") { document.getElementById("ctl").innerHTML = sel("Evaluación", [["todas", "Todas las clases"], ["sin_otro", "Sin la clase «otro»"]], S.modo, "cambiar('modo')"); return; }
   h += sel("Vista", VISTAS[S.tab], S.vista, "cambiar('vista')");
   if (S.tab === "m2") S.fuente = "m2"; else { S.fuente = "g"; if (S.tab === "m3") S.mod = "M3";
@@ -236,6 +336,7 @@ function metricas() {
   else if (S.tab === "m2") { const m = E.M2, c = m.como_clasificador_punto_a_punto[S.modo];
     h += `<div class="aviso"><b>${m.cabeza_dominante.pct.toFixed(1)} %</b> de los puntos caen en la <b>cabeza ${m.cabeza_dominante.cabeza}</b>; ${m.puntos_novedosos_pct.toFixed(1)} % se marcan como novedosos. Rango efectivo de f_sem: <b>${m.f_sem.rango_efectivo.toFixed(1)}</b> (el de Sonata ronda 100): el descriptor está casi colapsado.</div>`;
     h += resumen({mayoria: c.mayoria, uno_a_uno: c.uno_a_uno, ARI: c.ARI, NMI: c.NMI}, "M2 como clasificador punto a punto") + tablaClases(c[S.asig].por_clase) + "<h3>Confusión</h3>" + tablaConfusion(c[S.asig]); }
+  else if (S.tab === "lado") { h = metricasLado(); }
   else if (S.tab === "comparar") { const d = D.eval[S.modo]; const Kl = Object.keys(d.variantes[D.variantes[0]].K);
     h += `<div class="sup">mIoU % con asignación por mayoría / 1 a 1. Referencia (todo a «${d.referencia_todo_a_la_mayoritaria.clase}»): ${f3(d.referencia_todo_a_la_mayoritaria.mIoU)}.</div><table><tr><th>K · Módulo</th>` + D.variantes.map(v => `<th>${v}</th>`).join("") + "</tr>";
     for (const K of Kl) for (const mod of ["M2", "M3", "M4_base", "M4"]) h += `<tr><td>${K} · ${mod}</td>` + D.variantes.map(v => { const x = d.variantes[v].K[K][mod]; return `<td>${f3(x.mayoria.mIoU)} / ${f3(x.uno_a_uno.mIoU)}</td>`; }).join("") + "</tr>";
@@ -247,8 +348,9 @@ function metricas() {
   el.innerHTML = h;
 }
 function refrescar() {
-  document.getElementById("tabs").innerHTML = [["m1", "M1"], ["m2", "M2"], ["m3", "M3"], ["m4", "M4"], ["comparar", "Comparar"]].map(([k, t]) => `<button class="${S.tab === k ? "on" : ""}" onclick="irA('${k}')">${t}</button>`).join("");
-  controles(); metricas(); if (S.tab !== "comparar") dibujar();
+  document.getElementById("tabs").innerHTML = [["m1", "M1"], ["m2", "M2"], ["m3", "M3"], ["m4", "M4"], ["lado", "Lado a lado"], ["comparar", "Tablas"]].map(([k, t]) => `<button class="${S.tab === k ? "on" : ""}" onclick="irA('${k}')">${t}</button>`).join("");
+  controles(); metricas();
+  if (S.tab === "comparar") { document.getElementById("ley").innerHTML = ""; compararGrafico(); } else if (S.tab === "lado") ladoAlado(); else dibujar();
 }
 function irA(t) { S.tab = t; S.vista = VISTAS[t] ? VISTAS[t][0][0] : S.vista; refrescar(); }
 refrescar();

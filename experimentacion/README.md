@@ -19,7 +19,8 @@ experimentacion/
 │   └── visualizar_features.sbatch   lo mismo, como trabajo en Khipu
 ├── modulo4_simulado/          M4 sobre una escena sintética con verdad conocida (ver su README)
 ├── modulo4_real/              M4 real sobre PL13: une f_sem (M2) y f_ssl (M3) (ver su README)
-├── evaluacion_etiquetada/     escena etiquetada `listo`: unir piezas, etiquetas y mIoU de M2, M3 y M4 (ver su README)
+├── evaluacion_etiquetada/     HERRAMIENTAS para evaluar con etiquetas (unir, mIoU, FP/FN, sonda lineal, visor); ver su README
+├── escena_capilla_etiquetada/ EXPERIMENTO con la escena `listo`: datos, resultados y visor, todo en una carpeta; ver su README
 ├── tesis2/                    pendientes, hipótesis y experimentos por hacer para Tesis 2 (ver su README)
 ├── registro/                  un .json por experimento + registrar.py (valida e indexa); ver su LEEME.md
 ├── visor/index.html          visor con pestañas M1–M4 y modo comparar (abre con doble clic)

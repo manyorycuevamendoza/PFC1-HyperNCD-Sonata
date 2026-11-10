@@ -1,0 +1,45 @@
+{
+  "id": "escena_m3_adaptado",
+  "etapa": "M3",
+  "titulo": "Escena etiquetada: Sonata adaptado a la Catedral",
+  "entradas": [
+    "escena_m1"
+  ],
+  "descripcion": "f_ssl con sonata_catedral.pth (30 epocas, lote 1). Empeora frente al original.",
+  "parametros": {
+    "pesos": "m3/pesos/sonata_catedral.pth",
+    "atencion": "SDPA"
+  },
+  "hardware": "Colab L4",
+  "costo": {
+    "forward_s": 27.0,
+    "vram_pico_gb": 10.49
+  },
+  "metricas": {
+    "mIoU_sin_otro_K8_1a1": 0.3563,
+    "mIoU_sin_otro_K6_1a1": 0.3576
+  },
+  "notas": "No esta demostrado por que empeora; hipotesis: lote 1.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-09",
+  "datos_pesados": [
+    {
+      "que": "paquete de resultados y f_ssl",
+      "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+  ],
+  "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+      "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+      "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+  }
+}

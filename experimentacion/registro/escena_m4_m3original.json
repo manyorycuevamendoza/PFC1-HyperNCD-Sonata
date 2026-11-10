@@ -1,0 +1,49 @@
+{
+  "id": "escena_m4_m3original",
+  "etapa": "M4",
+  "titulo": "Escena etiquetada: M4 con Sonata original",
+  "entradas": [
+    "escena_m2",
+    "escena_m3_original"
+  ],
+  "descripcion": "Fusion [f_sem ; f_ssl]. Supera a la linea base [f_sem ; f_geo] pero no a M3 solo.",
+  "parametros": {
+    "celda_m": 0.75,
+    "K": [
+      6,
+      8,
+      12
+    ]
+  },
+  "hardware": "Colab (CPU)",
+  "costo": {
+    "s": 80
+  },
+  "metricas": {
+    "mIoU_sin_otro_K8_1a1_M4": 0.5247,
+    "mIoU_sin_otro_K8_1a1_M4_base": 0.3207
+  },
+  "notas": "f_sem aporta casi nada porque M2 esta colapsado.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-09",
+  "datos_pesados": [
+    {
+      "que": "paquete de resultados y f_ssl",
+      "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+  ],
+  "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+      "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+      "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+  }
+}

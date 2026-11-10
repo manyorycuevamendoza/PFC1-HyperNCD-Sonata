@@ -80,7 +80,7 @@ m4/salida/<ESCENA>/        m4_<variante>/, evaluacion/, evaluacion_sin_otro/, lo
 python experimentacion/evaluacion_etiquetada/traer_resultados.py
 ```
 
-   Toma el `paquete_*.zip` más reciente de Descargas y lo deja en `experimentacion/datos/escena_<ESCENA>/` (no va a git), con la misma
+   Toma el `paquete_*.zip` más reciente de Descargas y lo deja en `experimentacion/escena_<ESCENA>/datos/` (no va a git), con la misma
    estructura que el Drive. Si tienes **Google Drive para escritorio**, sirve sin zip:
    `python experimentacion/evaluacion_etiquetada/traer_resultados.py --drive-desktop "G:/Mi unidad/PFC1_HyperNCD_Sonata"`.
 

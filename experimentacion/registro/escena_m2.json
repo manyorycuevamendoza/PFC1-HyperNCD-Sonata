@@ -1,0 +1,45 @@
+{
+  "id": "escena_m2",
+  "etapa": "M2",
+  "titulo": "Escena etiquetada: HyperNCD (f_sem), epoca 8",
+  "entradas": [
+    "escena_m1"
+  ],
+  "descripcion": "Mismo checkpoint que PL7/PL13. El f_sem esta casi colapsado: 98,4 % de los puntos en la cabeza 9.",
+  "parametros": {
+    "checkpoint": "split0_run4/SemanticPOSS_S0_best-epoch=8-step=11196.ckpt"
+  },
+  "hardware": "Colab",
+  "costo": {
+    "forward_s": 1.781,
+    "vram_pico_gb": 3.198
+  },
+  "metricas": {
+    "cabeza_dominante_pct": 98.4,
+    "rango_efectivo_fsem": 3.43,
+    "mIoU_punto_a_punto_sin_otro": 0.0937
+  },
+  "notas": "M2 no discrimina las clases de la capilla.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-09",
+  "datos_pesados": [
+    {
+      "que": "paquete de resultados y f_ssl",
+      "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+  ],
+  "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+      "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+      "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+  }
+}

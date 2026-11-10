@@ -17,6 +17,12 @@ Las referencias bibliográficas se citaron de memoria: **verificarlas antes de u
 
 Ver `../adaptacion_sonata/README.md` y `../modulo4_real/README.md`.
 
+## 0b. Resultado con etiquetas reales (escena `capilla_etiquetada`, 9-nov-2026)
+
+Ver `../escena_capilla_etiquetada/README.md`. Resumen (sin `otro`, K = 8, 1 a 1, mIoU %): M3 original 53,4 · M3 adaptado 35,6 · M4 original 52,5 · M4 base 32,1 · M2 34,1.
+**El Sonata adaptado empeora** (queda como resultado, no se omite); **M2 está colapsado** (98,4 % de los puntos en una cabeza, rango efectivo de `f_sem` 3,4) y por eso **M4 no mejora a M3 solo**.
+Ideas que salen de ahí: arreglar M2 (ajuste con etiquetas parciales de la Catedral) antes de seguir con la fusión, y repetir la adaptación con lote mayor.
+
 ## 1. Cerrar lo que quedó a medias de la adaptación
 
 1. **Control de entorno.** Extraer PL13 en Colab con los pesos **originales** (`sonata.pth`), con el mismo

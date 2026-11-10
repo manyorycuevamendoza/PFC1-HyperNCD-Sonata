@@ -1,0 +1,44 @@
+{
+  "id": "escena_m1",
+  "etapa": "M1",
+  "titulo": "Escena etiquetada `listo`: preprocesamiento",
+  "entradas": [],
+  "descripcion": "19 .las unidos (3,38 M de puntos) -> SOR y voxel de 5 cm -> 1,14 M de puntos con etiqueta (clase por vecino mas cercano, mediana 1,2 cm).",
+  "parametros": {
+    "voxel_m": 0.05,
+    "q": 20,
+    "lam": 2.0
+  },
+  "hardware": "Colab (CPU)",
+  "costo": {
+    "s": 9.3
+  },
+  "metricas": {
+    "puntos_crudo": 3380661,
+    "puntos_tras_M1": 1135946,
+    "sesgo_de_clases": "ninguno visible (parte antes/despues casi igual)"
+  },
+  "notas": "otro.las contiene toda la escena; la clase especifica gana sobre otro.",
+  "estado": "hecho (1 corrida, 1 escena)",
+  "fecha": "2026-11-09",
+  "datos_pesados": [
+    {
+      "que": "paquete de resultados y f_ssl",
+      "donde": "Drive m1..m4/salida/capilla_etiquetada/; local experimentacion/escena_capilla_etiquetada/datos/"
+    }
+  ],
+  "resultados": {
+    "documento": "experimentacion/escena_capilla_etiquetada/README.md",
+    "json": [
+      "experimentacion/escena_capilla_etiquetada/resultados/evaluacion/sin_otro/evaluacion.json",
+      "experimentacion/escena_capilla_etiquetada/resultados/etapas/etapas.json"
+    ],
+    "imagenes": [
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/miou_por_modulo.png",
+      "experimentacion/escena_capilla_etiquetada/resultados/graficos/fp_fn_por_clase.png"
+    ],
+    "visores": [
+      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
+    ]
+  }
+}
