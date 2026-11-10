@@ -29,6 +29,8 @@ def get_dataset(name):
         return SemanticKITTIRestrictedDataset
     elif name == "SemanticPOSS":
         return SemanticPOSSRestrictedDataset
+    elif name == "ArCH":
+        return ArCHRestrictedDataset
     else:
         raise NameError(f'Dataset "{name}" not yet implemented')
 
@@ -664,6 +666,118 @@ class SemanticPOSSRestrictedDataset(torch.utils.data.Dataset):
             selected_region_idx,
             t,
         )
+
+
+class ArCHRestrictedDataset(torch.utils.data.Dataset):
+    """ArCH en bloques .npz (ver experimentacion/arch_entrenamiento/convertir_arch.py).
+    Misma salida que SemanticPOSSRestrictedDataset. Cada bloque es una muestra; en entrenamiento se
+    submuestrean `downsampling` puntos al azar. Las regiones (superpuntos) de la clase nueva se calculan
+    sobre el bloque completo y se guardan en cache. features = unos (solo geometria), como en SemanticPOSS."""
+
+    def __init__(self, config_file="config/arch_dataset.yaml", split="train", voxel_size=0.05, downsampling=60000,
+                 augment=False, label_mapping=None, data_splits=None, superpoint=False, max_val_points=150000,
+                 dbscan_eps=0.5):
+        import glob
+        with open(config_file, "r") as f:
+            self.config = yaml.safe_load(f)
+        raiz = os.environ.get("ARCH_TILES", self.config["dataset_path"])
+        self.files = {"input": []}
+        for sub in self.config["split_sequence"][split]:
+            self.files["input"] += sorted(glob.glob(os.path.join(raiz, sub, "*.npz")))
+        if not self.files["input"]:
+            raise RuntimeError(f"No hay bloques .npz en {raiz} ({self.config['split_sequence'][split]})")
+        self.filenames = self.files["input"]
+        self.num_files = len(self.filenames)
+        self.voxel_size, self.downsampling, self.split = voxel_size, downsampling, split
+        self.max_val_points, self.dbscan_eps = max_val_points, dbscan_eps
+        self.superpoint, self.data_splits = superpoint, data_splits
+        self.augment = split == "train" and augment
+        lm = self.config["learning_map"]
+        self.lm_tab = np.full(max(lm) + 1, -1, np.int64)
+        for k, v in lm.items():
+            self.lm_tab[k] = v
+        self.label_mapping = label_mapping
+        if label_mapping is not None:
+            self.map_tab = np.full(max(label_mapping) + 2, -1, np.int64)
+            for k, v in label_mapping.items():
+                self.map_tab[k] = v
+            self.unseen_id = max(label_mapping.values())   # id de la clase "nueva" (la de los desconocidos)
+        if self.augment:
+            self.voxelizer = Voxelizer(
+                voxel_size=voxel_size, clip_bound=None, use_augmentation=True,
+                scale_augmentation_bound=(0.95, 1.05),
+                rotation_augmentation_bound=((-np.pi / 20, np.pi / 20),) * 3,
+                translation_augmentation_ratio_bound=None, ignore_label=-1)
+        self._regiones = {}
+
+    def __len__(self):
+        return self.num_files
+
+    def _regiones_bloque(self, t, xyz, lab_map):
+        """Region (DBSCAN, eps m) de cada punto de la clase nueva; -1 en el resto. Sobre el bloque completo."""
+        if t in self._regiones:
+            return self._regiones[t]
+        clave = (f"{CACHE_ROOT}/ArCH/{self.data_splits}_{self.unseen_id}_{self.dbscan_eps}/"
+                 f"{os.path.basename(self.files['input'][t])}.pkl")
+        if os.path.exists(clave):
+            with open(clave, "rb") as f:
+                reg = pickle.load(f)
+        else:
+            reg = np.full(len(xyz), -1, np.int64)
+            m = lab_map == self.unseen_id
+            if m.sum() >= 2:
+                from sklearn import cluster
+                from scipy.spatial import cKDTree
+                p = xyz[m]
+                # DBSCAN sobre una version submuestreada (0.2 m) y se propaga al resto: con 5 cm de resolucion
+                # DBSCAN directo tendria cientos de vecinos por punto.
+                g = np.floor(p / 0.2).astype(np.int64)
+                _, idx = np.unique(g, axis=0, return_index=True)
+                lab = cluster.DBSCAN(eps=self.dbscan_eps, min_samples=2).fit(p[idx]).labels_
+                _, vec = cKDTree(p[idx]).query(p)
+                reg[m] = lab[vec]
+            os.makedirs(os.path.dirname(clave), exist_ok=True)
+            with open(clave, "wb") as f:
+                pickle.dump(reg, f)
+        self._regiones[t] = reg
+        return reg
+
+    def __getitem__(self, t):
+        z = np.load(self.files["input"][t])
+        coordinates = z["xyz"].astype(np.float32)
+        raw = z["label"].astype(np.int64)
+        labels = self.lm_tab[np.clip(raw, 0, len(self.lm_tab) - 1)]   # ids aprendidos; -1 = ignorada
+        n = len(coordinates)
+        if self.superpoint and self.label_mapping is not None:
+            lm_full = np.where(labels >= 0, self.map_tab[np.clip(labels, 0, len(self.map_tab) - 1)], -1)
+            sup_full = self._regiones_bloque(t, coordinates, lm_full)
+        else:
+            sup_full = np.full(n, -1, np.int64)
+
+        if self.augment:
+            selected_idx = np.sort(np.random.choice(n, min(self.downsampling, n), replace=False))
+        elif self.split != "train" and n > self.max_val_points:
+            selected_idx = np.sort(np.random.RandomState(t).choice(n, self.max_val_points, replace=False))
+        else:
+            selected_idx = np.arange(n)
+        coordinates, labels, sup_label = coordinates[selected_idx], labels[selected_idx], sup_full[selected_idx]
+        features = np.ones((len(coordinates), 1))
+        if self.augment:
+            voxel_mtx, affine_mtx = self.voxelizer.get_transformation_matrix()
+            rigid = affine_mtx @ voxel_mtx
+            homo = np.hstack((coordinates, np.ones((len(coordinates), 1), dtype=coordinates.dtype)))
+            coordinates = homo @ rigid.T[:, :3]
+
+        ok = labels != -1
+        coordinates, features, labels, sup_label, selected_idx = (
+            coordinates[ok], features[ok], labels[ok], sup_label[ok], selected_idx[ok])
+        mapped_labels = self.map_tab[labels] if self.label_mapping is not None else np.copy(labels)
+
+        discrete_coords, unique_map = ME.utils.sparse_quantize(
+            coordinates=coordinates, return_index=True, quantization_size=self.voxel_size)
+        unique_sup_label = sup_label[unique_map]
+        return (discrete_coords, features[unique_map], labels[unique_map], selected_idx[unique_map],
+                mapped_labels[unique_map], unique_sup_label, np.unique(unique_sup_label), t)
 
 
 class SemanticPOSSRestrictedDatasetCleanSplit(SemanticPOSSRestrictedDataset):

@@ -1,0 +1,66 @@
+# ArCH (Politecnico di Torino, CC BY-NC-SA 4.0): 17 escenas de patrimonio, ya convertidas a bloques .npz
+# con experimentacion/arch_entrenamiento/convertir_arch.py. Entrenamiento = carpeta Training, validacion = Test.
+# La ruta se puede cambiar con la variable de entorno ARCH_TILES.
+dataset_path: /content/drive/MyDrive/PFC1_HyperNCD_Sonata/arch/tiles/
+
+folder_name:
+  input: ""
+  label: ""
+
+split_sequence:   # carpetas dentro de dataset_path
+  train: [Training]
+  valid: [Test]
+
+# Clases de ArCH (0..9). "other" (9) se ignora: los autores desaconsejan usarla.
+learning_map:
+  0: 0   # arch
+  1: 1   # column
+  2: 2   # moldings
+  3: 3   # floor
+  4: 4   # door_window
+  5: 5   # wall
+  6: 6   # stairs
+  7: 7   # vault
+  8: 8   # roof
+  9: -1  # other (ignorada)
+
+learning_map_inv:
+  -1: 9
+  0: 0
+  1: 1
+  2: 2
+  3: 3
+  4: 4
+  5: 5
+  6: 6
+  7: 7
+  8: 8
+
+labels:
+  0: "arch"
+  1: "column"
+  2: "moldings"
+  3: "floor"
+  4: "door_window"
+  5: "wall"
+  6: "stairs"
+  7: "vault"
+  8: "roof"
+  9: "other"
+
+# Clases NUEVAS (las que HyperNCD debe descubrir sin etiquetas). El resto son conocidas.
+# Elegidas por ser los elementos arquitectonicos de interes de la tesis (arco, columna, boveda/cupula).
+# Se puede cambiar aqui, o por linea de comandos con --novel 0 1 7 (ids de arriba).
+novel_classes: [0, 1, 7]
+
+content:  # proporcion de puntos por clase (ArCH completo, 136 M de puntos)
+  0: 0.035
+  1: 0.023
+  2: 0.101
+  3: 0.105
+  4: 0.045
+  5: 0.394
+  6: 0.014
+  7: 0.135
+  8: 0.092
+  9: 0.057

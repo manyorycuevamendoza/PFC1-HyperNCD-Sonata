@@ -18,7 +18,7 @@ SEED = 1234
 
 parser = ArgumentParser()
 parser.add_argument("-s", "--split", type=int, help="split", required=True)
-parser.add_argument("--dataset", choices=["SemanticKITTI", "SemanticPOSS"], default="SemanticPOSS", type=str,
+parser.add_argument("--dataset", choices=["SemanticKITTI", "SemanticPOSS", "ArCH"], default="SemanticPOSS", type=str,
                     help="dataset")
 parser.add_argument("--dataset_config", default=None, type=str, help="dataset config file")
 parser.add_argument("--voxel_size", default="0.05", type=float, help="voxel_size")
@@ -77,6 +77,8 @@ parser.add_argument("--use_imbalanced_region", default=False, action="store_true
 parser.add_argument("--use_gt", default=False, action="store_true", help="")
 parser.add_argument("--exp_path", default=None, help="")
 parser.add_argument("--dbscan", type=float, default=0.5)
+parser.add_argument("--novel", type=int, nargs="+", default=None,
+                    help="ids (ya mapeados) de las clases nuevas; por defecto novel_classes del config o el reparto de SemanticPOSS")
 parser.add_argument("--profile", default=False, action="store_true",
                     help="perfilar tiempos, VRAM y FLOPs (ver utils/profiling.py)")
 parser.add_argument("--profile_dir", default="profiling", type=str, help="carpeta de salida del perfilado")
@@ -108,15 +110,22 @@ def main(args):
             args.dataset_config = "config/semkitti_dataset.yaml"
         elif args.dataset == "SemanticPOSS":
             args.dataset_config = "config/semposs_dataset.yaml"
+        elif args.dataset == "ArCH":
+            args.dataset_config = "config/arch_dataset.yaml"
         else:
             raise NameError(f"Dataset {args.dataset} not implemented")
 
     with open(args.dataset_config, "r") as f:
         dataset_config = yaml.safe_load(f)
 
-    unknown_labels = unk_labels.unknown_labels(
-        split=args.split, dataset_config=dataset_config
-    )
+    if args.novel is not None:
+        unknown_labels = list(args.novel)
+    elif "novel_classes" in dataset_config:
+        unknown_labels = list(dataset_config["novel_classes"])   # clases nuevas fijadas en el config (ArCH)
+    else:
+        unknown_labels = unk_labels.unknown_labels(
+            split=args.split, dataset_config=dataset_config
+        )
 
     number_of_unk = len(unknown_labels)
 
