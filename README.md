@@ -102,7 +102,7 @@ Se descargó por FTP temporal directo a Drive desde Colab (no pasa por la laptop
 | bloques de 10 m para entrenar | `arch/tiles/` (los crea `colab_entrenamiento_arch.ipynb`) |
 | checkpoints, logs y mediciones del entrenamiento | `arch/entrenamiento/` |
 
-Estado: datos descargados y resumidos; HyperNCD (M2) **entrenado 30 épocas en Colab T4 (75 min)**: mIoU de validación 0,489 y, en la capilla, la cabeza dominante baja de 98,4 % a 44,6 % (NMI 0,02 a 0,19). Detalle en `experimentacion/arch_entrenamiento/README.md`. Con ese M2, M4 base (`f_sem` + `f_geo`) alcanza a M4 (`f_sem` + `f_ssl`): 52,9 contra 50,6 de mIoU 1 a 1 (una escena, una semilla).
+Estado: datos descargados y resumidos; HyperNCD (M2) **entrenado 30 épocas en Colab T4 (75 min)**: mIoU de validación 0,489 y, en la capilla, la cabeza dominante baja de 98,4 % a 44,6 % (NMI 0,02 a 0,19). Detalle en `experimentacion/arch_entrenamiento/README.md`. Con 10 semillas (una escena, K = 8, mIoU 1 a 1 sin `otro`): M4 52,5 ± 2,5, M4 base 51,4 ± 1,7, M2 48,4 ± 1,1, M3 45,4 ± 8,5; la diferencia M4 contra M4 base (+1,1) cae dentro del ruido. Ver `experimentacion/modulo4_fusion/README.md`.
 
 ## Primera vez en Khipu
 

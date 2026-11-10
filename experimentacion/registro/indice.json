@@ -817,7 +817,7 @@
      "experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/evaluacion_miou.png"
     ],
     "visores": [
-     "experimentacion/arch_entrenamiento/visor/visor_escena_m2_arch.html"
+     "experimentacion/arch_entrenamiento/visor/visor_escena_comparacion_m2.html"
     ]
    },
    "datos_pesados": [
@@ -878,7 +878,7 @@
      "experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/evaluacion_miou.png"
     ],
     "visores": [
-     "experimentacion/arch_entrenamiento/visor/visor_escena_m2_arch.html"
+     "experimentacion/arch_entrenamiento/visor/visor_escena_comparacion_m2.html"
     ]
    },
    "datos_pesados": [
@@ -888,6 +888,108 @@
     }
    ],
    "notas": "Una corrida, una semilla, una escena. M4 agrupa TODOS los puntos (--todos), porque el M2 de ArCH marca solo 12,6 % como novedosos; el texto 'solo los que M2 marca como novedosos' de evaluacion.md ya no aplica. mIoU con asignacion 1 a 1 y K=8, sin 'otro'. Con M2 sano, la linea base M4_base (f_sem + f_geo) sube de 32,1 a 52,9 y alcanza a M4 (50,6) y a M3 (52,5): la ventaja de f_ssl sobre f_geo que se veia antes dependia del M2 colapsado. Por clase (K=6, mayoria): arco y columna siguen siendo las peores en M3 y M4."
+  },
+  {
+   "id": "m4_fusion_barrido",
+   "etapa": "M4",
+   "titulo": "Barrido de fusiones deterministas de f_sem y f_ssl en M4",
+   "descripcion": "39 configuraciones (preprocesado raw/center/PCA con blanqueo; fusion lineal, producto, minimo, por confianza de M2 y SNF; pesos de f_sem; peso de la geometria) x 4 combinaciones HyperNCD x Sonata x 5 semillas, con protocolo de dos mitades espaciales (elegir en una, reportar en la otra).",
+   "estado": "hecho (1 escena, 5 semillas)",
+   "fecha": "2026-11-10",
+   "entradas": [
+    "m4_arch_m3original",
+    "m4_arch_m3adaptado",
+    "m4_referencias_semillas"
+   ],
+   "parametros": {
+    "K": 8,
+    "semillas": 5,
+    "configuraciones": 39,
+    "celda_m": 0.75,
+    "protocolo": "mitades espaciales A/B"
+   },
+   "hardware": "Laptop CPU",
+   "costo": {
+    "min_por_combinacion": 5
+   },
+   "metricas": {
+    "mejora_honesta_arch_original": -0.2,
+    "mejora_honesta_arch_adaptado": 1.1,
+    "mejora_honesta_semposs_original": 8.8,
+    "mejora_honesta_semposs_adaptado": 18.2,
+    "consistentes_en_las_4_combinaciones": "raw|conf y raw|prod|a=0.1 (+1,3 a +1,8 con M2 sano; +4,7 a +6,7 con M2 colapsado)"
+   },
+   "resultados": {
+    "documento": "experimentacion/modulo4_fusion/README.md",
+    "json": [
+     "experimentacion/modulo4_fusion/resultados/arch_original/resultados.json",
+     "experimentacion/modulo4_fusion/resultados/arch_adaptado/resultados.json",
+     "experimentacion/modulo4_fusion/resultados/semposs_original/resultados.json",
+     "experimentacion/modulo4_fusion/resultados/semposs_adaptado/resultados.json"
+    ],
+    "imagenes": [
+     "experimentacion/modulo4_fusion/resultados/comparacion_combos.png"
+    ],
+    "visores": []
+   },
+   "datos_pesados": [
+    {
+     "que": "cache de descriptores por region (cache_regiones.npz, no va a git)",
+     "donde": "local experimentacion/modulo4_fusion/resultados/<combinacion>/; se regenera con barrido_fusion.py"
+    }
+   ],
+   "notas": "Ninguna fusion mejora de forma significativa con el M2 sano; con el M2 colapsado, PCA con blanqueo, minimo y SNF rescatan a M4 de ~42 a ~50 (peor caso de una familia: -16 puntos). Elegir la mejor configuracion con las mismas etiquetas infla el resultado (57,3 no se repitio). Las fusiones se basan en SNF (Wang 2014), agrupamiento multivista (Kumar 2011) y blanqueo antes del coseno; ver las fuentes en el README."
+  },
+  {
+   "id": "m4_referencias_semillas",
+   "etapa": "M4",
+   "titulo": "Escena etiquetada: M2, M3, M4 base y M4 con 10 semillas (barras de error)",
+   "descripcion": "Repite M2, M3, M4 base (f_sem + f_geo) y M4 (f_sem + f_ssl) con 10 semillas de inicializacion sobre los descriptores por region, para las 4 combinaciones HyperNCD (original SemanticPOSS / adaptado ArCH) x Sonata (original / adaptado). Corrige las cifras de una sola semilla de las evaluaciones anteriores.",
+   "estado": "hecho (1 escena, 10 semillas)",
+   "fecha": "2026-11-10",
+   "entradas": [
+    "m4_arch_m3original",
+    "m4_arch_m3adaptado",
+    "escena_m4_m3adaptado"
+   ],
+   "parametros": {
+    "K": 8,
+    "semillas": 10,
+    "celda_m": 0.75,
+    "asignacion": "1 a 1 (hungaro)",
+    "ignorada": "otro"
+   },
+   "hardware": "Laptop CPU",
+   "costo": {
+    "s": 200
+   },
+   "metricas": {
+    "arch_original_M4": "52.5 +- 2.5",
+    "arch_original_M4_base": "51.4 +- 1.7",
+    "arch_original_M2": "48.4 +- 1.1",
+    "M3_original": "45.4 +- 8.5 (rango 33 a 53)",
+    "semposs_original_M4": "43.4 +- 8.2",
+    "semposs_original_M4_base": "32.5 +- 0.6",
+    "arch_adaptado_M4": "47.0 +- 0.8",
+    "M3_adaptado": "34.3 +- 1.7"
+   },
+   "resultados": {
+    "documento": "experimentacion/modulo4_fusion/README.md",
+    "json": [
+     "experimentacion/modulo4_fusion/resultados/referencias_semillas.json"
+    ],
+    "imagenes": [
+     "experimentacion/modulo4_fusion/resultados/referencias_semillas.png"
+    ],
+    "visores": []
+   },
+   "datos_pesados": [
+    {
+     "que": "cache de descriptores por region (cache_regiones.npz, no va a git)",
+     "donde": "local experimentacion/modulo4_fusion/resultados/<combinacion>/; se regenera con barrido_fusion.py"
+    }
+   ],
+   "notas": "El 53,4 de M3 original y el 52,5 de M4 con HyperNCD original de las tablas anteriores eran una semilla afortunada. Con un M2 sano M4 supera a M3 y a M2 pero no de forma significativa a M4 base (+1,1 con desviaciones de 1,7 a 2,5). Las desviaciones son solo de la inicializacion, no de escenas distintas."
   }
  ]
 }

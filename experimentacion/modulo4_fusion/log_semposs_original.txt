@@ -1,0 +1,61 @@
+﻿regiones 3,831; puntos agrupados 1,130,200 de 1,135,946
+cache -> experimentacion\modulo4_fusion\resultados\semposs_original\cache_regiones.npz (16s)
+semposs_original: 3,831 regiones; clases ['arco', 'columna', 'cupula', 'pared', 'techo', 'otro']; ignoradas ['otro']
+mitades por el eje y: A 1874 regiones, B 1957
+39 configuraciones x K [6, 8] x 5 semillas
+codigo original m4_regiones (media de 5 semillas), K=8: mIoU 1 a 1 = 42.1
+[1/39] base_M4_actual         K=8: 42.1 (A 40.8 | B 43.3)  estab 0.58  [6s]
+[2/39] raw|lineal|a=0.1       K=8: 45.5 (A 44.2 | B 47.3)  estab 0.71  [13s]
+[3/39] raw|lineal|a=0.25      K=8: 40.2 (A 38.9 | B 41.9)  estab 0.64  [19s]
+[4/39] raw|lineal|a=0.75      K=8: 50.1 (A 51.6 | B 49.2)  estab 0.83  [26s]
+[5/39] raw|lineal|a=0.9       K=8: 43.3 (A 44.6 | B 43.2)  estab 0.74  [32s]
+[6/39] raw|prod|a=0.1         K=8: 48.8 (A 48.4 | B 50.2)  estab 0.60  [40s]
+[7/39] raw|prod|a=0.25        K=8: 45.6 (A 44.4 | B 47.2)  estab 0.62  [47s]
+[8/39] raw|prod|a=0.5         K=8: 50.6 (A 49.9 | B 52.5)  estab 0.64  [54s]
+[9/39] raw|prod|a=0.75        K=8: 50.4 (A 49.7 | B 52.0)  estab 0.63  [61s]
+[10/39] raw|prod|a=0.9         K=8: 52.3 (A 51.0 | B 54.2)  estab 0.80  [69s]
+[11/39] raw|min                K=8: 51.4 (A 50.5 | B 52.9)  estab 0.80  [75s]
+[12/39] raw|conf               K=8: 48.8 (A 47.8 | B 50.2)  estab 0.66  [82s]
+[13/39] raw|snf                K=8: 52.7 (A 51.4 | B 54.4)  estab 0.73  [101s]
+[14/39] center|lineal|a=0.1    K=8: 45.9 (A 44.7 | B 47.9)  estab 0.64  [107s]
+[15/39] center|lineal|a=0.25   K=8: 37.8 (A 35.9 | B 41.7)  estab 0.73  [114s]
+[16/39] center|lineal|a=0.5    K=8: 40.2 (A 41.6 | B 41.1)  estab 0.69  [120s]
+[17/39] center|lineal|a=0.75   K=8: 38.2 (A 39.3 | B 37.8)  estab 0.76  [126s]
+[18/39] center|lineal|a=0.9    K=8: 35.5 (A 36.2 | B 35.9)  estab 0.66  [133s]
+[19/39] center|prod|a=0.1      K=8: 41.2 (A 43.4 | B 40.4)  estab 0.66  [140s]
+[20/39] center|prod|a=0.25     K=8: 39.3 (A 39.8 | B 41.2)  estab 0.65  [147s]
+[21/39] center|prod|a=0.5      K=8: 42.1 (A 43.2 | B 42.2)  estab 0.63  [154s]
+[22/39] center|prod|a=0.75     K=8: 39.7 (A 40.9 | B 39.6)  estab 0.77  [160s]
+[23/39] center|prod|a=0.9      K=8: 38.9 (A 40.0 | B 38.8)  estab 0.65  [167s]
+[24/39] center|min             K=8: 37.4 (A 36.5 | B 40.1)  estab 0.69  [173s]
+[25/39] center|conf            K=8: 37.5 (A 37.8 | B 39.2)  estab 0.58  [179s]
+[26/39] center|snf             K=8: 40.9 (A 43.4 | B 40.5)  estab 0.69  [196s]
+[27/39] pca|lineal|a=0.1       K=8: 50.9 (A 51.0 | B 51.9)  estab 0.54  [198s]
+[28/39] pca|lineal|a=0.25      K=8: 49.7 (A 48.9 | B 51.6)  estab 0.52  [201s]
+[29/39] pca|lineal|a=0.5       K=8: 43.8 (A 43.9 | B 45.3)  estab 0.56  [204s]
+[30/39] pca|lineal|a=0.75      K=8: 40.0 (A 39.6 | B 40.7)  estab 0.63  [206s]
+[31/39] pca|lineal|a=0.9       K=8: 37.0 (A 36.6 | B 39.6)  estab 0.68  [209s]
+[32/39] pca|prod|a=0.1         K=8: 50.2 (A 51.3 | B 50.1)  estab 0.55  [212s]
+[33/39] pca|prod|a=0.25        K=8: 46.9 (A 49.3 | B 46.3)  estab 0.60  [215s]
+[34/39] pca|prod|a=0.5         K=8: 49.0 (A 49.3 | B 49.5)  estab 0.65  [218s]
+[35/39] pca|prod|a=0.75        K=8: 44.6 (A 45.0 | B 44.6)  estab 0.59  [221s]
+[36/39] pca|prod|a=0.9         K=8: 44.3 (A 44.4 | B 45.3)  estab 0.60  [225s]
+[37/39] pca|min                K=8: 51.2 (A 52.6 | B 50.4)  estab 0.67  [228s]
+[38/39] pca|conf               K=8: 46.2 (A 47.9 | B 45.3)  estab 0.59  [230s]
+[39/39] pca|snf                K=8: 51.3 (A 51.0 | B 53.0)  estab 0.69  [244s]
+  geo  raw|snf|geo=0.0                K=8: 38.6 (A 37.7 | B 39.7)
+  geo  raw|snf|geo=0.25               K=8: 47.1 (A 46.2 | B 48.1)
+  geo  raw|prod|a=0.9|geo=0.0         K=8: 44.1 (A 44.6 | B 44.7)
+  geo  raw|prod|a=0.9|geo=0.25        K=8: 48.0 (A 47.1 | B 49.6)
+  geo  raw|min|geo=0.0                K=8: 41.8 (A 41.7 | B 43.2)
+  geo  raw|min|geo=0.25               K=8: 43.6 (A 43.9 | B 44.1)
+  geo  pca|snf|geo=0.0                K=8: 40.0 (A 39.7 | B 41.1)
+  geo  pca|snf|geo=0.25               K=8: 49.4 (A 50.5 | B 49.6)
+  geo  base_M4_actual|geo=0.0         K=8: 45.3 (A 45.3 | B 45.8)
+  geo  base_M4_actual|geo=0.25        K=8: 47.6 (A 48.3 | B 48.7)
+
+=== PROTOCOLO HONESTO (K=8, mIoU 1 a 1, sin otro) ===
+base (M4 actual): A 40.8 | B 43.3 | media 42.1 | escena completa 42.1
+elegida en A: pca|min -> en B 50.4  |  elegida en B: raw|snf -> en A 51.4
+estimacion honesta: 50.9  (mejora sobre la base: +8.8 puntos)
+mejor por mIoU de la escena completa (optimista): raw|snf = 52.7

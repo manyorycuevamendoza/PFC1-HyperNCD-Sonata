@@ -65,6 +65,8 @@ python experimentacion/registro/registrar.py
 
 ## M4 con el M2 de ArCH (corrido en la laptop, CPU, 79 s y 68 s)
 
+> **CORRECCIÓN (10-nov-2026, más tarde): esta tabla usa UNA semilla y engaña.** Al repetir con 10 semillas (`../modulo4_fusion/`), M3 con Sonata original da **45,4 ± 8,5** (rango 33 a 53), no 53,4, y M4 con el HyperNCD original da 43,4 ± 8,2, no 52,5: los agrupamientos con un `f_sem` colapsado o con `f_ssl` solo son muy sensibles a la semilla. Con 10 semillas y el M2 de ArCH el orden es **M4 52,5 ± 2,5 > M4 base 51,4 ± 1,7 > M2 48,4 ± 1,1 > M3 45,4 ± 8,5** (K = 8, 1 a 1, sin `otro`). Las conclusiones 2 y 3 de abajo, escritas con una semilla, **quedan superadas**; léase `../modulo4_fusion/README.md`. La tabla se deja como estaba para que se vea de dónde salió el error.
+
 M4 con el `f_sem` de ArCH (último checkpoint) y los `f_ssl` de la capilla (Sonata original y adaptado), con `--todos` (agrupa todos los puntos; ver conclusión 3). mIoU en %, **sin `otro`, K = 8, asignación 1 a 1** (entre paréntesis, por mayoría). Mismo evaluador y mismas etiquetas que la corrida anterior. Tabla y gráfico: `resultados/m4_capilla/comparacion_m2.{md,csv,png}`.
 
 | Método | M2 SemanticPOSS + Sonata original | **M2 ArCH** + Sonata original | M2 SemanticPOSS + Sonata adaptado | **M2 ArCH** + Sonata adaptado |
@@ -83,7 +85,17 @@ M4 con el `f_sem` de ArCH (último checkpoint) y los `f_ssl` de la capilla (Sona
 
 **Límites.** Con `--todos` se agrupan todos los puntos (la salida de `evaluar_m4.py` aún dice "solo los que M2 marca como novedosos": ya no aplica). El M2 de ArCH se entrenó con otras clases conocidas/novedosas que las de la capilla. Falta: más escenas y semillas, M4 con otras fusiones, y la sonda lineal de Sonata.
 
-**Visor 3D** (M1 a M4, aciertos y errores, original contra adaptado): `visor/visor_escena_m2_arch.html` (no va a git; se regenera con `generar_visor_escena.py --datos arch_entrenamiento/datos_visor --resultados arch_entrenamiento/resultados/visor_base`). No lo abrí en un navegador, solo comprobé que se genera.
+6. **Por clase (IoU 1 a 1, K = 8; tabla en `resultados/m4_capilla/comparacion_m2.md`):** con el M2 de ArCH el **arco** mejora mucho en M4 base (13,9 a 49,8) y en M4 (18,8 a 42,3), pero la **cúpula** en M4 **cae** de 80,5 a 43,0: `f_sem` pesa más en la fusión y ArCH separa peor la cúpula que `f_ssl`. Es decir, el M2 nuevo no mejora todo: cambia qué clases se ganan y cuáles se pierden.
+
+**Visor 3D con las dos variantes de M2** (`visor/visor_escena_comparacion_m2.html`, 11 MB, no va a git): M1 a M4 con aciertos y errores (TP/FP/FN), **2 M2 (SemanticPOSS, ArCH) × 2 Sonata (original, adaptado)** = 4 variantes de M3 y de M4, más la línea base M4 (`f_sem` + `f_geo`) de cada M2. La pestaña **Lado a lado → «TODO cruzado»** muestra 8 paneles con la misma cámara: por cada M2, M2 · base `f_geo` · M4 con Sonata original · M4 con Sonata adaptado, cada uno con su mIoU. La pestaña **Tablas** compara las 4 variantes por K y módulo. En la pestaña **M2** se elige el M2 (SemanticPOSS o ArCH); en **M3** solo se elige Sonata original o adaptado (M3 no depende de M2; se usa la corrida que agrupa todos los puntos); en **M4** se elige M2 + Sonata y el módulo (M4, M4 base o M2 por regiones). Se regenera con:
+En el visor, el M2 de SemanticPOSS se llama **«HyperNCD original»** y el de ArCH **«HyperNCD adaptado»**, en paralelo a Sonata original y adaptado. Ojo con el sentido de «adaptado»: Sonata adaptado es el original con más preentrenamiento sin etiquetas en la Catedral; HyperNCD adaptado se **entrenó desde cero en ArCH** (no se afinó el checkpoint de SemanticPOSS). El tercer campo de `--fuente` es el nombre que se muestra.
+```bash
+python experimentacion/evaluacion_etiquetada/generar_visor_escena.py \
+  --fuente "SemanticPOSS=experimentacion/escena_capilla_etiquetada/datos,experimentacion/escena_capilla_etiquetada/resultados,HyperNCD original (SemanticPOSS)" \
+  --fuente "ArCH=experimentacion/arch_entrenamiento/datos_visor,experimentacion/arch_entrenamiento/resultados/visor_base,HyperNCD adaptado (ArCH)" \
+  --salida experimentacion/arch_entrenamiento/visor/visor_escena_comparacion_m2.html
+```
+Necesita internet (Plotly por CDN). No pude abrirlo en un navegador: probé su JavaScript con un entorno simulado en Node (185 renders, 0 errores, y los mIoU de los paneles coinciden con la tabla), pero conviene que lo mires. En el panel «M2» el mIoU es el de las cabezas como clasificador punto a punto (SemanticPOSS 9,3; ArCH 42,6), distinto del 34,1/49,0 de la tabla, que agrupa `f_sem` en K = 8 grupos.
 
 **Cómo se corrió M4 en local** (`f_ssl` bajados de Drive a `escena_capilla_etiquetada/datos/m3/salida/capilla_etiquetada/`):
 ```bash
@@ -105,7 +117,7 @@ python experimentacion/arch_entrenamiento/comparar_m2_m4.py
 | `resultados/m2_capilla/` | métricas e imágenes de M2 en la capilla (SemanticPOSS contra ArCH) | sí |
 | `resultados/m4_capilla/` | evaluaciones de M4 (`evaluacion/`, `evaluacion_sin_otro/`), `comparacion_m2.{md,csv,png}` y logs; los `grupos_PL13.npz` no van a git | sí, salvo los `.npz` |
 | `resultados/visor_base/` | tablas estilo papers, etapas y evaluaciones que usa el visor | sí |
-| `visor/visor_escena_m2_arch.html`, `datos_visor/` | visor 3D y copias de trabajo (enlaces duros a los datos) | no (se regeneran) |
+| `visor/visor_escena_comparacion_m2.html`, `datos_visor/` | visor 3D con las dos variantes de M2 y copias de trabajo (enlaces duros a los datos) | no (se regeneran) |
 | `resultados_colab/` | el zip de Colab tal cual (logs, mediciones y predicciones `.npz`) | solo lo liviano; los `.npz` no |
 
 Licencia de ArCH: CC BY-NC-SA 4.0 (Politecnico di Torino); citar el dataset en la tesis.

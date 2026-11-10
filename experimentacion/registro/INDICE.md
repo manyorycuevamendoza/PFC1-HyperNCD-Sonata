@@ -39,3 +39,5 @@ Generado por `registrar.py`; no editar a mano. Visor: `experimentacion/visor/ind
 | `escena_m4_m3original` — Escena etiquetada: M4 con Sonata original | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab (CPU) | escena_m2, escena_m3_original |
 | `m4_arch_m3adaptado` — Escena etiquetada: M4 con M2 de ArCH + Sonata adaptado | 2026-11-10 | hecho (1 corrida, 1 escena) | Laptop CPU (RTX 3050 sin usar) | escena_m2_arch_e30, escena_m3_adaptado |
 | `m4_arch_m3original` — Escena etiquetada: M4 con M2 de ArCH + Sonata original | 2026-11-10 | hecho (1 corrida, 1 escena) | Laptop CPU (RTX 3050 sin usar) | escena_m2_arch_e30, escena_m3_original |
+| `m4_fusion_barrido` — Barrido de fusiones deterministas de f_sem y f_ssl en M4 | 2026-11-10 | hecho (1 escena, 5 semillas) | Laptop CPU | m4_arch_m3original, m4_arch_m3adaptado, m4_referencias_semillas |
+| `m4_referencias_semillas` — Escena etiquetada: M2, M3, M4 base y M4 con 10 semillas (barras de error) | 2026-11-10 | hecho (1 escena, 10 semillas) | Laptop CPU | m4_arch_m3original, m4_arch_m3adaptado, escena_m4_m3adaptado |

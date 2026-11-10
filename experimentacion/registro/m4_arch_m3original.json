@@ -48,7 +48,7 @@
       "experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/evaluacion_miou.png"
     ],
     "visores": [
-      "experimentacion/arch_entrenamiento/visor/visor_escena_m2_arch.html"
+      "experimentacion/arch_entrenamiento/visor/visor_escena_comparacion_m2.html"
     ]
   },
   "datos_pesados": [

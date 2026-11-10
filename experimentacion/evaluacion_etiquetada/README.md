@@ -12,7 +12,7 @@ Herramientas que usan los cuadernos de Colab. **Cómo correr todo:** [`documenta
 | `verificar_etapas.py` | comprueba M1 y M2 contra las etiquetas y resume M3 y M4 desde sus logs |
 | `tablas_papers.py` | tablas al estilo de HyperNCD y de Sonata, FP/FN por clase y gráficos |
 | `sonda_lineal.py` | sonda lineal y k-NN sobre `f_ssl` (protocolo del paper de Sonata), con división espacial; corre en Colab |
-| `generar_visor_escena.py` | visor HTML de M1 a M4 con aciertos y errores (TP, FP, FN) y métricas |
+| `generar_visor_escena.py` | visor HTML de M1 a M4 con aciertos y errores (TP, FP, FN) y métricas; con `--fuente` (repetible) junta **varios M2** (p. ej. SemanticPOSS y ArCH × Sonata original y adaptado) con una comparación cruzada de 8 paneles |
 | `empaquetar.py` | arma, desde el Drive, un zip con solo lo necesario de la escena (sin los `f_ssl`) |
 | `traer_resultados.py` | deja ese zip (o el Drive de escritorio) en `experimentacion/datos/escena_<ESCENA>/` |
 

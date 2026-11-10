@@ -52,6 +52,22 @@ for met in METODOS:
     for m2, var in (("SemanticPOSS", "original"), ("ArCH", "original"), ("SemanticPOSS", "adaptado"), ("ArCH", "adaptado")):
         cel.append(f"{val(m2, var, met, 8, 'mIoU_1a1_pct'):.1f} ({val(m2, var, met, 8, 'mIoU_mayoria_pct'):.1f})")
     md.append(f"| {met} | " + " | ".join(cel) + " |")
+
+# IoU por clase (1 a 1, K=8): cada columna = metodo + M2 + Sonata
+cols_cl = [("M3", "SemanticPOSS", "original", v), ("M3", "ArCH", "original", n),
+           ("M4_base", "SemanticPOSS", "original", v), ("M4_base", "ArCH", "original", n),
+           ("M4", "SemanticPOSS", "original", v), ("M4", "ArCH", "original", n),
+           ("M4", "SemanticPOSS", "adaptado", v), ("M4", "ArCH", "adaptado", n)]
+clases_ev = [c for c in v["clases"] if c != "otro"]
+md += ["", "## IoU por clase (%), 1 a 1, K = 8, sin `otro`", "",
+       "| Clase | " + " | ".join(f"{m} · {m2[:4] if m2 == 'SemanticPOSS' else m2} · {sv[:4]}" for m, m2, sv, _ in cols_cl) + " |",
+       "|---|" + "---|" * len(cols_cl)]
+for c in clases_ev:
+    cel = []
+    for m, m2, sv, ev in cols_cl:
+        cel.append(f"{100 * ev['variantes'][sv]['K'][K][m]['uno_a_uno']['iou_por_clase'][c]:.1f}")
+    md.append(f"| {c} | " + " | ".join(cel) + " |")
+md += ["", "Columnas: método · M2 (Semp = SemanticPOSS) · Sonata (orig = original, adap = adaptado)."]
 (SAL / "comparacion_m2.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 print("\n".join(md))
 
