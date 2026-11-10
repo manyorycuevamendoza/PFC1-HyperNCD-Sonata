@@ -18,13 +18,24 @@
 
 **Métricas** (no dependen de qué clase representa cada cabeza, así que son comparables entre dominios): % en la cabeza dominante, cabezas usadas, entropía normalizada, rango efectivo de `f_sem`, y con etiquetas NMI, ARI y mIoU 1 a 1.
 
-**Hecho ya en local (sin GPU), con salidas guardadas**
+## Resultado (corrido en Colab, T4, 9-nov-2026)
 
-| Escena | Cabeza dominante | Rango `f_sem` |
-|---|---|---|
-| Capilla (época 8) | 98,4 % | 3,4 |
-| PL13 (época 8) | 82,5 % | 2,1 |
-| PL7 (época 8) | 81,4 % | 2,1 |
-| PL13 (época 0) | 95,6 % | 8,8 |
+Mismo código de inferencia, 8 escaneos por secuencia de SemanticPOSS. mIoU 1 a 1 y NMI entre la cabeza y la clase real.
 
-Esto muestra que el colapso no es exclusivo de la capilla. **Falta** correr SemanticPOSS y los otros checkpoints en Colab (el control que puede refutar o apoyar la hipótesis del dominio). Hasta entonces, "dominio" es una hipótesis, no un hecho.
+| Escena | Cabeza dominante | Cabezas > 1 % | Rango `f_sem` | NMI | mIoU 1 a 1 |
+|---|---|---|---|---|---|
+| SemanticPOSS val (03), época 8 | 30,4 % | 7 | 5,4 | **0,48** | **0,375** |
+| SemanticPOSS train (00), época 8 | 28,2 % | 6 | 4,1 | 0,49 | 0,472 |
+| Capilla, época 8 | **98,4 %** | 1 | 3,4 | **0,02** | 0,114 |
+| Capilla a 80 000 puntos, época 8 | 91,8 % | 4 | 1,6 | 0,03 | 0,099 |
+| PL13 / PL7, época 8 | 82,5 % / 81,4 % | 4 | 2,1 | (sin etiquetas) | |
+
+Con la época 4 y con `last` la capilla sigue colapsada (98,2 %; con 80 000 puntos baja a 63,8 % pero NMI 0,08). `last.ckpt` da exactamente lo mismo que la época 4, es decir, **no es la última época**.
+
+**Qué se concluye**
+1. **El checkpoint y la extracción de `f_sem` funcionan.** En SemanticPOSS val el mIoU es 0,375, casi el 0,384 guardado en el checkpoint. No es un bug del pipeline ni un checkpoint malo.
+2. **El colapso aparece al salir del dominio de entrenamiento**: cabeza dominante 30 % en SemanticPOSS contra 98 % en la capilla y 80 % en la Catedral, y NMI 0,48 contra 0,02.
+3. **La densidad de puntos sola no lo explica**: submuestrear la capilla a 80 000 puntos (época 8) sigue dando 92 % en una cabeza.
+4. **Corrección:** el rango efectivo bajo no es señal de colapso. En SemanticPOSS también es bajo (4 a 5) y ahí el modelo funciona. Lo que delata el colapso son el reparto de cabezas y el NMI.
+
+**Límites.** "Dominio" agrupa varias cosas que no separamos: escala de la escena, contenido (edificio contra calle) y patrón de un LiDAR real (anillos, caída con la distancia), que el submuestreo al azar no imita. El experimento apoya la hipótesis de la brecha de dominio; no mide cuál de esos factores pesa más. Falta, por ejemplo, reescalar o recortar la capilla, o ajustar M2 con pocas etiquetas de la Catedral.

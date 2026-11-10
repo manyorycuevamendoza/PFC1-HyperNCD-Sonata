@@ -21,8 +21,7 @@ mIoU en %. La línea base "todo a una clase" da **7,9**.
 
 1. **Sustituir `f_geo` por `f_ssl` ayuda mucho** con el Sonata original: M4 52,5 contra M4 base 32,1 (+20 puntos). Es el núcleo de la tesis.
 2. **El Sonata adaptado empeora** (53,4 → 35,6 en M3). La adaptación no ayudó con la configuración usada (lote 1). *No está demostrado por qué.*
-3. **M4 no mejora a M3 solo** (52,5 contra 53,4): **`f_sem` aporta casi nada**. Comprobado: M2 manda el **98,4 %** de los puntos a una sola cabeza y su `f_sem` tiene
-   rango efectivo **3,4** (el de Sonata ronda 100). Como clasificador punto a punto, M2 queda en mIoU ≈ 9–11 %.
+3. **M4 no mejora a M3 solo** (52,5 contra 53,4): **`f_sem` aporta casi nada**. Comprobado: M2 manda el **98,4 %** de los puntos a una sola cabeza y las cabezas casi no separan las clases (NMI 0,02; en SemanticPOSS, su dominio, 0,48). El rango efectivo bajo (3,4) **no** es la señal: en SemanticPOSS también es bajo (~5). Ver `experimentacion/m2_dominio/`. Como clasificador punto a punto, M2 queda en mIoU ≈ 9–11 %.
 4. **Por clase** (sin `otro`, K = 8, 1 a 1, Sonata original en M3): cúpula 81, pared 69, techo 66, columna 32, arco 18. Las clases grandes salen bien; las **finas** (arco, columna) son las que fallan.
 
 ## Cómo leer estos números (límites)
