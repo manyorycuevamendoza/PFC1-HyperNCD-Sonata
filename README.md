@@ -23,11 +23,16 @@ puntos de la Catedral de Lima (objetivo OE2).
 ├── README.md · ESTADO_DEL_PROYECTO.md · SETUP_KHIPU.md     empieza por aquí
 ├── preprocesar.* · extraer_features.* · predecir_hyperncd.py · hyperncd_*.sbatch · demo_sonata.sbatch
 ├── sonata_adaptacion/             adaptar Sonata a la Catedral en Khipu (preparar + sbatch)
-├── colab_runner.ipynb             M2 en Colab          colab_sonata_adaptacion.ipynb   M3 en Colab
+├── colab_runner.ipynb             M2 en Colab (solo predice)   colab_sonata_adaptacion.ipynb   M3 en Colab
+├── colab_experimento_m2_dominio.ipynb   ¿el colapso de M2 es del dominio?   colab_entrenamiento_arch.ipynb   entrenar M2 con ArCH, medido
 ├── experimentacion/               M4, visores 3D, etiquetado, resultados (cada carpeta con su README)
 │   ├── registro/                  un .json por experimento (qué es, de qué viene, parámetros, costo, métricas)
 │   ├── visor/index.html           VISOR: pestañas M1–M4, lista de experimentos y modo comparar (doble clic)
-│   └── adaptacion_sonata/         experimento: Sonata original vs adaptado (comparación M3, M4 y costo)
+│   ├── adaptacion_sonata/         experimento: Sonata original vs adaptado (comparación M3, M4 y costo)
+│   ├── m2_dominio/                experimento: M2 en SemanticPOSS vs capilla (colapso por dominio)
+│   ├── arch_resumen/              puntos y clases por escena de ArCH
+│   ├── arch_entrenamiento/        convertir ArCH a bloques y entrenar HyperNCD con él
+│   └── monitor_recursos/          mide tiempo, RAM y GPU de cualquier comando
 ├── documentacion/
 │   ├── drive_indice.md            qué hay en cada carpeta del Drive
 │   ├── prompts/                   prompts listos para pegar (p. ej. pruebas de parámetros en Khipu)
@@ -42,6 +47,16 @@ puntos de la Catedral de Lima (objetivo OE2).
 ## Qué modelo y qué pesos usar
 
 Cuál checkpoint es el correcto (M2 época 8, Sonata original y Sonata adaptado), dónde está cada uno y cómo comprobarlo: [`documentacion/modelos_y_pesos.md`](documentacion/modelos_y_pesos.md).
+
+**Resumen rápido de pesos (todos en Drive, `PFC1_HyperNCD_Sonata/`; ninguno va a git):**
+
+| Pesos | Ruta |
+|---|---|
+| M2 HyperNCD, `best-epoch=8-step=11196.ckpt` (SemanticPOSS) | `m2/entrada/datos_m2_descomprimidos/hyperncd/checkpoints/SemanticPOSS/split0_run4/` |
+| M3 Sonata adaptado, `sonata_catedral.pth` | `m3/pesos/` |
+| M3 Sonata original | se descarga de Hugging Face (`facebook/sonata`); no hay archivo propio |
+
+Ojo: `m1/salida/` solo tiene salidas del módulo 1 (`data_m1.tar.gz` y `capilla_etiquetada/`), no pesos.
 
 ## Ver los experimentos
 
@@ -73,6 +88,21 @@ En Google Drive (`PFC1_HyperNCD_Sonata/`) hay una carpeta por módulo: `m1/salid
 es una copia de `data/`, y `m2/`, `m3/`, `m4/` guardan entradas y salidas de cada módulo.
 Para crearla en Khipu: `tar -czf data_m1.tar.gz data` y bajarla con `scp`
 (comandos en `experimentacion/VER_RESULTADOS_SONATA.md`).
+
+### ArCH (dataset público de patrimonio, para entrenar M2)
+
+ArCH Dataset, Politecnico di Torino, licencia **CC BY-NC-SA 4.0** (hay que citarlo en la tesis). 17 escenas
+etiquetadas (15 `Training` + 2 `Test`), 136 millones de puntos, 9 clases útiles más `other` (que se ignora).
+Se descargó por FTP temporal directo a Drive desde Colab (no pasa por la laptop):
+
+| Qué | Ruta en Drive |
+|---|---|
+| `.txt` originales (~10 GB) | `arch/datos/ArCH_labelled/{Training,Test}/` |
+| resumen de puntos y clases por escena | `arch/resumen/resumen_arch.md` |
+| bloques de 10 m para entrenar | `arch/tiles/` (los crea `colab_entrenamiento_arch.ipynb`) |
+| checkpoints, logs y mediciones del entrenamiento | `arch/entrenamiento/` |
+
+Estado: datos descargados y resumidos; el entrenamiento está preparado (`experimentacion/arch_entrenamiento/README.md`) pero **aún no se ha corrido**.
 
 ## Primera vez en Khipu
 

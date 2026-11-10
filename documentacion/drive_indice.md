@@ -20,6 +20,11 @@ PFC1_HyperNCD_Sonata/
 │   ├── pesos/sonata_catedral.pth        pesos adaptados en formato sonata.load
 │   └── salida/                          PL7_SCN0001_adaptado_feats.npz, PL13_SCN0001_adaptado_feats.npz
 ├── m4/salida/                           (reservada: grupos y métricas de la fusión)
+├── arch/                                ArCH (dataset público de patrimonio, CC BY-NC-SA 4.0)
+│   ├── datos/ArCH_labelled/{Training,Test}/   17 .txt originales (~10 GB), bajados por FTP desde Colab
+│   ├── resumen/                         resumen_arch.md/json: puntos y clases por escena
+│   ├── tiles/                           bloques de 10 m para entrenar (los crea colab_entrenamiento_arch.ipynb)
+│   └── entrenamiento/                   checkpoints, logs y medicion/ (tiempo, RAM, GPU) de la corrida con ArCH
 └── entornos/                            entornos compilados para no reinstalar
     ├── pointcept_env_py<...>_torch<...>_cu<...>.tar.gz      (Sonata/Pointcept en Colab)
     └── hyperncd_env_cache.tar.gz                            (HyperNCD / MinkowskiEngine en Colab)
