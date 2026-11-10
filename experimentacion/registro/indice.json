@@ -179,22 +179,24 @@
    ],
    "parametros": {
     "epocas": 30,
-    "iteraciones": 1560,
+    "iteraciones": 3150,
     "loop": 5,
-    "lote": 2,
+    "lote": 1,
     "max_puntos": 32768,
     "lr": 0.0002,
     "amp": "bf16",
     "atencion": "SDPA",
-    "pesos": "teacher, epoca 30"
+    "pesos": "teacher, epoca 30",
+    "iteraciones_por_epoca": 105
    },
    "hardware": "Colab L4 (22.5 GB)",
    "costo": {
     "min_entrenamiento": 103,
     "min_corrida_invalida": 42,
     "checkpoints_gb": 13.3,
-    "forward_s": null,
-    "vram_pico_gb": null
+    "forward_s": 20.3,
+    "vram_pico_gb": 7.4,
+    "fuente_extraccion": "salida guardada del cuaderno colab_sonata_adaptacion (Drive), PL13, L4 con atencion SDPA; PL7: 15.0 s y 5.73 GB"
    },
    "metricas": {
     "filas_rejilla": 796309,
@@ -202,7 +204,8 @@
     "varianza_pca10": 0.4767,
     "rango_efectivo": 81.3,
     "coseno_centrado_vs_original": 0.54,
-    "ari_kmeans8_vs_original": 0.21
+    "ari_kmeans8_vs_original": 0.21,
+    "cambio_relativo_pesos_teacher": 0.0835
    },
    "resultados": {
     "documento": "experimentacion/adaptacion_sonata/README.md",
@@ -227,7 +230,7 @@
      "donde": "Drive m3/pesos/ y m3/entrenamiento/"
     }
    ],
-   "notas": "Control pendiente: extraer PL13 en Colab con los pesos originales para separar el efecto de la adaptacion del del entorno."
+   "notas": "Control pendiente: extraer PL13 en Colab con los pesos originales para separar el efecto de la adaptacion del del entorno. Datos de lote e iteraciones tomados de la salida guardada del cuaderno de Drive (lote 1, LOOP 5)."
   },
   {
    "id": "m4_m2e0_m3orig",

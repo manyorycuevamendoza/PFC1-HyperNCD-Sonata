@@ -12,7 +12,7 @@ Módulo 4?
 | Paso | Detalle |
 |---|---|
 | Datos de entrenamiento | los 21 escaneos de `data/` **menos PL7 y PL13** (se dejan fuera para evaluar). Sin etiquetas |
-| Entrenamiento | Pointcept, config `pretrain-sonata-v1m1-0-base` modificada. Parte de `sonata.pth` (Meta) y sigue con el mismo objetivo auto-supervisado. 30 épocas × 52 iteraciones (`LOOP=5`, lote 2, 32 768 puntos por vista, LR 0,0002, bf16) |
+| Entrenamiento | Pointcept, config `pretrain-sonata-v1m1-0-base` modificada. Parte de `sonata.pth` (Meta) y sigue con el mismo objetivo auto-supervisado. 30 épocas × 105 iteraciones = 3 150 (`LOOP=5`, **lote 1**, 32 768 puntos por vista, LR 0,0002, bf16; datos tomados de la salida guardada del cuaderno en Drive) |
 | Dónde corrió | Google Colab, GPU L4 de 22,5 GB (cuaderno `colab_sonata_adaptacion.ipynb`). La versión para Khipu está en `sonata_adaptacion/` y todavía no se corrió |
 | Atención | parche SDPA de PyTorch (no hay flash-attn); equivalente matemáticamente a la atención original |
 | Pesos usados | el *teacher* de la época 30 (`model_last.pth`), exportado a `m3/pesos/sonata_catedral.pth` |
@@ -73,6 +73,7 @@ El Módulo 4 original reproduce exactamente las cifras de `../modulo4_real/READM
 
 | Medida | Original | Adaptado |
 |---|---|---|
+| Cambio relativo de los pesos del *teacher* (norma) | | **8,35 %** (453 de 453 tensores cambiaron) |
 | Coseno punto a punto (centrado) | media **0,54** (p5 0,35) | |
 | Varianza de la PCA (3 / 10 comps.) | 0,253 / 0,434 | 0,225 / 0,477 |
 | Rango efectivo (riqueza del espacio) | 110,5 | **81,3** |
@@ -99,10 +100,12 @@ corridas (control).
 ### Costo computacional
 
 `resultados/costo/costo_computacional.png`. Entrenamiento: unos **103 min** en la L4
-(1 560 iteraciones, ~3,5 min por época) y 13,3 GB de checkpoints. Además hubo una corrida
+(3 150 iteraciones: 105 por época, ~1,9 s por iteración, ~3,5 min por época) y 13,3 GB de checkpoints. Además hubo una corrida
 inválida de ~42 min por un error de configuración (`loop`), que cuenta como costo de depuración.
-Extraer `f_ssl` de PL13 con el original costó 13,9 s y 34,6 GB de VRAM en Khipu (RTX A6000);
-el valor del adaptado queda **PENDIENTE** (ver abajo).
+Extraer `f_ssl` de PL13 con el original costó 13,9 s y 34,6 GB de VRAM en Khipu (RTX A6000, atención densa);
+con el adaptado costó **20,3 s y 7,40 GB** en la L4 con atención SDPA (PL7: 15,0 s y 5,73 GB), según la salida guardada
+del cuaderno. **No son comparables entre sí**: cambian la GPU y el tipo de atención. Sirven para decir que el adaptado
+cabe en una L4.
 
 ## Cómo leer estos resultados (límites)
 

@@ -1,11 +1,11 @@
 etapa,hardware,valor,unidad,fuente
 adaptacion_entrenamiento_valido,Colab L4 (22.5 GB),103,min,hora de los checkpoints en Drive (epoch_5 05:51 ... epoch_30 07:18); inicio estimado 05:35
-adaptacion_entrenamiento_valido_iteraciones,Colab L4 (22.5 GB),1560,iteraciones,30 epocas x 52 (21 escenas x LOOP 5 / lote 2)
+adaptacion_entrenamiento_valido_iteraciones,Colab L4 (22.5 GB),3150,iteraciones,30 epocas x 105 (21 escenas x LOOP 5 / lote 1); lote segun la salida guardada del cuaderno
 adaptacion_entrenamiento_invalido,Colab L4 (22.5 GB),42,min,corrida con el error de loop (10 it/epoca); log 04:40 -> 05:20
 checkpoints_en_disco,Drive,13.3,GB,ls del directorio model/ (7 archivos de 1.81 GB)
 extraccion_f_ssl_original,Khipu RTX A6000 (48 GB),13.9,s,CONTEXTO_DEFENSA seccion M3 (sin log en el repo)
 extraccion_f_ssl_original_vram_pico,Khipu RTX A6000 (48 GB),34.6,GB,CONTEXTO_DEFENSA seccion M3 (atencion densa sin flash-attn)
-extraccion_f_ssl_adaptado,Colab L4 (22.5 GB),,s,PENDIENTE: pegar la salida de la celda 8 (">>> TIEMPO" y ">>> VRAM PICO")
-extraccion_f_ssl_adaptado_vram_pico,Colab L4 (22.5 GB),,GB,PENDIENTE (con el parche SDPA)
+extraccion_f_ssl_adaptado,Colab L4 (22.5 GB),20.3,s,salida guardada del cuaderno colab_sonata_adaptacion (PL13; PL7 15.0 s)
+extraccion_f_ssl_adaptado_vram_pico,Colab L4 (22.5 GB),7.4,GB,salida guardada del cuaderno (PL13, atencion SDPA; PL7 5.73 GB)
 modulo4_original,Laptop CPU,52,s,corrida de hoy (correr_modulo4_real.py, K=4 y 8)
 modulo4_adaptado,Laptop CPU,48,s,corrida de hoy

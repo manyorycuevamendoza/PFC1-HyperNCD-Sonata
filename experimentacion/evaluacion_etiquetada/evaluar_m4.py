@@ -85,12 +85,17 @@ def main():
     ap.add_argument("--info", required=True, help="<escena>_etiquetas.json (nombres de clases)")
     ap.add_argument("--grupos", nargs="+", required=True, help="nombre=ruta/grupos_PL13.npz (uno o mas)")
     ap.add_argument("--salida", required=True)
+    ap.add_argument("--ignorar", nargs="*", default=[],
+                    help="clases que NO se evaluan (por ejemplo: otro). Sus puntos se tratan como sin etiqueta")
     a = ap.parse_args()
 
     lab = np.load(a.etiquetas)
     info = json.loads(Path(a.info).read_text())
     clases = info["clases"]
     C = len(clases)
+    for c in a.ignorar:
+        assert c in clases, f"Clase '{c}' no existe. Clases: {clases}"
+        lab[lab == clases.index(c)] = -1          # como si no tuvieran etiqueta: no entran a ninguna metrica
     sal = Path(a.salida)
     sal.mkdir(parents=True, exist_ok=True)
 
@@ -124,7 +129,8 @@ def main():
 
     # ---- tabla legible ----
     md = ["# Evaluación con etiquetas", "",
-          f"Clases: {', '.join(f'{c} ({n:,})' for c, n in zip(clases, total))}", "",
+          f"Clases: {', '.join(f'{c} ({n:,})' for c, n in zip(clases, total))}",
+          (f"**Clases ignoradas en la evaluación:** {', '.join(a.ignorar)}" if a.ignorar else ""), "",
           f"**Referencia (todo a '{referencia['clase']}'):** mIoU {referencia['mIoU']:.3f}, "
           f"exactitud {referencia['exactitud']:.3f}. Un mIoU que no supere esto no dice nada.", ""]
     for nombre, bloque in resultado["variantes"].items():

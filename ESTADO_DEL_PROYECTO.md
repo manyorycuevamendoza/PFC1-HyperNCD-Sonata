@@ -17,6 +17,8 @@ documentos enlazados.
 Fuente del estado de M1–M5: `documentacion/contexto/CONTEXTO_DEFENSA_MODULOS_1_Y_3.md`
 (sección 1). Si algo cambia, actualiza esta tabla.
 
+**¿Qué checkpoint es el bueno?** Ver `documentacion/modelos_y_pesos.md` (M2 época 8, Sonata original y adaptado, con rutas y cómo comprobarlas).
+
 ## Mapa de carpetas
 
 ```
@@ -30,7 +32,7 @@ raíz/
 ├── sonata_adaptacion/              M3  adaptación auto-supervisada de Sonata en Khipu
 ├── colab_runner.ipynb              M2  en Google Colab
 ├── colab_sonata_adaptacion.ipynb   M3  adaptación de Sonata en Google Colab
-├── colab_pipeline_etiquetado.ipynb M1→M4  pipeline completo con evaluación con etiquetas (escena `listo`)
+├── colab_1_m1_m2.ipynb + colab_2_m3_m4.ipynb   pipeline M1→M4 con evaluación con etiquetas (escena `listo`)
 ├── experimentacion/                M4, visores, etiquetado y resultados (cada subcarpeta con su README)
 │   ├── registro/ y visor/          registro de experimentos (.json) y visor con pestañas por etapa y modo comparar
 ├── hyperncd/, sonata/              código de terceros (clonados; no tocar)
@@ -141,7 +143,7 @@ contra el Sonata original con el recorte etiquetado de PL13. Se hace con Pointce
 (`configs/sonata/pretrain-sonata-v1m1-0-base.py`), no con la carpeta `sonata/` del repo (solo inferencia).
 
 - **Colab (L4, 22,5 GB):** la primera corrida fue inválida por un error de `loop` (10 iteraciones por época). Corregido,
-  se reentrenó: 30 épocas × 52 iteraciones, ~103 min, `f_ssl` adaptado de PL7 y PL13 extraído (con parche SDPA).
+  se reentrenó: 30 épocas × 105 iteraciones (lote 1), ~103 min, `f_ssl` adaptado de PL7 y PL13 extraído (con parche SDPA).
 - **Khipu:** `sonata_adaptacion/` (preparar + sbatch en un solo job). Escrito, **sin correr todavía**. Comandos en `SETUP_KHIPU.md`.
 - **Resultado (PL13, sin etiquetas)** — detalle y figuras en `experimentacion/adaptacion_sonata/`:
   el descriptor adaptado es bastante distinto del original (coseno medio 0,54; rango efectivo 110 → 81; ARI de
@@ -167,7 +169,7 @@ a quien etiquete es `etiquetado_PL13.zip`. Las etiquetas devueltas
 
 19 `.las` con una pieza por clase (arco, columna, cúpula, pared, techo, otro): una escena de 3,38 M de puntos con
 etiquetas reales. **No está dentro de PL7 ni PL13** (a ~10 m). Herramientas en `experimentacion/evaluacion_etiquetada/`,
-cuaderno `colab_pipeline_etiquetado.ipynb` y guía `documentacion/ejecutar_pipeline_colab.md`. **Falta correrlo en Colab**
+cuadernos `colab_1_m1_m2.ipynb` y `colab_2_m3_m4.ipynb` y guía `documentacion/ejecutar_pipeline_colab.md`. **Falta correrlo en Colab**
 (M2 y M3 no se han probado con ella); con esto se podrá medir mIoU de M2, M3 y M4, original contra adaptado.
 
 ## Recordatorios para la tesis

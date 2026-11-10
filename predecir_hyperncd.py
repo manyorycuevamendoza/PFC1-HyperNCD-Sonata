@@ -244,6 +244,8 @@ def main():
         "pct_retenido": round(pct_retenido, 2),
         "dim_fsem": int(f_sem.shape[1]),
         "dtype": "float32" if args.fp32 else "float16",
+        "gpu": torch.cuda.get_device_name(0),
+        "capacidad_cuda": "%d.%d" % torch.cuda.get_device_capability(0),
         "vram_pico_gb": round(vram_pico, 3),
         "t_lectura_s": round(t_lectura, 3),
         "t_forward_s": round(t_forward, 3),

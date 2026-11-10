@@ -10,7 +10,7 @@ Las referencias bibliográficas se citaron de memoria: **verificarlas antes de u
 |---|---|
 | Sonata original da descriptores estables y con estructura en PL13 (M3) | medido |
 | El M4 con `f_sem` de la época 8 mezcla de verdad las dos fuentes; con la época 0 era casi una copia de M3 | medido |
-| La adaptación de Sonata (lote 2, 21 escaneos, 30 épocas) cambia mucho el descriptor (coseno 0,54) y baja su rango efectivo (110 → 81) | medido |
+| La adaptación de Sonata (lote 1, 21 escaneos, 30 épocas, 3 150 iteraciones) cambia mucho el descriptor (coseno 0,54) y baja su rango efectivo (110 → 81) | medido |
 | En M4 la estabilidad baja con el adaptado en 3 de 4 casos | medido, con **3 semillas y un solo entrenamiento** |
 | La adaptación "no mejora" o "empeora" el descriptor | **no demostrado**: sin etiquetas y sin control |
 | Las bóvedas se sobre-segmentan en M4 y los anillos de la cúpula sí salen coherentes | observación cualitativa, sin número |
@@ -26,7 +26,7 @@ Ver `../adaptacion_sonata/README.md` y `../modulo4_real/README.md`.
 2. **Variabilidad del entrenamiento.** Repetir la adaptación 2 o 3 veces con semillas distintas. Hoy no se
    sabe si 0,629 contra 0,567 de estabilidad es una diferencia real.
 3. **Más semillas en el agrupamiento.** Pasar de 3 a 10 o 20 y reportar media y desviación.
-4. **Lote mayor en Khipu** (A6000 de 48 GB: `BATCH=4` o más, `MAX_PUNTOS=65536`). *Hipótesis:* con lote 2 el
+4. **Lote mayor en Khipu** (A6000 de 48 GB: `BATCH=4` o más, `MAX_PUNTOS=65536`). *Hipótesis:* con lote 1 el
    agrupamiento online de Sonata (Sinkhorn sobre el lote) es muy ruidoso y deriva el descriptor. El original
    usa 96 escenas por paso. `sonata_adaptacion/` ya está listo y falta correrlo.
 5. **Otras épocas y LR.** Se guardaron `epoch_5` a `epoch_30`: exportar varias y compararlas por mIoU. No hay

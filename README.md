@@ -39,6 +39,10 @@ puntos de la Catedral de Lima (objetivo OE2).
 └── data/ · cache/ · logs/ · datos_crudos/    datos de trabajo (NO van a git)
 ```
 
+## Qué modelo y qué pesos usar
+
+Cuál checkpoint es el correcto (M2 época 8, Sonata original y Sonata adaptado), dónde está cada uno y cómo comprobarlo: [`documentacion/modelos_y_pesos.md`](documentacion/modelos_y_pesos.md).
+
 ## Ver los experimentos
 
 Abre `experimentacion/visor/index.html` (doble clic, sin servidor). Tiene una pestaña por etapa
@@ -94,7 +98,7 @@ squeue -u $USER                                                        # ver tus
 tail -n 40 logs/<job>_<id>.out                                         # ver el avance
 ```
 
-- **Pipeline completo con etiquetas (M1→M4 + mIoU):** `colab_pipeline_etiquetado.ipynb`; guía en `documentacion/ejecutar_pipeline_colab.md`.
+- **Pipeline completo con etiquetas (M1→M4 + mIoU):** `colab_1_m1_m2.ipynb` y `colab_2_m3_m4.ipynb`; guía en `documentacion/ejecutar_pipeline_colab.md`.
 - **M2 sobre la Catedral:** abre `colab_runner.ipynb` en Colab (los checkpoints están en Drive, `m2/entrada/`).
 - **M3 adaptado en Colab:** `colab_sonata_adaptacion.ipynb`, celdas 1 → 8.
 - **M4 (laptop):** `python experimentacion/modulo4_real/correr_modulo4_real.py` (ver su README).
