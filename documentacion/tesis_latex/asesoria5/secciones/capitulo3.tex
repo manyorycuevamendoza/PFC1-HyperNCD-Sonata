@@ -20,7 +20,8 @@ La Figura~\ref{fig:flujo} muestra las etapas del proyecto en el orden en que se
 ejecutan, de E0 a E5. La letra E indica etapa, para distinguirlas de los pasos
 internos de cada módulo, que se numeran Paso~1, Paso~2 y siguientes en las
 secciones de cada unidad. Las secciones se procesan una a una, y en cada sección
-las etapas E2 y E3 se repiten tres veces (Sección~\ref{sec:repeticiones}).
+la etapa de agrupamiento se repite con diez semillas
+(Sección~\ref{sec:repeticiones}); el entrenamiento de M2 se realizó una vez.
 
 \begin{figure}[!htbp]
 \centering\setstretch{1}
@@ -490,7 +491,22 @@ fusión concatena.
 \label{sec:rama-sem}
 
 La rama semántica es el Módulo~2 (Sección~\ref{sec:modulo2}). Es un módulo
-entrenado, por lo que se ejecuta en cada época.
+entrenable, pero en el flujo aplicado a la Catedral se separan dos fases. Primero
+se entrena HyperNCD con un conjunto etiquetado; después se carga el checkpoint en
+modo de evaluación y se extrae $f_{\mathrm{sem}}$ una sola vez por escena. El
+programa \texttt{predecir\_hyperncd.py} cuantiza XYZ a 5\,cm, asigna la
+característica constante 1, ejecuta MinkowskiUNet-34C sin gradiente y guarda el
+descriptor de 96 dimensiones, las cabezas y el índice inverso.
+
+Se comparan dos entrenamientos. El primero usa SemanticPOSS, con nueve clases
+conocidas y cuatro novedosas en la partición~0. El segundo usa ArCH
+\cite{matrone2020benchmark}: se ignora \emph{other}; son conocidas molduras,
+piso, puerta/ventana, pared, escalera y cubierta, y novedosas arco, columna y
+bóveda. Sus 15 escenarios de entrenamiento y dos de prueba se voxelizan a
+5\,cm y se dividen en bloques de 10\,m. Cada muestra toma hasta 60\,000 puntos y
+las regiones novedosas usan DBSCAN de radio 0,5\,m. Las escenas oficiales de
+prueba se usan como validación para seleccionar el checkpoint; su mIoU no se
+considera una prueba externa independiente.
 
 \FloatBarrier
 \subsection{Rama Auto-supervisada Congelada}
@@ -704,7 +720,7 @@ dirección, lo que indicaría un colapso, y 1088 si se reparte por igual.
 \subsection{Punto de Fusión}
 \label{sec:fusion}
 
-El Módulo~4 (Sección~\ref{sec:modulo4}) aún no se ha ejecutado con datos reales.
+El Módulo~4 (Sección~\ref{sec:modulo4}) se ejecutó con la escena de control.
 Concatena los dos descriptores según la Ec.~\eqref{eq:hibrido} y deja igual todo
 lo posterior (Ec.~\eqref{eq:afinidad}, $M=8$ vecinos), condición que hace
 interpretable la ablación. La Sección~\ref{sec:m4-simulado} lo prueba sobre datos
@@ -1039,7 +1055,7 @@ descripción.
 \hyperref[sec:u2-p2]{2. Modelo} & Aporta lo que Sonata aprendió sin etiquetas & Con pesos al azar, los descriptores no dirían nada de la escena \\
 \hyperref[sec:u2-p3]{3. Preparación} & Pone la nube en la escala de Sonata y guarda el índice inverso & No se podrían devolver los descriptores a cada punto \\
 \hyperref[sec:u2-p4]{4. Inferencia} & Produce $f_{\mathrm{ssl}}$, el descriptor que reemplaza a $f_{\mathrm{geo}}$ & No existe el aporte de la tesis \\
-\hyperref[sec:u2-p5]{5. Escritura} & Sonata corre una vez por sección y HyperNCD lee el archivo en cada época & Habría que correr Sonata en cada época, en un entorno incompatible \\
+\hyperref[sec:u2-p5]{5. Escritura} & Ambas ramas se extraen una vez por sección y M4 lee sus archivos & Habría que repetir dos inferencias costosas y mezclar entornos incompatibles \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1192,38 +1208,34 @@ procedimiento se obtienen las mediciones y bajo qué protocolo se repiten.
 \subsection{Procedimiento Experimental}
 \label{sec:procedimiento}
 
-El procedimiento se ejecuta en seis pasos reproducibles, correspondientes a los
-rótulos E0 a E5 de la Figura~\ref{fig:flujo}. Los dos primeros son insumo de la
-revisión crítica y fijan la línea base; los restantes corresponden a los
-objetivos específicos:
+El procedimiento se organiza en seis pasos reproducibles, correspondientes a los
+rótulos E0 a E5 de la Figura~\ref{fig:flujo}. La ejecución final separa el
+entrenamiento de HyperNCD, la extracción congelada de ambas ramas y la fusión
+posterior, por lo que no existe entrenamiento conjunto HyperNCD--Sonata:
 
 \begin{enumerate}\setlength{\itemsep}{2pt}
-\item \textbf{E0. Recepción.} Nube TLS con al menos cuatro clases base anotadas
-en la sección de referencia, requisito mínimo de la tarea NCD.
-\item \textbf{E1. Preparación y línea base.} Preprocesamiento de cada sección
-(centrado, SOR, voxelización a 5\,cm y normales); ejecución de HyperNCD sin
-modificaciones con tres semillas distintas para fijar el punto de partida contra
-el que se compara el híbrido.
-\item \textbf{E2. Inferencia congelada (OE1).} Ejecución del codificador sobre
-cada sección, con \emph{cache} de características y \emph{up-cast} para
-conciliar la resolución del \emph{encoder} PTv3 con la rejilla de Minkowski, y
-escritura de $f_{\mathrm{ssl}}$ en disco.
-\item \textbf{E3. Fusión y entrenamiento (OE1).} Sustitución del descriptor
-según la Ec.~\eqref{eq:hibrido} y verificación de funcionamiento de extremo a
-extremo sobre una sección de control. Se comprueba que el mIoU de las clases
-conocidas no caiga respecto de la línea base.
-\item \textbf{E4. Calibración (OE2).} Búsqueda por grilla acotada sobre
-$\alpha$, $M$ y $\epsilon$ en la sección de referencia; la configuración
-ganadora se congela y se aplica sin reajuste al resto de secciones.
-\item \textbf{E5. Análisis (OE3).} Cómputo de $\Delta$mIoU \emph{novel}
-(Ec.~\eqref{eq:delta}), de la brecha cerrada $G$ (Ec.~\eqref{eq:G}) y del
-análisis de dominancia (Ec.~\eqref{eq:dominante}), más la ablación de las tres
-variantes del descriptor: la línea base
-$F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}}]$, el modelo híbrido
-$F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ y la variante completa
-$F_i=[f_{\mathrm{sem}};f_{\mathrm{geo}};f_{\mathrm{ssl}}]$ del Plan~B
-(Sección~\ref{sec:riesgos}). En las tres la afinidad geométrica del hipergrafo
-se calcula igual, de modo que la única diferencia entre ellas es el descriptor.
+\item \textbf{E0. Preparación.} Preprocesamiento de los escaneos de la Catedral
+de Lima y construcción de las entradas requeridas por las ramas semántica y
+auto-supervisada.
+\item \textbf{E1. Diagnóstico de dominio.} Aplicación del checkpoint entrenado
+con SemanticPOSS a una sección de la catedral. La concentración de 98,4\,\% de
+los puntos en una sola cabeza reveló un desplazamiento de dominio y motivó el
+cambio de datos de entrenamiento.
+\item \textbf{E2. Entrenamiento de M2.} Entrenamiento desde cero de HyperNCD con
+ArCH~\cite{matrone2020benchmark}: 15 escenas de entrenamiento y dos escenas de
+prueba utilizadas como validación, seis clases conocidas, tres novedosas y la
+clase \emph{other} ignorada en la evaluación principal.
+\item \textbf{E3. Inferencia congelada.} Carga del mejor checkpoint de M2 y
+extracción, bajo \texttt{eval()} y \texttt{no\_grad()}, de $f_{\mathrm{sem}}$
+de 96 dimensiones, logits e índice inverso. En una ejecución independiente se
+extrae $f_{\mathrm{ssl}}$ con Sonata. Ninguna rama se reajusta sobre la catedral.
+\item \textbf{E4. Fusión posterior.} Lectura de los descriptores almacenados y
+comparación de M2, M3, M4 base y M4. La fusión y el agrupamiento operan después
+de la inferencia; no retropropagan gradientes hacia HyperNCD ni Sonata.
+\item \textbf{E5. Evaluación.} Cómputo de mIoU con emparejamiento uno a uno,
+NMI, dominancia de cabezas y estadísticos de las semillas de agrupamiento. Se
+reportan por separado las métricas con y sin \emph{other} para evitar que la
+clase residual domine la interpretación.
 \end{enumerate}
 
 \FloatBarrier
@@ -1234,13 +1246,12 @@ Las secciones son independientes. Ninguna necesita información de otra, de modo
 que cada una constituye una medición separada y todas pueden ejecutarse de forma
 simultánea.
 
-Cada configuración se ejecuta tres veces sobre cada sección y se reporta la
-media y la desviación entre repeticiones. La razón no es solo la variabilidad
-del entrenamiento. El submuestreo que precede al codificador elige al azar el
-punto representante de cada celda, y esa elección la fija la semilla
-(\enlace{sec:param-replicacion}{replicación del procedimiento}). Cada
-repetición usa una semilla distinta, de modo que las tres abarcan el
-procedimiento completo, E2 y E3, y no solo el entrenamiento.
+El entrenamiento de HyperNCD con ArCH se realizó una vez; por ello, el valor de
+validación del checkpoint no debe presentarse como media de entrenamientos. La
+comparación posterior de M2, M3, M4 base y M4 se repitió con diez semillas del
+agrupamiento. Se reportan media y desviación estándar entre esas diez semillas.
+Esta dispersión caracteriza la estabilidad del agrupamiento, pero \textbf{no}
+equivale a diez reentrenamientos de HyperNCD o Sonata.
 
 Como las secciones son independientes, pueden repartirse entre varias GPU. Con
 $n_{\mathrm{gpu}}$ unidades y $n_{\mathrm{sec}}$ secciones, la aceleración frente
