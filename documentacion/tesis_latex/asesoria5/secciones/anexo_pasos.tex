@@ -1,0 +1,183 @@
+% =====================================================================
+% Anexo F: pseudocodigo y diagramas de flujo de los pasos de las Unidades 1 y 2
+% (movidos desde el capitulo 3 para mantener directo el cuerpo del documento).
+% =====================================================================
+
+\section*{Anexo F. Pseudocódigo y diagramas de flujo de los pasos}
+\label{sec:anexo-pasos}
+\phantomsection\addcontentsline{toc}{section}{Anexo F. Pseudocódigo y diagramas de flujo de los pasos}
+
+\setcounter{figure}{0}\renewcommand{\thefigure}{F.\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{F.\arabic{table}}
+
+Este anexo reúne el pseudocódigo y los diagramas de flujo de los pasos de la
+Unidad~1 (Sección~\ref{sec:u1-procedimiento}) y de la rama auto-supervisada de la
+Unidad~2 (Sección~\ref{sec:rama-ssl}). La descripción de cada paso está en esas
+secciones.
+
+\subsection*{Unidad 1. Preprocesamiento}
+
+\subsubsection*{Paso 1. Carga}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 1 del Módulo~1, carga.}
+\KwIn{archivo LAS de $N$ puntos}
+\KwOut{posiciones $P\in\mathbb{R}^{N\times 3}$ y colores $C\in[0,255]^{N\times 3}$}
+$P \leftarrow \emptyset$, \ $C \leftarrow \emptyset$\;
+\ForEach{bloque $B$ de $5\times 10^{6}$ puntos del archivo}{
+  $P \leftarrow \begin{bmatrix} P \\ B_{x,y,z} \end{bmatrix}$\;
+  $C \leftarrow \begin{bmatrix} C \\ B_{R,G,B} \end{bmatrix}$\;
+}
+\lIf{el color usa 16 bits}{$C \leftarrow C/256$}
+\end{algorithm}
+
+\subsubsection*{Paso 2. Centrado}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 2 del Módulo~1, centrado.}
+\KwIn{posiciones $P$ en coordenadas UTM}
+\KwOut{posiciones centradas y centro $c$}
+$c \leftarrow (\min P + \max P)/2$, calculado por eje\;
+$P \leftarrow P - c$\;
+guardar $c$ para los metadatos\;
+\end{algorithm}
+
+\subsubsection*{Paso 3. Filtrado SOR}
+
+\begin{figure}[!htbp]
+\centering\setstretch{1}
+\begin{tikzpicture}[font=\scriptsize, node distance=4mm]
+\node[fdato] (a) {$P$ y $C$, $N$ puntos de la sección};
+\node[fop, below=of a] (b) {Para cada punto $p$: buscar sus $q$ vecinos más cercanos};
+\node[fop, below=of b] (c) {$d_p\leftarrow$ distancia media a esos vecinos};
+\node[fop, below=of c] (d) {$\mu,\sigma\leftarrow$ media y desviación de todos los $d_p$};
+\node[fdec, below=of d] (e) {$d_p\le\mu+\lambda\sigma$?};
+\node[fno, right=6mm of e] (n) {Descartar};
+\node[fdato, below=of e] (f) {Conservar los puntos que pasan el umbral};
+\foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
+\draw[ffl] (e) -- node[left, font=\tiny]{sí} (f);
+\draw[ffl] (e) -- node[above, font=\tiny]{no} (n);
+\end{tikzpicture}
+\caption[Filtrado SOR]{Filtrado SOR. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 4. Voxelización}
+
+\begin{figure}[!htbp]
+\centering\setstretch{1}
+\begin{tikzpicture}[font=\scriptsize, node distance=4mm]
+\node[fdato] (a) {$P$ y $C$ tras el filtrado};
+\node[fop, below=of a] (b) {Para cada punto: cubo $v_p=\lfloor (p-p_0)/\ell\rfloor$, con $p_0$ la esquina mínima de la nube menos $\ell/2$};
+\node[fop, below=of b] (c) {Agrupar los puntos que caen en el mismo cubo};
+\node[fop, below=of c] (d) {Por cubo ocupado: promedio de posición y de color};
+\node[fdato, below=of d] (e) {$P'$ y $C'$, un representante por cubo ocupado};
+\foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
+\end{tikzpicture}
+\caption[Voxelización]{Voxelización. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 5. Normales}
+
+\begin{figure}[!htbp]
+\centering\setstretch{1}
+\begin{tikzpicture}[font=\scriptsize, node distance=4mm]
+\node[fdato] (a) {$P'$, los representantes del Paso~4};
+\node[fop, below=of a] (b) {Para cada representante: sus $q$ vecinos};
+\node[fop, below=of b] (c) {$\Sigma_p\leftarrow$ covarianza de los vecinos};
+\node[fop, below=of c] (d) {$n_p\leftarrow$ autovector del menor autovalor};
+\node[fdec, below=of d] (e) {$n_{p,z}<0$?};
+\node[fno, right=6mm of e] (n) {$n_p\leftarrow -n_p$};
+\node[fdato, below=of e] (f) {Normales de largo 1 con $n_z\ge 0$};
+\foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
+\draw[ffl] (e) -- node[left, font=\tiny]{no} (f);
+\draw[ffl] (e) -- node[above, font=\tiny]{sí} (n);
+\draw[ffl] (n) |- (f);
+\end{tikzpicture}
+\caption[Estimación de normales]{Estimación de normales. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 6. Escritura}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 6 del Módulo~1, escritura.}
+\KwIn{$P'$, $C'$, $n$, centro $c$ y conteos de cada paso}
+\KwOut{archivo de la matriz $S$ y archivo de metadatos}
+$S \leftarrow [\,P' \mid C' \mid n\,]$ en precisión simple\;
+guardar $S$\;
+guardar $\ell$, $q$, $\lambda$, $c$ y los conteos en el archivo de metadatos\;
+\end{algorithm}
+
+\subsection*{Unidad 2. Rama auto-supervisada congelada}
+
+\subsubsection*{Paso 1. Carga de la matriz}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 1 del Módulo~3, carga de la matriz.}
+\KwIn{archivo de la matriz $S\in\mathbb{R}^{N\times 9}$}
+\KwOut{$\mathit{coord}$, $\mathit{color}$ y $\mathit{normal}$, cada una de $N\times 3$}
+$S \leftarrow$ leer el archivo\;
+$\mathit{coord} \leftarrow$ columnas 1 a 3 de $S$\;
+$\mathit{color} \leftarrow$ columnas 4 a 6 de $S$\;
+$\mathit{normal} \leftarrow$ columnas 7 a 9 de $S$\;
+\end{algorithm}
+
+\subsubsection*{Paso 2. Carga del modelo}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 2 del Módulo~3, carga del modelo.}
+\KwIn{pesos públicos de Sonata guardados en disco}
+\KwOut{codificador $\mathrm{PTv3}_{\Phi}$ listo en la GPU}
+$\Phi \leftarrow$ leer los pesos preentrenados sin conexión a internet\;
+crear PTv3 con FlashAttention desactivada y parches de 1024 puntos\;
+cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
+\end{algorithm}
+
+\subsubsection*{Paso 3. Preparación}
+
+\begin{figure}[!htbp]
+\centering\setstretch{1}
+\begin{tikzpicture}[font=\scriptsize, node distance=4mm]
+\node[fdato] (a) {$S$ de la sección, $N$ puntos};
+\node[fop, below=of a] (b) {Trasladar: restar el centro de la caja en $x,y$ y el mínimo de $z$};
+\node[fop, below=of b] (c) {Dividir en celdas de lado $g$ y elegir un punto al azar por celda};
+\node[fop, below=of c] (d) {Guardar el índice inverso: celda de cada punto de $S$};
+\node[fop, below=of d] (e) {Dividir el color entre 255};
+\node[fdato, below=of e] (f) {Puntos de la rejilla e índice inverso de $N$ entradas};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
+\end{tikzpicture}
+\caption[Preparación de la nube para Sonata]{Preparación de la nube para Sonata. Elaboración propia.}
+\end{figure}
+
+\subsubsection*{Paso 4. Inferencia}
+
+\begin{figure}[!htbp]
+\centering\setstretch{1}
+\begin{tikzpicture}[font=\scriptsize, node distance=4mm]
+\node[fdato] (a) {Puntos de la rejilla $\times$ 9 valores};
+\node[fop, below=of a] (b) {\textbf{4.1 Embedding:} 9 $\rightarrow$ 48 valores (Ec.~\ref{eq:embedding})};
+\node[fop, below=of b] (c) {\textbf{4.2 Serialización:} orden Z y Hilbert, parches de 1024};
+\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5:} bloques con atención (Ecs.~\ref{eq:bloque} y~\ref{eq:atencion}); \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
+\node[fop, below=of d] (e) {\textbf{4.4 Up-cast:} concatenar etapas 3, 4 y 5 (Ec.~\ref{eq:upcast})};
+\node[fdato, below=of e] (f) {$f_{\mathrm{ssl}}$: 1088 valores por punto de la rejilla};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
+\end{tikzpicture}
+\caption[Inferencia de Sonata]{Inferencia de Sonata. Elaboración propia.}
+\label{fig:m3-inferencia}
+\end{figure}
+
+\subsubsection*{Paso 5. Escritura}
+
+\begin{algorithm}[H]
+\small
+\caption{Paso 5 del Módulo~3, escritura.}
+\KwIn{$f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$ y $g$}
+\KwOut{archivo \texttt{.npz} en disco}
+convertir $f_{\mathrm{ssl}}$ a precisión media\;
+guardar $f_{\mathrm{ssl}}$, $\mathit{coord}$, $\mathit{inv}$, $g$, $N$ y la semilla en un archivo comprimido\;
+\end{algorithm}
+
