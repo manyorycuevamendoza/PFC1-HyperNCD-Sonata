@@ -390,9 +390,9 @@ $f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
 razonamiento por hipergrafo. Así,
 $F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
 la métrica es atribuible a ese reemplazo y a nada más.
-\emph{Resultado verificable:} el híbrido corriendo de extremo a extremo sobre una
-sección de control, con las dimensiones de ambas ramas documentadas y sin que el
-mIoU de las clases conocidas baje respecto de la línea base.
+\emph{Resultado verificable:} las ramas congeladas y la fusión posterior
+corriendo sobre una sección de control, con dimensiones documentadas y métricas
+comparables.
 
 \item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
 corrección de la línea base (OE1).} La inspección del código liberado muestra
@@ -423,8 +423,9 @@ en un mismo proceso, y la repetición del costo del codificador en cada época, 
 desaparece. Incluye la formulación propia de una cota de aceleración que delimita
 hasta dónde vale la pena distribuir el cacheo. \emph{Resultado verificable:} el
 \emph{cache} persistente por sección, legible desde los dos entornos, y la cota
-de aceleración. El \emph{cache} ya se generó para el escaneo PL13
-(Sección~\ref{sec:res-unidad2}); falta que la rama de HyperNCD lo lea.
+de aceleración. El \emph{cache} se generó para el escaneo PL13 y la etapa de
+fusión lee las salidas de ambas ramas (Secciones~\ref{sec:res-unidad2}
+y~\ref{sec:res-unidad3}).
 \end{enumerate}
 
 \medskip
@@ -509,7 +510,7 @@ revisado y termina en un resultado propio que se puede verificar.}
 \multicolumn{4}{@{}l}{\textbf{OE1. Integración de Sonata en el módulo de prototipos}}\\
 A1 & Sustitución de $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
    & HyperNCD (\S\ref{sec:hyperncd}), Sonata (\S\ref{sec:sonata})
-   & Híbrido de extremo a extremo sin caída en clases conocidas \\
+   & Ramas congeladas y fusión posterior con métricas comparables \\
 A2 & Auditoría del código y corrección de la línea base
    & HyperNCD (\S\ref{sec:hyperncd}) y su repositorio
    & Tabla artículo frente a implementación y tres decisiones metodológicas \\
