@@ -76,6 +76,8 @@
 % Enlace a la seccion donde se explica un termino, con su numero al lado
 % Tamanos de letra del diagrama iguales a los del PDF suelto (base 10 pt)
 \newcommand{\fuentediagrama}{\setstretch{1}\def\scriptsize{\fontsize{7.8}{9.4}\selectfont}\def\tiny{\fontsize{6}{7.2}\selectfont}}
+% Enlace de cada titulo del capitulo 4 a su seccion homologa del capitulo 3.
+\newcommand{\espejo}[1]{\texorpdfstring{\hspace{0.7em}{\normalfont\small\mdseries\hyperref[#1]{[Método~\S\ref*{#1}]}}}{}}
 \newcommand{\enlace}[2]{\hyperref[#1]{#2}\nobreakspace{\tiny\color{black!45}(\S\ref*{#1})}}
 % Logo de una herramienta, enlazado a la tabla de herramientas
 \newcommand{\logo}[1]{\hyperref[sec:anexo-software]{\raisebox{-0.25ex}{\includegraphics[height=1.7ex]{imagenes/logos/#1}}}}
