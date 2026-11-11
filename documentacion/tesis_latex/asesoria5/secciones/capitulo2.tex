@@ -299,6 +299,22 @@ con los pesos; durante la aplicación a la Catedral el checkpoint se congela y
 $f_{\mathrm{sem}}$ se extrae una sola vez por escena para reutilizarlo en el
 Módulo~4.
 
+En fórmulas, cada punto cae en una celda de lado $\nom{ell}{\ell}=5$\,cm, cada
+vóxel ocupado recibe la característica constante 1 (el color y la normal no
+entran) y la red $\nom{Unet}{U_\theta}$ devuelve un vector de 96 canales por
+vóxel ocupado:
+\begin{equation}
+\nom{vcel}{\mathbf{v}_i}=\left\lfloor \frac{\nom{xi}{x_i}}{\nom{ell}{\ell}}\right\rfloor,\qquad a_{\mathbf{v}}=1,
+\label{eq:cuant}
+\end{equation}
+\begin{equation}
+\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})=\nom{Unet}{U_\theta}(\mathcal{V})_{\nom{vcel}{\mathbf{v}_i}}\in\mathbb{R}^{96},
+\label{eq:fsem}
+\end{equation}
+donde $\mathcal{V}$ es el tensor disperso formado por las celdas ocupadas y
+sus características $a_{\mathbf{v}}$ (Sección~\ref{sec:rejilla}). Los puntos
+que comparten celda comparten descriptor.
+
 \subsubsection{Descriptor Geométrico Analítico}
 \label{sec:fgeo}
 
@@ -309,8 +325,14 @@ planaridad $(\lambda_2-\lambda_3)/\lambda_1$ y dispersión
 $\lambda_3/\lambda_1$. El artículo los calcula sobre un vecindario de 15 puntos;
 la implementación ejecutada los calcula sobre la región que contiene al punto
 (Sección~\ref{sec:region}) y les concatena el centroide de esa región, lo que da
-una dimensión total de 6. Este trabajo adopta la versión ejecutada, en la que cada punto
-hereda el descriptor de su región. Se denota $f_{\mathrm{geo}}$ y es el
+una dimensión total de 6,
+\begin{equation}
+\nom{g}{g^{(r)}}=\left[\frac{\nom{eig}{\lambda_1}-\nom{eig}{\lambda_2}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_2}-\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;c^{(r)}\right]\in\mathbb{R}^{6},
+\label{eq:g-region}
+\end{equation}
+donde $\lambda_1\geq\lambda_2\geq\lambda_3$ son los autovalores de la covarianza
+de los puntos de la región $r$ y $c^{(r)}$ es su centroide. Este trabajo adopta
+la versión ejecutada, en la que cada punto hereda el descriptor de su región. Se denota $f_{\mathrm{geo}}$ y es el
 componente del descriptor que este trabajo sustituye. Solo describe forma, sin
 ningún conocimiento de qué es el punto.
 
@@ -543,7 +565,13 @@ La implementación de HyperNCD forma las regiones con
 DBSCAN, un algoritmo de agrupamiento por densidad. Dos puntos pertenecen al
 mismo grupo si se puede ir de uno a otro pasando por puntos separados por menos
 de un radio dado, que es 0{,}5\,m en la configuración de SemanticPOSS; los
-puntos sin vecinos dentro de ese radio quedan fuera de toda región. Se aplica sobre las coordenadas de los puntos de las clases novedosas. Los descriptores $F_i$ de los puntos de una región se promedian en uno solo.
+puntos sin vecinos dentro de ese radio quedan fuera de toda región. Se aplica sobre las coordenadas de los puntos de las clases novedosas. Los descriptores $F_i$ de los puntos de una región $r$ se promedian en uno solo,
+\begin{equation}
+\nom{Freg}{F^{(r)}}=\frac{1}{|r|}\sum_{i\in r}\nom{Fi}{F_i}.
+\label{eq:reg-prom}
+\end{equation}
+En la escena de la Catedral, donde todo el interior está conectado y DBSCAN daría
+una sola región, las regiones son celdas cúbicas de 0{,}75\,m.
 Razonar sobre regiones y no sobre puntos reduce el
 número de nodos del hipergrafo en varios órdenes de magnitud.
 
@@ -552,9 +580,15 @@ número de nodos del hipergrafo en varios órdenes de magnitud.
 \label{sec:formproto}
 
 Vector \nom{Pk}{$P_k$} que representa a un grupo de puntos o regiones semejantes. Hay $K$
-prototipos, tantos como clases. Una cabeza convolucional asigna a cada punto una
-puntuación $z_{i,k}$ por prototipo y una función \emph{softmax} la convierte en
-pesos de pertenencia:
+prototipos, tantos como clases. En HyperNCD la cabeza que asigna a cada punto una
+puntuación $z_{i,k}$ por prototipo es un clasificador por coseno,
+\begin{equation}
+\nom{z}{z_{i,k}}=\frac{\nom{prod}{\langle}\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i}),\;\nom{wk}{w_k}\nom{prod}{\rangle}}{\nom{norma}{\lVert}\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})\nom{norma}{\rVert}\;\nom{norma}{\lVert}\nom{wk}{w_k}\nom{norma}{\rVert}},
+\label{eq:cabeza}
+\end{equation}
+con $w_k$ el vector de pesos aprendido del prototipo $k$; la pérdida multiplica
+$z_{i,k}$ por 10 antes de la entropía cruzada. Una función \emph{softmax}
+convierte las puntuaciones en pesos de pertenencia:
 \begin{equation}
 \nom{s}{s_{i,k}}=\frac{\mathop{\nom{exp}{\exp}}\nolimits\left(\nom{z}{z_{i,k}}\right)}{\nomop{suma}{\sum}_{j=1}^{K}\mathop{\nom{exp}{\exp}}\nolimits\left(\nom{z}{z_{i,j}}\right)},
 \qquad \nomop{suma}{\sum}_{k=1}^{\nom{K}{K}}\nom{s}{s_{i,k}}=1 .
@@ -593,7 +627,16 @@ un subconjunto selectivo de nodos, lo que no ocurriría con solo $K$ prototipos.
 Los autores de HyperNCD reportan $M=8$ como valor óptimo. Cada región recibe
 después el promedio de los descriptores de su hiperarista, ponderado por la
 afinidad, y es ese descriptor enriquecido el que se compara con los
-prototipos.
+prototipos:
+\begin{equation}
+\hat{F}^{(r)}=\sum_{j\in\nom{Nr}{\mathcal{N}_M(r)}}\nom{St}{\tilde{S}}_{rj}\,\nom{Freg}{F^{(j)}},\qquad
+\tilde{S}_{rj}=\frac{\nom{Sb}{S_b}^{(rj)}}{\sum_{l\in\mathcal{N}_M(r)}S_b^{(rl)}},
+\label{eq:hiper-agr}
+\end{equation}
+donde $\mathcal{N}_M(r)$ son las $M$ regiones de mayor $S_b$ respecto de $r$. En
+el entrenamiento de M2 la propia región ocupa una de esas $M$ plazas, porque su
+afinidad consigo misma es máxima; en el Módulo~4 se añade a las $M$ y el
+resultado se normaliza además a longitud 1.
 
 \subsubsection{Afinidad entre Prototipos}
 \label{sec:afinidad}
@@ -617,7 +660,12 @@ descriptor $F^{(i)}$ es por donde entra $f_{\mathrm{ssl}}$. El rasgo $g^{(i)}$
 es el $f_{\mathrm{geo}}$ de la región (Sección~\ref{sec:fgeo}): aunque sale del
 descriptor $F_i$ en el modelo propuesto, se sigue calculando para la afinidad y
 es igual en la línea base y en el modelo propuesto, con lo que el razonamiento
-geométrico del hipergrafo se conserva íntegro.
+geométrico del hipergrafo se conserva íntegro. Hay dos matices de implementación.
+En el entrenamiento de M2, $\tau=0{,}1$ y $g$ se usa tal como sale, sin
+estandarizar, de modo que el centroide, medido en celdas de la rejilla, domina
+la distancia. En el Módulo~4 sobre la Catedral, $g$ se estandariza por columna y
+la distancia se promedia por dimensión, es decir, el exponente es
+$-\lVert g^{(i)}-g^{(j)}\rVert^{2}/(\tau d)$ con $d=6$ y $\tau=1$.
 Ambos se combinan en
 \begin{equation}
 \nom{Sb}{S_b}=\nom{alpha}{\alpha}\,\nom{Sg}{S_g}+(1-\nom{alpha}{\alpha})\,\nom{Ss}{S_s},\qquad \nom{alpha}{\alpha}\nom{en}{\in}[0,1],
@@ -676,7 +724,10 @@ pesos parecidos, con una tolerancia que fija $\gamma$. El resultado es
 \label{eq:sk-plan}
 \end{equation}
 y la fila $Y_i$ es la pseudo-etiqueta del punto $i$, repartida entre las clases
-novedosas. En el código, $\epsilon_{\mathrm{sk}}=0{,}1$. Aunque el programa
+novedosas. En el entrenamiento de M2, $\epsilon_{\mathrm{sk}}=0{,}1$ y la
+iteración se repite hasta que se estabiliza; en el Módulo~4 sobre la Catedral,
+$\epsilon_{\mathrm{sk}}=0{,}05$, con tres iteraciones y con cada región pesada por
+los puntos que contiene. Aunque el programa
 tiene 10 como valor por defecto de $\gamma$, las corridas de SemanticPOSS y ArCH
 analizadas se lanzaron con $\gamma=1$ y pueden reducirlo adaptativamente.
 
@@ -721,6 +772,23 @@ dinámico de la cuarta, y asigna las pseudo-etiquetas con Sinkhorn-Knopp en luga
 del umbral (Sección~\ref{sec:aporte}). Además, en la implementación los nodos del hipergrafo son
 regiones y no prototipos (Sección~\ref{sec:hiperarista}); este trabajo adopta esa
 formulación.
+
+La función que optimiza el entrenamiento ejecutado suma un término por punto y
+uno por región,
+\begin{equation}
+\nom{Lt}{\mathcal{L}}=\nom{Lp}{\mathcal{L}_{\mathrm{pt}}}+\nom{beta}{\beta}\,\nom{Lr}{\mathcal{L}_{\mathrm{reg}}},\qquad
+\mathcal{L}_{\mathrm{pt}}=\sum_{v=1}^{2}\frac{1}{|\mathcal{P}_v|}\sum_{i\in\mathcal{P}_v}\mathrm{CE}\!\left(10\,z_i^{(v)},\;y_i^{(\bar v)}\right),
+\label{eq:perdida}
+\end{equation}
+donde $v=1,2$ indexa las dos vistas aumentadas de la misma escena, $\bar v$ es
+la otra vista, CE es la entropía cruzada y el objetivo $y_i^{(\bar v)}$ es
+\emph{one-hot} para los puntos de clases conocidas y la pseudo-etiqueta de
+Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}) para los demás. $\mathcal{L}_{\mathrm{reg}}$
+tiene la misma forma, pero sobre las regiones, con las puntuaciones de
+$\hat{F}^{(r)}$ (Ec.~\eqref{eq:hiper-agr}) frente a los prototipos novedosos.
+El peso $\beta$ es el argumento \texttt{--alpha} del programa de entrenamiento,
+que vale 1 en las corridas registradas; no debe confundirse con el $\alpha$ de la
+afinidad $S_b$, que vale 0{,}5.
 
 \subsection{Arquitectura de Sonata}
 \label{sec:arq-sonata-paper}
@@ -977,19 +1045,30 @@ prueba. Elaboración propia.}
 
 Recibe las coordenadas de $S$ y entrega $f_{\mathrm{sem}}(x^i)$, 96 números
 por punto (Sección~\ref{sec:fsem}). El color y la normal de $S$ no entran en
-este módulo.
+este módulo. En el entrenamiento ejecuta, para cada lote de dos vistas
+aumentadas, los pasos siguientes; cada uno enlaza con su fórmula.
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Cuantiza las coordenadas en una rejilla dispersa de 5\,cm y asigna a cada
-vóxel ocupado la característica constante 1 (Sección~\ref{sec:rejilla}).
+vóxel ocupado la característica constante 1 (Ec.~\ref{eq:cuant}).
 \item Aplica la red MinkowskiUNet-34C, de convoluciones dispersas, con
-codificador, decodificador y conexiones de salto
-(Secciones~\ref{sec:convdispersa} y~\ref{sec:minkunet}).
-\item Durante el entrenamiento usa etiquetas reales de las clases conocidas y
-pseudo-etiquetas para las salidas novedosas (Sección~\ref{sec:pseudo}).
-\item Durante la aplicación carga un checkpoint, desactiva el gradiente y
-guarda $f_{\mathrm{sem}}$, las puntuaciones y el índice inverso. No se reentrena
-con la Catedral ni con los descriptores de Sonata.
+codificador, decodificador y conexiones de salto (Ec.~\ref{eq:fsem};
+Secciones~\ref{sec:convdispersa} y~\ref{sec:minkunet}).
+\item Puntúa cada punto con el clasificador por coseno de sus prototipos
+(Ec.~\ref{eq:cabeza}).
+\item Construye los objetivos: etiqueta real \emph{one-hot} para las clases
+conocidas y pseudo-etiqueta de Sinkhorn-Knopp para las novedosas
+(Ecs.~\ref{eq:sk-costo} a~\ref{eq:sk-plan}).
+\item Promedia $f_{\mathrm{sem}}$ por región, calcula el rasgo geométrico de
+cada una, forma la afinidad $S_b$ y agrega los $M$ vecinos de cada región
+(Ecs.~\ref{eq:reg-prom}, \ref{eq:g-region}, \ref{eq:afinidad}
+y~\ref{eq:hiper-agr}).
+\item Suma la pérdida por punto y la regional y actualiza los pesos con AdamW
+(Ec.~\ref{eq:perdida}).
 \end{enumerate}
+Durante la aplicación a la Catedral solo se conservan los pasos 1 y 2: se carga
+un checkpoint, se desactiva el gradiente y se guardan $f_{\mathrm{sem}}$, las
+puntuaciones y el índice inverso. No se reentrena con la Catedral ni con los
+descriptores de Sonata.
 
 Se evaluaron dos checkpoints: uno entrenado con SemanticPOSS, de escenas
 urbanas, y otro entrenado desde cero con ArCH, conjunto de patrimonio
