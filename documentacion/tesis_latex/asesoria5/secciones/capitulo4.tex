@@ -506,6 +506,21 @@ IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
 \end{tabular}
 \end{table}
 
+La Figura~\ref{fig:m2-arch-curvas} muestra la pérdida de entrenamiento, el mIoU
+de validación con su mejor época marcada y las curvas de IoU por clase. Las tres
+clases novedosas aparecen con línea discontinua: bóveda sube de forma sostenida,
+mientras que arco y columna se mantienen bajas y oscilantes.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/m2_arch_curvas.png}
+\caption[Curvas de entrenamiento de M2 con ArCH]{Entrenamiento de M2 con ArCH
+durante 30 épocas: pérdida de entrenamiento, mIoU de validación con mejor época
+en la 20 (0,489) y IoU por clase; las clases novedosas van en línea
+discontinua. Elaboración propia.}
+\label{fig:m2-arch-curvas}
+\end{figure}
+
 \subsection{Transferencia a la Catedral de Lima}
 
 La Tabla~\ref{tab:m2-dominio} cuantifica el efecto del cambio de dominio. Con
@@ -531,6 +546,23 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 35,5\,\% \\
 \end{tabular}
 \end{table}
 
+La Figura~\ref{fig:m2-dominio} compara los tres checkpoints sobre la capilla con
+cuatro indicadores: porcentaje de puntos en la cabeza dominante, rango efectivo
+de $f_{\mathrm{sem}}$, entropía normalizada de las cabezas y NMI frente a la
+clase real. Los dos checkpoints de ArCH se comportan de forma casi idéntica
+entre sí y muy distinta del checkpoint urbano, que concentra casi todos los
+puntos en una cabeza.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/m2_dominio_capilla.png}
+\caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de dominio
+de M2 sobre la escena de control: checkpoint de SemanticPOSS (época~8) frente a
+los checkpoints de ArCH (mejor y último). Se reportan cabeza dominante, rango
+efectivo de $f_{\mathrm{sem}}$, entropía normalizada y NMI. Elaboración propia.}
+\label{fig:m2-dominio}
+\end{figure}
+
 \subsection{Comparación de M2, M3 y M4}
 
 La comparación final se repitió con diez semillas de agrupamiento y excluyó
@@ -555,6 +587,27 @@ M4: fusión completa & $52,5\pm2,5$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+La Figura~\ref{fig:m4-semillas} extiende la comparación a las cuatro
+combinaciones de entrenamiento de HyperNCD (original con SemanticPOSS o
+adaptado con ArCH) y de Sonata (pesos originales o adaptados). La
+Tabla~\ref{tab:m2-m4-semillas} corresponde a la tercera combinación, HyperNCD
+adaptado con Sonata original, que es la de mejores medias. Con HyperNCD
+original ninguna configuración supera 46\,\% y las barras de error son amplias;
+con ArCH las medias suben y la dispersión de M2 y de M4 base se reduce. Esto
+sustenta que la ganancia principal del sistema proviene de adaptar el dominio
+de M2 con ArCH, y que la fusión con Sonata añade una mejora menor y todavía no
+concluyente.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/m4_semillas.png}
+\caption[Comparación M2--M4 con diez semillas y cuatro combinaciones]{mIoU uno a
+uno sin \emph{other}, media y desviación de diez semillas de agrupamiento
+(K=8), para M2, M3, M4 base y M4 en las cuatro combinaciones de HyperNCD y
+Sonata; los puntos negros marcan mínimo y máximo. Elaboración propia.}
+\label{fig:m4-semillas}
+\end{figure}
 
 % =====================================================================
 \FloatBarrier
