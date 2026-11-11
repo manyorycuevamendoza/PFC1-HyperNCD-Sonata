@@ -39,7 +39,7 @@
 \end{minipage}};
 
 %% ---------- semantica y encoder ----------
-\node[mod, draw=cSem, fill=cSem!6, text width=4.3cm, anchor=south] (M2) at ($(M1.north)+(1.25,1.6)$)
+\node[mod, draw=cSem, fill=cSem!6, text width=5.0cm, anchor=south] (M2) at ($(M1.north)+(1.6,1.6)$)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-hyperncd-paper]{\textcolor{cSem}{HyperNCD}}}\\[4pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\h in {0/0.95, 1/0.72, 2/0.50, 3/0.32}
@@ -50,7 +50,13 @@
       \draw[cSem!80, densely dashed, -{Latex[length=1mm]}] (\a*0.24+0.16,0.5+\h/2+0.05) -- (1.1+\b*0.24,0.5+\h/2+0.05);
     \draw[-{Latex[length=1.2mm]}, cSem!80, semithick] (0.88,0.5) -- (1.08,0.5);}\\[5pt]
   \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{\enlace{sec:fsem}{$f_{\mathrm{sem}}(x^i)\in\mathbb{R}^{96}$}}
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:cuant}{$\mathbf{v}_i=\lfloor x_i/\ell\rfloor,\; a_{\mathbf{v}}=1$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:fsem}{$f_{\mathrm{sem}}(x^i)=U_\theta(\mathcal{V})_{\mathbf{v}_i}\in\mathbb{R}^{96}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:cabeza}{$z_{i,k}=\frac{\langle f_{\mathrm{sem}}(x^i),w_k\rangle}{\lVert f_{\mathrm{sem}}(x^i)\rVert\,\lVert w_k\rVert}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:g-region}{$g^{(r)}=\left[\frac{\lambda_1-\lambda_2}{\lambda_1},\frac{\lambda_2-\lambda_3}{\lambda_1},\frac{\lambda_3}{\lambda_1},c^{(r)}\right]$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:hiper-agr}{$\hat F^{(r)}=\sum_{j\in\mathcal{N}_M(r)}\tilde S_{rj}F^{(j)}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:perdida}{$\mathcal{L}=\mathcal{L}_{\mathrm{pt}}+\beta\,\mathcal{L}_{\mathrm{reg}}$}}
 \end{minipage}};
 
 \node[mod, draw=cEnc, fill=cEnc!6, text width=6.4cm, anchor=north] (M3) at ($(M1.south)+(0.2,-1.75)$)
@@ -72,7 +78,7 @@
 \end{minipage}};
 
 %% ---------- fusion ----------
-\node[align=center, anchor=north, text width=4.8cm] (M4h) at (7.75,6.9)
+\node[align=center, anchor=north, text width=4.8cm] (M4h) at (8.35,9.2)
  {{\rule{0pt}{8pt}\scriptsize\bfseries\itshape \hyperref[sec:arq-hyperncd-paper]{\textcolor{cFus}{HyperNCD}}}};
 
 \node[tarj] (T1) at ($(M4h.south)+(0,-0.3)$)
@@ -86,25 +92,11 @@
     \fill[cSem!45, draw=cSem] (2.45,0) rectangle (2.81,0.22);
     \fill[red!30, draw=cFus] (2.81,0) rectangle (2.93,0.22);
     \node[font=\tiny, text=black!60] at (2.69,-0.16) {\hyperref[sec:fgeo]{antes}};}}\\[4pt]
-  \enlaceec{eq:hibrido}{$F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]$}\end{minipage}};
+  \enlaceec{eq:hibrido}{$F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]$}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:reg-prom}{$F^{(r)}=\frac{1}{|r|}\sum_{i\in r}F_i$}}\end{minipage}};
 
-\node[tarj] (T2) at ($(T1.south)+(0,-0.8)$)
- {\enlace{sec:formproto}{\textbf{\textcircled{\scriptsize 2} Prototipos}}~\logo{pytorch.png}\\[3pt]
-  \begin{minipage}{\linewidth}\centering
-  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
-    \foreach \x/\y/\c in {0.222/0.339/cSem, 0.457/0.245/cSem, 0.212/0.293/cSem, 0.401/0.416/cSem, 0.234/0.177/cSem, 0.429/0.353/cSem, 0.494/0.392/cSem, 0.330/0.247/cSem, 1.343/0.558/cEnc, 1.069/0.463/cEnc, 1.179/0.624/cEnc, 1.092/0.570/cEnc, 1.182/0.660/cEnc, 1.267/0.602/cEnc, 0.986/0.644/cEnc, 1.005/0.562/cEnc, 1.651/0.120/cSal, 1.712/0.144/cSal, 1.999/0.117/cSal, 1.884/-0.012/cSal, 1.766/0.197/cSal, 1.785/0.179/cSal, 1.811/0.011/cSal, 1.862/0.031/cSal} \fill[\c!55] (\x,\y) circle (0.035);
-    \foreach \x/\y/\c in {0.35/0.30/cSem, 1.15/0.58/cEnc, 1.80/0.12/cSal}
-      \node[star, star points=5, star point ratio=2.2, draw=\c, fill=\c!35, inner sep=0.6pt] at (\x,\y) {};
-    \fill[black] (0.80,0.20) circle (0.042);
-    \draw[dashed, black!55] (0.80,0.20) -- (0.35,0.30);
-    \draw[dashed, black!55] (0.80,0.20) -- (1.15,0.58);
-    \node[font=\tiny, text=black!60] at (0.52,0.02) {\hyperref[sec:formproto]{70\,\%}};
-    \node[font=\tiny, text=black!60] at (1.22,0.20) {\hyperref[sec:formproto]{30\,\%}};\end{scope}}}\\[4pt]
-  \enlaceec{eq:softmax}{$s_{i,k}=\frac{e^{z_{i,k}}}{\sum_{j}e^{z_{i,j}}}$}\\[4pt]
-  \enlaceec{eq:prototipo}{$P_k=\frac{\sum_{i}s_{i,k}F_i}{\sum_{i}s_{i,k}}$}\end{minipage}};
-
-\node[tarj] (T3) at ($(T2.south)+(0,-0.8)$)
- {\enlace{sec:afinhiper}{\textbf{\textcircled{\scriptsize 3} Afinidad e hiperaristas}}\\[3pt]
+\node[tarj] (T2) at ($(T1.south)+(0,-1.0)$)
+ {\enlace{sec:afinhiper}{\textbf{\textcircled{\scriptsize 2} Afinidad entre regiones}}\\[3pt]
   \begin{minipage}{\linewidth}\centering
   \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
     \fill[cSem!25, draw=cSem!60, rotate=20] (0.72,0.26) ellipse (0.80 and 0.34);
@@ -115,17 +107,21 @@
   \adjustbox{max width=\linewidth}{\enlaceec{eq:gauss}{$S_g=\exp\left(-\lVert g^{(i)}-g^{(j)}\rVert^{2}/\tau\right)$}}\\[4pt]
   \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\end{minipage}};
 
-\node[tarj] (T4) at ($(T3.south)+(0,-0.8)$)
- {\enlace{sec:pseudoetq}{\textbf{\textcircled{\scriptsize 4} Pseudo-etiquetas}}\\[3pt]
+\node[tarj] (T3) at ($(T2.south)+(0,-1.0)$)
+ {\enlace{sec:hiperarista}{\textbf{\textcircled{\scriptsize 3} Hiperaristas}}\\[3pt]
   \begin{minipage}{\linewidth}\centering
-  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
-    \foreach \i/\h/\c in {0/0.62/cSem, 1/0.16/cEnc, 2/0.08/cSal}
-      \fill[\c!55, draw=\c] (\i*0.26,0) rectangle (\i*0.26+0.2,\h);
-    \draw[-{Latex[length=1.3mm]}, black!55] (0.95,0.28) -- (1.4,0.28);
-    \foreach \i/\c in {0/cSem, 1/cEnc, 2/cSal}
-      \fill[\c!55, draw=\c] (1.6+\i*0.26,0) rectangle (1.6+\i*0.26+0.2,0.28);}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:suavizado}{$\tilde{y}_i=(1-\epsilon)\,e_{y_i}+\epsilon/|\mathcal{C}_k|$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:hiper-agr}{$\hat F^{(r)}=\sum_{j\in\mathcal{N}_M(r)}\tilde S_{rj}F^{(j)}$}}\end{minipage}};
+
+\node[tarj] (T4) at ($(T3.south)+(0,-1.0)$)
+ {\enlace{sec:formproto}{\textbf{\textcircled{\scriptsize 4} Prototipos y pseudo-etiquetas}}~\logo{pytorch.png}\\[3pt]
+  \begin{minipage}{\linewidth}\centering
+  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.85]
+    \foreach \x/\y/\c in {0.222/0.339/cSem, 0.457/0.245/cSem, 0.212/0.293/cSem, 0.401/0.416/cSem, 0.234/0.177/cSem, 0.429/0.353/cSem, 0.494/0.392/cSem, 0.330/0.247/cSem, 1.343/0.558/cEnc, 1.069/0.463/cEnc, 1.179/0.624/cEnc, 1.092/0.570/cEnc, 1.182/0.660/cEnc, 1.267/0.602/cEnc, 0.986/0.644/cEnc, 1.005/0.562/cEnc, 1.651/0.120/cSal, 1.712/0.144/cSal, 1.999/0.117/cSal, 1.884/-0.012/cSal, 1.766/0.197/cSal, 1.785/0.179/cSal, 1.811/0.011/cSal, 1.862/0.031/cSal} \fill[\c!55] (\x,\y) circle (0.035);
+    \foreach \x/\y/\c in {0.35/0.30/cSem, 1.15/0.58/cEnc, 1.80/0.12/cSal}
+      \node[star, star points=5, star point ratio=2.2, draw=\c, fill=\c!35, inner sep=0.6pt] at (\x,\y) {};\end{scope}}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:prototipo}{$P_k=\frac{\sum_{i}s_{i,k}F_i}{\sum_{i}s_{i,k}}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-costo}{$Q_{ik}=\mathrm{softmax}(o_i/0{,}1)_k^{1/\epsilon_{\mathrm{sk}}}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-iter}{$u\leftarrow\frac{1/B}{Qv},\;v\leftarrow\left(\frac{1/|\mathcal{C}_n|}{Q^{\top}u}\right)^{\frac{\gamma}{\gamma+\epsilon_{\mathrm{sk}}}}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\end{minipage}};
 
 \begin{pgfonlayer}{background}
@@ -133,14 +129,14 @@
       rounded corners=3pt, inner sep=7pt] (M4) {};
 \end{pgfonlayer}
 \draw[fl] (T1.south) -- (T2.north)
-  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
-  {\hyperref[eq:hibrido]{$F_i$} por \hyperref[sec:region]{región (DBSCAN)}};
+  node[midway, right=0.6mm, chico, align=left, fill=cFus!5, inner sep=1pt]
+  {\hyperref[sec:region]{regiones de}\\\hyperref[sec:region]{0{,}75\,m}};
 \draw[fl] (T2.south) -- (T3.north)
-  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
-  {\hyperref[sec:region]{regiones} y \hyperref[eq:prototipo]{$P_k$}};
+  node[midway, right=0.6mm, chico, align=left, fill=cFus!5, inner sep=1pt]
+  {\hyperref[eq:afinidad]{$S_b$ entre}\\\hyperref[sec:hipergrafo]{regiones}};
 \draw[fl] (T3.south) -- (T4.north)
-  node[midway, right=0.6mm, chico, fill=cFus!5, inner sep=1pt]
-  {\hyperref[sec:hipergrafo]{hipergrafo $\mathcal{H}$}};
+  node[midway, right=0.6mm, chico, align=left, fill=cFus!5, inner sep=1pt]
+  {\hyperref[sec:hipergrafo]{hipergrafo $\mathcal{H}$}\\\hyperref[eq:hiper-agr]{$\hat F^{(r)}$}};
 
 %% ---------- salida ----------
 \node[mod, draw=cSal, fill=cSal!6, text width=4.35cm, anchor=west] (M5) at ($(M4.east)+(1.3,0)$)
@@ -161,7 +157,7 @@
 
 %% ---------- pestanas con el nombre de cada modulo ----------
 \node[tab, text width=4.1cm, fill=cEnt] (P1) at ($(M1.north)+(0,-0.2)$) {\tabmod{sec:modulo1}{MÓDULO 1: PREPROCESAMIENTO}};
-\node[tab, text width=4.1cm, fill=cSem] (P2) at ($(M2.north)+(0,-0.2)$) {\tabmod{sec:modulo2}{MÓDULO 2: SEMÁNTICA}};
+\node[tab, text width=4.8cm, fill=cSem] (P2) at ($(M2.north)+(0,-0.2)$) {\tabmod{sec:modulo2}{MÓDULO 2: SEMÁNTICA}};
 \node[tab, text width=4.1cm, fill=cEnc] (P3) at ($(M3.north)+(0,-0.2)$) {\tabmod{sec:modulo3}{MÓDULO 3: ENCODER}};
 \node[tab, text width=4.9cm, fill=cFus] (P4) at ($(M4.north)+(0,-0.2)$) {\tabmod{sec:modulo4}{MÓDULO 4: FUSIÓN}};
 \node[tab, text width=4.15cm, fill=cSal] (P5) at ($(M5.north)+(0,-0.2)$) {\tabmod{sec:modulo5}{MÓDULO 5: SALIDA}};
@@ -181,8 +177,8 @@
 \draw[fl] (M2.east) -- (M4.west |- M2.east)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
   {\hyperref[sec:fsem]{$f_{\mathrm{sem}}$}\\\hyperref[sec:fsem]{96}\\\hyperref[sec:fsem]{por punto}};
-\draw[fl] (M3.east) -- (M4.west |- M3.east)
-  node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
+\draw[fl] (M3.east) -| (M4.south)
+  node[pos=0.14, below=0.5mm, chico, align=center, inner sep=1pt]
   {\hyperref[sec:fssl]{$f_{\mathrm{ssl}}$}\\\hyperref[sec:fssl]{1088}\\\hyperref[sec:fssl]{por punto}};
 \draw[fl] (M4.east |- M5.west) -- (M5.west)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
