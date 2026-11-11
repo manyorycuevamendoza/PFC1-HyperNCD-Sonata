@@ -8,8 +8,10 @@ una sola cabeza, el NMI de 0,027 y el mIoU uno a uno de 7,7\,\% al excluir
 
 \item El cambio a ArCH está justificado porque este conjunto contiene escenas y
 categorías de patrimonio arquitectónico, entre ellas arcos, columnas y bóvedas.
-El modelo entrenado con ArCH redujo la cabeza dominante a 44,6\,\%, elevó el NMI
-sin \emph{other} a 0,439 y el mIoU uno a uno a 35,5\,\%. Así, M2 pasó a producir
+El modelo entrenado con ArCH~\cite{matrone2020benchmark}, en su último
+checkpoint (época 30), redujo la cabeza dominante a 44,6\,\%, elevó el NMI sin
+\emph{other} a 0,439 y el mIoU uno a uno a 35,5\,\%; el mejor checkpoint por
+validación dio 44,5\,\%, 0,437 y 33,6\,\%. Así, M2 pasó a producir
 una representación semántica útil para la escena de control.
 
 \item La integración implementada no es un entrenamiento de extremo a extremo.
@@ -23,6 +25,14 @@ $45,4\pm8,5$\,\%, M4 base $51,4\pm1,7$\,\% y M4 $52,5\pm2,5$\,\% de mIoU sin
 \emph{other}. M4 obtiene la mejor media, pero su ventaja de 1,1 puntos frente a
 M4 base queda dentro de la dispersión observada. La evidencia permite afirmar
 una mejora numérica, no una superioridad concluyente de la fusión.
+
+\item La mayor parte de la ganancia proviene del dominio de M2 y no de la fusión:
+con ArCH, M2 sube 12,5 puntos y M4 base 18,9, frente a los 9,1 de M4. El aporte
+de $f_{\mathrm{ssl}}$ es grande cuando M2 está colapsado, 10,9 puntos de M4 sobre
+su base, y de 1,1 punto cuando M2 funciona. El Sonata adaptado a la Catedral
+empeora a M3, de 45,4 a 34,3. Frente a la hipótesis, la mejora medible de
+reemplazar $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ se cumple en las medias, pero
+no es concluyente con M2 entrenado en patrimonio.
 
 \item Los resultados están limitados a una escena de la Catedral de Lima, una
 corrida de entrenamiento con ArCH y diez repeticiones únicamente del

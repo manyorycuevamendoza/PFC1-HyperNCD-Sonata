@@ -20,8 +20,10 @@ fused afterwards, without joint training.
 
 On a section of Lima Cathedral, the SemanticPOSS checkpoint assigned 98.4\% of
 the points to one head and achieved an NMI of 0.027 when the residual class was
-excluded. Training on ArCH reduced the dominant head to 44.6\%, raised NMI
-without the residual class to 0.439, and reached a one-to-one mIoU of 35.5\%.
+excluded. Training on ArCH, using the last checkpoint (epoch 30), reduced the dominant
+head to 44.6\%, raised NMI without the residual class to 0.439, and reached a
+one-to-one mIoU of 35.5\%; the best validation checkpoint gave 44.5\%, 0.437 and
+33.6\%.
 Across ten clustering seeds, M2 obtained $48.4\pm1.1$\%, M3
 $45.4\pm8.5$\%, M4 base $51.4\pm1.7$\%, and the M4 fusion
 $52.5\pm2.5$\%. The 1.1-point difference between M4 and M4 base lies within

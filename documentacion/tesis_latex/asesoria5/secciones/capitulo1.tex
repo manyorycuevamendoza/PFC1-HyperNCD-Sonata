@@ -537,6 +537,16 @@ A3 & Brecha cerrada $G$ y atribución por etapas
 \end{tabularx}
 \end{table}
 
+\paragraph*{Estado de cada aporte al cierre.} A1 se ejecutó con las dos ramas
+congeladas y una fusión posterior (Sección~\ref{sec:res-u3-rep}). A2 se cumplió
+con la comparación entre el artículo y el código, cuyas diferencias están en el
+Capítulo~\ref{cap:teorico}, y A4 con el \emph{cache} por sección. A5 se cumplió
+en parte: cada rama se lleva a longitud 1 antes de concatenar, pero no se midió
+la distribución de $S_b$ antes y después. A3 se cumplió en parte: se reportan el
+IoU por clase y el reparto por cabezas (Sección~\ref{sec:res-u3-traza}), pero no
+la brecha $G$ ni la sonda lineal. A6 y A7 no se ejecutaron, porque no hubo grilla
+conjunta ni más de una sección etiquetada; pasan a los trabajos futuros.
+
 El aporte al estado del arte no es una arquitectura nueva. Es establecer si
 un hallazgo demostrado en un régimen se transfiere a otro donde resulta más
 crítico, hacerlo sobre un objeto de estudio en el que el costo del trabajo manual

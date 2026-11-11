@@ -286,7 +286,10 @@ con la representación de Sonata.
 El punto y coma indica
 concatenación, es decir, colocar un vector a continuación del otro.
 La línea base describe así cada punto con $96+6=102$ números, y el modelo
-propuesto, con $96+1088=1184$. 
+propuesto, con $96+1088=1184$. En el Módulo~4 ejecutado cada parte se normaliza a
+longitud 1 antes de concatenar, y la línea base conserva solo los tres rasgos de
+forma, porque el centroide interviene en la afinidad geométrica
+(Ec.~\eqref{eq:gauss}). 
 
 \subsubsection{Descriptor Semántico}
 \label{sec:fsem}
@@ -1150,13 +1153,15 @@ novedosas.
 
 La Tabla~\ref{tab:estado-impl} indica, por módulo, qué está implementado y qué
 parte es estado del arte y qué parte es aporte propio. Cada módulo vale
-100\,\%; el aporte propio previsto suma 270 de 500, el 54\,\%. El escaneo de
-prueba no trae etiquetas y su anotación está pendiente.
+100\,\%; el aporte propio suma 270 de 500, el 54\,\%. Los porcentajes son una
+estimación de planificación hecha antes de la ejecución, no una medición. Los
+escaneos PL13 y PL7 no traen etiquetas; la medición con etiquetas se hizo sobre
+una capilla anotada de la Catedral.
 
 \begin{table}[H]
 \centering
 \setstretch{1}\small
-\caption[Implementación actual y aporte por módulo]{Implementación actual y aporte previsto por módulo. Elaboración
+\caption[Implementación actual y aporte por módulo]{Implementación actual y aporte estimado por módulo. Elaboración
 propia.}
 \label{tab:estado-impl}
 \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}Xll@{}}
