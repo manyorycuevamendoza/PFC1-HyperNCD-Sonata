@@ -1,7 +1,7 @@
 % Diagrama de diseno: cinco modulos; el Modulo 4 contiene sus cuatro operaciones.
 % Solo imagenes y formulas; cada formula enlaza con su ecuacion en el marco teorico.
 % Modulo 1 segun preprocesar.py; entradas de los Modulos 2 y 3 segun el codigo.
-% Flecha continua: conexion implementada. Flecha discontinua: conexion propuesta.
+% Flecha continua: conexion implementada. Todas las conexiones estan implementadas.
 % Cada linea y cada formula enlaza con el marco teorico (correspondencia uno a uno).
 % La incluyen la tesis (capitulo2.tex) y diagrama_diseno.tex (PDF/PNG).
 \definecolor{cEnt}{RGB}{31,78,121}
@@ -172,7 +172,7 @@
   {\hyperref[sec:nube]{nube de}\\\hyperref[sec:nube]{puntos en}\\\hyperref[sec:las]{.LAS}};
 \coordinate (sube) at ($(P1.north east)+(-0.45,0)$);
 \coordinate (baja) at ($(M1.south)+(1.15,0)$);
-\draw[flp] (sube) -- (sube |- M2.south)
+\draw[fl] (sube) -- (sube |- M2.south)
   node[midway, right=0.8mm, chico, align=left, fill=white, inner sep=1pt]
   {\hyperref[sec:modulo2]{coordenadas}\\\hyperref[sec:modulo2]{$(x,y,z)$ de $S$}};
 \draw[fl] (baja) -- (baja |- P3.north)
@@ -181,7 +181,7 @@
 \draw[fl] (M2.east) -- (M4.west |- M2.east)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
   {\hyperref[sec:fsem]{$f_{\mathrm{sem}}$}\\\hyperref[sec:fsem]{96}\\\hyperref[sec:fsem]{por punto}};
-\draw[flp] (M3.east) -- (M4.west |- M3.east)
+\draw[fl] (M3.east) -- (M4.west |- M3.east)
   node[midway, above=0.5mm, chico, align=center, fill=white, inner sep=1pt]
   {\hyperref[sec:fssl]{$f_{\mathrm{ssl}}$}\\\hyperref[sec:fssl]{1088}\\\hyperref[sec:fssl]{por punto}};
 \draw[fl] (M4.east |- M5.west) -- (M5.west)
@@ -189,6 +189,5 @@
   {\hyperref[sec:ncd]{etiquetas}\\\hyperref[sec:ncd]{$\hat{y}_i$}};
 %% ---------- leyenda de las flechas ----------
 \node[chico, anchor=north west, align=left, inner sep=1pt] (ley) at ($(M3.south west)+(0,-0.35)$)
- {\tikz[baseline=-0.6ex]{\draw[fl] (0,0) -- (0.75,0);}~\hyperref[sec:estado-impl]{conexión implementada}\\[2pt]
-  \tikz[baseline=-0.6ex]{\draw[flp] (0,0) -- (0.75,0);}~\hyperref[sec:estado-impl]{conexión propuesta}};
+ {\tikz[baseline=-0.6ex]{\draw[fl] (0,0) -- (0.75,0);}~\hyperref[sec:estado-impl]{conexión implementada}};
 \end{tikzpicture}
