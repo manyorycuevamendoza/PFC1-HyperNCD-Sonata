@@ -57,12 +57,16 @@ ser fuerte, entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
 supervisado equivalente~\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
 el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
 tipo de señal que Sonata~\cite{wu2025sonata} considera perjudicial, y propone
-reemplazarlo por su codificador auto-supervisado congelado.
+reemplazarlo por su codificador auto-supervisado congelado. Durante la ejecución
+se comprobó además que el checkpoint entrenado con SemanticPOSS no se transfiere
+a la catedral: concentra 98,4\,\% de los puntos en una sola cabeza. Por ello M2
+se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio y cuyas clases
+corresponden al patrimonio arquitectónico.
 
 El Capítulo~I presenta la revisión crítica de la literatura; el Capítulo~II, el
 marco teórico y el análisis de arquitectura del que se deriva el punto de la
 sustitución; el Capítulo~III, el marco metodológico; y el Capítulo~IV, los
-resultados esperados.
+resultados obtenidos y sus límites.
 
 \introsection{Formulación del problema}
 
@@ -83,10 +87,11 @@ novedosas en un levantamiento patrimonial real.
 \paragraph*{Objetivo General}
 \addcontentsline{toc}{paragraph}{Objetivo General}
 
-Construir y medir un modelo híbrido que integre las representaciones
+Construir y medir un sistema híbrido que integre las representaciones
 auto-supervisadas de Sonata en el módulo de prototipos de HyperNCD, y cuantificar
 la mejora del mIoU en la clasificación de elementos estructurales no anotados
-sobre el levantamiento de la Catedral de Lima.
+sobre el levantamiento de la Catedral de Lima, mediante ramas congeladas y una
+fusión posterior sin entrenamiento conjunto.
 
 \paragraph*{Objetivos Específicos}
 \addcontentsline{toc}{paragraph}{Objetivos Específicos}
@@ -107,30 +112,27 @@ la diferencia de resolución entre PTv3 y la rejilla de Minkowski con
 \item \textit{Herramientas y trabajo computacional:} pesos públicos de Sonata,
 Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch; módulo de fusión e
 inferencia congelada sobre cada sección.
-\item \textit{Resultado verificable:} repositorio con el híbrido produciendo
-$F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ y una \textbf{prueba de
-funcionamiento} sobre una sección de control donde el mIoU de las clases
-conocidas no baje respecto de la línea base.
+\item \textit{Resultado verificable:} repositorio con ambas ramas congeladas,
+archivos de descriptores y el híbrido produciendo
+$F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ sobre una sección de control.
 \item \textit{Conclusión asociada:} si la sustitución es viable dentro del
 hipergrafo.
 \end{itemize}
 
 \medskip
-\noindent\textbf{OE2. Calibrar la configuración del híbrido.} Determinar $\alpha$, que balancea la componente geométrica y la semántica, $M$,
-el número de vecinos por hiperarista, y $\epsilon$, que suaviza las etiquetas, con
-los que se maximiza el mIoU de las clases novedosas en una sección de referencia.
-Al combinar dos métodos, las ventajas y los modos de falla de cada uno pasan al
-resultado.
+\noindent\textbf{OE2. Evaluar la configuración del híbrido.} Comparar M2, M3,
+M4 base y M4 bajo un protocolo común, cuantificando la variabilidad debida a las
+semillas de agrupamiento. Los parámetros activos se documentan desde el código
+y los registros de ejecución.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item \textit{Herramientas y trabajo computacional:} búsqueda por grilla acotada,
-AdamW y Weights~\&~Biases; barrido sobre la sección de referencia y fijación de
-la configuración, aplicada sin reajuste al resto.
-\item \textit{Resultado verificable:} curvas de sensibilidad de los tres
-parámetros y la configuración fijada, con la métrica reportada también en el
-punto intermedio del proceso (Sección~\ref{sec:metricas-hibrido}).
-\item \textit{Conclusión asociada:} qué parámetro domina y de qué etapa proviene
-la mejora.
+\item \textit{Herramientas y trabajo computacional:} entrenamiento de M2 con
+ArCH, inferencia congelada, agrupamiento con diez semillas y métricas mIoU, NMI
+y dominancia.
+\item \textit{Resultado verificable:} tabla comparativa de las cuatro
+configuraciones, con media y desviación estándar del agrupamiento.
+\item \textit{Conclusión asociada:} si la fusión mejora numéricamente la línea
+base y si la diferencia supera la dispersión observada.
 \end{itemize}
 
 \medskip
