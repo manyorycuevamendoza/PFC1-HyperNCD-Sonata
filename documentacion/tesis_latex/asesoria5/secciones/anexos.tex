@@ -37,6 +37,58 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \end{tabularx}
 \end{table}
 
+La Tabla~\ref{tab:archivos} lista los archivos del sistema y los de inspección, y los recursos del clúster están en la Tabla~\ref{tab:hardware}.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Archivos del sistema y archivos de inspección]{Archivos del sistema y archivos de inspección, para los escaneos de
+prueba. Elaboración propia.}
+\label{tab:archivos}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Archivo} & \textbf{Función} \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Del sistema}}\\
+\texttt{PL7\_SCN0001.las} & Entrada del Módulo~1: escaneo en bruto \\
+\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1: matriz $S$, entrada del Módulo~3 \\
+\texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1: parámetros, centro restado y conteos \\
+\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13: $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{De inspección y documentación}}\\
+\texttt{PL7\_muestra\_100.csv} & Cien puntos del archivo LAS en texto, para examinar sus campos \\
+\texttt{PL7\_preprocesado\_muestra\_100.csv} & Cien filas de $S$ en texto, para examinar sus columnas \\
+\texttt{PL7\_SCN0001\_preprocesado.ply} & Copia de $S$ para verla en un visor 3D \\
+\texttt{inspeccionar\_data.py} & Guion que comprueba la coherencia entre los archivos anteriores, sin ejecutar ningún modelo \\
+\texttt{inspeccion\_DATA.json} & Reporte que produce ese guion \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.9}
+\caption[Requisitos del método y recursos del clúster Khipu]{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
+verificados por los autores sobre los nodos asignados.}
+\label{tab:hardware}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.07\hsize}X>{\raggedright\arraybackslash\hsize=0.93\hsize}X@{}}
+\toprule
+\textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
+\midrule
+GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
+VRAM & Pico medido de 34{,}60\,GB en PL13 (803\,099 puntos); los pesos del codificador (108{,}46\,M parámetros) ocupan 0{,}43\,GB & 48\,GB (49\,140\,MiB) \\
+RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
+Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
+\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos; driver 610.57.04 \\
+Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
+Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \paragraph*{Visor 3D del proyecto.}
 El programa \texttt{visor\_3d.py}, descrito en la Sección~\ref{sec:visor}, genera
 una página web con Plotly que muestra un escaneo en sus distintas etapas: la

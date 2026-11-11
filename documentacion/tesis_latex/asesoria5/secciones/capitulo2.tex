@@ -1013,35 +1013,10 @@ con los válidos, y las normales se estiman al final, sobre los representantes.
 Los metadatos registran los parámetros usados, el centro restado y el número de
 puntos tras cada paso.
 
-La Tabla~\ref{tab:archivos} separa los archivos que forman parte del sistema de
-los que se generaron para examinar y documentar el dato. Estos últimos no son
-etapas de la arquitectura y por eso no figuran en el diagrama.
+La Tabla~\ref{tab:archivos} del \hyperref[sec:anexo-software]{Anexo~A} separa los
+archivos que forman parte del sistema de los que se generaron para examinar y
+documentar el dato.
 
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Archivos del sistema y archivos de inspección]{Archivos del sistema y archivos de inspección, para los escaneos de
-prueba. Elaboración propia.}
-\label{tab:archivos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Archivo} & \textbf{Función} \\
-\midrule
-\multicolumn{2}{@{}l}{\textbf{Del sistema}}\\
-\texttt{PL7\_SCN0001.las} & Entrada del Módulo~1: escaneo en bruto \\
-\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1: matriz $S$, entrada del Módulo~3 \\
-\texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1: parámetros, centro restado y conteos \\
-\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13: $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
-\midrule
-\multicolumn{2}{@{}l}{\textbf{De inspección y documentación}}\\
-\texttt{PL7\_muestra\_100.csv} & Cien puntos del archivo LAS en texto, para examinar sus campos \\
-\texttt{PL7\_preprocesado\_muestra\_100.csv} & Cien filas de $S$ en texto, para examinar sus columnas \\
-\texttt{PL7\_SCN0001\_preprocesado.ply} & Copia de $S$ para verla en un visor 3D \\
-\texttt{inspeccionar\_data.py} & Guion que comprueba la coherencia entre los archivos anteriores, sin ejecutar ningún modelo \\
-\texttt{inspeccion\_DATA.json} & Reporte que produce ese guion \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \subsection{Módulo 2: Semántica}
 \label{sec:modulo2}

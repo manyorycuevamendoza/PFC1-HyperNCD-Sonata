@@ -216,32 +216,10 @@ Sonata congelado, una pasada con \emph{cache} & Una vez por sección & 1 GPU \\
 El proyecto está limitado por cómputo. Se ejecuta sobre el clúster
 \textbf{Khipu} de UTEC, cuya configuración de GPU cambió hace poco, de modo que
 \textbf{no se estiman tiempos de calendario}. Se especifica el hardware sobre el
-que las pruebas corrieron realmente (Tabla~\ref{tab:hardware}). La división en
+que las pruebas corrieron realmente (Tabla~\ref{tab:hardware}, en el \hyperref[sec:anexo-software]{Anexo~A}). La división en
 secciones sostiene esta política, ya que ninguna etapa necesita la nube completa
 en memoria.
 
-\begin{table}[!htb]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{0.9}
-\caption[Requisitos del método y recursos del clúster Khipu]{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
-verificados por los autores sobre los nodos asignados.}
-\label{tab:hardware}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.07\hsize}X>{\raggedright\arraybackslash\hsize=0.93\hsize}X@{}}
-\toprule
-\textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
-\midrule
-GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
-VRAM & Pico medido de 34{,}60\,GB en PL13 (803\,099 puntos); los pesos del codificador (108{,}46\,M parámetros) ocupan 0{,}43\,GB & 48\,GB (49\,140\,MiB) \\
-RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
-Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
-\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos; driver 610.57.04 \\
-Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
-Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 El nodo \texttt{ag001} ofrece además una A100 con particiones MIG, útiles para
 pruebas cortas. Los nodos de cómputo no tienen salida a internet, así que los

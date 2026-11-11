@@ -12,30 +12,25 @@ every unforeseen element to the closest known class. The objective is to
 measurably improve the recognition of elements absent from the training labels.
 
 This applied, quantitative study follows a comparative experimental design.
-HyperNCD was first trained on SemanticPOSS and then, after its poor transfer
-from urban scenes was verified, on ArCH, an architectural-heritage data
+HyperNCD was trained on SemanticPOSS and, after its poor transfer from urban
+scenes was verified, on ArCH, an architectural-heritage data
 set~\cite{matrone2020benchmark}. The semantic model and the self-supervised
-Sonata encoder were used as frozen branches; their descriptors were stored and
-fused afterwards, without joint training.
+Sonata encoder ran frozen and their descriptors were fused afterwards, without
+joint training.
 
 On a section of Lima Cathedral, the SemanticPOSS checkpoint assigned 98.4\% of
-the points to one head and achieved an NMI of 0.027 when the residual class was
-excluded. Training on ArCH, using the last checkpoint (epoch 30), reduced the dominant
-head to 44.6\%, raised NMI without the residual class to 0.439, and reached a
-one-to-one mIoU of 35.5\%; the best validation checkpoint gave 44.5\%, 0.437 and
-33.6\%.
-Across ten clustering seeds, M2 obtained $48.4\pm1.1$\%, M3
-$45.4\pm8.5$\%, M4 base $51.4\pm1.7$\%, and the M4 fusion
-$52.5\pm2.5$\%. The 1.1-point difference between M4 and M4 base lies within
-the observed dispersion and is not, by itself, conclusive evidence of an
-improvement.
+the points to one head; the ArCH checkpoint (epoch 30) reduced it to 44.6\%,
+raised NMI without the residual class from 0.027 to 0.439, and reached a
+one-to-one mIoU of 35.5\%. Across ten clustering seeds, M2 obtained
+$48.4\pm1.1$\%, M3 $45.4\pm8.5$\%, M4 base $51.4\pm1.7$\%, and the M4 fusion
+$52.5\pm2.5$\%. The 1.1-point difference between M4 and M4 base lies within the
+dispersion and is not conclusive.
 
-The results show that domain adaptation through ArCH prevents the collapse
-observed with SemanticPOSS and enables evaluation of the hybrid system. The
-scope remains limited to one heritage scene, one ArCH training run, and
-repetitions only at the clustering stage.
+Domain adaptation through ArCH prevents the collapse observed with SemanticPOSS
+and makes the hybrid system evaluable, within the limits of one scene, one
+training run, and repetitions only at the clustering stage.
 
-\vspace{1em}
+\vspace{0.5em}
 
 \noindent\begin{minipage}{\linewidth}
 \noindent\textbf{Keywords:}\par
