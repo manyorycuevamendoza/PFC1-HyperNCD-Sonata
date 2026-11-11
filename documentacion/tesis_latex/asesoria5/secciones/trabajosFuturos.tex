@@ -1,25 +1,28 @@
 \customchapter{TRABAJOS FUTUROS}
 
 \begin{itemize}
-\item \textbf{Extensión a otras tipologías patrimoniales.} Validar el modelo
-híbrido sobre edificaciones de tipología distinta a la de catedral colonial
-(conventos, huacas, arquitectura republicana) para medir la pérdida de
-rendimiento fuera de la generalización declarada.
+\item \textbf{Repetición completa.} Entrenar HyperNCD con varias semillas y
+repetir después la extracción y el agrupamiento, para separar la variabilidad
+del aprendizaje de la variabilidad de la etapa final.
 
-\item \textbf{Segmentación de instancias.} Pasar del etiquetado por punto a la
-individualización de elementos (columna~1, columna~2), requisito para la
-generación automática del modelo BIM.
+\item \textbf{Validación sin reutilizar el conjunto de prueba.} Reservar escenas
+de ArCH para validación o aplicar validación cruzada, manteniendo intactas las
+escenas oficiales de prueba para la evaluación final.
 
-\item \textbf{Ornamento fino.} Explorar esquemas de resolución adaptativa que
-levanten la limitación del vóxel de 5\,cm sobre elementos decorativos por debajo
-de esa escala.
+\item \textbf{Más escenas patrimoniales.} Evaluar iglesias, conventos, huacas y
+edificios republicanos para determinar si la ventaja de ArCH se conserva fuera
+de la sección estudiada de la Catedral de Lima.
 
-\item \textbf{Preentrenamiento específico de dominio.} Evaluar si un
-preentrenamiento auto-supervisado sobre un corpus de levantamientos
-patrimoniales mejora las representaciones respecto de los pesos públicos de
-Sonata, entrenados sobre escenas interiores genéricas.
+\item \textbf{Ablación de la fusión.} Comparar bajo las mismas semillas el
+descriptor semántico, Sonata, la geometría manual y sus combinaciones, e
+incorporar intervalos de confianza o pruebas pareadas antes de atribuir la
+diferencia a una rama específica.
 
-\item \textbf{Vocabulario abierto.} Integrar modelos de lenguaje-visión para
-nombrar automáticamente las clases descubiertas, en lugar de dejarlas como
-agrupaciones sin etiqueta semántica.
+\item \textbf{Clases minoritarias y ornamento fino.} Ajustar el muestreo, la
+resolución y las pérdidas para puerta/ventana, arco y escaleras, que conservaron
+los IoU más bajos durante el entrenamiento con ArCH.
+
+\item \textbf{Vocabulario abierto e instancias.} Nombrar las agrupaciones
+descubiertas y separar elementos individuales, como columna~1 y columna~2, para
+facilitar su incorporación posterior a un modelo BIM.
 \end{itemize}
