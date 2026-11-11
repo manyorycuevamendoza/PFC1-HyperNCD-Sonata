@@ -293,10 +293,11 @@ propuesto, con $96+1088=1184$.
 
 Vector que la red troncal supervisada de HyperNCD entrega por cada punto. Esa
 red es una MinkowskiUNet-34C de 96 canales (Sección~\ref{sec:minkunet}). Codifica a qué se parece un punto en términos
-de las clases que la red vio etiquetadas. No son medidas físicas, son
-coordenadas aprendidas, próximas entre puntos de una misma clase. Como la red se
-entrena, su salida cambia en cada época y debe recalcularse. Se denota
-$f_{\mathrm{sem}}$.
+de las clases y pseudo-etiquetas usadas durante el entrenamiento. No son medidas
+físicas, sino coordenadas aprendidas. Durante el entrenamiento la salida cambia
+con los pesos; durante la aplicación a la Catedral el checkpoint se congela y
+$f_{\mathrm{sem}}$ se extrae una sola vez por escena para reutilizarlo en el
+Módulo~4.
 
 \subsubsection{Descriptor Geométrico Analítico}
 \label{sec:fgeo}
@@ -635,16 +636,16 @@ una sola vez en el sistema y $\alpha$ conserva su interpretación.
 Etiqueta que el propio modelo asigna a un punto sin supervisión humana y que
 después usa como si fuera verdadera para continuar entrenando. En la
 implementación ejecutada cada punto del lote recibe un objetivo de entrenamiento.
-Si el punto es de una clase conocida, el objetivo es su etiqueta real suavizada,
+En la formulación del artículo, un punto conocido puede recibir una etiqueta suavizada,
 \begin{equation}
 \nom{ytil}{\tilde{y}_i}=(1-\nom{eps}{\epsilon})\,\nom{ytil}{e_{y_i}}+\frac{\nom{eps}{\epsilon}}{\nom{Ck}{|\mathcal{C}_k|}}\,\mathbf{1},
 \label{eq:suavizado}
 \end{equation}
-donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás, y
-$\epsilon=0{,}15$ (opción \texttt{--label\_smoothing}). Así la clase real no
-recibe certeza total, lo que reduce el sobreajuste. Si el punto no tiene
-etiqueta, su objetivo es la pseudo-etiqueta que entrega la normalización de
-Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}). 
+donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás. El artículo fija
+$\epsilon=0{,}15$. Sin embargo, la ruta ejecutada en esta tesis no expone la
+opción \texttt{--label\_smoothing}: construye objetivos \emph{one-hot} para las
+clases conocidas. Los puntos del conjunto novedoso reciben las pseudo-etiquetas
+de Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}).
 
 \subsection{Normalización de Sinkhorn-Knopp}
 \label{sec:sinkhorn}
@@ -675,8 +676,9 @@ pesos parecidos, con una tolerancia que fija $\gamma$. El resultado es
 \label{eq:sk-plan}
 \end{equation}
 y la fila $Y_i$ es la pseudo-etiqueta del punto $i$, repartida entre las clases
-novedosas. En el código, $\epsilon_{\mathrm{sk}}=0{,}1$ y $\gamma=10$
-(opción \texttt{--gamma}).
+novedosas. En el código, $\epsilon_{\mathrm{sk}}=0{,}1$. Aunque el programa
+tiene 10 como valor por defecto de $\gamma$, las corridas de SemanticPOSS y ArCH
+analizadas se lanzaron con $\gamma=1$ y pueden reducirlo adaptativamente.
 
 
 \subsection{Arquitectura de HyperNCD}
@@ -983,9 +985,18 @@ vóxel ocupado la característica constante 1 (Sección~\ref{sec:rejilla}).
 \item Aplica la red MinkowskiUNet-34C, de convoluciones dispersas, con
 codificador, decodificador y conexiones de salto
 (Secciones~\ref{sec:convdispersa} y~\ref{sec:minkunet}).
-\item Entrena con las clases conocidas (Sección~\ref{sec:clases}).
-\item Se reentrena en cada época (Sección~\ref{sec:fsem}).
+\item Durante el entrenamiento usa etiquetas reales de las clases conocidas y
+pseudo-etiquetas para las salidas novedosas (Sección~\ref{sec:pseudo}).
+\item Durante la aplicación carga un checkpoint, desactiva el gradiente y
+guarda $f_{\mathrm{sem}}$, las puntuaciones y el índice inverso. No se reentrena
+con la Catedral ni con los descriptores de Sonata.
 \end{enumerate}
+
+Se evaluaron dos checkpoints: uno entrenado con SemanticPOSS, de escenas
+urbanas, y otro entrenado desde cero con ArCH, conjunto de patrimonio
+arquitectónico presentado por Matrone et al.~\cite{matrone2020benchmark}. ArCH
+incluye iglesias, capillas y claustros, con categorías como arco, columna,
+bóveda y pared; esta correspondencia de dominio motiva su uso.
 
 \subsection{Módulo 3: \emph{Encoder}}
 \label{sec:modulo3}
@@ -1075,10 +1086,10 @@ propia.}
 \textbf{Módulo} & \textbf{Implementación actual} & \textbf{Estado del arte} & \textbf{Aporte propio} \\
 \midrule
 1. Preprocesamiento & Implementado; probado en PL7 y ejecutado sobre los 23 archivos en Khipu & 20\,\% & 80\,\% \\
-2. Semántica & Código de HyperNCD; falta el lector de $S$ & 90\,\% & 10\,\% \\
-3. \emph{Encoder} & Extracción implementada y probada en PL13; falta medir su calidad & 60\,\% & 40\,\% \\
-4. Fusión & Por implementar & 30\,\% & 70\,\% \\
-5. Salida & mIoU disponible; el resto, por implementar & 30\,\% & 70\,\% \\
+2. Semántica & Entrenado con SemanticPOSS y ArCH; lector de $S$ y extracción de $f_{\mathrm{sem}}$ implementados & 90\,\% & 10\,\% \\
+3. \emph{Encoder} & Sonata original y adaptación a la Catedral evaluados & 60\,\% & 40\,\% \\
+4. Fusión & Implementada y comparada con varias semillas de agrupamiento & 30\,\% & 70\,\% \\
+5. Salida & mIoU, NMI, ARI, tablas por clase y visor implementados & 30\,\% & 70\,\% \\
 \midrule
 \textbf{Total} & & 230 & 270 \\
 \bottomrule
