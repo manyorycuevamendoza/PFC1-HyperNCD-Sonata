@@ -638,36 +638,13 @@ $\alpha$, $M$, $\tau$, $\epsilon$, $\epsilon_{\mathrm{sk}}$, $\gamma$ & \hyperre
 \subsection{Función de Cada Paso y Efecto de Omitirlo}
 \label{sec:param-funcion}
 
-Antes de discutir valores hay que justificar que cada paso exista. La
-Tabla~\ref{tab:funcion} lo resume; el título de cada paso enlaza con su
-descripción.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Qué aporta cada paso y qué pasaría sin él]{Qué aporta cada paso y qué pasaría sin él. Elaboración propia.}
-\label{tab:funcion}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.6\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
-\toprule
-\textbf{Paso} & \textbf{Qué aporta} & \textbf{Sin este paso} \\
-\midrule
-\multicolumn{3}{@{}l}{\textit{Unidad 1}}\\
-\hyperref[sec:u1-p1]{1. Carga} & Limita la memoria y deja el color en la escala de Sonata & Sonata recibiría color hasta 65\,535 en vez de 255 \\
-\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión: en UTM, la precisión simple redondea $y$ a pasos de 1\,m; centrada, a micrómetros & Molduras y aristas se perderían por redondeo \\
-\hyperref[sec:u1-p3]{3. Filtrado SOR} & Retira puntos sueltos antes de que se promedien en el vóxel o tuerzan una normal & Sonata recibiría posiciones y normales de superficies que no existen \\
-\hyperref[sec:u1-p4]{4. Voxelización} & Iguala la densidad y reduce la nube para que quepa en la GPU & Las zonas cercanas al escáner dominarían y la nube no cabría \\
-\hyperref[sec:u1-p5]{5. Normales} & Da a Sonata su tercera entrada, que el escáner no mide & Sonata no tendría su entrada completa \\
-\hyperref[sec:u1-p6]{6. Escritura} & Separa las dos unidades y permite verificar repeticiones & Habría que preprocesar cada vez que corre Sonata \\
-\midrule
-\multicolumn{3}{@{}l}{\textit{Unidad 2}}\\
-\hyperref[sec:u2-p2]{2. Modelo} & Aporta lo que Sonata aprendió sin etiquetas & Con pesos al azar, los descriptores no dirían nada de la escena \\
-\hyperref[sec:u2-p3]{3. Preparación} & Pone la nube en la escala de Sonata y guarda el índice inverso & No se podrían devolver los descriptores a cada punto \\
-\hyperref[sec:u2-p4]{4. Inferencia} & Produce $f_{\mathrm{ssl}}$, el descriptor que reemplaza a $f_{\mathrm{geo}}$ & No existe el aporte de la tesis \\
-\hyperref[sec:u2-p5]{5. Escritura} & Ambas ramas se extraen una vez por sección y M4 lee sus archivos & Habría que repetir dos inferencias costosas y mezclar entornos incompatibles \\
-\bottomrule
-\end{tabularx}
-\end{table}
+Antes de discutir valores hay que justificar que cada paso exista. Los seis pasos
+de la Unidad~1 y los cuatro de la rama auto-supervisada hacen un trabajo que los
+siguientes necesitan: limitar la memoria, conservar la precisión, retirar puntos
+sueltos, igualar la densidad, dar a Sonata su tercera entrada, y escribir una
+salida que separe las unidades. La Tabla~\ref{tab:funcion}, en el
+\hyperref[sec:anexo-parametros]{Anexo~H}, dice qué aporta cada uno y qué pasaría
+sin él.
 
 \FloatBarrier
 \subsection{Pruebas de los Parámetros}
@@ -677,133 +654,26 @@ descripción.
 \phantomsection\label{sec:param-p4}\phantomsection\label{sec:param-p5}%
 
 Cada prueba cambia un solo parámetro sobre la misma sección, deja fijos los
-demás y mide la salida con cuatro indicadores:
-\begin{enumerate}
-\item \textbf{Rugosidad $r$}: distancia media de cada punto al plano de sus
-vecinos. Baja si se limpia ruido, pero también si se borra detalle, por eso no
-se lee sola.
-\item \textbf{Dispersión angular}: cuánto difiere cada normal de las de sus
-vecinos.
-\item \textbf{ARI y NMI} (Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}): cuánto se
-parecen los grupos de $k$-means de los descriptores a los de la configuración
-de referencia. Cerca de 1, el parámetro no cambia lo que recibe el Módulo~4.
-\item \textbf{Costo}: puntos que quedan, tiempo y memoria.
-\end{enumerate}
-Se elige el valor más barato a partir del cual los indicadores dejan de mejorar.
-Si quitar un paso no cambia nada, se retira del procedimiento. La
-Tabla~\ref{tab:pruebas} resume las seis pruebas.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Pruebas de los parámetros]{Pruebas de los parámetros. Elaboración propia.}
-\label{tab:pruebas}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
-\toprule
-\textbf{Prueba} & \textbf{Qué cambia} & \textbf{Valores} & \textbf{Qué se espera ver} \\
-\midrule
-P0 & Tamaño de bloque & 1, 5 y 20 millones & Ninguna diferencia en $S$ \\
-P1 & Filtrado: con o sin, $q$ y $\lambda$ & Sin filtrado; $q$ de 10 a 40; $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
-P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm; $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
-P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en paredes y en aristas; requiere separar este valor del $q$ del filtrado en el código \\
-P4 & Precisión del \texttt{.npz} & Media y simple & Si la precisión media cambia los descriptores (ARI) \\
-P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria sin cambiar los descriptores \\
-\bottomrule
-\end{tabularx}
-\end{table}
+demás y mide la salida con cuatro indicadores: la rugosidad, la dispersión
+angular de las normales, el ARI y el NMI frente a la configuración de referencia
+(Ecs.~\eqref{eq:ari} y~\eqref{eq:nmi}) y el costo. Se elige el valor más barato a
+partir del cual los indicadores dejan de mejorar. Las seis pruebas, P0 a P5, están
+en la Tabla~\ref{tab:pruebas} del \hyperref[sec:anexo-parametros]{Anexo~H}.
 
 \FloatBarrier
 \subsection{Replicación del Procedimiento}
 \label{sec:param-replicacion}
 
-Las pruebas anteriores solo valen si cada configuración se puede repetir y dar
-el mismo resultado. Esta subsección explica por qué el procedimiento de las
-Unidades~1 y~2 es replicable, qué hay que hacer para replicarlo con otra
-configuración y qué límites tiene esa replicación.
-
-\paragraph*{Por qué es replicable.}
-Hay cuatro razones, y cada una remite a la sección donde ya está descrita.
-\begin{enumerate}
-\item Ningún valor está escondido en el código. Cada parámetro de los dos
-programas es una opción de la línea de órdenes con un valor por defecto
-(\enlace{sec:u1-reproducibilidad}{Unidad~1} y Tabla~\ref{tab:replica}). La única
-excepción es el tamaño de parche del codificador, fijo en el programa, que la
-\enlace{sec:param-p5}{prueba~P5} convierte en opción.
-\item La Unidad~1 no tiene pasos aleatorios
-(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}); la
-comprobación en dos máquinas está en la Sección~\ref{sec:res-u1-repro}.
-\item Cada corrida deja constancia de lo que hizo: los metadatos de la
-\enlace{sec:unidad1}{Unidad~1} (Paso~6) y los campos del archivo de
-descriptores de la \enlace{sec:rama-ssl}{Unidad~2} (Paso~5).
-\item El código, la instalación y los pesos están en el
-\enlace{sec:hardware-repo}{repositorio}, y las versiones de las bibliotecas en
-el \hyperref[sec:anexo-software]{Anexo~A}.
-\end{enumerate}
-
-\paragraph*{La única fuente de azar.}
-La rutina de preparación de Sonata elige al azar un punto cuando varios caen en
-la misma celda de la rejilla. Por eso dos corridas sobre la misma matriz $S$
-podían dar descriptores algo distintos en esas celdas. Para eliminar esa
-variación, el programa \texttt{extraer\_features.py} fija ahora una semilla
-aleatoria, con valor 0 por defecto, que se elige con la opción
-\texttt{--semilla} y queda guardada en el archivo. Que dos inferencias en la GPU
-con la misma semilla den exactamente los mismos valores se comprueba repitiendo
-una extracción y comparando los dos archivos.
-
-\paragraph*{Cómo se replica una configuración.}
-Replicar una configuración consiste en cinco pasos, los mismos para cualquiera
-de las pruebas.
-\begin{enumerate}
-\item Fijar los valores de la configuración, uno por parámetro, a partir de la
-Tabla~\ref{tab:replica}.
-\item Ejecutar \texttt{preprocesar.py} con esos valores, con la orden de la
-\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}. En el clúster se
-usa \texttt{preprocesar.sbatch}, que acepta el vóxel, los vecinos y el umbral
-como variables de entorno (\hyperref[sec:anexo-software]{Anexo~A}).
-\item Comprobar los conteos del archivo de metadatos como indica la
-\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}. Si no coinciden,
-la configuración no se reprodujo y no tiene sentido seguir.
-\item Ejecutar \texttt{extraer\_features.py} sobre esa misma matriz $S$, con la
-rejilla, la precisión y la semilla de la configuración, con la orden del
-\hyperref[sec:anexo-software]{Anexo~A}.
-\item Comparar los descriptores con los de la condición de referencia, con el
-ARI y el NMI del \enlace{sec:param-criterio}{criterio común}, y revisar las dos
-salidas en el \enlace{sec:visor}{visor}, que además comprueba que descriptores y
-puntos correspondan.
-\end{enumerate}
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Cómo cambiar cada parte de la configuración]{Cómo cambiar cada parte de la configuración y qué comprobar después. Elaboración propia.}
-\label{tab:replica}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X@{}}
-\toprule
-\textbf{Qué cambia} & \textbf{Cómo se cambia} & \textbf{Qué se comprueba} \\
-\midrule
-Otro escaneo & \texttt{--input} con su archivo LAS & Conteos de su archivo de metadatos \\
-Tamaño de vóxel & \texttt{--voxel}, o \texttt{VOXEL} en el guion & \texttt{n\_voxel} y memoria en la GPU \\
-Vecinos del filtrado & \texttt{--q}, o \texttt{Q} en el guion & \texttt{n\_sor} \\
-Umbral del filtrado & \texttt{--lam}, o \texttt{LAM} en el guion & \texttt{n\_sor} \\
-Rejilla de Sonata & \texttt{--grid} & Puntos retenidos por la rejilla \\
-Precisión de los descriptores & \texttt{--fp32} & Tamaño del archivo, ARI y NMI \\
-Azar de la rejilla & \texttt{--semilla} & Descriptores idénticos con la misma semilla \\
-Otra máquina u otra versión de Open3D & Ninguna opción, mismos valores & Mismos conteos, aunque las filas salgan en otro orden \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\paragraph*{Límites de la replicación.}
-Hay tres. El primero es el orden de las filas
-(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}). El segundo es la memoria. Una
-configuración que deje muchos más representantes, por ejemplo un vóxel menor,
-puede no caber en los 48\,GB de la GPU, y en ese caso la falta de memoria se
-reporta como resultado de la configuración y no se reduce la nube para que
-quepa. El tercero es el tamaño de la sección: si la memoria crece con el número
-de puntos, las secciones más grandes no cabrán en una sola pasada y su
-replicación depende de la división en bloques de la
-Sección~\ref{sec:observables} o de la \enlace{sec:param-p5}{prueba~P5}.
+El procedimiento de las Unidades~1 y~2 es replicable porque ningún valor está
+escondido en el código, porque cada parámetro es una opción de la línea de
+órdenes, porque cada corrida deja constancia de lo que hizo en sus metadatos y
+porque el código, la instalación y los pesos están en el
+\enlace{sec:hardware-repo}{repositorio}. La única fuente de azar es la rutina de
+preparación de Sonata, que elige un punto al azar cuando varios caen en la misma
+celda; el programa \texttt{extraer\_features.py} fija ahora una semilla, con
+valor 0 por defecto, y la guarda en el archivo. Los cinco pasos para replicar una
+configuración, la tabla de cambios (Tabla~\ref{tab:replica}) y los límites de la
+replicación están en el \hyperref[sec:anexo-parametros]{Anexo~H}.
 
 % =====================================================================
 \FloatBarrier
