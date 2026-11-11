@@ -33,53 +33,37 @@ la etapa de agrupamiento se repite con diez semillas
   bucle/.style={-{Latex[length=1.6mm]}, thick, dashed, black!60},
   vb/.style={font=\tiny, text=black!70}
 ]
-% Fila 1, de izquierda a derecha
+% Fila 1, de izquierda a derecha: E0, E1, E2
 \node[logo] (i0) at (0,0)
-  {\adjustbox{trim=0 0 {.6667\width} {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
-\node[et] at (0,-1.25) {\textbf{E0.} 23 archivos LAS};
-\node[logo] (i1) at (3.7,0)
-  {\includegraphics[height=1cm]{imagenes/logos/open3d.png}\hspace{1mm}\includegraphics[height=1cm]{imagenes/logos/numpy.png}};
-\node[et] at (3.7,-1.25) {\textbf{E1.} SOR, vóxel y normales};
-\node[logo] (i2) at (7.4,0)
-  {\adjustbox{trim={.3333\width} 0 {.3333\width} {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
-\node[et] at (7.4,-1.25) {Matriz $S$};
-\node[logo] (i3) at (11.1,0)
-  {\includegraphics[height=1cm]{imagenes/logos/pytorch.png}};
-\node[et, text width=2.6cm] (e2) at (11.1,-1.25) {\textbf{E2.} Sonata congelado};
-% Fila 2, de derecha a izquierda
-\node[logo] (i4) at (11.1,-4.2)
-  {\adjustbox{trim={.6667\width} 0 0 {.12\height}, clip, height=2cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}};
-\node[et] at (11.1,-5.45) {$f_{\mathrm{ssl}}$};
-\node[logo] (i5) at (7.4,-4.2) {\begin{tikzpicture}
+  {\adjustbox{trim=0 0 {.6667\width} {.12\height}, clip, height=2.5cm}{\includegraphics{imagenes/visor_pl13_entrada_m1_m3.png}}\hspace{1mm}\includegraphics[height=0.8cm]{imagenes/logos/open3d.png}};
+\node[et, text width=3.6cm] at (0,-1.7) {\textbf{E0.} 23 archivos LAS: SOR, vóxel y normales, matriz $S$};
+\node[logo] (i1) at (5.2,0)
+  {\adjustbox{trim={.34\width} 0 {.33\width} 0, clip, height=2.5cm}{\includegraphics{imagenes/m2_cabeza_x_clase.png}}};
+\node[et, text width=3.6cm] at (5.2,-1.7) {\textbf{E1.} Diagnóstico de dominio: M2 de SemanticPOSS en la capilla};
+\node[logo] (i2) at (10.4,0)
+  {\adjustbox{trim={.34\width} 0 {.33\width} 0, clip, height=2.5cm}{\includegraphics{imagenes/m2_arch_curvas.png}}};
+\node[et, text width=3.6cm] (e2) at (10.4,-1.7) {\textbf{E2.} Entrenamiento de M2 con ArCH, una corrida};
+% Fila 2, de derecha a izquierda: E3, E4, E5
+\node[logo] (i3) at (10.4,-5.0) {\begin{tikzpicture}
   \draw[thick, fill=black!6] (0,0) -- (0,1.4) -- (0.75,1.4) -- (1.1,1.05) -- (1.1,0) -- cycle;
   \draw[thick] (0.75,1.4) -- (0.75,1.05) -- (1.1,1.05);
   \node[font=\scriptsize\ttfamily] at (0.55,0.5) {.npz};
-\end{tikzpicture}};
-\node[et] at (7.4,-5.45) {Frontera de disco};
-\node[logo] (i6) at (3.7,-4.2)
-  {\adjustbox{trim={.6\width} 0 0 {.18\height}, clip, height=2cm}{\includegraphics{imagenes/m4_paso4_hiperarista.png}}};
-\node[et] at (3.7,-5.45) {\textbf{E3.} HyperNCD con\\$S_b=\alpha S_g+(1-\alpha)S_s$};
-\node[logo] (i7) at (0,-4.2)
-  {\adjustbox{trim={.755\width} {.21\height} 0 {.16\height}, clip, height=2cm}{\includegraphics{imagenes/m4_paso5_escena.png}}};
-\node[et] (e4) at (0,-5.45) {\textbf{E4.} mIoU por sección};
-% Fila 3
-\node[logo] (i8) at (0,-8.4)
-  {\adjustbox{trim=0 0 {.8\width} 0, clip, height=2.4cm}{\includegraphics{imagenes/m4_curvas.png}}};
-\node[et] at (0,-9.75) {\textbf{E5.} $\Delta$mIoU, brecha $G$ y ablación};
+\end{tikzpicture}\hspace{2mm}\includegraphics[height=1cm]{imagenes/logos/pytorch.png}};
+\node[et, text width=3.6cm] at (10.4,-6.4) {\textbf{E3.} Inferencia congelada: $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ a disco};
+\node[logo] (i4) at (5.2,-5.0)
+  {\adjustbox{max width=4.4cm, max height=2.5cm}{\includegraphics{imagenes/m4_semillas.png}}};
+\node[et, text width=3.6cm] (e4) at (5.2,-6.4) {\textbf{E4.} Fusión y agrupamiento M2--M4, $K=8$, $\times10$ semillas};
+\node[logo] (i5) at (0,-5.0)
+  {\adjustbox{trim=0 0 {.5\width} 0, clip, height=2.5cm}{\includegraphics{imagenes/m4_iou_por_clase.png}}};
+\node[et, text width=3.6cm] at (0,-6.4) {\textbf{E5.} Evaluación: mIoU uno a uno, NMI, ARI e IoU por clase};
 % Flujo
 \draw[fl] (i0) -- (i1);
 \draw[fl] (i1) -- (i2);
-\draw[fl] (i2) -- (i3);
-\draw[fl] (i3.east) -- (12.9,0) -- (12.9,-4.2) -- (i4.east);
+\draw[fl] (i2.south) -- (i3.north);
+\draw[fl] (i3) -- (i4);
 \draw[fl] (i4) -- (i5);
-\draw[fl] (i5) -- (i6);
-\draw[fl] (i6) -- (i7);
-\draw[fl] (e4.south) -- (i8.north);
-% Bucles
-\draw[bucle] (i6.north) -- (3.7,-2.3) -- node[vb, above, pos=0.5]{$\times 3$ repeticiones} (11.1,-2.3) -- (e2.south);
-\draw[bucle] (i7.west) -- (-1.6,-4.2) -- (-1.6,1.5) -- node[vb, above, pos=0.5]{$\times 23$ secciones} (3.7,1.5) -- (i1.north);
 \end{tikzpicture}
-\caption[Flujo general del proyecto]{Flujo general del proyecto. Las imágenes de E3 a E5 provienen de la escena simulada del \hyperref[sec:m4-simulado]{Anexo~D}. Elaboración propia.}
+\caption[Flujo general del proyecto]{Flujo general del proyecto. Las imágenes provienen de los resultados del Capítulo~\ref{cap:resultados}. Elaboración propia.}
 \label{fig:flujo}
 \end{figure}
 
@@ -87,9 +71,10 @@ El flujo muestra tres elementos que la arquitectura no representa. El primero es
 la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine CUDA 11.x (11.8 en el
 clúster), que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
 un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
-asimetría de frecuencia, porque E2 se ejecuta una vez por sección y E3 en cada época,
-lo que justifica el almacenamiento intermedio. El tercero son los dos bucles, el
-de repeticiones y el de recorrido de secciones.
+asimetría de frecuencia: M2 se entrena una vez (E2), ambas ramas se extraen una
+vez por escena (E3) y solo la fusión y el agrupamiento (E4) se repiten, lo que
+justifica el almacenamiento intermedio. El tercero es el bucle de semillas, que
+repite el agrupamiento y no el entrenamiento.
 
 % =====================================================================
 \FloatBarrier
@@ -139,7 +124,7 @@ de intercambio.
 Las dos ramas están en paralelo porque ninguna consume la salida de la otra:
 parten de la misma nube preparada y solo se encuentran en el Módulo~4. Esa
 independencia permite ejecutar el Módulo~3 una sola vez, guardar su salida y
-reutilizarla en todas las épocas del Módulo~2.
+reutilizarla en todas las repeticiones de la fusión.
 
 Las herramientas, el módulo en que interviene cada una y los entornos con sus
 versiones se recogen en la Tabla~\ref{tab:herramientas} del \hyperref[sec:anexo-software]{Anexo~A}.
@@ -163,9 +148,9 @@ incompatibilidad de dimensión o de resolución aparezca antes de implementar.
 \textbf{Módulo} & \textbf{Entrada} & \textbf{Salida} & \textbf{Régimen} & \textbf{Frecuencia} \\
 \midrule
 1 & Archivos LAS de la sección, $N$ puntos & Matriz $S$ de 9 columnas: coord., color, normal & Sin modelo & Una vez por sección \\
-2 & Coordenadas de $S$, con característica constante 1 & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa de 5\,cm & Entrenado & Cada época \\
+2 & Coordenadas de $S$, con característica constante 1 & $f_{\mathrm{sem}}$, 96 dim.\ por punto, rejilla dispersa de 5\,cm & Entrenado antes y aplicado congelado & Entrenamiento una vez; extracción una vez por escena \\
 3 & $S$, 9 columnas & $f_{\mathrm{ssl}}$, 1088 dim.\ por punto, rejilla propia de 2\,cm, con índice inverso & Congelado & Una vez por sección \\
-4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Prototipos, hipergrafo y pseudo-etiquetas & Entrenado & Cada época \\
+4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Prototipos, hipergrafo y pseudo-etiquetas & Fusión posterior, sin gradientes & Una vez por semilla \\
 5 & Pseudo-etiquetas y verdad de terreno & Etiqueta por punto, mIoU por clase e interfaz de consulta & Evaluación y consulta & Por corrida \\
 \bottomrule
 \end{tabularx}
