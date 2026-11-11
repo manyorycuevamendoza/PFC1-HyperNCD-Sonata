@@ -1,12 +1,12 @@
 \chapter{RESULTADOS}
 \label{cap:resultados}
 
-Este capítulo sigue la estructura del Capítulo~\ref{cap:metodo}, como se
-indica al inicio de ese capítulo. Las Unidades~1 y~2 se ejecutaron sobre
-escaneos reales de la Catedral de Lima; su propósito no es demostrar que el
-sistema acierta, porque todavía no hay etiquetas con las que medirlo, sino que el
-procedimiento escrito es ejecutable y reproducible. Solo se reporta lo
-ejecutado; lo que aún no se ha ejecutado se indica en una línea.
+Este capítulo sigue la estructura del Capítulo~\ref{cap:metodo}. Las tres
+unidades se ejecutaron: preprocesamiento de los escaneos, extracción de
+descriptores y evaluación de M2--M4. Las etiquetas disponibles para la escena de
+control permiten medir el comportamiento del sistema. Se distingue siempre
+entre la corrida de entrenamiento de HyperNCD y las semillas posteriores de
+agrupamiento.
 
 % =====================================================================
 \FloatBarrier
@@ -14,8 +14,7 @@ ejecutado; lo que aún no se ha ejecutado se indica en una línea.
 \label{sec:res-flujo}
 
 Responde a la Sección~\ref{sec:diagrama-flujo}. De las etapas de la
-Figura~\ref{fig:flujo} se han ejecutado E0, E1 y E2 (Tabla~\ref{tab:res-etapas});
-E3 a E5 y el bucle de repeticiones aún no.
+Figura~\ref{fig:flujo} se ejecutaron E0 a E5 (Tabla~\ref{tab:res-etapas}).
 
 \begin{table}[!htbp]
 \centering
@@ -29,13 +28,16 @@ E3 a E5 y el bucle de repeticiones aún no.
 E0 & Recepción de los 23 archivos LAS, sin etiquetas & \S\ref{sec:res-u1-datos} \\
 E1 & Preprocesamiento de las 23 secciones & \S\ref{sec:res-u1-repro} \\
 E2 & Extracción con Sonata sobre PL13 & \S\ref{sec:res-unidad2} \\
+E3 & Extracción congelada de M2 entrenado con ArCH & \S\ref{sec:res-unidad3} \\
+E4 & Fusión posterior y agrupamiento M2--M4 & \S\ref{sec:res-unidad3} \\
+E5 & Evaluación con diez semillas de agrupamiento & \S\ref{sec:res-unidad3} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La frontera de disco funciona en un sentido: el archivo \texttt{.npz} de PL13 se
-escribió desde el entorno de Sonata y el visor lo leyó fuera de él. Falta que lo
-lea el entorno de HyperNCD.
+La frontera de disco funciona en ambos sentidos: las ramas congeladas escriben
+sus descriptores y la etapa de fusión los lee sin mantener simultáneamente en
+memoria los entornos de HyperNCD y Sonata.
 
 % =====================================================================
 \FloatBarrier
@@ -63,7 +65,9 @@ Las salidas de los Módulos~1 y~3 tienen la forma que declara la
 Tabla~\ref{tab:contrato}: la matriz $S$ de 9 columnas
 (Tabla~\ref{tab:m1-metadatos}) y $f_{\mathrm{ssl}}$ de 1088 valores en la
 rejilla de 2\,cm, con un índice inverso de una entrada por fila de $S$
-(Tabla~\ref{tab:npz}). Los Módulos~2, 4 y~5 aún no se han ejecutado.
+(Tabla~\ref{tab:npz}). El Módulo~2 produce $f_{\mathrm{sem}}$ de 96 dimensiones,
+logits e índice inverso; los Módulos~4 y~5 consumen las salidas almacenadas para
+la fusión, el agrupamiento y el cálculo de métricas.
 
 \FloatBarrier
 \subsection{Visor 3D del Proyecto}
@@ -286,7 +290,11 @@ Responde a la Sección~\ref{sec:unidad2}.
 \FloatBarrier
 \subsection{Rama Semántica}
 
-Responde a la Sección~\ref{sec:rama-sem}. No se ha ejecutado.
+Responde a la Sección~\ref{sec:rama-sem}. La rama se ejecutó primero con el
+checkpoint de SemanticPOSS y después con el checkpoint entrenado con ArCH. En
+ambos casos se mantuvo congelada durante la inferencia y produjo el descriptor
+$f_{\mathrm{sem}}$ de 96 dimensiones, logits e índice inverso. La comparación
+cuantitativa se presenta en la Sección~\ref{sec:res-unidad3}.
 
 \FloatBarrier
 \subsection{Rama Auto-supervisada Congelada}
@@ -432,17 +440,21 @@ direcciones independientes.
 \FloatBarrier
 \subsection{Punto de Fusión}
 
-Responde a la Sección~\ref{sec:fusion}. No se ha ejecutado.
+Responde a la Sección~\ref{sec:fusion}. La fusión se ejecutó después de extraer
+y almacenar los descriptores de M2 y M3. Su resultado corresponde a M4 en la
+Tabla~\ref{tab:m2-m4-semillas}; no hubo retropropagación hacia los dos
+codificadores.
 
 % =====================================================================
 \FloatBarrier
 \section{Justificación de los Parámetros del Procedimiento}
 \label{sec:res-parametros}
 
-Responde a la Sección~\ref{sec:parametros}. Las pruebas P0 a P5 aún no se han
-ejecutado, de modo que los valores usados en las Secciones~\ref{sec:res-unidad1}
-y~\ref{sec:res-unidad2} son los que trae el programa por defecto. Lo ejecutado
-de esta sección son dos comprobaciones.
+Responde a la Sección~\ref{sec:parametros}. No se ejecutó la grilla P0--P5
+propuesta originalmente. En consecuencia, los valores activos se recuperaron
+del código y de los registros de las corridas, y esa limitación se conserva en
+la interpretación. Lo ejecutado de esta sección son las comprobaciones
+siguientes.
 
 \paragraph*{Efecto de cada paso.} Los efectos que la
 Sección~\ref{sec:param-funcion} atribuye a cada paso se observan en las salidas:
@@ -460,10 +472,89 @@ Sección~\ref{sec:res-u1-repro}.
 \section{Unidad 3. Entrenamiento, Calibración y Evaluación}
 \label{sec:res-unidad3}
 
-Responde a la Sección~\ref{sec:unidad3}. Esta unidad aún no se ha ejecutado.
-Lo único hecho es la verificación del entorno de la
-Sección~\ref{sec:entorno-computo}: con MinkowskiEngine compilado, una corrida de
-HyperNCD en Khipu llegó hasta la carga del primer lote.
+Responde a la Sección~\ref{sec:unidad3}. Esta unidad se ejecutó en dos etapas:
+primero se evaluó la transferencia del checkpoint entrenado con SemanticPOSS y,
+tras observar su colapso de dominio, se entrenó HyperNCD desde cero con ArCH.
+
+\subsection{Entrenamiento con ArCH}
+
+ArCH se eligió porque contiene geometría y clases propias del patrimonio
+arquitectónico, como arcos, columnas y bóvedas, ausentes en el dominio urbano de
+SemanticPOSS. Se usaron 15 escenas para entrenamiento y dos escenas de prueba
+como validación; seis clases fueron conocidas (molduras, piso, puerta/ventana,
+muro, escaleras y techo), tres novedosas (arco, columna y bóveda), y
+\emph{other} se ignoró en la métrica principal. La configuración usó 30 épocas,
+lotes de cuatro muestras, 60\,000 puntos por muestra, teselas de 10\,m,
+voxelización de 5\,cm y radio DBSCAN de 0,5\,m.
+
+El mejor checkpoint alcanzó 48,93\,\% de mIoU de validación y el de la última
+época, 48,47\,\%. El resultado proviene de una única corrida de entrenamiento.
+La Tabla~\ref{tab:m2-arch-clases} muestra que las clases extensas obtienen los
+valores más altos y que puerta/ventana, arco y escaleras continúan siendo las
+más difíciles.
+
+\begin{table}[!htbp]
+\centering\small
+\caption[IoU por clase del entrenamiento de M2 con ArCH]{IoU por clase del checkpoint de M2 entrenado con ArCH.}
+\label{tab:m2-arch-clases}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Clase & Techo & Muro & Bóveda & Piso & Columna & Moldura & Escalera & Arco & P/V \\
+\midrule
+IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Transferencia a la Catedral de Lima}
+
+La Tabla~\ref{tab:m2-dominio} cuantifica el efecto del cambio de dominio. Con
+SemanticPOSS, casi todos los puntos de la capilla se concentran en una sola
+cabeza; ArCH reduce esa dominancia y mejora todas las métricas sin clase
+residual. Por tanto, el checkpoint urbano no era adecuado para interpretar la
+escena patrimonial, mientras que ArCH proporciona una inicialización coherente
+con su vocabulario geométrico.
+
+\begin{table}[!htbp]
+\centering\small
+\caption[Comparación de M2 entrenado con SemanticPOSS y ArCH]{Transferencia de M2 a la escena de control de la Catedral de Lima.}
+\label{tab:m2-dominio}
+\begin{tabular}{lrr}
+\toprule
+Métrica & SemanticPOSS & ArCH \\
+\midrule
+Cabeza dominante & 98,4\,\% & 44,6\,\% \\
+NMI, todas las clases & 0,018 & 0,191 \\
+NMI, sin \emph{other} & 0,027 & 0,439 \\
+mIoU uno a uno, sin \emph{other} & 7,7\,\% & 35,5\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Comparación de M2, M3 y M4}
+
+La comparación final se repitió con diez semillas de agrupamiento y excluyó
+\emph{other}. Estas repeticiones no reentrenan las redes. Los resultados de la
+Tabla~\ref{tab:m2-m4-semillas} muestran que la fusión completa M4 obtiene la
+media más alta, pero su ventaja de 1,1 puntos frente a M4 base es menor que su
+desviación estándar. En consecuencia, se observa una mejora numérica, no una
+demostración estadística concluyente del aporte de Sonata.
+
+\begin{table}[!htbp]
+\centering\small
+\caption[Resultados de M2--M4 con diez semillas]{mIoU sin \emph{other}, media y desviación estándar de diez semillas de agrupamiento.}
+\label{tab:m2-m4-semillas}
+\begin{tabular}{lr}
+\toprule
+Configuración & mIoU (\%) \\
+\midrule
+M2: descriptor semántico & $48,4\pm1,1$ \\
+M3: descriptor Sonata & $45,4\pm8,5$ \\
+M4 base & $51,4\pm1,7$ \\
+M4: fusión completa & $52,5\pm2,5$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % =====================================================================
 \FloatBarrier
@@ -480,10 +571,13 @@ corrió en la GPU asignada (Sección~\ref{sec:res-hardware}).
 
 % =====================================================================
 \FloatBarrier
-\section{Resumen de los Resultados Preliminares}
+\section{Resumen de los Resultados}
 
-Responde a la Sección~\ref{sec:conclusion-metodo}. Las Unidades~1 y~2 se
-ejecutaron paso a paso sobre escaneos reales y cada paso entregó la salida que
-declara la metodología; la Unidad~1 se reprodujo en otra máquina
-(Sección~\ref{sec:res-u1-repro}). Son resultados preliminares: muestran que el
-procedimiento funciona y se repite, no todavía que mejore la segmentación.
+Responde a la Sección~\ref{sec:conclusion-metodo}. Las tres unidades produjeron
+las salidas declaradas por la metodología. El resultado principal de M2 es que
+ArCH corrige el colapso de dominio del checkpoint de SemanticPOSS y permite
+extraer un descriptor semántico útil para la catedral. M4 alcanza la mejor media
+de agrupamiento, 52,5\,\%, aunque la diferencia respecto de M4 base permanece
+dentro de la variabilidad entre semillas. La evidencia es exploratoria por
+proceder de una escena, una corrida de entrenamiento y diez repeticiones solo
+del agrupamiento.
