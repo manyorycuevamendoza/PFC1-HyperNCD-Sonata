@@ -7,25 +7,28 @@ segmentación semántica tridimensional usan una lista cerrada de categorías y
 asignan todo elemento imprevisto a la clase más parecida. El objetivo es
 mejorar de forma medible el reconocimiento de los elementos sin etiqueta.
 
-La investigación es aplicada, cuantitativa y
-de diseño experimental comparativo. Primero se diagnostica el mejor método de
-descubrimiento de clases novedosas reanalizando su ablación; luego se sustituye
-su componente más débil por un codificador auto-supervisado. La evaluación usa
-el levantamiento de la Catedral de Lima, dividido en secciones, contra una línea
-base de tres corridas.
+La investigación es aplicada, cuantitativa y de diseño experimental
+comparativo. HyperNCD se entrenó primero con SemanticPOSS y luego, al comprobar
+su insuficiente transferencia desde escenas urbanas, con ArCH, un conjunto de
+patrimonio arquitectónico~\cite{matrone2020benchmark}. El modelo semántico y el
+codificador auto-supervisado Sonata se ejecutaron como ramas congeladas; sus
+descriptores se almacenaron y fusionaron posteriormente, sin entrenamiento
+conjunto.
 
-El método base logra entre 11,8 y 47,5 puntos de
-intersección sobre unión en las clases no vistas, frente a 49,8 del supervisado.
-Su ablación da al descriptor geométrico solo 4,2 puntos sobre una base de 23,2,
-menos de la mitad de los 9,6 del hipergrafo. Eliminar esa dependencia eleva un
-descriptor congelado de 5,6 a 72,5 puntos. Se define además una medida de
-brecha cerrada, pues el sesgo hacia las clases mayoritarias cuesta hasta 15,34
-puntos.
+En una sección de la Catedral de Lima, el checkpoint de SemanticPOSS asignó
+98,4\,\% de los puntos a una sola cabeza y obtuvo NMI de 0,027 al excluir la
+clase residual. El modelo entrenado con ArCH redujo la cabeza dominante a
+44,6\,\%, elevó el NMI sin clase residual a 0,439 y alcanzó 35,5\,\% de mIoU
+uno a uno. En diez semillas de agrupamiento, M2 obtuvo
+$48,4\pm1,1$\,\%, M3 $45,4\pm8,5$\,\%, M4 base $51,4\pm1,7$\,\% y la fusión
+M4 $52,5\pm2,5$\,\%. La diferencia de 1,1 puntos entre M4 y M4 base se encuentra
+dentro de la dispersión observada y no constituye, por sí sola, evidencia de
+una mejora concluyente.
 
-El desequilibrio del método base lo documentan sus
-propios autores y sigue sin corregirse, pero queda por establecer si persiste
-sin etiquetas. Cada punto de mejora es corrección manual que el especialista
-deja de hacer.
+Los resultados demuestran que la adaptación de dominio mediante ArCH evita el
+colapso observado con SemanticPOSS y hace viable la evaluación del sistema
+híbrido. El alcance sigue limitado a una escena patrimonial, una corrida de
+entrenamiento de ArCH y repeticiones únicamente en la etapa de agrupamiento.
 
 \vspace{1em}
 
