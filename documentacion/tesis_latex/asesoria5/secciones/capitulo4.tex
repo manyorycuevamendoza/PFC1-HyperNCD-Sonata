@@ -663,7 +663,7 @@ M3 con Sonata original, de $\pm8{,}5$, indica que ese agrupamiento es inestable.
 \subsection[Trazabilidad de la Métrica]{Trazabilidad de la Métrica\espejo{sec:trazabilidad}}
 \label{sec:res-u3-traza}
 
-La Tabla~\ref{tab:iou-clase} descompone el mIoU por clase para una semilla, con
+El IoU de cada clase es $TP/(TP+FP+FN)$ y vale 0 si la clase no tiene puntos reales ni asignados; el NMI usa la normalización aritmética de la Ec.~\eqref{eq:nmi}. La Tabla~\ref{tab:iou-clase} descompone el mIoU por clase para una semilla, con
 $K=8$, asignación uno a uno y sin \emph{other}; la
 Figura~\ref{fig:m4-iou-clase} muestra todas las combinaciones, con y sin
 \emph{other}. La clase que domina cada agregado es distinta. En M3 domina la
