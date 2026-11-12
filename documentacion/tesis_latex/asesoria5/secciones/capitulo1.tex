@@ -11,39 +11,11 @@
 \label{cap:revision}
 
 Las cuatro publicaciones revisadas se corresponden con los objetivos específicos
-de la tesis según la Tabla~\ref{tab:mapa-estudios}. De ellas nacen los
+de la tesis según la Tabla~\ref{tab:obj-vs-revision}. De ellas nacen los
 \textbf{siete aportes} que el proyecto declara. El número de aportes no coincide
 con el de publicaciones porque un mismo estudio puede dar origen a más de uno,
 según cuántos de sus resultados se estén explotando. De HyperNCD nacen dos, de
 BRDL tres, y de Sonata y de PTv3 uno cada uno.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\small
-\caption[Publicaciones revisadas y su aporte a cada objetivo]{Correspondencia entre las publicaciones revisadas, lo que aportan y el
-objetivo específico con el que se identifican.}
-\label{tab:mapa-estudios}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.88\hsize}X>{\raggedright\arraybackslash\hsize=1.12\hsize}Xll@{}}
-\hline
-\textbf{Publicación} & \textbf{Qué aporta a la tesis} & \textbf{Aportes} &
-\textbf{Objetivo} \\
-\hline
-Zhang et al. (2026), HyperNCD \newline (Sección~\ref{sec:hyperncd})
-& El método sobre el que se construye y la vara de comparación
-& A1, A2 & OE1 \\
-Wu et al. (2025), Sonata \newline (Sección~\ref{sec:sonata})
-& La pieza que sustituye al descriptor y la forma de medir representación
-& A3 & OE1, OE3 \\
-Wu et al. (2024), PTv3 \newline (Sección~\ref{sec:ptv3})
-& La estructura espacial que crea el problema de integración
-& A4 & OE1 \\
-Su et al. (2025), BRDL \newline (Sección~\ref{sec:brdl})
-& El procedimiento de calibración bajo desbalance de clases
-& A5, A6, A7 & OE2 \\
-\hline
-\end{tabularx}
-\end{table}
 
 % =====================================================================
 \section[HyperNCD]{Zhang, Wu, Li, Han y Shen (2026): HyperNCD, razonamiento por
@@ -390,9 +362,6 @@ $f_{\mathrm{ssl}}$, el codificador congelado de Sonata, conservando íntegro el
 razonamiento por hipergrafo. Así,
 $F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
 la métrica es atribuible a ese reemplazo y a nada más.
-\emph{Resultado verificable:} las ramas congeladas y la fusión posterior
-corriendo sobre una sección de control, con dimensiones documentadas y métricas
-comparables.
 
 \item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
 corrección de la línea base (OE1).} La inspección del código liberado muestra
@@ -409,9 +378,7 @@ Esto obliga a tres decisiones. La línea base se establece sobre el código que 
 ejecuta y no sobre la formulación publicada, la comparación se hace contra
 corridas propias bajo condiciones idénticas de datos, partición y semilla, y la
 sustitución se aplica sobre el descriptor de dimensión seis. Sin esta corrección,
-cualquier mejora reportada quedaría mal atribuida. \emph{Resultado verificable:}
-la tabla de correspondencia entre artículo e implementación y las tres decisiones
-metodológicas que de ella se derivan.
+cualquier mejora reportada quedaría mal atribuida.
 
 \item[\textbf{A4}] \textbf{Puente entre dos estructuras espaciales incompatibles
 (OE1).} Resolver el emparejamiento entre la secuencia serializada de PTv3 y la
@@ -421,11 +388,7 @@ problemas a la vez: el emparejamiento de vecindades, la incompatibilidad entre
 pilas de dependencias, que deja de importar porque las dos ramas nunca coexisten
 en un mismo proceso, y la repetición del costo del codificador en cada época, que
 desaparece. Incluye la formulación propia de una cota de aceleración que delimita
-hasta dónde vale la pena distribuir el cacheo. \emph{Resultado verificable:} el
-\emph{cache} persistente por sección, legible desde los dos entornos, y la cota
-de aceleración. El \emph{cache} se generó para el escaneo PL13 y la etapa de
-fusión lee las salidas de ambas ramas (Secciones~\ref{sec:res-unidad2}
-y~\ref{sec:res-unidad3}).
+hasta dónde vale la pena distribuir el cacheo.
 \end{enumerate}
 
 \medskip
@@ -447,16 +410,14 @@ requisito previo a la calibración, y el régimen
 congelado lo agrava porque impide que la rama auto-supervisada se reescale sola
 durante el entrenamiento. En BRDL los dos parámetros pertenecen al mismo método
 y comparten escala, por lo que este caso queda fuera de lo que ese trabajo
-cubre. \emph{Resultado verificable:} el procedimiento de normalización adoptado
-y su efecto medido sobre la distribución de $S_b$ antes y después.
+cubre.
 
 \item[\textbf{A6}] \textbf{Calibración conjunta y verificación de
 no-aditividad (OE2).} Determinar los tres valores con una grilla
 conjunta y curvas de sensibilidad sobre una sección de referencia, en lugar de un
 barrido por parámetro, y verificar si la no-aditividad que BRDL documenta entre
 sus dos estrategias aparece también entre la representación y el razonamiento del
-híbrido. \emph{Resultado verificable:} la grilla conjunta, las tres curvas de
-sensibilidad y la configuración fijada.
+híbrido.
 
 \item[\textbf{A7}] \textbf{Verificación de que la configuración se sostiene fuera
 de donde se calibró (OE2).} La configuración se fija sobre una única sección de
@@ -465,9 +426,7 @@ la degradación observada. Así se distingue una calibración real de un ajuste 
 sobre aquello que se iba a medir, y el estudio de referencia muestra por qué
 importa. Al cambiar solo el orden de presentación de las clases, los métodos
 incrementales existentes se degradan de forma significativa mientras que el
-entrenamiento conjunto apenas se mueve. \emph{Resultado verificable:} la métrica
-por sección bajo configuración fija y su diferencia respecto de la sección de
-calibración.
+entrenamiento conjunto apenas se mueve.
 \end{enumerate}
 
 \medskip
@@ -537,15 +496,8 @@ A3 & Brecha cerrada $G$ y atribución por etapas
 \end{tabularx}
 \end{table}
 
-\paragraph*{Estado de cada aporte al cierre.} A1 se ejecutó con las dos ramas
-congeladas y una fusión posterior (Sección~\ref{sec:res-u3-rep}). A2 se cumplió
-con la comparación entre el artículo y el código, cuyas diferencias están en el
-Capítulo~\ref{cap:teorico}, y A4 con el \emph{cache} por sección. A5 se cumplió
-en parte: cada rama se lleva a longitud 1 antes de concatenar, pero no se midió
-la distribución de $S_b$ antes y después. A3 se cumplió en parte: se reportan el
-IoU por clase y el reparto por cabezas (Sección~\ref{sec:res-u3-traza}), pero no
-la brecha $G$ ni la sonda lineal. A6 y A7 no se ejecutaron, porque no hubo grilla
-conjunta ni más de una sección etiquetada; pasan a los trabajos futuros.
+Qué aportes se ejecutaron y cuáles pasan a trabajos futuros se indica en el
+Capítulo~\ref{cap:resultados} y en los trabajos futuros.
 
 El aporte al estado del arte no es una arquitectura nueva. Es establecer si
 un hallazgo demostrado en un régimen se transfiere a otro donde resulta más

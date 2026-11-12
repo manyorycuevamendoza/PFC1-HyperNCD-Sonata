@@ -34,16 +34,14 @@ un patio a una capilla del mismo inmueble, y la única salida fue etiquetar a ma
 y reentrenar.
 
 Los métodos generales de segmentación semántica en tres dimensiones tampoco
-alcanzan. PTv3~\cite{wu2024ptv3} llega a 77,5 mIoU y Sonata~\cite{wu2025sonata} a 79,4 sobre
-ScanNet (Ec.~\eqref{eq:miou}), y otras arquitecturas como Stratified
+alcanzan. PTv3~\cite{wu2024ptv3}, Sonata~\cite{wu2025sonata}, Stratified
 Transformer~\cite{lai2022stratified} o Superpoint
-Transformer~\cite{robert2023spt} compiten en el mismo orden, pero todas trabajan
-con una lista de clases fijada antes de entrenar y asignan todo punto imprevisto
-a la clase conocida más parecida, sin avisar que no saben. En patrimonio eso es
-serio, porque cada edificio tiene elementos propios que no figuran en ningún
-catálogo previo~\cite{grilli2020generalisation}, y el problema se agrava con las
-clases minoritarias, donde el sesgo hacia las mayoritarias llega a costar 15,34
-puntos de mIoU~\cite{su2025brdl}.
+Transformer~\cite{robert2023spt} trabajan con una lista de clases fijada antes de
+entrenar y asignan todo punto imprevisto a la clase conocida más parecida, sin
+avisar que no saben. En patrimonio eso es serio, porque cada edificio tiene
+elementos propios que no figuran en ningún catálogo
+previo~\cite{grilli2020generalisation}, y el problema se agrava con las clases
+minoritarias~\cite{su2025brdl}.
 
 El descubrimiento de clases novedosas, o NCD, elimina ese supuesto y permite
 trabajar con clases que el modelo nunca vio etiquetadas. Riz et
@@ -53,8 +51,8 @@ método actual es HyperNCD~\cite{zhang2026hyperncd}, que resume la nube en
 \emph{prototipos}, vectores alrededor de los cuales se agrupan los puntos
 parecidos, y los conecta mediante un \emph{hipergrafo}, donde cada arista puede
 unir varios prototipos a la vez. Su problema es que rinde mal justo donde debería
-ser fuerte, entre 11,8 y 47,5 mIoU en las clases novedosas, frente a 49,8 del
-supervisado equivalente~\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
+ser fuerte, con entre 11,8 y 47,5 mIoU en las clases novedosas
+\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
 el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
 tipo de señal que Sonata~\cite{wu2025sonata} considera perjudicial, y propone
 reemplazarlo por su codificador auto-supervisado congelado. Durante la ejecución
@@ -179,57 +177,20 @@ El levantamiento se recibe como archivos LAS (Sección~\ref{sec:las}) y la unida
 de trabajo es la \textbf{sección espacial} (Sección~\ref{sec:seccion}). Una sección es el conjunto de
 archivos que se preprocesan juntos, y las secciones funcionan como particiones de
 entrenamiento y evaluación. El preprocesamiento
-implementado aplica dos reducciones de naturaleza distinta
-(Tabla~\ref{tab:datos}). El filtrado SOR descarta los puntos estadísticamente
-aislados, que en el escaneo de prueba son el 4,73\,\%. La voxelización no
-descarta ruido. Agrupa los puntos que caen en un mismo cubo de 5\,cm y los
-representa con uno solo, de modo que 8\,184\,419 puntos quedan en 610\,637
-representantes, el 7,46\,\% de los registros anteriores. El 92,54\,\% restante
-no era ruido, sino mediciones redundantes de superficies que el representante
-de su vóxel sigue describiendo. El vóxel de 5\,cm es un límite, no una
-preferencia. Por debajo, con muy pocos puntos por clase novedosa, la diferencia
+aplica dos reducciones de naturaleza distinta: el filtrado SOR descarta los
+puntos estadísticamente aislados y la voxelización agrupa los puntos de cada cubo
+de 5\,cm en un solo representante, sin descartar ruido. Las cifras medidas están
+en la Tabla~\ref{tab:m1-metadatos}. El vóxel de 5\,cm es un límite, no una
+preferencia: por debajo, con muy pocos puntos por clase novedosa, la diferencia
 entre el modelo base y el híbrido dejaría de distinguirse del ruido entre
 corridas.
 
-\begin{table}[!htb]
-\centering
-\small
-\renewcommand{\arraystretch}{0.95}
-\caption[Cadena de reducción de datos del preprocesamiento]{Cadena de reducción de datos medida sobre un escaneo del levantamiento
-(archivo \texttt{PL7\_SCN0001.las}), con los conteos que registra el propio
-preprocesamiento.}
-\label{tab:datos}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.89\hsize}X>{\raggedright\arraybackslash\hsize=1.11\hsize}Xl@{}}
-\toprule
-\textbf{Etapa} & \textbf{Volumen} & \textbf{Recurso} \\
-\midrule
-Archivo LAS en bruto & 8\,590\,904 puntos, 292\,MB & Almacenamiento \\
-Filtrado SOR, $q=20$ y $\lambda=2$ & 8\,184\,419 puntos (95,27\,\%) & CPU \\
-Voxelización a 5\,cm & 610\,637 representantes (7,46\,\% de los anteriores) & CPU \\
-Matriz de salida & $610\,637\times 9$ en precisión simple, 22\,MB & Almacenamiento \\
-Sonata congelado, una pasada con \emph{cache} & Una vez por sección & 1 GPU \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\paragraph*{Hardware}
-El proyecto está limitado por cómputo. Se ejecuta sobre el clúster
-\textbf{Khipu} de UTEC, cuya configuración de GPU cambió hace poco, de modo que
-\textbf{no se estiman tiempos de calendario}. Se especifica el hardware sobre el
-que las pruebas corrieron realmente (Tabla~\ref{tab:hardware}, en el \hyperref[sec:anexo-software]{Anexo~A}). La división en
-secciones sostiene esta política, ya que ninguna etapa necesita la nube completa
-en memoria.
-
-
-El nodo \texttt{ag001} ofrece además una A100 con particiones MIG, útiles para
-pruebas cortas. Los nodos de cómputo no tienen salida a internet, así que los
-pesos y los datos se descargan desde el nodo de acceso.
-
-\paragraph*{Costo computacional medido}
-El codificador de Sonata corre congelado y una sola vez por sección, así que su
-costo no se repite en cada época. En el escaneo PL13, con 796\,315 puntos tras
-la rejilla de 2\,cm, la inferencia tardó 13{,}9 segundos en la RTX A6000 y usó
-34{,}60\,GB de memoria de vídeo (Sección~\ref{sec:res-unidad2}).
+\paragraph*{Hardware y costo}
+El proyecto está limitado por cómputo y \textbf{no estima tiempos de calendario}.
+El hardware en el que las pruebas corrieron realmente y los tiempos y memorias
+medidos están en la Tabla~\ref{tab:res-hardware} y en el
+\hyperref[sec:anexo-software]{Anexo~A}. La división en secciones sostiene esta
+política, ya que ninguna etapa necesita la nube completa en memoria.
 
 \paragraph*{Rangos de operación}
 El proyecto declara por adelantado dónde se espera que el método funcione, y OE3
