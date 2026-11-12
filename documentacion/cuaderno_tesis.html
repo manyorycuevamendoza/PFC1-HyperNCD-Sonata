@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuaderno de Tesis</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:wght@500;600&display=swap">
+<style>
+/* Layout: índice de secciones a la izquierda, hoja de la sección a la derecha; en teléfono se apilan. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#1d2330; --muted:#5d6678; --line:#dde1e8;
+  --accent:#1f5fa8; --accent-soft:#e4eefa; --ok:#2c7a4b; --warn:#a15c12; --warn-soft:#fbeedb;
+  --serif:'Source Serif 4',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --surface:#1a1f28; --fg:#e6e9ef; --muted:#9aa3b5; --line:#2c3341;
+  --accent:#7db3ee; --accent-soft:#1d2d44; --ok:#6fcf97; --warn:#e8b36b; --warn-soft:#3a2d18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --surface:#1a1f28; --fg:#e6e9ef; --muted:#9aa3b5; --line:#2c3341;
+  --accent:#7db3ee; --accent-soft:#1d2d44; --ok:#6fcf97; --warn:#e8b36b; --warn-soft:#3a2d18; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1040px;margin:0 auto}
+header h1{font-family:var(--serif);font-size:1.9rem;margin:0;text-wrap:balance}
+header p{margin:.25rem 0 1.5rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+nav{display:flex;flex-direction:column;gap:2px;position:sticky;top:12px}
+@media (max-width:760px){nav{position:static;flex-direction:row;flex-wrap:wrap;gap:6px}}
+nav .grp{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+@media (max-width:760px){nav .grp{display:none}}
+nav button{font:inherit;text-align:left;background:none;border:1px solid transparent;color:var(--fg);padding:7px 10px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+nav button:hover{background:var(--accent-soft)}
+nav button[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+nav .dot{width:8px;height:8px;border-radius:50%;background:var(--line);align-self:center;flex:none}
+nav .dot.on{background:var(--ok)}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;min-width:0}
+main h2{font-family:var(--serif);font-size:1.5rem;margin:0 0 .25rem;text-wrap:balance}
+.crumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+h3{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:1.6rem 0 .5rem}
+.read{max-width:68ch}
+.cita{border-left:3px solid var(--line);padding:.2rem 0 .2rem 14px;color:var(--muted);margin:.5rem 0}
+.callout{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:12px 14px;margin:.75rem 0;max-width:68ch}
+.callout b{color:var(--warn)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tw{overflow-x:auto}
+textarea{width:100%;min-height:130px;font:inherit;line-height:1.55;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:12px;resize:vertical}
+.status{font-size:.8rem;color:var(--muted);margin-top:6px;min-height:1.2em}
+.pend{color:var(--muted);font-style:italic}
+ul{padding-left:1.2rem;margin:.4rem 0} li{margin:.2rem 0}
+</style>
+
+</head><body>
+<div class="wrap">
+  <header>
+    <h1>Cuaderno de Tesis</h1>
+    <p>Aquí vamos anotando lo que se entiende de cada parte de la tesis, sección por sección.</p>
+  </header>
+  <div class="grid">
+    <nav id="nav" aria-label="Secciones de la tesis"></nav>
+    <main id="hoja"></main>
+  </div>
+</div>
+
+<script>
+var SECCIONES=[
+ {id:"resumen",grupo:"Parte inicial",titulo:"Resumen"},
+ {id:"abstract",grupo:"Parte inicial",titulo:"Abstract"},
+ {id:"introduccion",grupo:"Parte inicial",titulo:"Introducción"},
+ {id:"cap1",grupo:"Cuerpo",titulo:"I. Revisión crítica"},
+ {id:"cap2",grupo:"Cuerpo",titulo:"II. Marco teórico"},
+ {id:"cap3",grupo:"Cuerpo",titulo:"III. Marco metodológico"},
+ {id:"cap4",grupo:"Cuerpo",titulo:"IV. Resultados"},
+ {id:"conclusiones",grupo:"Cierre",titulo:"Conclusiones"},
+ {id:"futuros",grupo:"Cierre",titulo:"Trabajos futuros"},
+ {id:"anexos",grupo:"Cierre",titulo:"Anexos"}
+];
+
+var RESUMEN_HTML =
+'<h3>Cómo está escrito</h3>'+
+'<p class="read">Sigue el estilo de una tesis anterior similar: tres párrafos seguidos, sin nombrar capítulos. Cada párrafo cuenta una cosa y las partes de la tesis se deducen de lo que se explica.</p>'+
+'<h3>Lo que dice cada párrafo</h3>'+
+'<div class="tw"><table><tr><th>Párrafo</th><th>Qué dice</th></tr>'+
+'<tr><td><b>1. El problema</b></td><td>La investigación busca reconocer elementos arquitectónicos sin etiqueta en nubes de puntos de la Catedral de Lima. El escáner láser registra dónde hay materia, pero no qué elemento es cada punto, y eso hoy se interpreta a mano. Los métodos actuales solo reconocen las categorías con que fueron entrenados.</td></tr>'+
+'<tr><td><b>2. Lo que se propone</b></td><td>Un modelo híbrido: parte de HyperNCD y cambia su descriptor geométrico, calculado con una fórmula fija, por la representación auto-supervisada de Sonata, sin reentrenarla. La nube se prepara con filtrado de ruido (SOR), voxelización y normales. Cada punto tiene un vector semántico y otro auto-supervisado, y se combinan para agrupar los puntos.</td></tr>'+
+'<tr><td><b>3. Lo que se encontró</b></td><td>El modelo entrenado con escenas urbanas no sirve en la catedral: el 98,4 % de los puntos cae en una sola salida. Entrenado con ArCH (patrimonio) baja a 44,6 % y el mIoU llega a 35,5 %. Combinar los dos descriptores da 52,5 % frente a 51,4 % sin Sonata: la diferencia no es concluyente. Hay una sola escena y una sola corrida de entrenamiento, así que falta repetirlo.</td></tr>'+
+'</table></div>'+
+'<h3>Cómo leer las cifras</h3>'+
+'<p class="read">98,4 % y 44,6 % son el porcentaje de puntos que cae en una sola salida del modelo: cuanto más cerca de 100, peor. El mIoU, en cambio, es mejor cuanto más alto.</p>';
+
+var DEFAULTS={resumen:"El resumen son tres párrafos: el problema (reconocer elementos sin etiqueta en la Catedral de Lima), lo que se propone (HyperNCD con el descriptor auto-supervisado de Sonata) y lo que se encontró (entrenar con patrimonio arregla el fallo; combinar descriptores mejora poco y no es concluyente).\nNo nombra capítulos; se entiende por lo que explica."};
+
+var DATOS={};
+SECCIONES.forEach(function(s){DATOS[s.id]=s.id==="resumen"?RESUMEN_HTML:'<p class="pend">Todavía no revisada. Cuando la leamos, aquí irá la explicación.</p>';});
+
+var KEY="cuaderno-tesis-v1", notas={};
+try{notas=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){notas={};}
+Object.keys(DEFAULTS).forEach(function(k){if(notas[k]===undefined)notas[k]=DEFAULTS[k];});
+function guardar(){try{localStorage.setItem(KEY,JSON.stringify(notas));return true;}catch(e){return false;}}
+
+var nav=document.getElementById("nav"), hoja=document.getElementById("hoja"), actual="resumen";
+function esc(t){return t.replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+
+function pintarNav(){
+  var h="",g="";
+  SECCIONES.forEach(function(s){
+    if(s.grupo!==g){g=s.grupo;h+='<div class="grp">'+g+'</div>';}
+    var on=notas[s.id]&&notas[s.id].trim();
+    h+='<button type="button" data-id="'+s.id+'" aria-current="'+(s.id===actual)+'"><span>'+s.titulo+'</span><span class="dot'+(on?' on':'')+'" title="'+(on?'Con apuntes':'Sin apuntes')+'"></span></button>';
+  });
+  nav.innerHTML=h;
+}
+function pintarHoja(){
+  var s=SECCIONES.filter(function(x){return x.id===actual;})[0];
+  hoja.innerHTML='<div class="crumb">Tesis › '+s.grupo+'</div><h2>'+s.titulo+'</h2>'+DATOS[actual]+
+   '<h3>Lo que he entendido</h3><label for="nota" class="crumb">Escribe aquí con tus palabras.</label>'+
+   '<textarea id="nota" placeholder="Por ejemplo: el resumen debe nombrar cada parte de la tesis en una o dos frases…">'+esc(notas[actual]||"")+'</textarea>'+
+   '<div class="status" id="estado" aria-live="polite"></div>';
+  var ta=document.getElementById("nota"), est=document.getElementById("estado"), t;
+  ta.addEventListener("input",function(){
+    notas[actual]=ta.value; est.textContent="Guardando…";
+    clearTimeout(t); t=setTimeout(function(){
+      est.textContent=guardar()?"Guardado en este navegador.":"No se pudo guardar en este navegador.";
+      pintarNav();
+    },400);
+  });
+}
+function ir(id){actual=id;try{history.replaceState(null,"","#"+id);}catch(e){location.hash=id;}pintarNav();pintarHoja();}
+nav.addEventListener("click",function(e){var b=e.target.closest("button[data-id]");if(b)ir(b.getAttribute("data-id"));});
+window.addEventListener("hashchange",function(){var id=location.hash.slice(1);if(DATOS[id]&&id!==actual){actual=id;pintarNav();pintarHoja();}});
+var inicio=location.hash.slice(1); if(DATOS[inicio])actual=inicio;
+pintarNav();pintarHoja();
+</script>
+
+</body></html>
