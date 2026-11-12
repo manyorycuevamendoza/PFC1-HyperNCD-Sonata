@@ -2,29 +2,24 @@
 
 La documentación digital del patrimonio construido depende de levantamientos
 láser cuya interpretación sigue siendo manual: el escáner registra dónde hay
-materia, pero no qué elemento representa cada punto. Los métodos de
-segmentación semántica tridimensional usan una lista cerrada de categorías y
-asignan todo elemento imprevisto a la clase más parecida. El objetivo es
-mejorar de forma medible el reconocimiento de los elementos sin etiqueta.
+materia, pero no qué elemento representa cada punto. Los métodos actuales
+solo reconocen las categorías con las que fueron entrenados. Esta tesis busca
+mejorar de forma medible el reconocimiento de elementos que no tienen etiqueta,
+sobre el levantamiento de la Catedral de Lima.
 
-La investigación es aplicada, cuantitativa y de diseño experimental
-comparativo. HyperNCD se entrenó con SemanticPOSS y, al comprobar su
-insuficiente transferencia desde escenas urbanas, con ArCH, un conjunto de
-patrimonio arquitectónico~\cite{matrone2020benchmark}. El modelo semántico y el
-codificador auto-supervisado Sonata se ejecutaron congelados y sus descriptores
-se fusionaron después, sin entrenamiento conjunto.
-
-En una sección de la Catedral de Lima, el checkpoint de SemanticPOSS asignó
-98,4\,\% de los puntos a una sola cabeza; el de ArCH (época 30) la redujo a
-44,6\,\%, elevó el NMI sin clase residual de 0,027 a 0,439 y alcanzó 35,5\,\% de
-mIoU uno a uno. En diez semillas de agrupamiento, M2 obtuvo $48,4\pm1,1$\,\%, M3
-$45,4\pm8,5$\,\%, M4 base $51,4\pm1,7$\,\% y la fusión M4 $52,5\pm2,5$\,\%. La
-diferencia de 1,1 puntos entre M4 y M4 base cae dentro de la dispersión y no es
-una mejora concluyente.
-
-La adaptación de dominio con ArCH evita el colapso observado con SemanticPOSS y
-hace viable evaluar el sistema híbrido, con alcance limitado a una escena, una
-corrida de entrenamiento y repeticiones solo del agrupamiento.
+La \textbf{introducción} plantea el problema, los objetivos y los límites del
+estudio. La \textbf{revisión crítica} analiza cuatro trabajos que sustentan el
+método y de ellos extrae los aportes del proyecto. El \textbf{marco teórico}
+define los conceptos, las fórmulas y el diseño del sistema. El \textbf{marco
+metodológico} describe el procedimiento paso a paso: preparar la nube de puntos,
+extraer dos descriptores de cada punto, uno semántico y otro auto-supervisado, y
+combinarlos. Los \textbf{resultados} muestran que entrenar el modelo con un
+conjunto de patrimonio arquitectónico~\cite{matrone2020benchmark} corrige el
+fallo que presentaba el entrenado con escenas urbanas, y que combinar los dos
+descriptores mejora levemente el agrupamiento sin que la diferencia sea
+concluyente. Las \textbf{conclusiones} reconocen que la evidencia procede de una
+escena y de una sola corrida de entrenamiento, y proponen repetirlo con más
+escenas y semillas.
 
 \vspace{0.5em}
 

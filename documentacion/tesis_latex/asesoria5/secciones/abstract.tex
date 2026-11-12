@@ -6,29 +6,24 @@ discovery in the semantic segmentation of architectural heritage point clouds}
 \end{center}
 
 The digital recording of architectural heritage produces point clouds that show
-where matter is, but not which element each point stands for. Three-dimensional
-semantic segmentation methods work over a closed list of categories and assign
-every unforeseen element to the closest known class. The objective is to
-measurably improve the recognition of elements absent from the training labels.
+where matter is, but not which element each point stands for. Current methods
+recognize only the categories they were trained on. This thesis seeks a
+measurable improvement in the recognition of unlabeled elements on the survey of
+the Cathedral of Lima.
 
-This applied, quantitative study follows a comparative experimental design.
-HyperNCD was trained on SemanticPOSS and, after its poor transfer from urban
-scenes was verified, on ArCH, an architectural-heritage data
-set~\cite{matrone2020benchmark}. The semantic model and the self-supervised
-Sonata encoder ran frozen and their descriptors were fused afterwards, without
-joint training.
-
-On a section of Lima Cathedral, the SemanticPOSS checkpoint assigned 98.4\% of
-the points to one head; the ArCH checkpoint (epoch 30) reduced it to 44.6\%,
-raised NMI without the residual class from 0.027 to 0.439, and reached a
-one-to-one mIoU of 35.5\%. Across ten clustering seeds, M2 obtained
-$48.4\pm1.1$\%, M3 $45.4\pm8.5$\%, M4 base $51.4\pm1.7$\%, and the M4 fusion
-$52.5\pm2.5$\%. The 1.1-point difference between M4 and M4 base lies within the
-dispersion and is not conclusive.
-
-Domain adaptation through ArCH prevents the collapse observed with SemanticPOSS
-and makes the hybrid system evaluable, within the limits of one scene, one
-training run, and repetitions only at the clustering stage.
+The \textbf{introduction} states the problem, the objectives and the limits of the
+study. The \textbf{critical review} analyzes four works that support the method
+and derives the project's contributions from them. The \textbf{theoretical
+framework} defines the concepts, the formulas and the system design. The
+\textbf{methodological framework} describes the procedure step by step: preparing
+the point cloud, extracting two descriptors per point, one semantic and one
+self-supervised, and combining them. The \textbf{results} show that training the
+model on an architectural-heritage dataset~\cite{matrone2020benchmark} corrects
+the failure of the model trained on urban scenes, and that combining the two
+descriptors slightly improves the clustering, although the difference is not
+conclusive. The \textbf{conclusions} acknowledge that the evidence comes from one
+scene and a single training run, and propose repeating the study with more
+scenes and seeds.
 
 \vspace{0.5em}
 
