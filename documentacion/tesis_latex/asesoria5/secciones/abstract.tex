@@ -5,25 +5,26 @@
 discovery in the semantic segmentation of architectural heritage point clouds}
 \end{center}
 
-The digital recording of architectural heritage produces point clouds that show
-where matter is, but not which element each point stands for. Current methods
-recognize only the categories they were trained on. This thesis seeks a
-measurable improvement in the recognition of unlabeled elements on the survey of
-the Cathedral of Lima.
+This research focuses on recognizing unlabeled architectural elements in point
+clouds of built heritage, using the Cathedral of Lima as a case study. Laser scanning records
+where matter is, but not which element each point stands for, and that
+interpretation is still done by hand. Current segmentation methods
+recognize only the categories they were trained on.
 
-The \textbf{introduction} states the problem, the objectives and the limits of the
-study. The \textbf{critical review} analyzes four works that support the method
-and derives the project's contributions from them. The \textbf{theoretical
-framework} defines the concepts, the formulas and the system design. The
-\textbf{methodological framework} describes the procedure step by step: preparing
-the point cloud, extracting two descriptors per point, one semantic and one
-self-supervised, and combining them. The \textbf{results} show that training the
-model on an architectural-heritage dataset~\cite{matrone2020benchmark} corrects
-the failure of the model trained on urban scenes, and that combining the two
-descriptors slightly improves the clustering, although the difference is not
-conclusive. The \textbf{conclusions} acknowledge that the evidence comes from one
-scene and a single training run, and propose repeating the study with more
-scenes and seeds.
+We propose a hybrid model that starts from HyperNCD, a novel class discovery
+method, and replaces its geometric descriptor, computed with a fixed formula, with
+the self-supervised representation of Sonata, used without retraining. The cloud
+is prepared with outlier removal (SOR), 5\,cm voxelization and normals. Each point gets a semantic vector, learned by HyperNCD, and a
+self-supervised one, and both are combined to cluster the points.
+
+The results show that HyperNCD trained on urban scenes does not transfer to the
+cathedral: almost all points (98.4\%) fall into a single output of the model.
+Training it on ArCH, an architectural-heritage dataset~\cite{matrone2020benchmark},
+reduces that concentration to 44.6\% and raises the mIoU to 35.5\%. When the two
+descriptors are combined, the mean mIoU is 52.5\% against 51.4\% without Sonata, a
+difference that is not conclusive, and adapting Sonata to the cathedral does not
+improve the result. The evidence comes from one scene and one training run, so more
+scenes and repetitions are needed.
 
 \vspace{0.5em}
 

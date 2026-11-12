@@ -1,25 +1,29 @@
 \customchapter{RESUMEN}
 
-La documentación digital del patrimonio construido depende de levantamientos
-láser cuya interpretación sigue siendo manual: el escáner registra dónde hay
-materia, pero no qué elemento representa cada punto. Los métodos actuales
-solo reconocen las categorías con las que fueron entrenados. Esta tesis busca
-mejorar de forma medible el reconocimiento de elementos que no tienen etiqueta,
-sobre el levantamiento de la Catedral de Lima.
+Esta investigación se enfoca en el reconocimiento de elementos arquitectónicos sin
+etiqueta en nubes de puntos del patrimonio construido, tomando como caso la
+Catedral de Lima. Los levantamientos con escáner láser terrestre registran con
+detalle dónde hay materia, pero no qué elemento representa cada punto, y esa
+interpretación sigue siendo manual. Los métodos de segmentación semántica
+tridimensional solo reconocen las categorías con las que fueron entrenados.
 
-La \textbf{introducción} plantea el problema, los objetivos y los límites del
-estudio. La \textbf{revisión crítica} analiza cuatro trabajos que sustentan el
-método y de ellos extrae los aportes del proyecto. El \textbf{marco teórico}
-define los conceptos, las fórmulas y el diseño del sistema. El \textbf{marco
-metodológico} describe el procedimiento paso a paso: preparar la nube de puntos,
-extraer dos descriptores de cada punto, uno semántico y otro auto-supervisado, y
-combinarlos. Los \textbf{resultados} muestran que entrenar el modelo con un
-conjunto de patrimonio arquitectónico~\cite{matrone2020benchmark} corrige el
-fallo que presentaba el entrenado con escenas urbanas, y que combinar los dos
-descriptores mejora levemente el agrupamiento sin que la diferencia sea
-concluyente. Las \textbf{conclusiones} reconocen que la evidencia procede de una
-escena y de una sola corrida de entrenamiento, y proponen repetirlo con más
-escenas y semillas.
+Proponemos un modelo híbrido que parte de HyperNCD, un método de descubrimiento
+de clases novedosas, y sustituye su descriptor geométrico, calculado con una
+fórmula fija, por la representación auto-supervisada de Sonata, usada sin
+reentrenarla. La nube se prepara con filtrado de puntos atípicos (SOR),
+voxelización a 5\,cm y estimación de normales. Cada punto se describe con un
+vector semántico, que aprende HyperNCD, y con uno auto-supervisado, y ambos se
+combinan para agrupar los puntos. Se evalúa con mIoU y NMI sobre una capilla anotada.
+
+Los resultados muestran que HyperNCD entrenado con escenas urbanas no se
+transfiere a la catedral: casi todos los puntos (98,4\,\%) caen en una sola
+salida del modelo. Entrenarlo con ArCH, un conjunto de patrimonio
+arquitectónico~\cite{matrone2020benchmark}, reduce esa concentración a 44,6\,\%
+y eleva el mIoU a 35,5\,\%. Al combinar los dos descriptores, el mIoU medio es
+52,5\,\% frente a 51,4\,\% sin Sonata, una diferencia que no es concluyente, y
+adaptar Sonata a la catedral no mejora el resultado. Las evidencias provienen de
+una sola escena y de una corrida de entrenamiento, por lo que se requieren más
+escenas y repeticiones para confirmar la mejora.
 
 \vspace{0.5em}
 
