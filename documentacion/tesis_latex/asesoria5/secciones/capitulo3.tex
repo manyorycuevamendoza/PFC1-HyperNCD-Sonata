@@ -67,14 +67,10 @@ la etapa de agrupamiento se repite con diez semillas
 \label{fig:flujo}
 \end{figure}
 
-El flujo muestra tres elementos que la arquitectura no representa. El primero es
-la frontera de disco. PTv3 requiere CUDA 12.4 y MinkowskiEngine CUDA 11.x (11.8 en el
-clúster), que no coexisten en un mismo proceso, por lo que $f_{\mathrm{ssl}}$ se escribe en
-un archivo \texttt{.npz} y se lee desde el otro entorno. El segundo es la
-asimetría de frecuencia: M2 se entrena una vez (E2), ambas ramas se extraen una
-vez por escena (E3) y solo la fusión y el agrupamiento (E4) se repiten, lo que
-justifica el almacenamiento intermedio. El tercero es el bucle de semillas, que
-repite el agrupamiento y no el entrenamiento.
+El flujo añade a la arquitectura la frontera de disco, que exige CUDA 12.4 para
+PTv3 y 11.8 para MinkowskiEngine, la asimetría de frecuencia entre el
+entrenamiento, la extracción y la fusión, y el bucle de diez semillas
+(Sección~\ref{sec:contrato}).
 
 % =====================================================================
 \FloatBarrier
@@ -82,31 +78,19 @@ repite el agrupamiento y no el entrenamiento.
 \label{sec:hardware-repo}
 
 \paragraph*{Hardware}
-El proyecto se ejecuta en el clúster Khipu de UTEC, cuyos recursos se detallan
-en la Tabla~\ref{tab:hardware}. Cada paso pide al gestor de colas solo lo que
-necesita. El preprocesamiento usa 16 núcleos y 64\,GB de memoria, sin GPU. La
-extracción de descriptores con Sonata usa una GPU RTX~A6000, 8 núcleos y
-64\,GB. El entrenamiento de HyperNCD usa una GPU, 8 núcleos y 32\,GB. La prueba
-preliminar de la Unidad~1 se ejecutó en una laptop con procesador AMD Ryzen~5
-8645HS de 6 núcleos y 12 hilos, 16\,GB de memoria y Windows~11 Home
-(versión 10.0.26200). Su GPU, una NVIDIA GeForce RTX~3050 de 6\,GB, no interviene
-en el preprocesamiento. El programa corrió con Python~3.12.7, \texttt{laspy}~2.7.0,
-NumPy~2.3.5 y Open3D~0.20.0.
+El preprocesamiento y la extracción de Sonata se ejecutan en el clúster Khipu de
+UTEC; el entrenamiento y la extracción de M2 y la evaluación final, en Google
+Colab. Cada paso pide solo lo que necesita. Los recursos del clúster están en la
+Tabla~\ref{tab:hardware} y las versiones del entorno en el
+\hyperref[sec:anexo-software]{Anexo~A}; el equipo, el tiempo y la memoria de cada
+etapa, en la Sección~\ref{sec:res-hardware}.
 
 \paragraph*{Repositorio}
 Todo el código está en el repositorio del
 proyecto.\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}}
-Contiene el programa de preprocesamiento (\texttt{preprocesar.py}), el programa
-que extrae y guarda los descriptores de Sonata (\texttt{extraer\_features.py}),
-el código de HyperNCD y de Sonata en dos carpetas, la carpeta
-\texttt{experimentacion} con las herramientas para revisar y medir las salidas
-(el visor \texttt{visor\_3d.py} y el programa \texttt{visualizar\_features.py}), el
-guion de instalación \texttt{setup.sh}, que crea un entorno para cada método
-porque sus dependencias son incompatibles, la guía \texttt{SETUP\_KHIPU.md} con
-los pasos de instalación en el clúster, y un guion por paso para lanzarlo en el
-clúster. Los archivos LAS y las salidas no se guardan en el repositorio; se
-copian aparte. Los pesos de Sonata se descargan del repositorio
-\texttt{facebook/sonata} de Hugging
+Sus archivos principales están en la Tabla~\ref{tab:archivos}. Los archivos LAS y
+las salidas no se guardan en él, y los pesos de Sonata se descargan de
+\texttt{facebook/sonata} en Hugging
 Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 
 % =====================================================================

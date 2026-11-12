@@ -13,27 +13,10 @@ fue una, y las semillas posteriores del agrupamiento, que fueron diez.
 \section[Diagrama de Flujo General]{Diagrama de Flujo General\espejo{sec:diagrama-flujo}}
 \label{sec:res-flujo}
 
-De las etapas de la Figura~\ref{fig:flujo} se ejecutaron E0 a E5
-(Tabla~\ref{tab:res-etapas}).
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Etapas ejecutadas del flujo general]{Etapas ejecutadas del flujo general y dónde está su resultado. Elaboración propia.}
-\label{tab:res-etapas}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Etapa} & \textbf{Alcance ejecutado} & \textbf{Resultado} \\
-\midrule
-E0. Preparación & 23 archivos LAS preprocesados; PL13, PL7 y la capilla etiquetada en detalle & \S\ref{sec:res-unidad1}, Tabla~\ref{tab:m1-metadatos} \\
-E1. Diagnóstico de dominio & M2 entrenado con SemanticPOSS aplicado a la capilla & \S\ref{sec:res-u3-proc}, Tabla~\ref{tab:m2-control} \\
-E2. Entrenamiento de M2 & Una corrida de 30 épocas con ArCH & \S\ref{sec:res-u3-proc}, Figura~\ref{fig:m2-arch-curvas} \\
-E3. Inferencia congelada & $f_{\mathrm{sem}}$ de M2 y $f_{\mathrm{ssl}}$ de Sonata, escritos a disco & \S\ref{sec:res-unidad2}, Tabla~\ref{tab:salidas-p2} \\
-E4. Fusión y agrupamiento & M2, M3, M4 base y M4 con $K=8$ & \S\ref{sec:res-u3-rep}, Tabla~\ref{tab:m2-m4-semillas} \\
-E5. Evaluación & mIoU uno a uno, NMI, ARI y IoU por clase, con diez semillas & \S\ref{sec:res-u3-traza}, Figura~\ref{fig:m4-semillas} \\
-\bottomrule
-\end{tabularx}
-\end{table}
+Se ejecutaron las seis etapas de la Figura~\ref{fig:flujo}. E0 está en la
+Sección~\ref{sec:res-unidad1}; E1 y E2, en la Sección~\ref{sec:res-u3-proc}; E3, en
+la Sección~\ref{sec:res-unidad2}; E4, en la Sección~\ref{sec:res-u3-rep}, y E5, en
+la Sección~\ref{sec:res-u3-traza}.
 
 La frontera de disco funciona en ambos sentidos: las ramas congeladas escriben
 sus descriptores y la etapa de fusión los lee sin mantener a la vez en memoria
@@ -167,15 +150,8 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 \label{sec:res-u1-procedimiento}
 
 Los seis pasos se ejecutaron como los define la
-Sección~\ref{sec:u1-procedimiento}; su evidencia visual, paso a paso y para los
-dos escaneos, está en el \hyperref[sec:anexo-evidencia-m1]{Anexo~E}. En
-resumen: la carga leyó cada escaneo en dos bloques en cerca de un segundo; el
-centrado dejó cada nube en su propio origen; el filtrado SOR descartó el
-2{,}66\,\% de los puntos de PL13 y el 4{,}73\,\% de PL7, concentrados en las
-zonas ralas; la voxelización dejó como representantes el 10{,}01\,\% y el
-7{,}46\,\% de los puntos filtrados; y las normales toman el mismo tono en las
-superficies con la misma orientación, con manchas en las mismas zonas ralas que
-concentraron los descartes del filtrado.
+Sección~\ref{sec:u1-procedimiento}; su evidencia visual está en el
+\hyperref[sec:anexo-evidencia-m1]{Anexo~E}.
 
 La escritura final dejó la matriz $S$ de PL13 en 28{,}9\,MB y la de PL7 en
 22{,}0\,MB, cada una junto a su archivo de metadatos
@@ -425,23 +401,22 @@ Tabla~\ref{tab:iou-clase}.
 \section[Justificación de los Parámetros del Procedimiento]{Justificación de los Parámetros del Procedimiento\espejo{sec:parametros}}
 \label{sec:res-parametros}
 
-La grilla de pruebas P0 a P5 no se ejecutó. Los valores activos se recuperaron
-del código y de los registros de las corridas y se reúnen en la
-Tabla~\ref{tab:res-parametros}; esa limitación se conserva en la interpretación.
+La grilla de pruebas P0 a P5 no se ejecutó. Los valores de M1 y M3 son los que
+declara la Tabla~\ref{tab:parametros} (vóxel 5\,cm, $q=20$, $\lambda=2$, rejilla
+2\,cm, parche 1024). Los de las etapas entrenadas y de la fusión se recuperaron del
+código y de los registros y se reúnen en la Tabla~\ref{tab:res-parametros}.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Parámetros efectivos de las corridas]{Parámetros efectivos de las corridas ejecutadas. Elaboración propia a partir del código y de los registros.}
+\caption[Parámetros efectivos de M2 y M4]{Parámetros efectivos de M2 y M4 en las corridas ejecutadas. Elaboración propia a partir del código y de los registros.}
 \label{tab:res-parametros}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Etapa} & \textbf{Valores efectivos} \\
 \midrule
-M1 & Vóxel 5\,cm; $q=20$; $\lambda=2$ \\
 M2, entrenamiento ArCH & 30 épocas; lote 4; 60\,000 puntos por muestra; vóxel 5\,cm; AdamW con tasa 1\,e$-$3 y mínima 1\,e$-$5, programación coseno; $\gamma=1$; $\beta=1$; DBSCAN 0{,}5\,m; semilla 0 \\
 M2, pérdida y Sinkhorn & Escala 10 sobre las puntuaciones; $\epsilon_{\mathrm{sk}}=0{,}1$; $\alpha=0{,}5$, $\tau=0{,}1$, $M=8$ en la afinidad regional \\
-M3 & Rejilla 2\,cm; parche 1024; sin FlashAttention; semilla 0 \\
 M4 & Regiones de 0{,}75\,m; $\alpha=0{,}5$; $M=8$; $\tau=1$ con $g$ estandarizado; $\epsilon_{\mathrm{sk}}=0{,}05$; $\gamma=1$; 15 iteraciones; $K=8$; diez semillas \\
 \bottomrule
 \end{tabularx}
@@ -486,14 +461,11 @@ no está comprobada.
 \subsubsection*{E1. Diagnóstico de dominio}
 
 El checkpoint de SemanticPOSS se aplicó primero a escenas de su propio dominio
-como control positivo. La Tabla~\ref{tab:m2-control} muestra que allí funciona:
-en la secuencia de validación el mIoU uno a uno es 0{,}375, casi el 0{,}384
-guardado en el checkpoint, y la cabeza dominante reúne el 30\,\% de los puntos.
-En la capilla, en cambio, reúne el 98{,}4\,\% y el NMI cae de 0{,}48 a 0{,}02.
-Submuestrear la capilla a 80\,000 puntos, la densidad de un LiDAR, no lo corrige.
-No es, entonces, un error de la extracción ni un mal checkpoint, sino una brecha
-de dominio; el experimento no separa cuánto pesan el contenido, la escala y el
-sensor.
+como control positivo (Tabla~\ref{tab:m2-control}): allí funciona, y en la
+capilla colapsa en una sola cabeza. Submuestrear la capilla a 80\,000 puntos, la
+densidad de un LiDAR, no lo corrige. No es, entonces, un error de la extracción ni
+un mal checkpoint, sino una brecha de dominio; el experimento no separa cuánto
+pesan el contenido, la escala y el sensor.
 
 \begin{table}[!htbp]
 \centering
@@ -558,17 +530,15 @@ discontinua. Elaboración propia.}
 
 \subsubsection*{E3. Transferencia a la capilla}
 
-La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla. Con ArCH
-la cabeza dominante baja de 98{,}4 a 44{,}5\,\% y el NMI sin \emph{other} sube de
-0{,}027 a 0{,}437, y el mIoU uno a uno de 7{,}7 a 33{,}6\,\%. Los dos
-checkpoints de ArCH son casi idénticos entre sí. La selección por validación
-elige el de la época 20; el de la época 30 rinde 1{,}9 puntos más en la capilla,
-pero esa escena no se usó para elegir, y los experimentos de fusión de las
-secciones siguientes se hicieron con el de la época 30. La
-Figura~\ref{fig:m2-dominio} resume los indicadores y la
-Figura~\ref{fig:m2-cabeza-clase} muestra a qué cabezas va cada clase real:
-SemanticPOSS manda todas a una, y ArCH reparte el techo, la pared, la cúpula y el
-arco en cabezas distintas.
+La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla: con ArCH
+la cabeza dominante baja a menos de la mitad y el NMI y el mIoU uno a uno se
+multiplican por más de cuatro. Los dos checkpoints de ArCH son casi idénticos. La
+selección por validación elige el de la época 20; el de la época 30 rinde 1{,}9
+puntos más en la capilla, pero esa escena no se usó para elegir, y la fusión de
+las secciones siguientes se hizo con el de la época 30. La
+Figura~\ref{fig:m2-dominio} añade la entropía de las cabezas y el rango efectivo,
+que la tabla no trae, y la Figura~\ref{fig:m2-cabeza-clase} muestra a qué cabezas
+va cada clase real.
 
 \begin{table}[!htbp]
 \centering
@@ -657,7 +627,7 @@ frente a 51,4), menor que las desviaciones de 1,7 y 2,5 y con rangos que se
 solapan, de modo que se observa una mejora numérica, no una superioridad
 demostrada. Tercera, el Sonata adaptado a la Catedral empeora: M3 baja de 45,4 a
 34,3 y, con ArCH, M4 queda en 47,0, por debajo de su base. La dispersión alta de
-M3 con Sonata original, de $\pm8{,}5$, indica que ese agrupamiento es inestable.
+M3 con Sonata original, de $\pm8{,}5$, indica que ese agrupamiento es inestable. Los resultados con una sola semilla, las variantes de fusión, la adaptación de Sonata y la sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~G}.
 
 \FloatBarrier
 \subsection[Trazabilidad de la Métrica]{Trazabilidad de la Métrica\espejo{sec:trazabilidad}}
@@ -711,22 +681,10 @@ de entrenamiento; la sonda lineal tiene su programa, pero no se corrió.
 \subsection[Verificación Empírica del Entorno de Cómputo]{Verificación Empírica del Entorno de Cómputo\espejo{sec:entorno-computo}}
 \label{sec:res-entorno}
 
-La Tabla~\ref{tab:res-hardware} reúne los tiempos y las memorias. El
-entrenamiento de ArCH, de 30 épocas a razón de 2,5 minutos por época, usó en
-promedio 62{,}8\,\% de la GPU y 74{,}7\,\% de la CPU; una prueba de una época
-tardó 2{,}5 minutos con un pico de 7{,}9\,GB, y la corrida completa llegó a
-9{,}5\,GB. La Figura~\ref{fig:m2-arch-recursos} muestra el uso de recursos en el
-tiempo. La extracción de M2 sobre la capilla tardó 42{,}7\,s con ambos
-checkpoints.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.9\linewidth]{imagenes/m2_arch_recursos.png}
-\caption[Recursos durante el entrenamiento de M2 con ArCH]{Uso de memoria RAM,
-memoria de GPU, GPU y CPU durante las 30 épocas del entrenamiento de M2 con ArCH
-en una GPU T4. Elaboración propia.}
-\label{fig:m2-arch-recursos}
-\end{figure}
+El entrenamiento de ArCH usó en promedio 62{,}8\,\% de la GPU y 74{,}7\,\% de la
+CPU a razón de 2,5 minutos por época; los tiempos y las memorias restantes están
+en la Tabla~\ref{tab:res-hardware} y el uso de recursos en el tiempo, en la
+Figura~\ref{fig:g-recursos} del \hyperref[sec:anexo-complementarios]{Anexo~G}.
 
 % =====================================================================
 \FloatBarrier
@@ -748,10 +706,6 @@ entrenamiento con ArCH (Sección~\ref{sec:res-u3-proc}).
 \FloatBarrier
 \section[Resumen de los Resultados]{Resumen de los Resultados\espejo{sec:conclusion-metodo}}
 
-Las tres unidades produjeron las salidas declaradas por el método. El resultado
-principal de M2 es que ArCH corrige el colapso de dominio del checkpoint de
-SemanticPOSS y permite extraer un descriptor semántico útil para la Catedral. En
-la fusión, M4 alcanza la mejor media, 52,5\,\%, pero su ventaja sobre M4 base
-queda dentro de la variabilidad entre semillas, y el Sonata adaptado no mejora
-al original. La evidencia es exploratoria: una escena, una corrida de
-entrenamiento y diez repeticiones solo del agrupamiento.
+Las tres unidades produjeron las salidas declaradas por el método. La evidencia es
+exploratoria: una escena, una corrida de entrenamiento y diez repeticiones solo
+del agrupamiento. Las conclusiones están en el capítulo siguiente.

@@ -996,9 +996,8 @@ implementadas. Elaboración propia.}
 Recibe los archivos LAS de una sección y entrega la matriz $S$ de nueve
 columnas (Ec.~\eqref{eq:sj}). No usa ningún modelo y se ejecuta una vez, en CPU.
 \begin{enumerate}\setlength{\itemsep}{1pt}
-\item Lectura por bloques del archivo LAS (Sección~\ref{sec:las}).
-\item Extracción de las coordenadas $(x,y,z)$ y del color $(R,G,B)$, con el
-color llevado al rango 0 a 255 (Sección~\ref{sec:las}).
+\item Lectura por bloques del archivo LAS, con las coordenadas $(x,y,z)$ y el
+color $(R,G,B)$ llevado al rango 0 a 255 (Sección~\ref{sec:las}).
 \item Centrado de las coordenadas (Ec.~\eqref{eq:centrado}).
 \item Filtrado de puntos aislados por SOR, con $q=20$ y $\lambda=2$
 (Ec.~\eqref{eq:sor}).
