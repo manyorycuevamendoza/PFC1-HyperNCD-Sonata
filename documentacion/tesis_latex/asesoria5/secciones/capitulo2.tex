@@ -40,19 +40,13 @@ del retorno. Es la técnica con que se levantó la Catedral de Lima.
 \paragraph*{Formato LAS}\phantomsection
 \label{sec:las}
 
-Es el formato estándar de la ASPRS para intercambiar nubes de puntos láser.
-Cada registro de punto guarda las coordenadas como enteros, más atributos como la
+Es el formato estándar de la ASPRS para intercambiar nubes de puntos láser. Cada
+registro de punto guarda las coordenadas como enteros, más atributos como la
 intensidad del retorno, la clase y, según el formato, el color RGB en 16~bits.
 Para recuperar las coordenadas reales, la cabecera declara por cada eje una
-\emph{escala} y un \emph{desplazamiento} (para $x$; $y$ y $z$ son análogos):
-\begin{equation}
-\nom{xyz}{x} = \nom{las}{X}\cdot \nom{las}{s_x} + \nom{las}{o_x} ,
-\label{eq:las-escala}
-\end{equation}
-
-La implementación lee el archivo en bloques de cinco millones de registros, así
-que la sección completa debe caber en la memoria del nodo. De cada punto toma seis
-valores, $(x,y,z)$ y $(R,G,B)$, con el color llevado de 16~bits al rango 0 a 255.
+\emph{escala} y un \emph{desplazamiento}: coordenada real = entero $\times$
+escala + desplazamiento. De cada punto se toman la posición $(x,y,z)$ y el color
+$(R,G,B)$, llevado de 16~bits al rango 0 a 255.
 
 \subsection{Centrado de Coordenadas}
 \label{sec:centrado}
@@ -132,20 +126,20 @@ autovalor.
 \label{sec:seccion}
 
 Una sección es la porción del levantamiento que se preprocesa en una misma
-corrida. Reúne uno o varios archivos LAS; con un archivo por corrida, cada escaneo es una
-sección. Su salida se denota \nom{S}{$S$} y es una matriz de \nom{N}{$N$} filas, una por punto, y nueve
-columnas en precisión simple,
+corrida: reúne uno o varios archivos LAS, o un solo escaneo si hay un archivo por
+corrida. Su salida \nom{S}{$S$} es una matriz de \nom{N}{$N$} filas, una por punto,
+y nueve columnas en precisión simple,
 \begin{equation}
 \nom{S}{S}=\left[\,\nom{xyz}{x\;\;y\;\;z}\;\;\nom{rgb}{R\;\;G\;\;B}\;\;\nom{n}{n_x\;\;n_y\;\;n_z}\,\right],
 \label{eq:sj}
 \end{equation}
-con la posición centrada en metros, el color entre 0 y 255 y la normal
-unitaria. Como el autovector no fija el sentido de la normal, la implementación
-invierte las que apuntan hacia abajo para que todas cumplan $n_z\geq 0$; así no
-distingue la cara interior de un muro de la exterior.
+con la posición centrada, el color y la normal unitaria. Como el autovector no fija
+el sentido de la normal, la implementación invierte las que apuntan hacia abajo
+para que todas cumplan $n_z\geq 0$; así no distingue la cara interior de un muro
+de la exterior.
 
-Es la unidad indivisible de trabajo: ninguna etapa requiere la nube completa en
-memoria y ninguna sección depende de otra.
+Es la unidad de trabajo: ninguna sección depende de otra y cada una debe caber
+completa en la memoria del nodo.
 
 \subsection{Segmentación Semántica y Clases}
 \label{sec:segsem}
