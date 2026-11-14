@@ -100,7 +100,7 @@ Un $\lambda$ menor descarta más puntos, pero puede borrar detalle fino; un $q$ 
 hace la estimación más estable.
 
 Limpia la nube antes de voxelizarla, para que los puntos espurios no se promedien
-con los válidos. Se usa $q=20$ y $\lambda=2$.
+con los válidos. Se usa $\lambda=2$.
 
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
@@ -148,8 +148,8 @@ igual de válidos. La implementación invierte las normales que apuntan hacia
 abajo, de modo que todas cumplen $n_z\geq 0$; así son consistentes entre sí,
 pero no distinguen la cara interior de un muro de la exterior.
 
-Se estima sobre los representantes que deja la voxelización, con $q=20$, y no
-sobre los puntos en bruto.
+Se estima sobre los representantes que deja la voxelización y no sobre los puntos
+en bruto.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
@@ -344,7 +344,7 @@ tensor disperso es la estructura de datos que la representa en
 MinkowskiEngine: una lista de coordenadas enteras de vóxel y, por cada una, un
 vector de características.
 Las coordenadas de los puntos se dividen entre el
-tamaño de vóxel, que es 5\,cm por defecto, y se redondean a enteros. Si varios
+tamaño de vóxel y se redondean a enteros. Si varios
 puntos caen en el mismo vóxel se conserva uno. En HyperNCD la característica
 inicial de cada vóxel ocupado es el valor constante 1, de modo que la red recibe
 únicamente la ocupación, es decir, la forma, y no el color ni la normal. Es la entrada de la red que produce
@@ -411,12 +411,12 @@ la resolución de entrada reutilizando los índices de agrupamiento que el propi
 submuestreo registró. Es necesaria porque el codificador entrega su salida
 submuestreada varias veces. En los dos primeros pasos, desde la etapa más gruesa,
 las características se concatenan con las de la etapa anterior, la 5 con la 4 y
-el resultado con la 3, y en los restantes solo se copian, lo que da las 1088 dimensiones de $f_{\mathrm{ssl}}$:
+el resultado con la 3, y en los restantes solo se copian:
 \begin{equation}
 \nom{ftil}{\tilde{f}_j}=\left[\,\nom{h}{\mathbf{h}^{(3)}}_{\nom{pis}{\pi_3(j)}}\,;\,\nom{h}{\mathbf{h}^{(4)}}_{\nom{pis}{\pi_4(j)}}\,;\,\nom{h}{\mathbf{h}^{(5)}}_{\nom{pis}{\pi_5(j)}}\,\right]\in\mathbb{R}^{192+384+512},
 \label{eq:upcast}
 \end{equation}
-donde $j$ es un punto de la rejilla de 2\,cm y $\pi_s(j)$ la celda de la etapa
+donde $j$ es un punto de la rejilla y $\pi_s(j)$ la celda de la etapa
 $s$ que lo contiene, obtenida encadenando los índices del submuestreo.
 Por último, con el índice inverso cada punto de $S$ recibe el descriptor de la celda en la que cayó,
 \begin{equation}
@@ -892,12 +892,9 @@ columnas (Ec.~\eqref{eq:sj}). No usa ningún modelo y se ejecuta una vez, en CPU
 \item Lectura por bloques del archivo LAS, con las coordenadas $(x,y,z)$ y el
 color $(R,G,B)$ llevado al rango 0 a 255 (Sección~\ref{sec:las}).
 \item Centrado de las coordenadas (Ec.~\eqref{eq:centrado}).
-\item Filtrado de puntos aislados por SOR, con $q=20$ y $\lambda=2$
-(Ec.~\eqref{eq:sor}).
-\item Voxelización a 5\,cm, con un representante por vóxel
-(Ec.~\eqref{eq:voxel}).
-\item Estimación de normales por vecindad, con $q=20$
-(Ec.~\eqref{eq:normal}).
+\item Filtrado de puntos aislados por SOR (Ec.~\eqref{eq:sor}).
+\item Voxelización, con un representante por vóxel (Ec.~\eqref{eq:voxel}).
+\item Estimación de normales por vecindad (Ec.~\eqref{eq:normal}).
 \item Escritura de $S$ y de sus metadatos (Sección~\ref{sec:seccion}).
 \end{enumerate}
 El SOR precede a la voxelización para que los puntos espurios no se promedien
@@ -918,7 +915,7 @@ por punto (Sección~\ref{sec:fsem}). El color y la normal de $S$ no entran en
 este módulo. En el entrenamiento ejecuta, para cada lote de dos vistas
 aumentadas, los pasos siguientes; cada uno enlaza con su fórmula.
 \begin{enumerate}\setlength{\itemsep}{1pt}
-\item Cuantiza las coordenadas en una rejilla dispersa de 5\,cm y asigna a cada
+\item Cuantiza las coordenadas en una rejilla dispersa y asigna a cada
 vóxel ocupado la característica constante 1 (Ec.~\ref{eq:cuant}).
 \item Aplica la red MinkowskiUNet-34C, de convoluciones dispersas, con
 codificador, decodificador y conexiones de salto (Ec.~\ref{eq:fsem};
@@ -952,7 +949,7 @@ bóveda y pared; esta correspondencia de dominio motiva su uso.
 Recibe $S$ con sus nueve columnas y entrega $f_{\mathrm{ssl}}(x^i)$, 1088
 números por punto (Sección~\ref{sec:fssl}).
 \begin{enumerate}\setlength{\itemsep}{1pt}
-\item Muestrea la sección en una rejilla propia de 2\,cm y forma la entrada de
+\item Muestrea la sección en una rejilla propia y forma la entrada de
 nueve valores por punto (Sección~\ref{sec:gridsample}).
 \item Aplica el PTv3 de Sonata, preentrenado de forma auto-supervisada
 (Secciones~\ref{sec:ssl} y~\ref{sec:arq-sonata-paper}). El PTv3 ordena los
