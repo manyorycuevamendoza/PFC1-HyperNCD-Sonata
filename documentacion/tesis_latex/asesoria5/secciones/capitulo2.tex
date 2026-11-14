@@ -279,11 +279,10 @@ puntos, cuyas características reúne $\nom{Hp}{\mathbf{H}_p}$:
 \mathrm{Atn}(\nom{Hp}{\mathbf{H}_p})=\mathrm{softmax}\!\left(\frac{(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_Q})(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_K})^{\nom{T}{\top}}}{\sqrt{\nom{dcab}{d}}}\right)\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_V},
 \label{eq:atencion}
 \end{equation}
-con $W_Q$, $W_K$ y $W_V$ matrices aprendidas y $d$ el número de canales por
-cabeza; cada fila de la matriz softmax indica cuánto atiende un punto a los demás
-del parche. Tercero, entre etapas el \emph{pooling} duplica el lado de la celda y
-toma el máximo, canal a canal, de los puntos de cada celda. Cuarto, el
-\emph{up-cast} reúne las tres últimas etapas.
+con $W_Q$, $W_K$ y $W_V$ matrices aprendidas y $d$ los canales por cabeza; cada fila
+de softmax indica cuánto atiende un punto a los demás del parche. Tercero, entre
+etapas el \emph{pooling} duplica el lado de la celda y toma el máximo por celda.
+Cuarto, el \emph{up-cast} reúne las tres últimas etapas.
 
 \subsection{Red Dispersa de Minkowski}
 \label{sec:rejilla}
