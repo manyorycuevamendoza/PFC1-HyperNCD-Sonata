@@ -49,8 +49,8 @@ mediante un \emph{hipergrafo}, donde cada arista une varios prototipos a la vez.
 Rinde mal justo donde debería ser fuerte, con entre 11,8 y 47,5 mIoU en las
 clases novedosas~\cite{zhang2026hyperncd}. Este trabajo señala como causa
 probable el descriptor geométrico calculado a mano sobre el que arma sus
-prototipos, el tipo de señal que Sonata~\cite{wu2025sonata} considera
-perjudicial, y propone reemplazarlo por su codificador auto-supervisado
+prototipos, el tipo de señal que Sonata~\cite{wu2025sonata} identifica
+como un atajo, y propone reemplazarlo por su codificador auto-supervisado
 congelado. Además, el checkpoint entrenado con SemanticPOSS no se transfiere a la
 catedral, pues concentra 98,4\,\% de los puntos en una sola cabeza; por ello M2
 se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio corresponde al
@@ -69,7 +69,7 @@ $\hat{y}:P\rightarrow\mathcal{C}_k\cup\mathcal{C}_n$ que clasifique bien los
 puntos conocidos y descubra agrupaciones consistentes para los novedosos. El mejor método disponible
 alcanza solo entre 11,8 y 47,5 mIoU sobre $\mathcal{C}_n$ y construye sus
 prototipos sobre un descriptor geométrico analítico, con linealidad, planaridad y
-dispersión, que la literatura auto-supervisada considera un atajo perjudicial. La
+dispersión, que la literatura auto-supervisada identifica como un atajo. La
 hipótesis de investigación es que reemplazarlo por una representación
 auto-supervisada confiable aumenta de forma medible el mIoU sobre las clases
 novedosas en un levantamiento patrimonial real.
