@@ -113,30 +113,22 @@ usa un vóxel de 5\,cm.
 \label{sec:normales}
 
 La normal de un punto es el vector unitario
-\nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto. Dice
-hacia dónde mira la superficie, no qué elemento es el punto. El escáner no la
-mide, así que se estima a partir de los $q$ vecinos más cercanos del punto,
-\nom{pbar}{$p_1,\ldots,p_q$}. Primero se calcula el centroide local, el promedio
-de sus posiciones,
-\begin{equation}
-\nom{pbar}{\bar p}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\nom{pbar}{p_j} .
-\label{eq:centroide}
-\end{equation}
-Después se calcula la matriz de covarianza, que describe cómo se reparten los
-vecinos alrededor del centroide,
+\nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto; dice
+hacia dónde mira la superficie. El escáner no la mide, así que se estima con la
+matriz de covarianza de los $q$ vecinos más cercanos del punto,
+\nom{pbar}{$p_1,\ldots,p_q$}, cuyo promedio es el centroide
+\nom{pbar}{$\bar p$}:
 \begin{equation}
 \nom{cov}{C}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)^{\nom{T}{\top}}.
 \label{eq:normal}
 \end{equation}
-Sus tres autovectores son las direcciones principales de dispersión, cada una con
-un autovalor que mide cuánto se dispersan los vecinos a lo largo de ella. Sobre una
-superficie, la dirección de menor variación es aproximadamente la perpendicular:
-la normal es el autovector de \nom{cov}{$C$} con el menor autovalor.
-
-El autovector fija la dirección pero no el sentido, ya que $n$ y $-n$ son igual de
-válidos. La implementación invierte las normales que apuntan hacia abajo para que
-todas cumplan $n_z\geq 0$, aunque así no distingue la cara interior de un muro de
-la exterior.
+\noindent Sus tres autovectores son las direcciones principales de dispersión,
+cada una con un autovalor que mide cuánto se dispersan los vecinos a lo largo de
+ella. Sobre una superficie, la dirección de menor variación es aproximadamente la
+perpendicular: la normal es el autovector de \nom{cov}{$C$} con el menor
+autovalor. Como el autovector no fija el sentido, la implementación invierte las
+normales que apuntan hacia abajo para que todas cumplan $n_z\geq 0$; así no
+distingue la cara interior de un muro de la exterior.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
