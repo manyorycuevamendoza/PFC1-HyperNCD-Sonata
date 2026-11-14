@@ -61,23 +61,19 @@ valores, $(x,y,z)$ y $(R,G,B)$, con el color llevado de 16~bits al rango 0 a 255
 \subsection{Centrado de Coordenadas}
 \label{sec:centrado}
 
-El centrado traslada la nube al origen. Se calcula el centro de la caja envolvente
-de la sección y se resta a todos los puntos:
+El centrado traslada la nube al origen restándole el centro de su caja envolvente:
 \begin{equation}
 \nom{c}{c}=\tfrac{1}{2}\left(\nom{minmax}{\min}_i \nom{xi}{x_i}+\nom{minmax}{\max}_i \nom{xi}{x_i}\right),\qquad \nom{xip}{x_i'}=\nom{xi}{x_i}-\nom{c}{c} ,
 \label{eq:centrado}
 \end{equation}
-con el mínimo y el máximo por eje. El vector \nom{c}{$c$} se guarda para revertir
-el centrado.
-
-Las coordenadas son proyectadas, del orden de $10^{5}$\,m y $10^{6}$\,m en los dos
-ejes horizontales. En precisión simple, el eje mayor solo distingue pasos de un
-metro; tras el centrado las coordenadas quedan en decenas de metros.
+El vector \nom{c}{$c$} se guarda para revertir el centrado. Las coordenadas del
+levantamiento son proyectadas, del orden de $10^{5}$\,m y $10^{6}$\,m, y en
+precisión simple el eje mayor solo distingue pasos de un metro; por eso se
+centran.
 
 Este desplazamiento no es el de la cabecera LAS (Ec.~\eqref{eq:las-escala}), que
-decodifica los enteros del archivo: el centrado se calcula después, sobre
-coordenadas ya decodificadas. En el archivo inspeccionado son 278\,802,58\,m en la
-cabecera y 278\,800,97\,m el centro restado.
+decodifica los enteros: el centrado se aplica después. En el archivo inspeccionado
+son 278\,802,58\,m en la cabecera y 278\,800,97\,m el centro restado.
 
 \subsection{Vecindad de los $q$ Vecinos y Filtrado de Valores Atípicos (SOR)}
 \label{sec:knn}
