@@ -126,9 +126,7 @@ matriz de covarianza de los $q$ vecinos más cercanos del punto,
 cada una con un autovalor que mide cuánto se dispersan los vecinos a lo largo de
 ella. Sobre una superficie, la dirección de menor variación es aproximadamente la
 perpendicular: la normal es el autovector de \nom{cov}{$C$} con el menor
-autovalor. Como el autovector no fija el sentido, la implementación invierte las
-normales que apuntan hacia abajo para que todas cumplan $n_z\geq 0$; así no
-distingue la cara interior de un muro de la exterior.
+autovalor.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
@@ -142,7 +140,9 @@ columnas en precisión simple,
 \label{eq:sj}
 \end{equation}
 con la posición centrada en metros, el color entre 0 y 255 y la normal
-unitaria.
+unitaria. Como el autovector no fija el sentido de la normal, la implementación
+invierte las que apuntan hacia abajo para que todas cumplan $n_z\geq 0$; así no
+distingue la cara interior de un muro de la exterior.
 
 Es la unidad indivisible de trabajo: ninguna etapa requiere la nube completa en
 memoria y ninguna sección depende de otra.
