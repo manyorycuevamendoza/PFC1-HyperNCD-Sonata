@@ -464,30 +464,19 @@ resultado se normaliza además a longitud 1.
 \label{sec:afinhiper}
 
 Medida de semejanza entre dos regiones que combina un criterio semántico y uno
-geométrico. El semántico es la similitud por coseno entre sus descriptores,
-\begin{equation}
-\nom{Ss}{S_s^{(ij)}}=\frac{\nom{prod}{\langle}\nom{Freg}{F^{(i)}},\;\nom{Freg}{F^{(j)}}\nom{prod}{\rangle}}{\nom{norma}{\lVert}\nom{Freg}{F^{(i)}}\nom{norma}{\rVert}\;\nom{norma}{\lVert}\nom{Freg}{F^{(j)}}\nom{norma}{\rVert}},
-\label{eq:coseno}
-\end{equation}
-que vale 1 cuando ambos vectores apuntan en la misma dirección. El geométrico es
-un núcleo gaussiano,
+geométrico. El semántico, \nom{Ss}{$S_s$}, es la similitud por coseno entre los
+descriptores \nom{Freg}{$F^{(i)}$} y $F^{(j)}$ de las regiones, por donde entra
+$f_{\mathrm{ssl}}$; vale 1 cuando apuntan en la misma dirección. El geométrico es un
+núcleo gaussiano sobre el rasgo $g^{(i)}$, el $f_{\mathrm{geo}}$ de la región,
 \begin{equation}
 \nom{Sg}{S_g^{(ij)}}=\mathop{\nom{exp}{\exp}}\nolimits\left(-\frac{\nom{norma}{\lVert}\nom{g}{g^{(i)}}-\nom{g}{g^{(j)}}\nom{norma}{\rVert}^{2}}{\nom{tau}{\tau}}\right),
 \label{eq:gauss}
 \end{equation}
 que vale 1 cuando las regiones tienen la misma forma y posición y cae hacia 0 al
-alejarse. El
-descriptor $F^{(i)}$ es por donde entra $f_{\mathrm{ssl}}$. El rasgo $g^{(i)}$
-es el $f_{\mathrm{geo}}$ de la región (Sección~\ref{sec:fgeo}): aunque sale del
-descriptor $F_i$ en el modelo propuesto, se sigue calculando para la afinidad y
-es igual en la línea base y en el modelo propuesto, con lo que el razonamiento
-geométrico del hipergrafo se conserva íntegro. Hay dos matices de implementación.
-En el entrenamiento de M2, $\tau=0{,}1$ y $g$ se usa tal como sale, sin
-estandarizar, de modo que el centroide, medido en celdas de la rejilla, domina
-la distancia. En el Módulo~4 sobre la Catedral, $g$ se estandariza por columna y
-la distancia se promedia por dimensión, es decir, el exponente es
-$-\lVert g^{(i)}-g^{(j)}\rVert^{2}/(\tau d)$ con $d=6$ y $\tau=1$.
-Ambos se combinan en
+alejarse, con $\tau$ la escala de esa distancia. Aunque $g$ sale del descriptor $F_i$ en el
+modelo propuesto, se sigue calculando para la afinidad y es igual en la línea base
+y en el modelo propuesto, con lo que el razonamiento geométrico del hipergrafo se
+conserva íntegro. Ambos criterios se combinan en
 \begin{equation}
 \nom{Sb}{S_b}=\nom{alpha}{\alpha}\,\nom{Sg}{S_g}+(1-\nom{alpha}{\alpha})\,\nom{Ss}{S_s},\qquad \nom{alpha}{\alpha}\nom{en}{\in}[0,1],
 \label{eq:afinidad}

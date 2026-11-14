@@ -96,7 +96,7 @@ regiones $\leftarrow$ DBSCAN sobre las coordenadas\;
 Para cada par de regiones se calculan dos afinidades, que van de 0, nada
 parecidas, a 1, iguales. La afinidad geométrica $S_g$, según la
 Ec.~\eqref{eq:gauss}, responde a si se parecen en forma y en posición, y usa solo
-$g$. La afinidad semántica $S_s$, según la Ec.~\eqref{eq:coseno}, responde a si
+$g$. La afinidad semántica $S_s$, según la Ec.~\eqref{eq:afinidad}, responde a si
 se parecen en lo que son, y usa el descriptor $F$, por donde entra Sonata. Las dos
 se combinan en $S_b=\alpha S_g+(1-\alpha)S_s$, según la Ec.~\eqref{eq:afinidad}.
 
