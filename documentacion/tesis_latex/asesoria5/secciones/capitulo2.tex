@@ -288,18 +288,11 @@ Cuarto, el \emph{up-cast} reúne las tres últimas etapas.
 \label{sec:rejilla}
 \label{sec:tensor}
 
-Una rejilla dispersa es una rejilla de vóxeles de la que solo
-se almacenan los ocupados. Un edificio ocupa una fracción mínima del volumen que
-lo envuelve, así que guardar también los vóxeles vacíos sería inviable. Un
-tensor disperso es la estructura de datos que la representa en
-MinkowskiEngine: una lista de coordenadas enteras de vóxel y, por cada una, un
-vector de características.
-Las coordenadas de los puntos se dividen entre el
-tamaño de vóxel y se redondean a enteros. Si varios
-puntos caen en el mismo vóxel se conserva uno. En HyperNCD la característica
-inicial de cada vóxel ocupado es el valor constante 1, de modo que la red recibe
-únicamente la ocupación, es decir, la forma, y no el color ni la normal. Es la entrada de la red que produce
-$f_{\mathrm{sem}}$.
+Una rejilla dispersa es una rejilla de vóxeles de la que solo se almacenan los
+ocupados. Un edificio ocupa una fracción mínima del volumen que lo envuelve, así
+que guardar también los vóxeles vacíos sería inviable. Un tensor disperso es la
+estructura de datos que la representa en MinkowskiEngine: una lista de
+coordenadas enteras de vóxel y, por cada una, un vector de características.
 
 \paragraph*{Convolución Dispersa}\phantomsection
 \label{sec:convdispersa}
