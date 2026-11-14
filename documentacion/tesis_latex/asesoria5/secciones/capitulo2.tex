@@ -1,17 +1,11 @@
 \chapter{MARCO TEÓRICO}
 \label{cap:teorico}
 
-Este capítulo define los conceptos que emplea el trabajo, en cinco secciones: los
-de ingeniería civil sobre el objeto de estudio (Sección~\ref{sec:civil}), los de
-computación (Sección~\ref{sec:computacion}), los algoritmos
-(Sección~\ref{sec:algoritmos}), las métricas de evaluación
-(Sección~\ref{sec:metricas}) y el diseño de la tesis, que los integra
-(Sección~\ref{sec:diseno-teorico}).
-
-Solo se definen conceptos que el diseño usa, y cada componente del diagrama de
-diseño (Figura~\ref{fig:diseno}) enlaza con la definición que le corresponde. Las
-fórmulas se explican aquí. Cada símbolo de una fórmula, en azul, enlaza con su
-significado en la nomenclatura del \hyperref[sec:anexo-nomenclatura]{Anexo~B}.
+El reconocimiento de elementos arquitectónicos en nubes de puntos del patrimonio
+construido es un tema interdisciplinario, que reúne la ingeniería civil y la
+computación. Este marco teórico define los conceptos que sustentan el diseño de la
+tesis (Figura~\ref{fig:diseno}): los del objeto de estudio, los de computación y
+los algoritmos, y las métricas con que se evalúa el modelo.
 
 % =====================================================================
 \section{Ingeniería Civil y Conservación del Patrimonio}
@@ -24,7 +18,7 @@ Catedral de Lima. A continuación se presentan los conceptos fundamentales de
 esta disciplina que son relevantes para este trabajo, desde la nube de puntos y
 el levantamiento que la produce hasta su preparación y su segmentación.
 
-\subsection{Nube de Puntos}
+\subsection{Nube de Puntos y su Captura}
 \label{sec:nube}
 
 Una nube de puntos es un conjunto $P=\{(x_i,f_i)\}_{i=1}^{N}$ donde
@@ -36,97 +30,74 @@ columna por valor. En este trabajo los atributos son el color, que registra el
 sensor, y la normal, que se estima a partir de los vecinos
 (Sección~\ref{sec:normales}). Es el dato de entrada y el objeto que se segmenta.
 
-\subsection{Levantamiento Láser Terrestre (TLS)}
+\paragraph*{Levantamiento Láser Terrestre (TLS)}\phantomsection
 \label{sec:tls}
 
-El levantamiento láser terrestre es el registro de una edificación mediante un escáner láser
-estacionado en posiciones fijas.
-El escáner emite un haz, mide la distancia y la
-dirección de cada retorno y con ellas calcula la posición del punto en que el
-haz tocó una superficie.  Es la técnica con la que se levantó la Catedral de
-Lima y, por tanto, la fuente de datos de este trabajo.
+Registra una edificación mediante un escáner estacionado en posiciones fijas. El escáner emite un haz, mide la distancia y la
+dirección del retorno y con ellas calcula la posición del punto donde el haz tocó
+una superficie. Es la técnica con la que se levantó la Catedral de Lima, la fuente
+de datos de este trabajo.
 
-\subsection{Formato LAS}
+\paragraph*{Formato LAS}\phantomsection
 \label{sec:las}
 
-El LAS es el formato binario estándar de la ASPRS para intercambiar nubes
-de puntos láser. Es el formato en que se recibe el levantamiento en bruto.
-Un archivo contiene una cabecera y un registro por
-punto. Cada registro guarda las coordenadas como enteros y atributos como la
-intensidad del retorno, la clase y, según el formato de registro, el color RGB
-en 16~bits. La cabecera declara el número de puntos y, por cada eje, una
-\emph{escala} y un \emph{desplazamiento} con los que se decodifican las
-coordenadas:
+Es el formato estándar de la ASPRS para intercambiar nubes de puntos láser.
+Cada registro de punto guarda las coordenadas como enteros, más atributos como la
+intensidad del retorno, la clase y, según el formato, el color RGB en 16~bits.
+Para recuperar las coordenadas reales, la cabecera declara por cada eje una
+\emph{escala} y un \emph{desplazamiento} (para $x$; $y$ y $z$ son análogos):
 \begin{equation}
 \nom{xyz}{x} = \nom{las}{X}\cdot \nom{las}{s_x} + \nom{las}{o_x} ,
 \label{eq:las-escala}
 \end{equation}
-Con ella se recuperan las coordenadas reales, en metros, a partir de los
-enteros almacenados.
-Para $y$ y $z$ es análogo. En el archivo inspeccionado la
-escala es de $10^{-4}$\,m. La normal no forma parte del formato, y en ese
-archivo el campo de clase vale cero en todos los puntos, es decir, el dato no
-trae etiquetas.
+En el archivo inspeccionado la escala es de $10^{-4}$\,m. El formato no incluye
+normales y el campo de clase vale cero en todos los puntos: el dato no trae
+etiquetas.
 
-Como todos los registros tienen el mismo tamaño, el archivo puede leerse por
-bloques consecutivos. La implementación lee bloques de cinco millones de
-registros, extrae de cada uno las coordenadas ya decodificadas y el color, y los
-apila en dos matrices de tres columnas. Los bloques se concatenan después en
-memoria, de modo que la lectura por bloques acota el tamaño de cada lectura pero
-la sección completa debe caber en la memoria del nodo.
-
-De cada punto se toman seis valores, $(x,y,z)$ y
-$(R,G,B)$. El color se lleva de 16~bits al rango 0 a 255 dividiéndolo entre 256.
-El resto de campos no se usa.
+La implementación lee el archivo en bloques de cinco millones de registros, así
+que la sección completa debe caber en la memoria del nodo. De cada punto toma seis
+valores, $(x,y,z)$ y $(R,G,B)$, con el color llevado de 16~bits al rango 0 a 255.
 
 \subsection{Centrado de Coordenadas}
 \label{sec:centrado}
 
-El centrado es una traslación de la nube que lleva su centro al origen.
-Se calcula el centro de la caja que envuelve a la
-sección y se resta a todos los puntos:
+El centrado traslada la nube al origen. Se calcula el centro de la caja envolvente
+de la sección y se resta a todos los puntos:
 \begin{equation}
 \nom{c}{c}=\tfrac{1}{2}\left(\nom{minmax}{\min}_i \nom{xi}{x_i}+\nom{minmax}{\max}_i \nom{xi}{x_i}\right),\qquad \nom{xip}{x_i'}=\nom{xi}{x_i}-\nom{c}{c} ,
 \label{eq:centrado}
 \end{equation}
-con el mínimo y el máximo tomados eje por eje. El vector \nom{c}{$c$} se guarda junto a
-la salida para poder devolver cualquier resultado a su posición real sumándolo.
+con el mínimo y el máximo por eje. El vector \nom{c}{$c$} se guarda para revertir
+el centrado.
 
-Las coordenadas del levantamiento son proyectadas, en
-metros, del orden de $10^{5}$ en un eje horizontal y de $10^{6}$ en el otro. La
-salida se guarda en precisión simple, que en el eje de mayor magnitud solo
-distingue pasos de un metro. Tras el centrado las coordenadas quedan en decenas
-de metros y conservan la resolución del escáner.
+Las coordenadas son proyectadas, del orden de $10^{5}$\,m y $10^{6}$\,m en los dos
+ejes horizontales. En precisión simple, el eje mayor solo distingue pasos de un
+metro; tras el centrado las coordenadas quedan en decenas de metros.
 
-Este desplazamiento no es el de la cabecera LAS (Ec.~\eqref{eq:las-escala}). El
-de la cabecera pertenece al formato y sirve para decodificar los enteros
-almacenados; el del centrado lo calcula el preprocesamiento sobre las
-coordenadas ya decodificadas. Sus valores tampoco coinciden. En el archivo
-inspeccionado el desplazamiento de cabecera en $x$ es 278\,802,58\,m y el centro
-restado es 278\,800,97\,m.
+Este desplazamiento no es el de la cabecera LAS (Ec.~\eqref{eq:las-escala}), que
+decodifica los enteros del archivo: el centrado se calcula después, sobre
+coordenadas ya decodificadas. En el archivo inspeccionado son 278\,802,58\,m en la
+cabecera y 278\,800,97\,m el centro restado.
 
-\subsection{Vecindad de los $q$ Vecinos Más Cercanos}
+\subsection{Vecindad de los $q$ Vecinos y Filtrado de Valores Atípicos (SOR)}
 \label{sec:knn}
 
-La vecindad de un punto $i$ es el conjunto \nom{vec}{$\mathcal{N}_q(i)$} de los \nom{q}{$q$} puntos de la nube más
-próximos a él en distancia euclídea. Se abrevia KNN.
-La nube se indexa en un árbol $k$-d, que divide el
-espacio de forma recursiva y permite hallar los vecinos de un punto sin
-compararlo con todos los demás.
+La vecindad (KNN) de un punto $i$ es el conjunto \nom{vec}{$\mathcal{N}_q(i)$} de los
+\nom{q}{$q$} puntos más próximos a él en distancia euclídea. La nube se indexa en
+un árbol $k$-d, que divide el espacio de forma recursiva y evita comparar cada
+punto con todos los demás.
 
-Es la noción de entorno local de un punto. Con ella se
-decide si un punto está aislado (Sección~\ref{sec:sor}) y hacia dónde mira la
-superficie (Sección~\ref{sec:normales}). En ambos casos $q=20$.
+Esta vecindad se usa para decidir si un punto está aislado
+(Sección~\ref{sec:sor}) y hacia dónde mira la superficie
+(Sección~\ref{sec:normales}), en ambos casos con $q=20$.
 
-\subsection{Filtrado Estadístico de Valores Atípicos (SOR)}
+\paragraph*{Filtrado Estadístico de Valores Atípicos (SOR)}\phantomsection
 \label{sec:sor}
 
-El filtrado estadístico de valores atípicos (SOR, \emph{Statistical Outlier
-Removal}) descarta los puntos estadísticamente aislados. Un levantamiento en bruto contiene
-puntos que no pertenecen a ninguna superficie, como reflejos en vidrios,
-personas que cruzaron durante el escaneo y mediciones sueltas en el límite del
-alcance del sensor. Se reconocen porque quedan lejos de sus vecinos.
-Para cada punto se calcula la distancia media a sus $q$
+Del inglés \emph{Statistical Outlier Removal}, descarta los puntos aislados. Un levantamiento en bruto contiene puntos que no
+pertenecen a ninguna superficie, como reflejos en vidrios, personas que cruzaron
+durante el escaneo y mediciones sueltas en el límite del alcance del sensor, y se
+reconocen porque quedan lejos de sus vecinos. Para cada punto se calcula la distancia media a sus $q$
 vecinos más cercanos (Sección~\ref{sec:knn}),
 \begin{equation}
 \nom{dbar}{\bar d_i}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j\in\nom{vec}{\mathcal{N}_q(i)}}\nom{norma}{\lVert}\nom{xi}{x_i}-\nom{xi}{x_j}\nom{norma}{\rVert} ,
@@ -137,14 +108,12 @@ y el punto se conserva solo si
 \nom{dbar}{\bar d_i}\le\nom{musigma}{\mu}+\nom{lam}{\lambda}\,\nom{musigma}{\sigma} ,
 \label{eq:sor}
 \end{equation}
-Así se descartan los puntos que quedan lejos de sus vecinos.
-Un
-$\lambda$ menor descarta más puntos, pero puede borrar detalle fino; un $q$ mayor
+Un $\lambda$ menor descarta más puntos, pero puede borrar detalle fino; un $q$ mayor
 hace la estimación más estable.
 
 Limpia la nube antes de voxelizarla, para que los
 puntos espurios no se promedien con los válidos. Con $q=20$ y $\lambda=2$, en el
-escaneo de prueba descarta 406\,485 de 8\,590\,904 puntos, el 4,73\,\%.
+escaneo de prueba descarta 406\,485 de 8\,590\,904 puntos (4,73\,\%).
 
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
@@ -159,17 +128,15 @@ promedio de los del grupo:
 \nom{xv}{\bar x_v}=\frac{1}{\nom{xv}{|v|}}\nomop{suma}{\sum}_{i\in \nom{xv}{v}}\nom{xi}{x_i} ,
 \label{eq:voxel}
 \end{equation}
-Con ello cada vóxel ocupado queda descrito por un solo punto.
-El representante no es, en
-general, ninguno de los puntos originales.
+El representante no es, en general, ninguno de los puntos originales.
 
 Reduce el número de registros y homogeniza la
 densidad, que en un levantamiento láser es muy alta cerca del escáner y baja
-lejos de él. No es un paso de limpieza. El SOR descarta puntos que no pertenecen
-a ninguna superficie; la voxelización conserva todas las superficies y solo
-cambia cuántos registros las describen. Con vóxeles de 5\,cm, los 8\,184\,419
+lejos de él. No es un paso de limpieza: el SOR descarta puntos que no pertenecen
+a ninguna superficie, y la voxelización conserva todas las superficies y solo
+reduce los registros que las describen. Con vóxeles de 5\,cm, los 8\,184\,419
 puntos del escaneo de prueba quedan en 610\,637 representantes, el 7,46\,\% de
-los registros anteriores. El 92,54\,\% restante no era ruido. Eran mediciones
+los registros anteriores; el 92,54\,\% restante no era ruido, sino mediciones
 redundantes de una misma porción de superficie.
 
 Los Módulos~2 y~3 aplican además su propia discretización sobre esta salida (Secciones~\ref{sec:rejilla}
@@ -179,55 +146,45 @@ y~\ref{sec:gridsample}).
 \label{sec:normales}
 
 La normal de un punto es el vector unitario
-\nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto. Describe la
-orientación geométrica local, es decir, hacia dónde mira la superficie. No es
-una clasificación, porque no dice qué elemento es el punto.
-El escáner no mide la normal, así que se estima a partir
-de la vecindad del punto, formada por sus $q$ vecinos más cercanos
-\nom{pbar}{$p_1,\ldots,p_q$} (Sección~\ref{sec:knn}). Primero se calcula el centroide local,
+\nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto. Dice
+hacia dónde mira la superficie, no qué elemento es el punto. El escáner no la
+mide, así que se estima a partir de los $q$ vecinos más cercanos del punto,
+\nom{pbar}{$p_1,\ldots,p_q$} (Sección~\ref{sec:knn}). Primero se calcula el
+centroide local, el promedio de sus posiciones,
 \begin{equation}
 \nom{pbar}{\bar p}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\nom{pbar}{p_j} .
 \label{eq:centroide}
 \end{equation}
-El centroide local es el promedio de las posiciones de los vecinos cercanos y se
-utiliza como punto de referencia para estudiar cómo están distribuidos alrededor
-de la superficie. Después se calcula la matriz de covarianza,
+Después se calcula la matriz de covarianza, que describe cómo se reparten los
+vecinos alrededor del centroide,
 \begin{equation}
 \nom{cov}{C}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)^{\nom{T}{\top}}.
 \label{eq:normal}
 \end{equation}
-La matriz de covarianza describe cómo se distribuyen los puntos alrededor del
-centroide y en qué direcciones presentan mayor o menor variación. Es una matriz
-simétrica de $3\times3$, y sus tres autovectores son esas direcciones
-principales, cada una con un autovalor que mide cuánto se dispersan los vecinos
-a lo largo de ella. Sobre una superficie, dos direcciones corresponden a su
-extensión, porque los vecinos se reparten a lo largo y a lo ancho, y la tercera,
-la de menor variación, corresponde aproximadamente a la perpendicular. La normal
-es por tanto el autovector de \nom{cov}{$C$} asociado al menor autovalor.
+Es una matriz simétrica de $3\times3$ cuyos tres autovectores son las
+direcciones principales de dispersión, cada una con un autovalor que mide cuánto
+se dispersan los vecinos a lo largo de ella. Sobre una superficie, dos
+direcciones corresponden a su extensión y la tercera, la de menor variación,
+corresponde aproximadamente a la perpendicular. La normal es por tanto el
+autovector de \nom{cov}{$C$} asociado al menor autovalor.
 
 El autovector fija una dirección pero no un sentido, ya que $n$ y $-n$ son
-igual de válidos. La implementación resuelve la ambigüedad invirtiendo las
-normales que apuntan hacia abajo, de modo que todas cumplen $n_z\geq 0$. Esto
-las hace consistentes entre sí, pero no distingue la cara interior de un muro de
-la exterior.
+igual de válidos. La implementación invierte las normales que apuntan hacia
+abajo, de modo que todas cumplen $n_z\geq 0$; así son consistentes entre sí,
+pero no distinguen la cara interior de un muro de la exterior. Como referencia,
+en un piso la normal es aproximadamente vertical, $(0,0,1)$; en una pared,
+aproximadamente horizontal, con $n_z$ cercano a cero; y en una superficie
+inclinada, como el arranque de una bóveda, tiene componentes en más de un eje.
 
-Tres casos sirven de referencia. En una superficie horizontal, como un piso, la
-normal es aproximadamente vertical, $(0,0,1)$. En una pared vertical la normal
-es aproximadamente horizontal, con $n_z$ cercano a cero. En una superficie
-inclinada, como el arranque de una bóveda, la normal tiene componentes en más
-de un eje.
-
-Aporta tres de los nueve valores con que se describe
-cada punto a la entrada del codificador de Sonata. Se estima sobre los
-representantes que deja la voxelización, con $q=20$, y no sobre los puntos en
-bruto.
+La normal aporta tres de los nueve valores con que se describe cada punto a la
+entrada del codificador de Sonata. Se estima sobre los representantes que deja
+la voxelización, con $q=20$, y no sobre los puntos en bruto.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
 
 Una sección es la porción del levantamiento que se preprocesa en una misma
-corrida. El preprocesamiento recibe uno o varios archivos LAS, los une y los
-trata como una sola sección; con un archivo por corrida, cada escaneo es una
+corrida. Reúne uno o varios archivos LAS; con un archivo por corrida, cada escaneo es una
 sección. Su salida se denota \nom{S}{$S$} y es una matriz de \nom{N}{$N$} filas, una por punto, y nueve
 columnas en precisión simple,
 \begin{equation}
@@ -237,17 +194,17 @@ columnas en precisión simple,
 con la posición centrada en metros, el color entre 0 y 255 y la normal
 unitaria. Para el escaneo de prueba, $N=610\,637$.
 
-Es la unidad indivisible de trabajo, ya que ninguna
-etapa requiere la nube completa en memoria y ninguna sección depende de otra.
+Es la unidad indivisible de trabajo: ninguna etapa requiere la nube completa en
+memoria y ninguna sección depende de otra.
 
-\subsection{Segmentación Semántica}
+\subsection{Segmentación Semántica y Clases}
 \label{sec:segsem}
 
 La segmentación semántica asigna una etiqueta de clase a cada punto de $P$. Se
 distingue de la segmentación de instancias, que además separa objetos distintos
-de una misma clase y que queda fuera del alcance de este trabajo. 
+de una misma clase y queda fuera del alcance de este trabajo.
 
-\subsection{Clase Conocida y Clase Novedosa}
+\paragraph*{Clase Conocida y Clase Novedosa}\phantomsection
 \label{sec:clases}
 
 \nom{Ck}{$\mathcal{C}_k$} es el subconjunto de clases con puntos etiquetados durante el
@@ -363,7 +320,7 @@ de los propios datos, por ejemplo vistas distintas de una misma escena que deben
 producir representaciones parecidas, y no de etiquetas humanas.  Es el régimen con el que se preentrenó el codificador de Sonata; este trabajo
 no lo ejecuta, solo usa su resultado.
 
-\subsection{Codificador Congelado}
+\paragraph*{Codificador Congelado}\phantomsection
 \label{sec:congelado}
 
 Red cuyos pesos no se actualizan y que se usa exclusivamente en inferencia. Su
@@ -372,7 +329,7 @@ por adelantado y almacenarla en disco. El codificador de Sonata tiene
 $108{,}46$~M de parámetros, es decir, de pesos aprendidos, y su inferencia sobre PL13
 usó $34{,}60$~GB de memoria de vídeo (Sección~\ref{sec:res-unidad2}).
 
-\subsection{Atajo Geométrico}
+\paragraph*{Atajo Geométrico}\phantomsection
 \label{sec:atajo}
 
 Modo de falla del preentrenamiento auto-supervisado en tres dimensiones,
@@ -381,7 +338,7 @@ fácilmente accesibles, como la normal, la altura o la curvatura local, en lugar
 de aprender semántica. Es la razón por la que este trabajo sustituye $f_{\mathrm{geo}}$, y por la que
 el codificador de Sonata prescinde del decodificador.
 
-\subsection{Serialización}
+\subsection{Serialización y Codificador PTv3}
 \label{sec:serializacion}
 
 Ordenamiento de los puntos mediante una curva de llenado de espacio, de tipo Z o
@@ -392,10 +349,10 @@ transformador combina la información de los elementos de un conjunto. Es el
 mecanismo que permite a PTv3~\cite{wu2024ptv3}, la red del codificador, aplicar
  atención con costo lineal.
 
-\subsection{Codificador PTv3}
+\paragraph*{Codificador PTv3}\phantomsection
 \label{sec:codificador-ptv3}
 
-El codificador de Sonata es un PTv3~\cite{wu2024ptv3} que aplica cuatro
+Es el codificador de Sonata: un PTv3~\cite{wu2024ptv3} que aplica cuatro
 operaciones; el número de etapas, bloques y canales de cada una está en el
 \hyperref[sec:arq-sonata]{Anexo~C} (Figura~\ref{fig:arq-sonata} y Tabla~\ref{tab:params-sonata}). Primero,
 un \emph{embedding} convierte los nueve valores $\nom{xin}{\mathbf{x}_i}$ de cada
@@ -434,7 +391,7 @@ donde $c$ es una celda de la etapa $s+1$, $W_p$ sube el número de canales y el
 máximo se toma canal a canal. Cuarto, el \emph{up-cast} reúne las tres últimas
 etapas (Sección~\ref{sec:upcast}).
 
-\subsection{Rejilla Dispersa y Tensor Disperso}
+\subsection{Red Dispersa de Minkowski}
 \label{sec:rejilla}
 \label{sec:tensor}
 
@@ -451,10 +408,10 @@ inicial de cada vóxel ocupado es el valor constante 1, de modo que la red recib
 únicamente la ocupación, es decir, la forma, y no el color ni la normal. Es la entrada de la red que produce
 $f_{\mathrm{sem}}$.
 
-\subsection{Convolución Dispersa}
+\paragraph*{Convolución Dispersa}\phantomsection
 \label{sec:convdispersa}
 
-La convolución dispersa es la operación de convolución definida sobre un tensor disperso.
+Es la operación definida sobre un tensor disperso.
 Como una convolución ordinaria, combina las
 características de un vóxel con las de sus vecinos dentro de un núcleo cúbico
 mediante pesos aprendidos, pero solo se evalúa en los vóxeles ocupados y solo
@@ -462,10 +419,10 @@ considera vecinos ocupados. La vecindad es por tanto métrica: son vecinos los v
 $f_{\mathrm{sem}}$, y su noción de vecindad es la que no coincide con la de la
 serialización (Sección~\ref{sec:serializacion}).
 
-\subsection{MinkowskiUNet-34C}
+\paragraph*{MinkowskiUNet-34C}\phantomsection
 \label{sec:minkunet}
 
-La MinkowskiUNet-34C es la red troncal de HyperNCD, una red de convoluciones dispersas
+Es la red troncal de HyperNCD, una red de convoluciones dispersas
 con arquitectura codificador-decodificador.
 Tiene tres partes.
 \begin{itemize}\setlength{\itemsep}{1pt}
@@ -504,7 +461,7 @@ modo que $f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos que entregó 
 Módulo~1. Como la celda de 2\,cm es menor que el vóxel de 5\,cm del
 preprocesamiento, casi todos los puntos quedan solos en su celda.
 
-\subsection{Propagación Inversa del Submuestreo}
+\paragraph*{Propagación Inversa del Submuestreo}\phantomsection
 \label{sec:upcast}
 
 También llamada \emph{up-cast}, devuelve las características del codificador a
@@ -527,7 +484,7 @@ $S$ recibe el descriptor de la celda en la que cayó,
 \end{equation}
 donde $\mathrm{inv}(i)$ es esa celda. 
 
-\subsection{Caja de Sección y Corte}
+\subsection{Corte de Sección y Reconstrucción de Superficie}
 \label{sec:caja}
 
 La caja de sección (\emph{section box}) es un paralelepípedo que se ajusta sobre
@@ -535,7 +492,7 @@ la nube para mostrar solo los puntos que quedan dentro; el corte es un plano que
 oculta todo lo que queda a un lado. Ambos permiten inspeccionar el interior de
 un edificio sin que el resto lo tape. 
 
-\subsection{Reconstrucción de Superficie de Poisson}
+\paragraph*{Reconstrucción de Superficie de Poisson}\phantomsection
 \label{sec:poisson}
 
 Método que convierte una nube de puntos con normales en una malla cerrada:
@@ -680,7 +637,7 @@ significado ya incluye el conocimiento auto-supervisado de $f_{\mathrm{ssl}}$,
 mientras que la forma sigue medida por $g$. Así $f_{\mathrm{ssl}}$ entra
 una sola vez en el sistema y $\alpha$ conserva su interpretación.
 
-\subsection{Pseudo-etiqueta}
+\subsection{Pseudo-etiquetas y Sinkhorn-Knopp}
 \label{sec:pseudo}
 \label{sec:pseudoetq}
 
@@ -698,7 +655,7 @@ opción \texttt{--label\_smoothing}: construye objetivos \emph{one-hot} para las
 clases conocidas. Los puntos del conjunto novedoso reciben las pseudo-etiquetas
 de Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}).
 
-\subsection{Normalización de Sinkhorn-Knopp}
+\paragraph*{Normalización de Sinkhorn-Knopp}\phantomsection
 \label{sec:sinkhorn}
 
 Procedimiento de normalización iterativa de una matriz que fuerza a que sus
@@ -831,7 +788,7 @@ el \emph{up-cast} (Sección~\ref{sec:upcast}).
 Para evaluar la efectividad del modelo se utilizan las métricas siguientes.
 
 
-\subsection{Intersection over Union (IoU)}
+\subsection{IoU, mIoU y Clase Dominante}
 \label{sec:iou}
 
 Para una clase $c$, la intersección sobre unión se define como:
@@ -843,7 +800,7 @@ Mide cuánto coinciden los puntos predichos de una clase con los reales: vale 1
 si coinciden todos y 0 si no coincide ninguno.
 
 
-\subsection{IoU Media (mIoU)}
+\paragraph*{IoU Media (mIoU)}\phantomsection
 \label{sec:miou}
 
 La métrica agregada es el promedio de la anterior sobre un conjunto de clases:
@@ -857,17 +814,12 @@ Resume en un solo número el desempeño sobre todas las clases del conjunto.
 Se reporta por separado como mIoU \emph{known}, mIoU \emph{novel} y mIoU
 \emph{all}.
 
-\subsection{Análisis de Dominancia}
+\paragraph*{Análisis de Dominancia}\phantomsection
 \label{sec:dominancia}
 
-La Ec.~\eqref{eq:miou} es una media aritmética no ponderada, por lo que
-\begin{equation}
-\frac{\nom{parcial}{\partial}\,\nom{miou}{\mathrm{mIoU}}}{\nom{parcial}{\partial}\,\nom{iou}{\mathrm{IoU}_c}}=\frac{1}{\nom{card}{|}\nom{conj}{\mathcal{S}}\nom{card}{|}}
-\qquad \nom{paratodo}{\forall}\, \nom{clase}{c}\nom{en}{\in}\nom{conj}{\mathcal{S}}.
-\label{eq:dominancia}
-\end{equation}
-Cada clase pesa igual con independencia de su número de puntos. Por ello el
-valor agregado se acompaña siempre de la clase dominante:
+La Ec.~\eqref{eq:miou} es una media aritmética no ponderada: cada clase pesa
+igual con independencia de su número de puntos. Por ello el valor agregado se
+acompaña siempre de la clase dominante:
 \begin{equation}
 \nom{cstar}{c^{*}}=\nomop{argmax}{\arg\max}_{c\in\mathcal{S}}\bigl|\nom{iou}{\mathrm{IoU}_c}-\nom{miou}{\mathrm{mIoU}}(\nom{conj}{\mathcal{S}})\bigr|.
 \label{eq:dominante}
@@ -875,7 +827,7 @@ valor agregado se acompaña siempre de la clase dominante:
 Identifica la clase que más se aparta del promedio y que, por tanto, más
 explica su valor.
 
-\subsection{Emparejamiento Húngaro}
+\subsection{Medidas de Agrupamiento}
 \label{sec:hungaro}
 
 Como las clases de $\mathcal{C}_n$ se descubren sin etiqueta, la correspondencia
@@ -888,7 +840,7 @@ entre agrupaciones predichas y clases reales se resuelve por asignación óptima
 Entre todas las correspondencias posibles elige la de mayor IoU total, y así
 cada grupo descubierto recibe el nombre de una clase real.
 
-\subsection{Índice de Rand Ajustado (ARI)}
+\paragraph*{Índice de Rand Ajustado (ARI)}\phantomsection
 \label{sec:ari}
 
 Mide la coincidencia entre la agrupación descubierta y la real con independencia
@@ -905,7 +857,7 @@ Vale 1 cuando las dos agrupaciones coinciden y cerca de 0 cuando coinciden
 solo por azar.
 
 
-\subsection{Información Mutua Normalizada (NMI)}
+\paragraph*{Información Mutua Normalizada (NMI)}\phantomsection
 \label{sec:nmi}
 
 Complementa al ARI midiendo la información que una agrupación aporta sobre la
@@ -931,7 +883,7 @@ que asigna a cada punto la clase con mayor puntuación. Como el descriptor está
 congelado, el desempeño resultante queda atribuido a la representación y no al
 clasificador.
 
-\subsection{Ganancia Absoluta}
+\subsection{Medidas de la Mejora}
 \label{sec:ganancia}
 
 Diferencia de mIoU sobre las clases novedosas entre el modelo híbrido y la línea
@@ -944,7 +896,7 @@ base:
 Indica cuántos puntos de mIoU gana, o pierde, el modelo híbrido en las clases
 novedosas.
 
-\subsection{Brecha Cerrada}
+\paragraph*{Brecha Cerrada}\phantomsection
 \label{sec:brecha}
 
 La ganancia absoluta no es interpretable por sí sola, porque el techo alcanzable
@@ -960,7 +912,7 @@ las clases que sí vio etiquetadas:
 clases novedosas alcanzan la calidad con que el modelo segmenta las conocidas y
 $G<0$ degradación.
 
-\subsection{Atribución por Etapas}
+\paragraph*{Atribución por Etapas}\phantomsection
 \label{sec:metricas-hibrido}
 
 Como el proceso es separable en dos etapas, la métrica se reporta también en el
