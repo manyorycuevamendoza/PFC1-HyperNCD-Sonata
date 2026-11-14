@@ -106,26 +106,17 @@ con los válidos. Se usa $q=20$ y $\lambda=2$.
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
 
-Un vóxel es una celda cúbica de una rejilla regular que divide
-el espacio; su lado es el tamaño de vóxel. La voxelización es la discretización
-de la nube sobre esa rejilla.
-Los puntos que caen en un mismo vóxel $v$ se agrupan y
-el grupo se sustituye por un único representante, cuya posición y color son el
-promedio de los del grupo:
+Un vóxel es una celda cúbica de una rejilla regular que divide el espacio; su lado
+es el tamaño de vóxel. La voxelización sustituye los puntos de cada vóxel $v$ por
+un único representante, cuya posición y color son el promedio de los del grupo:
 \begin{equation}
 \nom{xv}{\bar x_v}=\frac{1}{\nom{xv}{|v|}}\nomop{suma}{\sum}_{i\in \nom{xv}{v}}\nom{xi}{x_i} ,
 \label{eq:voxel}
 \end{equation}
-El representante no es, en general, ninguno de los puntos originales.
-
-Reduce el número de registros y homogeniza la
-densidad, que en un levantamiento láser es muy alta cerca del escáner y baja
-lejos de él. No es un paso de limpieza: el SOR descarta puntos que no pertenecen
-a ninguna superficie, y la voxelización conserva todas las superficies y solo
-reduce los registros que las describen. Con vóxeles de 5\,cm, los 8\,184\,419
-puntos del escaneo de prueba quedan en 610\,637 representantes, el 7,46\,\% de
-los registros anteriores; el 92,54\,\% restante no era ruido, sino mediciones
-redundantes de una misma porción de superficie.
+Reduce los registros y homogeniza la densidad, que en un levantamiento láser es
+muy alta cerca del escáner y baja lejos de él. No es un paso de limpieza:
+conserva todas las superficies y solo reduce los registros que las describen. Se
+usa un vóxel de 5\,cm.
 
 \subsection{Normal de Superficie y su Estimación}
 \label{sec:normales}
@@ -134,7 +125,7 @@ La normal de un punto es el vector unitario
 \nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto. Dice
 hacia dónde mira la superficie, no qué elemento es el punto. El escáner no la
 mide, así que se estima a partir de los $q$ vecinos más cercanos del punto,
-\nom{pbar}{$p_1,\ldots,p_q$} (Sección~\ref{sec:knn}). Primero se calcula el
+\nom{pbar}{$p_1,\ldots,p_q$}. Primero se calcula el
 centroide local, el promedio de sus posiciones,
 \begin{equation}
 \nom{pbar}{\bar p}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\nom{pbar}{p_j} .
@@ -156,14 +147,10 @@ autovector de \nom{cov}{$C$} asociado al menor autovalor.
 El autovector fija una dirección pero no un sentido, ya que $n$ y $-n$ son
 igual de válidos. La implementación invierte las normales que apuntan hacia
 abajo, de modo que todas cumplen $n_z\geq 0$; así son consistentes entre sí,
-pero no distinguen la cara interior de un muro de la exterior. Como referencia,
-en un piso la normal es aproximadamente vertical, $(0,0,1)$; en una pared,
-aproximadamente horizontal, con $n_z$ cercano a cero; y en una superficie
-inclinada, como el arranque de una bóveda, tiene componentes en más de un eje.
+pero no distinguen la cara interior de un muro de la exterior.
 
-La normal aporta tres de los nueve valores con que se describe cada punto a la
-entrada del codificador de Sonata. Se estima sobre los representantes que deja
-la voxelización, con $q=20$, y no sobre los puntos en bruto.
+Se estima sobre los representantes que deja la voxelización, con $q=20$, y no
+sobre los puntos en bruto.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
@@ -177,7 +164,7 @@ columnas en precisión simple,
 \label{eq:sj}
 \end{equation}
 con la posición centrada en metros, el color entre 0 y 255 y la normal
-unitaria. Para el escaneo de prueba, $N=610\,637$.
+unitaria.
 
 Es la unidad indivisible de trabajo: ninguna etapa requiere la nube completa en
 memoria y ninguna sección depende de otra.
