@@ -330,11 +330,6 @@ resolución original, con anchuras $(256,128,96,96)$.
 decodificador recibe, concatenada, la salida del nivel del codificador que tiene
 su misma resolución. Así recupera el detalle fino que el submuestreo perdió.
 \end{itemize}
-La red recibe un canal por vóxel y en HyperNCD se le retira la capa final de
-clasificación, por lo que entrega 96 valores por vóxel.
-
-Produce el descriptor semántico $f_{\mathrm{sem}}$ y se entrena con las clases
-conocidas.
 
 \subsection{Muestreo por Rejilla e Índice Inverso}
 \label{sec:gridsample}
