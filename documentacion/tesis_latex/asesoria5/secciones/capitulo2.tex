@@ -308,8 +308,10 @@ atención con costo lineal.
 \label{sec:codificador-ptv3}
 
 Es el codificador de Sonata: un PTv3~\cite{wu2024ptv3} que aplica cuatro
-operaciones; el número de etapas, bloques y canales de cada una está en el
-\hyperref[sec:arq-sonata]{Anexo~C} (Figura~\ref{fig:arq-sonata} y Tabla~\ref{tab:params-sonata}). Primero,
+operaciones; el número de etapas, bloques y canales de cada una, y las ecuaciones del bloque y
+del \emph{pooling}, están en el \hyperref[sec:arq-sonata]{Anexo~C}
+(Figura~\ref{fig:arq-sonata}, Tabla~\ref{tab:params-sonata} y
+Ecs.~\ref{eq:bloque} y~\ref{eq:pooling}). Primero,
 un \emph{embedding} convierte los nueve valores $\nom{xin}{\mathbf{x}_i}$ de cada
 punto en un vector de 48 características,
 \begin{equation}
@@ -317,16 +319,10 @@ punto en un vector de 48 características,
 \label{eq:embedding}
 \end{equation}
 donde $W_e$ es una matriz aprendida de $48\times9$, $b_e$ un sesgo, LN una
-normalización por capa y GELU una activación no lineal. Segundo, cada bloque
-actualiza las características de los puntos con tres sumas residuales,
-\begin{equation}
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{CPE}(\mathbf{h}),\qquad
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{Atn}\!\left(\mathrm{LN}(\mathbf{h})\right),\qquad
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{MLP}\!\left(\mathrm{LN}(\mathbf{h})\right),
-\label{eq:bloque}
-\end{equation}
-donde CPE es una convolución dispersa que codifica la posición y MLP dos capas
-lineales. La atención es la de los Transformers~\cite{vaswani2017attention}, que PTv3
+normalización por capa y GELU una activación no lineal. Segundo, cada bloque suma a
+las características de los puntos el resultado de una convolución dispersa que
+codifica la posición, de la atención y de un MLP, que son dos capas lineales.
+La atención es la de los Transformers~\cite{vaswani2017attention}, que PTv3
 aplica dentro de cada parche: si $\nom{Hp}{\mathbf{H}_p}$ reúne las
 características de los 1024 puntos de un parche,
 \begin{equation}
@@ -336,14 +332,9 @@ características de los 1024 puntos de un parche,
 con $W_Q$, $W_K$ y $W_V$ matrices aprendidas y $d$ el número de canales por
 cabeza; cada cabeza repite el cálculo con sus propias matrices. Cada fila de la
 matriz softmax indica cuánto atiende un punto a cada uno de los demás del
-parche. Tercero, entre una etapa y la siguiente, el \emph{pooling} duplica el
-lado de la celda y reúne los puntos que caen en la misma,
-\begin{equation}
-\nom{h}{\mathbf{h}_c^{(s+1)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\max_{i\in c}\,\nom{Wp}{W_p}\,\nom{h}{\mathbf{h}_i^{(s)}}\right)\right),
-\label{eq:pooling}
-\end{equation}
-donde $c$ es una celda de la etapa $s+1$, $W_p$ sube el número de canales y el
-máximo se toma canal a canal. Cuarto, el \emph{up-cast} reúne las tres últimas
+parche. Tercero, entre una etapa y la siguiente, el \emph{pooling} duplica el lado de la
+celda y se queda, canal a canal, con el máximo de los puntos que caen en la misma.
+Cuarto, el \emph{up-cast} reúne las tres últimas
 etapas.
 
 \subsection{Red Dispersa de Minkowski}

@@ -17,6 +17,24 @@ configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-s
 el recuento de parámetros de la Tabla~\ref{tab:params-sonata}, hecho capa por capa,
 da exactamente el total que el modelo declara al cargarse.
 
+Cada bloque actualiza las características de los puntos con tres sumas
+residuales,
+\begin{equation}
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{CPE}(\mathbf{h}),\qquad
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{Atn}\!\left(\mathrm{LN}(\mathbf{h})\right),\qquad
+\mathbf{h}\leftarrow\mathbf{h}+\mathrm{MLP}\!\left(\mathrm{LN}(\mathbf{h})\right),
+\label{eq:bloque}
+\end{equation}
+donde CPE es una convolución dispersa que codifica la posición y MLP dos capas
+lineales. Entre una etapa y la siguiente, el \emph{pooling} duplica el lado de la
+celda y reúne los puntos que caen en la misma,
+\begin{equation}
+\nom{h}{\mathbf{h}_c^{(s+1)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\max_{i\in c}\,\nom{Wp}{W_p}\,\nom{h}{\mathbf{h}_i^{(s)}}\right)\right),
+\label{eq:pooling}
+\end{equation}
+donde $c$ es una celda de la etapa $s+1$, $W_p$ sube el número de canales y el
+máximo se toma canal a canal.
+
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}[
