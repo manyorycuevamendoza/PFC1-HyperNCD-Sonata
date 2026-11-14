@@ -372,8 +372,8 @@ Como una convolución ordinaria, combina las
 características de un vóxel con las de sus vecinos dentro de un núcleo cúbico
 mediante pesos aprendidos, pero solo se evalúa en los vóxeles ocupados y solo
 considera vecinos ocupados. La vecindad es por tanto métrica: son vecinos los vóxeles adyacentes en el volumen. Es la capa con que está construida la red que produce
-$f_{\mathrm{sem}}$, y su noción de vecindad es la que no coincide con la de la
-serialización (Sección~\ref{sec:serializacion}).
+$f_{\mathrm{sem}}$, y su noción de vecindad no coincide con la de la
+serialización.
 
 \paragraph*{MinkowskiUNet-34C}\phantomsection
 \label{sec:minkunet}
@@ -395,8 +395,8 @@ su misma resolución. Así recupera el detalle fino que el submuestreo perdió.
 La red recibe un canal por vóxel y en HyperNCD se le retira la capa final de
 clasificación, por lo que entrega 96 valores por vóxel.
 
-Produce el descriptor semántico $f_{\mathrm{sem}}$
-(Sección~\ref{sec:fsem}). Se entrena con las clases conocidas.
+Produce el descriptor semántico $f_{\mathrm{sem}}$ y se entrena con las clases
+conocidas.
 
 \subsection{Muestreo por Rejilla e Índice Inverso}
 \label{sec:gridsample}
@@ -412,7 +412,7 @@ codificador. El índice inverso anota, para cada punto de la entrada, la celda e
 la que cayó.
 
 Con el índice inverso, el descriptor de cada celda se
-devuelve a todos los puntos de $S$ que cayeron en ella (Ec.~\eqref{eq:inverso}), de
+devuelve a todos los puntos de $S$ que cayeron en ella, de
 modo que $f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos que entregó el
 Módulo~1. Como la celda de 2\,cm es menor que el vóxel de 5\,cm del
 preprocesamiento, casi todos los puntos quedan solos en su celda.
@@ -432,8 +432,7 @@ el resultado con la 3, y en los restantes solo se copian, lo que da las 1088 dim
 \end{equation}
 donde $j$ es un punto de la rejilla de 2\,cm y $\pi_s(j)$ la celda de la etapa
 $s$ que lo contiene, obtenida encadenando los índices del submuestreo.
-Por último, con el índice inverso (Sección~\ref{sec:gridsample}) cada punto de
-$S$ recibe el descriptor de la celda en la que cayó,
+Por último, con el índice inverso cada punto de $S$ recibe el descriptor de la celda en la que cayó,
 \begin{equation}
 \nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})=\nom{ftil}{\tilde{f}}_{\nom{inv}{\mathrm{inv}(i)}},
 \label{eq:inverso}
