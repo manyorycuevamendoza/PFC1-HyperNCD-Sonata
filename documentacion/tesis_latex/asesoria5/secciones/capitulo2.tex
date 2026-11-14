@@ -580,19 +580,15 @@ formulación.
 La función que optimiza el entrenamiento ejecutado suma un término por punto y
 uno por región,
 \begin{equation}
-\nom{Lt}{\mathcal{L}}=\nom{Lp}{\mathcal{L}_{\mathrm{pt}}}+\nom{beta}{\beta}\,\nom{Lr}{\mathcal{L}_{\mathrm{reg}}},\qquad
-\mathcal{L}_{\mathrm{pt}}=\sum_{v=1}^{2}\frac{1}{|\mathcal{P}_v|}\sum_{i\in\mathcal{P}_v}\mathrm{CE}\!\left(10\,z_i^{(v)},\;y_i^{(\bar v)}\right),
+\nom{Lt}{\mathcal{L}}=\nom{Lp}{\mathcal{L}_{\mathrm{pt}}}+\nom{beta}{\beta}\,\nom{Lr}{\mathcal{L}_{\mathrm{reg}}},
 \label{eq:perdida}
 \end{equation}
-donde $v=1,2$ indexa las dos vistas aumentadas de la misma escena, $\bar v$ es
-la otra vista, CE es la entropía cruzada y el objetivo $y_i^{(\bar v)}$ es
+donde $\mathcal{L}_{\mathrm{pt}}$ es la entropía cruzada de las puntuaciones de
+cada punto en una vista aumentada frente a su objetivo en la otra, que es
 \emph{one-hot} para los puntos de clases conocidas y la pseudo-etiqueta de
-Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}) para los demás. $\mathcal{L}_{\mathrm{reg}}$
-tiene la misma forma, pero sobre las regiones, con las puntuaciones de
-$\hat{F}^{(r)}$ (Ec.~\eqref{eq:hiper-agr}) frente a los prototipos novedosos.
-El peso $\beta$ es el argumento \texttt{--alpha} del programa de entrenamiento,
-que vale 1 en las corridas registradas; no debe confundirse con el $\alpha$ de la
-afinidad $S_b$, que vale 0{,}5.
+Sinkhorn-Knopp para los demás. $\mathcal{L}_{\mathrm{reg}}$ tiene la misma forma
+sobre las regiones, con las puntuaciones de $\hat{F}^{(r)}$ frente a los
+prototipos novedosos, y $\beta$ pesa ese término.
 
 \subsection{Arquitectura de Sonata}
 \label{sec:arq-sonata-paper}
