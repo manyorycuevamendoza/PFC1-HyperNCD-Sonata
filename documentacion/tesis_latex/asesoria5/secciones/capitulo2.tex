@@ -178,12 +178,9 @@ El punto y coma indica concatenación: un vector a continuación del otro.
 \subsubsection{Descriptor Semántico}
 \label{sec:fsem}
 
-Vector que la red troncal supervisada de HyperNCD entrega por cada punto. Esa red
-es una MinkowskiUNet-34C de 96 canales. Codifica a qué se parece un punto en
-términos de las clases y pseudo-etiquetas usadas durante el entrenamiento; no son
-medidas físicas, sino coordenadas aprendidas. En la Catedral el checkpoint se
-congela y $f_{\mathrm{sem}}$ se extrae una sola vez por escena, para reutilizarlo
-en el Módulo~4.
+Vector que la red troncal supervisada de HyperNCD, una MinkowskiUNet-34C, entrega
+por cada punto. Codifica a qué se parece un punto en términos de las clases y
+pseudo-etiquetas usadas durante el entrenamiento.
 
 En fórmulas, cada punto cae en una celda de lado $\nom{ell}{\ell}=5$\,cm, cada
 vóxel ocupado recibe la característica constante 1 (el color y la normal no
