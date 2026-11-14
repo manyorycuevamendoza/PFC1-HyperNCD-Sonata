@@ -47,18 +47,12 @@ retorno, la clase y, según el formato, el color RGB.
 \subsection{Centrado de Coordenadas}
 \label{sec:centrado}
 
-El centrado traslada la nube al origen restándole el centro de su caja envolvente:
+El centrado resta el centro \nom{c}{$c$} de la caja envolvente para trasladar la nube
+al origen y conservar la precisión centimétrica; $c$ se guarda para revertirlo:
 \begin{equation}
 \nom{c}{c}=\tfrac{1}{2}\left(\nom{minmax}{\min}_i \nom{xi}{x_i}+\nom{minmax}{\max}_i \nom{xi}{x_i}\right),\qquad \nom{xip}{x_i'}=\nom{xi}{x_i}-\nom{c}{c} ,
 \label{eq:centrado}
 \end{equation}
-El vector \nom{c}{$c$} se guarda para revertir el centrado.
-
-Las coordenadas del levantamiento son números muy grandes: en el eje norte superan
-los 8 millones de metros. En precisión simple, que guarda unos siete dígitos, a esa
-magnitud dos valores consecutivos están a un metro, y puntos separados por
-centímetros quedarían iguales. Restar el centro reduce las coordenadas a decenas de
-metros y conserva ese detalle.
 
 \subsection{Vecindad de los $q$ Vecinos y Filtrado de Valores Atípicos (SOR)}
 \label{sec:knn}
@@ -71,86 +65,57 @@ recursiva y evita comparar cada punto con todos los demás.
 \paragraph*{Filtrado Estadístico de Valores Atípicos (SOR)}\phantomsection
 \label{sec:sor}
 
-Descarta los puntos aislados, como reflejos en vidrios o personas que cruzaron
-durante el escaneo. Para cada punto se mide su distancia media a los $q$ vecinos
-más cercanos, \nom{dbar}{$\bar d_i$}; el promedio $\mu$ y la desviación estándar
-$\sigma$ de esas distancias dicen cuál es la distancia normal entre vecinos. Se
-conserva el punto si no está más lejos que lo normal más $\lambda$ desviaciones:
+SOR compara \nom{dbar}{$\bar d_i$}, distancia media a los $q$ vecinos, con $\mu$ y $\sigma$
+globales. Conserva el punto cuando
 \begin{equation}
 \nom{dbar}{\bar d_i}\le\nom{musigma}{\mu}+\nom{lam}{\lambda}\,\nom{musigma}{\sigma} ,
 \label{eq:sor}
 \end{equation}
-\noindent Un $\lambda$ menor descarta más puntos pero puede borrar detalle fino; se
-usa $\lambda=2$. Limpia la nube antes de voxelizarla, para que los puntos
-espurios no se promedien con los válidos.
+\noindent Se usa $\lambda=2$ antes de voxelizar para eliminar puntos espurios sin borrar detalle fino.
 
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
 
-Un vóxel es una celda cúbica de una rejilla regular que divide el espacio; su lado
-es el tamaño de vóxel. La voxelización sustituye los puntos de cada vóxel $v$ por
-un único representante, cuya posición y color son el promedio de los del grupo:
+Un vóxel es una celda cúbica; la voxelización sustituye los puntos de cada celda $v$
+por un representante cuya posición y color son el promedio del grupo:
 \begin{equation}
 \nom{xv}{\bar x_v}=\frac{1}{\nom{xv}{|v|}}\nomop{suma}{\sum}_{i\in \nom{xv}{v}}\nom{xi}{x_i} ,
 \label{eq:voxel}
 \end{equation}
-Reduce los registros y homogeniza la densidad, que en un levantamiento láser es
-muy alta cerca del escáner y baja lejos de él. No es un paso de limpieza:
-conserva todas las superficies y solo reduce los registros que las describen. Se
-usa un vóxel de 5\,cm.
+Reduce los registros y homogeneiza la densidad sin eliminar superficies: solo
+disminuye los puntos que las describen. Se usa un vóxel de 5\,cm.
 
 \subsection{Normal de Superficie y su Estimación}
 \label{sec:normales}
 
-La normal de un punto es el vector unitario
-\nom{n}{$n_i=(n_x,n_y,n_z)$} perpendicular a la superficie en ese punto; dice
-hacia dónde mira la superficie. El escáner no la mide, así que se estima con la
-matriz de covarianza de los $q$ vecinos más cercanos del punto,
-\nom{pbar}{$p_1,\ldots,p_q$}, cuyo promedio es el centroide
-\nom{pbar}{$\bar p$}:
+La normal \nom{n}{$n_i$} es el vector unitario perpendicular. El escáner no la mide:
+se estima con la covarianza de $q$ vecinos \nom{pbar}{$p_j$} y centroide \nom{pbar}{$\bar p$}:
 \begin{equation}
 \nom{cov}{C}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)^{\nom{T}{\top}}.
 \label{eq:normal}
 \end{equation}
-\noindent Sus tres autovectores son las direcciones principales de dispersión,
-cada una con un autovalor que mide cuánto se dispersan los vecinos a lo largo de
-ella. Sobre una superficie, la dirección de menor variación es aproximadamente la
-perpendicular: la normal es el autovector de \nom{cov}{$C$} con el menor
-autovalor.
+\noindent Los autovectores de \nom{cov}{$C$} indican las direcciones de dispersión; la
+normal es el de menor autovalor, pues corresponde a la menor variación.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
 
-Una sección es la porción del levantamiento que se preprocesa en una misma
-corrida: reúne uno o varios archivos LAS, o un solo escaneo si hay un archivo por
-corrida. Su salida \nom{S}{$S$} es una matriz de \nom{N}{$N$} filas, una por punto,
-y nueve columnas en precisión simple,
+Una sección es la porción del levantamiento procesada en una corrida. Su salida
+\nom{S}{$S$} tiene \nom{N}{$N$} filas y nueve columnas en precisión simple:
 \begin{equation}
 \nom{S}{S}=\left[\,\nom{xyz}{x\;\;y\;\;z}\;\;\nom{rgb}{R\;\;G\;\;B}\;\;\nom{n}{n_x\;\;n_y\;\;n_z}\,\right],
 \label{eq:sj}
 \end{equation}
-De cada punto del LAS se conservan la posición $(x,y,z)$, que se centra, y el color
-$(R,G,B)$, llevado de 16~bits al rango 0 a 255; la normal se estima y queda
-unitaria. Como el autovector no fija el sentido de la normal, la implementación invierte las que apuntan hacia abajo
-para que todas cumplan $n_z\geq 0$; así no distingue la cara interior de un muro
-de la exterior.
+Cada fila contiene posición centrada, color escalado a 0--255 y normal unitaria
+orientada con $n_z\geq 0$; por ello no distingue las caras interior y exterior de un muro.
 
 \subsection{Segmentación Semántica y Clases}
 \label{sec:segsem}
 
-La segmentación semántica asigna una etiqueta de clase a cada punto de $P$. Se
-distingue de la segmentación de instancias, que además separa objetos distintos
-de una misma clase y queda fuera del alcance de este trabajo.
-
-\paragraph*{Clase Conocida y Clase Novedosa}\phantomsection
-\label{sec:clases}
-
-\nom{Ck}{$\mathcal{C}_k$} es el subconjunto de clases con puntos etiquetados durante el
-entrenamiento y \nom{Cn}{$\mathcal{C}_n$} el de clases presentes en la nube pero sin
-ninguna etiqueta, con $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$ y
-$\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$. En patrimonio, $\mathcal{C}_n$
-recoge los elementos singulares de cada edificio, que no figuran en ningún
-catálogo previo. 
+\phantomsection\label{sec:clases}La segmentación semántica asigna una clase a cada punto de $P$, sin separar
+instancias de una misma clase. \nom{Ck}{$\mathcal{C}_k$} reúne las clases etiquetadas y
+\nom{Cn}{$\mathcal{C}_n$}, las presentes sin etiquetas, con $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$ y
+$\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$; en patrimonio, $\mathcal{C}_n$ contiene elementos sin catálogo previo.
 
 % =====================================================================
 \section{Computación}
@@ -173,19 +138,14 @@ auto-supervisado:
 \nom{Fi}{F_i}=\left[\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})\nom{concat}{;}\,\nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})\right].
 \label{eq:hibrido}
 \end{equation}
-El punto y coma indica concatenación: un vector a continuación del otro.
+La propuesta conserva $f_{\mathrm{sem}}$ y sustituye únicamente el segundo componente.
 
 \subsubsection{Descriptor Semántico}
 \label{sec:fsem}
 
-Vector que la red troncal supervisada de HyperNCD, una MinkowskiUNet-34C, entrega
-por cada punto. Codifica a qué se parece un punto en términos de las clases y
-pseudo-etiquetas usadas durante el entrenamiento.
-
-En fórmulas, cada punto cae en una celda de lado $\nom{ell}{\ell}=5$\,cm, cada
-vóxel ocupado recibe la característica constante 1 (el color y la normal no
-entran) y la red $\nom{Unet}{U_\theta}$ devuelve un vector de 96 canales por
-vóxel ocupado:
+Vector supervisado de 96 canales de la MinkowskiUNet-34C de HyperNCD; codifica la
+semejanza con las clases de entrenamiento. Cada punto cae en una celda de lado
+$\nom{ell}{\ell}=5$\,cm con característica 1; color y normal no entran a $\nom{Unet}{U_\theta}$:
 \begin{equation}
 \nom{vcel}{\mathbf{v}_i}=\left\lfloor \frac{\nom{xi}{x_i}}{\nom{ell}{\ell}}\right\rfloor,\qquad a_{\mathbf{v}}=1,
 \label{eq:cuant}
@@ -194,39 +154,30 @@ vóxel ocupado:
 \nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})=\nom{Unet}{U_\theta}(\mathcal{V})_{\nom{vcel}{\mathbf{v}_i}}\in\mathbb{R}^{96},
 \label{eq:fsem}
 \end{equation}
-donde $\mathcal{V}$ es el tensor disperso formado por las celdas ocupadas y sus
-características $a_{\mathbf{v}}$. Los puntos que comparten celda comparten
-descriptor.
+donde $\mathcal{V}$ reúne las celdas ocupadas; los puntos de una celda comparten descriptor.
 
 \subsubsection{Descriptor Geométrico Analítico}
 \label{sec:fgeo}
 
-Vector calculado con una fórmula cerrada, sin aprendizaje, a partir de los
-autovalores \nom{eig}{$\lambda_1\geq\lambda_2\geq\lambda_3$} de la matriz de
-covarianza de un conjunto de puntos: linealidad, planaridad y dispersión. El
-artículo los calcula sobre un vecindario de 15 puntos; la implementación
-ejecutada los calcula sobre la región que contiene al punto y les concatena el
-centroide de esa región, lo que da dimensión 6,
+Vector analítico, sin aprendizaje, formado por la linealidad, planaridad y
+dispersión obtenidas de los autovalores
+\nom{eig}{$\lambda_1\geq\lambda_2\geq\lambda_3$}. El artículo usa 15 vecinos; la
+implementación usa la región del punto y concatena su centroide, dando dimensión 6,
 \begin{equation}
 \nom{g}{g^{(r)}}=\left[\frac{\nom{eig}{\lambda_1}-\nom{eig}{\lambda_2}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_2}-\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;c^{(r)}\right]\in\mathbb{R}^{6},
 \label{eq:g-region}
 \end{equation}
-donde los $\lambda$ son los autovalores de la covarianza de los puntos de la
-región $r$ y $c^{(r)}$ es su centroide. Este trabajo adopta la versión ejecutada,
-en la que cada punto hereda el descriptor de su región. Se denota
-$f_{\mathrm{geo}}$ y es el componente que este trabajo sustituye. Solo describe
-forma, sin ningún conocimiento de qué es el punto.
+donde los $\lambda$ son los autovalores de la covarianza de la región $r$ y
+$c^{(r)}$ es su centroide. Cada punto hereda el descriptor $f_{\mathrm{geo}}$ de
+su región, componente sustituido en este trabajo, que solo codifica forma.
 
 \subsubsection{Descriptor Auto-supervisado}
 \label{sec:fssl}
 
-Salida del codificador PTv3 preentrenado de Sonata~\cite{wu2025sonata}, usado con
-pesos congelados. Su dimensión es 1088. Se denota $f_{\mathrm{ssl}}$ y codifica
-estructura aprendida sobre 140 mil escenas, sin haber visto las clases de este
-proyecto. A diferencia de $f_{\mathrm{geo}}$, no es un descriptor de forma: el
-preentrenamiento de Sonata está diseñado para evitar el atajo geométrico, de modo
-que aporta un conocimiento semántico adquirido sin etiquetas, complementario al
-supervisado de $f_{\mathrm{sem}}$. Por eso el modelo es híbrido.
+Salida de 1088 dimensiones del PTv3 de Sonata~\cite{wu2025sonata}, preentrenado
+sobre 140 mil escenas y usado con pesos congelados. Se denota $f_{\mathrm{ssl}}$ y no
+conoce las clases del proyecto. A diferencia de $f_{\mathrm{geo}}$, evita el atajo
+geométrico y aporta conocimiento semántico sin etiquetas, complementario a $f_{\mathrm{sem}}$.
 
 \subsection{Aprendizaje Auto-supervisado}
 \label{sec:ssl}
@@ -253,57 +204,25 @@ la razón por la que este trabajo sustituye $f_{\mathrm{geo}}$.
 \subsection{Serialización y Codificador PTv3}
 \label{sec:serializacion}
 
-Ordenamiento de los puntos mediante una curva de llenado de espacio, de tipo Z o
-Hilbert, para que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad dentro
-de una secuencia unidimensional. La secuencia se corta en parches contiguos y la
-atención se aplica solo dentro de cada uno, lo que da a PTv3~\cite{wu2024ptv3} un
-costo lineal.
+Ordena los puntos con una curva Z o Hilbert, trasladando la proximidad en
+$\mathbb{R}^3$ a una secuencia. La divide en parches de 1024 puntos y aplica atención
+dentro de cada uno, lo que da a PTv3~\cite{wu2024ptv3} un costo lineal.
 
 \paragraph*{Codificador PTv3}\phantomsection
 \label{sec:codificador-ptv3}
 
-Es el codificador de Sonata: un PTv3~\cite{wu2024ptv3} que aplica cuatro
-operaciones (detalles en el \hyperref[sec:arq-sonata]{Anexo~C}). Primero, un
-\emph{embedding} convierte los nueve valores $\nom{xin}{\mathbf{x}_i}$ de cada
-punto en un vector de 48 características,
-\begin{equation}
-\nom{h}{\mathbf{h}_i^{(0)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\nom{We}{W_e}\,\nom{xin}{\mathbf{x}_i}+\nom{We}{b_e}\right)\right),
-\label{eq:embedding}
-\end{equation}
-donde $W_e$ y $b_e$ son parámetros aprendidos, y LN y GELU, una normalización y
-una activación. Segundo, cada bloque combina una convolución dispersa que codifica
-la posición, la atención y un MLP. La atención es la de los
-Transformers~\cite{vaswani2017attention}, aplicada dentro de cada parche de 1024
-puntos, cuyas características reúne $\nom{Hp}{\mathbf{H}_p}$:
-\begin{equation}
-\mathrm{Atn}(\nom{Hp}{\mathbf{H}_p})=\mathrm{softmax}\!\left(\frac{(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_Q})(\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_K})^{\nom{T}{\top}}}{\sqrt{\nom{dcab}{d}}}\right)\nom{Hp}{\mathbf{H}_p}\nom{WQKV}{W_V},
-\label{eq:atencion}
-\end{equation}
-con $W_Q$, $W_K$ y $W_V$ matrices aprendidas y $d$ los canales por cabeza; cada fila
-de softmax indica cuánto atiende un punto a los demás del parche. Tercero, entre
-etapas el \emph{pooling} duplica el lado de la celda y toma el máximo por celda.
-Cuarto, el \emph{up-cast} reúne las tres últimas etapas.
+El PTv3 de Sonata~\cite{wu2024ptv3} (\hyperref[sec:arq-sonata]{Anexo~C}) proyecta nueve valores a 48
+características; combina convolución dispersa, atención~\cite{vaswani2017attention} y MLP; aplica
+\emph{pooling} por máximos y reúne tres etapas en 1088 dimensiones con \emph{up-cast}.
 
 \subsection{Red Dispersa de Minkowski}
 \label{sec:rejilla}
 \label{sec:tensor}
 
-Una rejilla dispersa es una rejilla de vóxeles de la que solo se almacenan los
-ocupados. Un edificio ocupa una fracción mínima del volumen que lo envuelve, así
-que guardar también los vóxeles vacíos sería inviable. Un tensor disperso es la
-estructura de datos que la representa en MinkowskiEngine: una lista de
-coordenadas enteras de vóxel y, por cada una, un vector de características.
-
-\paragraph*{Convolución Dispersa}\phantomsection
-\label{sec:convdispersa}
-
-Es la operación definida sobre un tensor disperso.
-Como una convolución ordinaria, combina las
-características de un vóxel con las de sus vecinos dentro de un núcleo cúbico
-mediante pesos aprendidos, pero solo se evalúa en los vóxeles ocupados y solo
-considera vecinos ocupados. La vecindad es por tanto métrica: son vecinos los vóxeles adyacentes en el volumen. Es la capa con que está construida la red que produce
-$f_{\mathrm{sem}}$, y su noción de vecindad no coincide con la de la
-serialización.
+\phantomsection\label{sec:convdispersa}Una rejilla dispersa almacena solo los vóxeles ocupados como coordenadas y
+características, evitando guardar el volumen vacío. Su convolución combina cada
+vóxel con vecinos ocupados mediante pesos aprendidos; esta vecindad métrica difiere
+de la serialización y es la operación base de la red que produce $f_{\mathrm{sem}}$.
 
 \paragraph*{MinkowskiUNet-34C}\phantomsection
 \label{sec:minkunet}
@@ -326,14 +245,10 @@ su misma resolución. Así recupera el detalle fino que el submuestreo perdió.
 \subsection{Muestreo por Rejilla e Índice Inverso}
 \label{sec:gridsample}
 
-El muestreo por rejilla es la discretización que la rutina de preparación de
-Sonata aplica a la nube antes del codificador: la divide en celdas de 2\,cm y
-conserva un punto por celda ocupada. El índice inverso es la tabla que anota, para
-cada punto de la entrada, la celda en la que cayó; con ella, el descriptor de cada
-celda vuelve a todos los puntos de $S$ que cayeron en ella, de modo que
-$f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos del Módulo~1. Como la
-celda es más fina que el vóxel del preprocesamiento, casi todos los puntos quedan
-solos en su celda.
+El muestreo divide la nube en celdas de 2\,cm antes de Sonata y conserva un punto por
+celda. El índice inverso devuelve el descriptor a todos los puntos de $S$, manteniendo
+$f_{\mathrm{ssl}}$ sobre la misma nube. Al ser más fina que el vóxel previo, casi todos
+quedan solos en su celda.
 
 \paragraph*{Propagación Inversa del Submuestreo}\phantomsection
 \label{sec:upcast}
@@ -384,20 +299,15 @@ $i$ se denota \nom{y}{$\hat{y}_i$}.
 \subsection{Región o Superpunto}
 \label{sec:region}
 
-Una región es una agrupación de puntos vecinos que el método trata como una sola
-unidad. HyperNCD las forma con DBSCAN, un agrupamiento por densidad: dos puntos
-pertenecen al mismo grupo si se puede ir de uno a otro pasando por puntos
-separados por menos de un radio dado, y los puntos sin vecinos dentro del radio
-quedan fuera de toda región. Los descriptores $F_i$ de los puntos de una región
-$r$ se promedian en uno solo,
+Una región agrupa puntos vecinos como una sola unidad. HyperNCD usa DBSCAN, que
+conecta puntos separados por menos de un radio y excluye los aislados. Los
+descriptores $F_i$ de cada región $r$ se promedian:
 \begin{equation}
 \nom{Freg}{F^{(r)}}=\frac{1}{|r|}\sum_{i\in r}\nom{Fi}{F_i}.
 \label{eq:reg-prom}
 \end{equation}
-En la escena de la Catedral, donde todo el interior está conectado y DBSCAN daría
-una sola región, las regiones son celdas cúbicas de 0{,}75\,m.
-Razonar sobre regiones y no sobre puntos reduce el
-número de nodos del hipergrafo en varios órdenes de magnitud.
+Como DBSCAN uniría todo el interior de la Catedral, se usan celdas cúbicas de
+0{,}75\,m; razonar sobre ellas reduce los nodos del hipergrafo.
 
 \subsection{Prototipo}
 \label{sec:prototipo}
@@ -405,33 +315,24 @@ número de nodos del hipergrafo en varios órdenes de magnitud.
 
 Vector \nom{Pk}{$P_k$} que representa a un grupo de puntos o regiones semejantes. Hay $K$
 prototipos, tantos como clases. En HyperNCD la cabeza que asigna a cada punto una
-puntuación $z_{i,k}$ por prototipo es un clasificador por coseno,
+puntuación $z_{i,k}$ por prototipo es un clasificador por coseno. Con $w_k$ como
+peso del prototipo, \emph{softmax} convierte las puntuaciones, escaladas por 10, en
+pesos \nom{s}{$s_{i,k}$} que suman 1. Su matriz \nom{Sp}{$S_p$} es la asignación suave;
+cada prototipo es el promedio ponderado de los descriptores:
+\par\noindent\begin{minipage}[t]{0.56\linewidth}
+\vspace{0pt}
 \begin{equation}
 \nom{z}{z_{i,k}}=\frac{\nom{prod}{\langle}\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i}),\;\nom{wk}{w_k}\nom{prod}{\rangle}}{\nom{norma}{\lVert}\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})\nom{norma}{\rVert}\;\nom{norma}{\lVert}\nom{wk}{w_k}\nom{norma}{\rVert}},
 \label{eq:cabeza}
 \end{equation}
-con $w_k$ el vector de pesos aprendido del prototipo $k$; la pérdida multiplica
-$z_{i,k}$ por 10 antes de la entropía cruzada. Una función \emph{softmax}
-convierte las puntuaciones en pesos de pertenencia:
-\begin{equation}
-\nom{s}{s_{i,k}}=\frac{\mathop{\nom{exp}{\exp}}\nolimits\left(\nom{z}{z_{i,k}}\right)}{\nomop{suma}{\sum}_{j=1}^{K}\mathop{\nom{exp}{\exp}}\nolimits\left(\nom{z}{z_{i,j}}\right)},
-\qquad \nomop{suma}{\sum}_{k=1}^{\nom{K}{K}}\nom{s}{s_{i,k}}=1 .
-\label{eq:softmax}
-\end{equation}
-Convierte las puntuaciones de un punto en pesos de pertenencia.
-Los pesos de un punto suman 1 y se
-leen como un reparto.
-La matriz \nom{Sp}{$S_p$} de todos los $s_{i,k}$ es la \emph{asignación suave}. Un punto
-puede pertenecer en parte a varios prototipos, lo que ocurre en las transiciones
-entre elementos arquitectónicos. Cada prototipo es el promedio de los
-descriptores, ponderado por esa pertenencia:
+\end{minipage}\hfill
+\begin{minipage}[t]{0.40\linewidth}
+\vspace{0pt}
 \begin{equation}
 \nom{Pk}{P_k}=\frac{\nomop{suma}{\sum}_{i}\nom{s}{s_{i,k}}\,\nom{Fi}{F_i}}{\nomop{suma}{\sum}_{i}\nom{s}{s_{i,k}}} .
 \label{eq:prototipo}
 \end{equation}
-Así cada prototipo resume a los puntos que más le pertenecen.
-
-
+\end{minipage}
 \subsection{Hipergrafo}
 \label{sec:hipergrafo}
 
@@ -443,97 +344,62 @@ simultáneamente en la explicación de una novedosa.
 \subsubsection{Hiperarista}
 \label{sec:hiperarista}
 
-Elemento $e_i\in\mathcal{E}$ formado por una región $r_i$ y sus \nom{M}{$M$} regiones
-más afines según la afinidad \nom{Sb}{$S_b$}. Los nodos del hipergrafo son por
-tanto regiones y no prototipos. Los autores de HyperNCD reportan $M=8$ como valor
-óptimo. Cada región recibe después el promedio de los descriptores de su
-hiperarista, ponderado por la afinidad, y es ese descriptor enriquecido el que se
-compara con los prototipos:
+La hiperarista $e_i$ agrupa una región $r_i$ con sus \nom{M}{$M=8$} más afines según
+\nom{Sb}{$S_b$}; su descriptor ponderado por afinidad se compara con los prototipos:
 \begin{equation}
 \hat{F}^{(r)}=\sum_{j\in\nom{Nr}{\mathcal{N}_M(r)}}\nom{St}{\tilde{S}}_{rj}\,\nom{Freg}{F^{(j)}},\qquad
 \tilde{S}_{rj}=\frac{\nom{Sb}{S_b}^{(rj)}}{\sum_{l\in\mathcal{N}_M(r)}S_b^{(rl)}},
 \label{eq:hiper-agr}
 \end{equation}
-donde $\mathcal{N}_M(r)$ son las $M$ regiones de mayor $S_b$ respecto de $r$. En
-el entrenamiento de M2 la propia región ocupa una de esas $M$ plazas, porque su
-afinidad consigo misma es máxima; en el Módulo~4 se añade a las $M$ y el
-resultado se normaliza además a longitud 1.
+donde $\mathcal{N}_M(r)$ reúne las $M$ regiones más afines; los nodos son regiones.
+M2 incluye la propia entre las $M$ y M4 la añade, normalizando el resultado.
 
 \subsubsection{Afinidad entre Prototipos}
 \label{sec:afinidad}
 \label{sec:afinhiper}
 
-Medida de semejanza entre dos regiones que combina un criterio semántico y uno
-geométrico. El semántico, \nom{Ss}{$S_s$}, es la similitud por coseno entre los
-descriptores \nom{Freg}{$F^{(i)}$} y $F^{(j)}$ de las regiones, por donde entra
-$f_{\mathrm{ssl}}$; vale 1 cuando apuntan en la misma dirección. El geométrico es un
-núcleo gaussiano sobre el rasgo $g^{(i)}$, el $f_{\mathrm{geo}}$ de la región,
-\begin{equation}
-\nom{Sg}{S_g^{(ij)}}=\mathop{\nom{exp}{\exp}}\nolimits\left(-\frac{\nom{norma}{\lVert}\nom{g}{g^{(i)}}-\nom{g}{g^{(j)}}\nom{norma}{\rVert}^{2}}{\nom{tau}{\tau}}\right),
-\label{eq:gauss}
-\end{equation}
-que vale 1 cuando las regiones tienen la misma forma y posición y cae hacia 0 al
-alejarse, con $\tau$ la escala de esa distancia. Aunque $g$ sale del descriptor $F_i$ en el
-modelo propuesto, se sigue calculando para la afinidad y es igual en la línea base
-y en el modelo propuesto, con lo que el razonamiento geométrico del hipergrafo se
-conserva íntegro. Ambos criterios se combinan en
+Combina la afinidad semántica \nom{Ss}{$S_s$}, coseno entre descriptores regionales,
+con la geométrica \nom{Sg}{$S_g$}, un núcleo gaussiano sobre $g$. $S_g$ vale 1 para
+igual forma y posición y cae con la distancia según la escala \nom{tau}{$\tau$}.
+Aunque $g$ se excluye de $F_i$, permanece en la afinidad. Ambos criterios se combinan:
 \begin{equation}
 \nom{Sb}{S_b}=\nom{alpha}{\alpha}\,\nom{Sg}{S_g}+(1-\nom{alpha}{\alpha})\,\nom{Ss}{S_s},\qquad \nom{alpha}{\alpha}\nom{en}{\in}[0,1],
 \label{eq:afinidad}
 \end{equation}
-donde \nom{alpha}{$\alpha$} reparte el peso. Con $\alpha=1$ la afinidad depende solo de la
-forma y con $\alpha=0$, solo del significado. En el modelo propuesto el
-significado ya incluye el conocimiento auto-supervisado de $f_{\mathrm{ssl}}$,
-mientras que la forma sigue medida por $g$. Así $f_{\mathrm{ssl}}$ entra
-una sola vez en el sistema y $\alpha$ conserva su interpretación.
+donde \nom{alpha}{$\alpha$} reparte el peso: 1 usa solo forma y 0, solo significado. La
+propuesta incorpora $f_{\mathrm{ssl}}$ en $S_s$ y mantiene $g$ en $S_g$, sin duplicarlos.
 
 \subsection{Pseudo-etiquetas y Sinkhorn-Knopp}
 \label{sec:pseudo}
 \label{sec:pseudoetq}
 
-Etiqueta que el propio modelo asigna a un punto sin supervisión humana y que
-después usa como si fuera verdadera para continuar entrenando. En la
-implementación ejecutada cada punto del lote recibe un objetivo de entrenamiento.
-En la formulación del artículo, un punto conocido puede recibir una etiqueta suavizada,
+Una pseudo-etiqueta es un objetivo que el modelo asigna sin supervisión humana.
+En el artículo, un punto conocido puede recibir una etiqueta suavizada:
 \begin{equation}
 \nom{ytil}{\tilde{y}_i}=(1-\nom{eps}{\epsilon})\,\nom{ytil}{e_{y_i}}+\frac{\nom{eps}{\epsilon}}{\nom{Ck}{|\mathcal{C}_k|}}\,\mathbf{1},
 \label{eq:suavizado}
 \end{equation}
-donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás. La ejecución de esta tesis
-no lo usa: construye objetivos \emph{one-hot} para las clases conocidas, y los
-puntos del conjunto novedoso reciben las pseudo-etiquetas de Sinkhorn-Knopp
-(Ec.~\eqref{eq:sk-plan}).
+donde $e_{y_i}$ marca la clase real. Esta tesis no suaviza: usa \emph{one-hot} para
+clases conocidas y Sinkhorn-Knopp para las novedosas (Sección~\ref{sec:sinkhorn}).
 
 \paragraph*{Normalización de Sinkhorn-Knopp}\phantomsection
 \label{sec:sinkhorn}
 
-Procedimiento de normalización iterativa de una matriz que fuerza a que sus
-filas y columnas sumen valores prefijados. Aplicado a la asignación de
-pseudo-etiquetas, las reparte de forma equilibrada entre clases y evita el
-colapso, es decir, que casi todos los puntos caigan en la clase más frecuente.
+Normalización iterativa que fija las sumas de filas y columnas. En las
+pseudo-etiquetas equilibra las clases y evita que casi todos los puntos caigan en
+la más frecuente.
 
-La implementación ejecutada usa una variante semi-relajada. Parte de la salida
-$\nom{o}{o_i}$ del clasificador de clases novedosas para cada uno de los
-$\nom{B}{B}$ puntos sin etiqueta del lote y forma
-\begin{equation}
-\nom{Q}{Q_{ik}}=\mathrm{softmax}\!\left(\nom{o}{o_i}/0{,}1\right)_k^{\,1/\nom{epssk}{\epsilon_{\mathrm{sk}}}} .
-\label{eq:sk-costo}
-\end{equation}
-Después alterna, hasta que se estabiliza, dos vectores de escala,
+La variante semi-relajada parte de las salidas $\nom{o}{o_i}$ de $\nom{B}{B}$ puntos sin
+etiqueta. Un \emph{softmax} de temperatura 0{,}1 forma \nom{Q}{$Q$}, ajustada por
+$\nom{epssk}{\epsilon_{\mathrm{sk}}}$, y alterna dos vectores de escala hasta estabilizarse:
 \begin{equation}
 \nom{uv}{u}\leftarrow\frac{1/\nom{B}{B}}{\nom{Q}{Q}\,\nom{uv}{v}},\qquad
 \nom{uv}{v}\leftarrow\left(\frac{1/\nom{Cn}{|\mathcal{C}_n|}}{\nom{Q}{Q}^{\nom{T}{\top}}\nom{uv}{u}}\right)^{\nom{gamma}{\gamma}/(\nom{gamma}{\gamma}+\nom{epssk}{\epsilon_{\mathrm{sk}}})},
 \label{eq:sk-iter}
 \end{equation}
-con las divisiones elemento a elemento. La primera obliga a que cada punto
-reparta un peso total fijo; la segunda empuja a que las clases novedosas reciban
-pesos parecidos, con una tolerancia que fija $\gamma$. El resultado es
-\begin{equation}
-\nom{Y}{Y}=\nom{B}{B}\,\mathrm{diag}(\nom{uv}{u})\,\nom{Q}{Q}\,\mathrm{diag}(\nom{uv}{v}) ,
-\label{eq:sk-plan}
-\end{equation}
-y la fila $Y_i$ es la pseudo-etiqueta del punto $i$, repartida entre las clases
-novedosas.
+La primera escala fija el peso total por punto; la segunda equilibra las clases con
+tolerancia $\gamma$. Al estabilizarse, reescalan $Q$ y cada fila \nom{Y}{$Y_i$} es la
+pseudo-etiqueta del punto $i$.
 
 
 \subsection{Arquitectura de HyperNCD}
@@ -570,25 +436,16 @@ recibe la etiqueta de esa clase; si no, se considera novedoso y recibe una
 etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
 \end{enumerate}
 
-La figura corresponde a la formulación del artículo. La implementación publicada
-que este trabajo ejecuta realiza las tres primeras etapas, pero no el reajuste
-dinámico de la cuarta, y asigna las pseudo-etiquetas con Sinkhorn-Knopp en lugar
-del umbral (Sección~\ref{sec:aporte}). Además, en la implementación los nodos del hipergrafo son
-regiones y no prototipos (Sección~\ref{sec:hiperarista}); este trabajo adopta esa
-formulación.
+La implementación realiza tres etapas, omite el reajuste de la cuarta y sustituye
+el umbral por Sinkhorn-Knopp; además, usa regiones como nodos (Sección~\ref{sec:aporte}).
 
-La función que optimiza el entrenamiento ejecutado suma un término por punto y
-uno por región,
+La pérdida suma un término por punto y otro por región:
 \begin{equation}
 \nom{Lt}{\mathcal{L}}=\nom{Lp}{\mathcal{L}_{\mathrm{pt}}}+\nom{beta}{\beta}\,\nom{Lr}{\mathcal{L}_{\mathrm{reg}}},
 \label{eq:perdida}
 \end{equation}
-donde $\mathcal{L}_{\mathrm{pt}}$ es la entropía cruzada de las puntuaciones de
-cada punto en una vista aumentada frente a su objetivo en la otra, que es
-\emph{one-hot} para los puntos de clases conocidas y la pseudo-etiqueta de
-Sinkhorn-Knopp para los demás. $\mathcal{L}_{\mathrm{reg}}$ tiene la misma forma
-sobre las regiones, con las puntuaciones de $\hat{F}^{(r)}$ frente a los
-prototipos novedosos, y $\beta$ pesa ese término.
+$\mathcal{L}_{\mathrm{pt}}$ usa objetivos \emph{one-hot} conocidos o Sinkhorn-Knopp novedosos;
+$\mathcal{L}_{\mathrm{reg}}$ aplica la misma pérdida a las regiones y $\beta$ la pondera.
 
 \subsection{Arquitectura de Sonata}
 \label{sec:arq-sonata-paper}
@@ -624,9 +481,6 @@ el \emph{up-cast} (Sección~\ref{sec:upcast}).
 % =====================================================================
 \section{Métricas de Evaluación de Modelos}
 \label{sec:metricas}
-
-Para evaluar la efectividad del modelo se utilizan las métricas siguientes.
-
 
 \subsection{IoU, mIoU y Clase Dominante}
 \label{sec:iou}
@@ -664,9 +518,6 @@ acompaña siempre de la clase dominante:
 \nom{cstar}{c^{*}}=\nomop{argmax}{\arg\max}_{c\in\mathcal{S}}\bigl|\nom{iou}{\mathrm{IoU}_c}-\nom{miou}{\mathrm{mIoU}}(\nom{conj}{\mathcal{S}})\bigr|.
 \label{eq:dominante}
 \end{equation}
-Identifica la clase que más se aparta del promedio y que, por tanto, más
-explica su valor.
-
 \subsection{Medidas de Agrupamiento}
 \label{sec:hungaro}
 
@@ -683,31 +534,17 @@ cada grupo descubierto recibe el nombre de una clase real.
 \paragraph*{Índice de Rand Ajustado (ARI)}\phantomsection
 \label{sec:ari}
 
-Mide la coincidencia entre la agrupación descubierta y la real con independencia
-del emparejamiento:
-\begin{equation}
-\nom{ariv}{\mathrm{ARI}}=
-\frac{\nomop{suma}{\sum}_{ij}\binom{\nom{ari}{n_{ij}}}{2}
--\Bigl[\nomop{suma}{\sum}_i\binom{\nom{ari}{a_i}}{2}\nomop{suma}{\sum}_j\binom{\nom{ari}{b_j}}{2}\Bigr]\big/\binom{\nom{ntotal}{n}}{2}}
-{\tfrac{1}{2}\Bigl[\nomop{suma}{\sum}_i\binom{\nom{ari}{a_i}}{2}+\nomop{suma}{\sum}_j\binom{\nom{ari}{b_j}}{2}\Bigr]
--\Bigl[\nomop{suma}{\sum}_i\binom{\nom{ari}{a_i}}{2}\nomop{suma}{\sum}_j\binom{\nom{ari}{b_j}}{2}\Bigr]\big/\binom{\nom{ntotal}{n}}{2}},
-\label{eq:ari}
-\end{equation}
-Vale 1 cuando las dos agrupaciones coinciden y cerca de 0 cuando coinciden
-solo por azar.
+Mide la coincidencia entre la agrupación descubierta y la real sin depender del
+emparejamiento. Compara los pares de puntos que permanecen juntos o separados y
+corrige la coincidencia por azar: vale 1 si ambas agrupaciones coinciden y cerca de
+0 si la coincidencia es aleatoria.
 
 
 \paragraph*{Información Mutua Normalizada (NMI)}\phantomsection
 \label{sec:nmi}
 
 Complementa al ARI midiendo la información que una agrupación aporta sobre la
-otra:
-\begin{equation}
-\nom{nmiv}{\mathrm{NMI}}(\nom{UV}{U},\nom{UV}{V})=\frac{2\,\nom{nmi}{I}(\nom{UV}{U};\nom{UV}{V})}{\nom{nmi}{H}(\nom{UV}{U})+\nom{nmi}{H}(\nom{UV}{V})},
-\label{eq:nmi}
-\end{equation}
-Vale 1 cuando conocer una agrupación determina la otra y 0 cuando son
-independientes.
+otra. Vale 1 cuando conocer una determina la otra y 0 cuando son independientes.
 
 
 \subsection{Linear Probing}
@@ -823,7 +660,7 @@ Secciones~\ref{sec:convdispersa} y~\ref{sec:minkunet}).
 (Ec.~\ref{eq:cabeza}).
 \item Construye los objetivos: etiqueta real \emph{one-hot} para las clases
 conocidas y pseudo-etiqueta de Sinkhorn-Knopp para las novedosas
-(Ecs.~\ref{eq:sk-costo} a~\ref{eq:sk-plan}).
+(Sección~\ref{sec:sinkhorn} y Ec.~\ref{eq:sk-iter}).
 \item Promedia $f_{\mathrm{sem}}$ por región, calcula el rasgo geométrico de
 cada una, forma la afinidad $S_b$ y agrega los $M$ vecinos de cada región
 (Ecs.~\ref{eq:reg-prom}, \ref{eq:g-region}, \ref{eq:afinidad}
@@ -836,11 +673,10 @@ un checkpoint, se desactiva el gradiente y se guardan $f_{\mathrm{sem}}$, las
 puntuaciones y el índice inverso. No se reentrena con la Catedral ni con los
 descriptores de Sonata.
 
-Se evaluaron dos checkpoints: uno entrenado con SemanticPOSS, de escenas
-urbanas, y otro entrenado desde cero con ArCH, conjunto de patrimonio
-arquitectónico presentado por Matrone et al.~\cite{matrone2020benchmark}. ArCH
-incluye iglesias, capillas y claustros, con categorías como arco, columna,
-bóveda y pared; esta correspondencia de dominio motiva su uso.
+Se evaluaron dos checkpoints: uno entrenado con las escenas urbanas de SemanticPOSS
+y otro desde cero con ArCH, conjunto de patrimonio arquitectónico de Matrone et
+al.~\cite{matrone2020benchmark}. ArCH incluye iglesias, capillas y claustros, con
+arcos, columnas, bóvedas y paredes; esta correspondencia de dominio motiva su uso.
 
 \subsection{Módulo 3: \emph{Encoder}}
 \label{sec:modulo3}
@@ -874,8 +710,8 @@ con el segundo.
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Concatenación de los descriptores en $F_i$ (Ec.~\eqref{eq:hibrido}).
 \item Agrupamiento en regiones mediante DBSCAN (Sección~\ref{sec:region}).
-\item Formación de prototipos (Ecs.~\eqref{eq:softmax}
-y~\eqref{eq:prototipo}).
+\item Formación de prototipos mediante asignación suave y promedio ponderado
+(Sección~\ref{sec:prototipo} y Ec.~\eqref{eq:prototipo}).
 \item Construcción del hipergrafo por afinidad
 (Ec.~\eqref{eq:afinidad} y Sección~\ref{sec:hiperarista}).
 \item Asignación de pseudo-etiquetas equilibradas

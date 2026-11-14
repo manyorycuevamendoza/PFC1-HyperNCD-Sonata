@@ -53,7 +53,7 @@
   \adjustbox{max width=\linewidth}{\enlaceec{eq:cuant}{$\mathbf{v}_i=\lfloor x_i/\ell\rfloor,\; a_{\mathbf{v}}=1$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:fsem}{$f_{\mathrm{sem}}(x^i)=U_\theta(\mathcal{V})_{\mathbf{v}_i}\in\mathbb{R}^{96}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:cabeza}{$z_{i,k}=\frac{\langle f_{\mathrm{sem}}(x^i),w_k\rangle}{\lVert f_{\mathrm{sem}}(x^i)\rVert\,\lVert w_k\rVert}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\hyperref[sec:sinkhorn]{$Y$: pseudo-etiquetas equilibradas}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:g-region}{$g^{(r)}=\left[\frac{\lambda_1-\lambda_2}{\lambda_1},\frac{\lambda_2-\lambda_3}{\lambda_1},\frac{\lambda_3}{\lambda_1},c^{(r)}\right]$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:hiper-agr}{$\hat F^{(r)}=\sum_{j\in\mathcal{N}_M(r)}\tilde S_{rj}F^{(j)}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:perdida}{$\mathcal{L}=\mathcal{L}_{\mathrm{pt}}+\beta\,\mathcal{L}_{\mathrm{reg}}$}}
@@ -70,8 +70,7 @@
         \foreach \s in {1,-1}{ \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a+40*\s}:0.08); \draw[cyan!65!black, semithick] ({\a}:0.17*\s) -- ++({\a-40*\s}:0.08);}}
     \end{scope}}\\[5pt]
   \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:embedding}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:atencion}{$\mathrm{Atn}(\mathbf{H}_p)=\mathrm{softmax}\big(\mathbf{H}_pW_Q(\mathbf{H}_pW_K)^{\top}\!/\sqrt{d}\big)\,\mathbf{H}_pW_V$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{9 valores $\rightarrow$ 48 características; atención en parches de 1024 puntos}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:upcast}{$f_{\mathrm{ssl}}(x^i)=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:probe}{$\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right)$}}
 \end{minipage}};
@@ -102,7 +101,7 @@
     \fill[cEnc!25, draw=cEnc!60, rotate=-15] (1.42,0.52) ellipse (0.74 and 0.32);
     \foreach \x/\y in {0.25/0.20, 0.72/0.46, 1.05/0.14, 1.55/0.40, 1.98/0.12, 1.62/0.70}
       \fill[black!75] (\x,\y) circle (0.05);\end{scope}}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:gauss}{$S_g=\exp\left(-\lVert g^{(i)}-g^{(j)}\rVert^{2}/\tau\right)$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\hyperref[sec:afinidad]{$S_g$: afinidad geométrica}}\\[4pt]
   \enlaceec{eq:afinidad}{$S_b=\alpha S_g+(1-\alpha)S_s$}\end{minipage}};
 
 \node[tarj] (T3) at ($(T2.south)+(0,-1.0)$)
@@ -118,9 +117,9 @@
     \foreach \x/\y/\c in {0.35/0.30/cSem, 1.15/0.58/cEnc, 1.80/0.12/cSal}
       \node[star, star points=5, star point ratio=2.2, draw=\c, fill=\c!35, inner sep=0.6pt] at (\x,\y) {};\end{scope}}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:prototipo}{$P_k=\frac{\sum_{i}s_{i,k}F_i}{\sum_{i}s_{i,k}}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-costo}{$Q_{ik}=\mathrm{softmax}(o_i/0{,}1)_k^{1/\epsilon_{\mathrm{sk}}}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\hyperref[sec:sinkhorn]{$Q$: puntuaciones normalizadas}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-iter}{$u\leftarrow\frac{1/B}{Qv},\;v\leftarrow\left(\frac{1/|\mathcal{C}_n|}{Q^{\top}u}\right)^{\frac{\gamma}{\gamma+\epsilon_{\mathrm{sk}}}}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:sk-plan}{$Y=B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}}\end{minipage}};
+  \adjustbox{max width=\linewidth}{\hyperref[sec:sinkhorn]{$Y$: pseudo-etiquetas equilibradas}}\end{minipage}};
 
 \begin{pgfonlayer}{background}
 \node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, very thick, fill=cFus!5,
@@ -148,7 +147,7 @@
   \adjustbox{max width=\linewidth}{\enlaceec{eq:iou}{$\mathrm{IoU}_c=\frac{TP_c}{TP_c+FP_c+FN_c}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:miou}{$\mathrm{mIoU}(\mathcal{S})=\frac{1}{|\mathcal{S}|}\sum_{c\in\mathcal{S}}\mathrm{IoU}_c$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:dominante}{$c^{*}$}\quad\enlaceec{eq:hungaro}{$\sigma^{*}$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:ari}{$\mathrm{ARI}$}\quad\enlaceec{eq:nmi}{$\mathrm{NMI}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\hyperref[sec:ari]{$\mathrm{ARI}$}\quad\hyperref[sec:nmi]{$\mathrm{NMI}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:delta}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}=\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:G}{$G=\frac{\Delta\mathrm{mIoU}^{\mathrm{novel}}}{\mathrm{mIoU}^{\mathrm{known}}_{\mathrm{base}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}$}}
 \end{minipage}};

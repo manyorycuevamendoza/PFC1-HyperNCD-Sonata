@@ -159,9 +159,9 @@ cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {Puntos de la rejilla $\times$ 9 valores};
-\node[fop, below=of a] (b) {\textbf{4.1 Embedding:} 9 $\rightarrow$ 48 valores (Ec.~\ref{eq:embedding})};
+\node[fop, below=of a] (b) {\textbf{4.1 Embedding:} 9 $\rightarrow$ 48 valores};
 \node[fop, below=of b] (c) {\textbf{4.2 Serialización:} orden Z y Hilbert, parches de 1024};
-\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5:} bloques con atención (Ecs.~\ref{eq:bloque} y~\ref{eq:atencion}); \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
+\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5:} bloques con atención (Ec.~\ref{eq:bloque}); \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
 \node[fop, below=of d] (e) {\textbf{4.4 Up-cast:} concatenar etapas 3, 4 y 5 (Ec.~\ref{eq:upcast})};
 \node[fdato, below=of e] (f) {$f_{\mathrm{ssl}}$: 1088 valores por punto de la rejilla};
 \foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
