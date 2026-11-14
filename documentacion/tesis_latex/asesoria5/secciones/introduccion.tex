@@ -7,64 +7,58 @@
 Cuando se levanta una edificación patrimonial con un escáner láser terrestre, el
 resultado es una nube de puntos $P=\{(x_i,f_i)\}_{i=1}^{N}$, donde
 $x_i\in\mathbb{R}^3$ es la ubicación del punto y $f_i$ los atributos que registra
-el escáner. En ingeniería civil ya son la fuente primaria para el control geométrico, el
-modelado como construido y la documentación de obra~\cite{wang2019construction}. Lo que no aparece es la etiqueta. El archivo
-sabe dónde hay materia, pero no qué elemento es cada cosa, y esa carencia es la
-que bloquea el paso de la nube al modelo BIM y al informe estructural o de
-conservación~\cite{wang2019construction}. Hoy ese trabajo se hace a mano, y la
-literatura de patrimonio lo documenta como el cuello de botella del proceso. La
-construcción del conjunto de referencia ArCH exigió anotar punto por punto
+el escáner. Ya son la fuente primaria para el control geométrico, el modelado
+como construido y la documentación de obra~\cite{wang2019construction}. Lo que no
+aparece es la etiqueta. El archivo sabe dónde hay materia, pero no qué elemento
+es cada cosa, y esa carencia bloquea el paso de la nube al modelo BIM y al
+informe estructural o de conservación~\cite{wang2019construction}. Hoy ese
+trabajo se hace a mano: construir el conjunto ArCH exigió anotar punto por punto
 diecisiete escenas de edificios históricos~\cite{matrone2020benchmark}. No existe
 un programa que automatice esa tarea sobre clases no catalogadas, y ese vacío es
 el que este proyecto busca cubrir.
 
-La tarea no se resuelve con fotografías, porque un clasificador de imágenes
-depende del ángulo y de la iluminación, mientras que la nube de puntos guarda la
-geometría sin depender del punto de vista~\cite{pierdicca2020dgcnn}. Sobre esa observación se construyeron los trabajos de patrimonio. Pierdicca et
-al.~\cite{pierdicca2020dgcnn} adaptan una red de grafos dinámicos con normales y
-color, con buenos resultados en muros y techos pero caídas en clases minoritarias
-como columnas y arcos, y Matrone et al.~\cite{matrone2020benchmark} confirman ese
-desbalance sobre un mismo conjunto de edificios. El límite aparece con claridad en Grilli y
-Remondino~\cite{grilli2020generalisation}. Un modelo entrenado sobre un edificio
-pierde desempeño al aplicarse a otro de tipología distinta, porque los
-descriptores geométricos que usa no son estables entre construcciones. Una tesis
-previa de UTEC sobre este mismo tipo de edificio~\cite{tesisutec2024} llega al
-mismo resultado, ya que su modelo dejó de reconocer columnas y arcos al pasar de
-un patio a una capilla del mismo inmueble, y la única salida fue etiquetar a mano
-y reentrenar.
+La nube de puntos guarda la geometría sin depender del ángulo ni de la
+iluminación, a diferencia de las fotografías~\cite{pierdicca2020dgcnn}. Sobre esa
+base, Pierdicca et al.~\cite{pierdicca2020dgcnn} adaptan una red de grafos
+dinámicos con normales y color, con buenos resultados en muros y techos pero
+caídas en columnas y arcos, y Matrone et al.~\cite{matrone2020benchmark}
+confirman ese desbalance. Grilli y Remondino~\cite{grilli2020generalisation}
+muestran el límite: un modelo entrenado sobre un edificio pierde desempeño en
+otro de tipología distinta, porque sus descriptores geométricos no son estables
+entre construcciones. Una tesis previa de UTEC~\cite{tesisutec2024} llega al
+mismo resultado: su modelo dejó de reconocer columnas y arcos al pasar de un
+patio a una capilla del mismo inmueble, y la única salida fue etiquetar a mano y
+reentrenar.
 
-Los métodos generales de segmentación semántica en tres dimensiones tampoco
-alcanzan. PTv3~\cite{wu2024ptv3}, Sonata~\cite{wu2025sonata}, Stratified
+Los métodos generales de segmentación semántica en tres dimensiones, como
+PTv3~\cite{wu2024ptv3}, Sonata~\cite{wu2025sonata}, Stratified
 Transformer~\cite{lai2022stratified} o Superpoint
-Transformer~\cite{robert2023spt} trabajan con una lista de clases fijada antes de
-entrenar y asignan todo punto imprevisto a la clase conocida más parecida, sin
-avisar que no saben. En patrimonio eso es serio, porque cada edificio tiene
-elementos propios que no figuran en ningún catálogo
+Transformer~\cite{robert2023spt}, tampoco alcanzan. Trabajan con una lista de
+clases fijada antes de entrenar y asignan todo punto imprevisto a la clase
+conocida más parecida, sin avisar que no saben. En patrimonio eso es serio,
+porque cada edificio tiene elementos propios que no figuran en ningún catálogo
 previo~\cite{grilli2020generalisation}, y el problema se agrava con las clases
 minoritarias~\cite{su2025brdl}.
 
-El descubrimiento de clases novedosas, o NCD, elimina ese supuesto y permite
-trabajar con clases que el modelo nunca vio etiquetadas. Riz et
+El descubrimiento de clases novedosas, o NCD, elimina ese supuesto. Riz et
 al.~\cite{riz2023nops} lo introdujeron para nubes de puntos y Xu et
-al.~\cite{xu2024dasl} lo refinaron con auto-etiquetado adaptativo. Su mejor
-método actual es HyperNCD~\cite{zhang2026hyperncd}, que resume la nube en
-\emph{prototipos}, vectores alrededor de los cuales se agrupan los puntos
-parecidos, y los conecta mediante un \emph{hipergrafo}, donde cada arista puede
-unir varios prototipos a la vez. Su problema es que rinde mal justo donde debería
-ser fuerte, con entre 11,8 y 47,5 mIoU en las clases novedosas
-\cite{zhang2026hyperncd}. Este trabajo señala como causa probable
-el descriptor geométrico calculado a mano sobre el que arma sus prototipos, el
-tipo de señal que Sonata~\cite{wu2025sonata} considera perjudicial, y propone
-reemplazarlo por su codificador auto-supervisado congelado. Durante la ejecución
-se comprobó además que el checkpoint entrenado con SemanticPOSS no se transfiere
-a la catedral: concentra 98,4\,\% de los puntos en una sola cabeza. Por ello M2
-se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio y cuyas clases
-corresponden al patrimonio arquitectónico.
+al.~\cite{xu2024dasl} lo refinaron. Su mejor método actual es
+HyperNCD~\cite{zhang2026hyperncd}, que resume la nube en \emph{prototipos},
+vectores alrededor de los cuales se agrupan los puntos parecidos, y los conecta
+mediante un \emph{hipergrafo}, donde cada arista une varios prototipos a la vez.
+Rinde mal justo donde debería ser fuerte, con entre 11,8 y 47,5 mIoU en las
+clases novedosas~\cite{zhang2026hyperncd}. Este trabajo señala como causa
+probable el descriptor geométrico calculado a mano sobre el que arma sus
+prototipos, el tipo de señal que Sonata~\cite{wu2025sonata} considera
+perjudicial, y propone reemplazarlo por su codificador auto-supervisado
+congelado. Además, el checkpoint entrenado con SemanticPOSS no se transfiere a la
+catedral, pues concentra 98,4\,\% de los puntos en una sola cabeza; por ello M2
+se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio corresponde al
+patrimonio arquitectónico.
 
 El Capítulo~I presenta la revisión crítica de la literatura; el Capítulo~II, el
-marco teórico y el análisis de arquitectura del que se deriva el punto de la
-sustitución; el Capítulo~III, el marco metodológico; y el Capítulo~IV, los
-resultados obtenidos y sus límites.
+marco teórico y el análisis de arquitectura; el Capítulo~III, el marco
+metodológico; y el Capítulo~IV, los resultados obtenidos y sus límites.
 
 \introsection{Formulación del problema}
 
