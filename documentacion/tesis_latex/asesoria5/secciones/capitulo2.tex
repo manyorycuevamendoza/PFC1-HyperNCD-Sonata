@@ -384,13 +384,12 @@ $i$ se denota \nom{y}{$\hat{y}_i$}.
 \subsection{Región o Superpunto}
 \label{sec:region}
 
-Una región es una agrupación de puntos vecinos que el método trata como una
-sola unidad.
-La implementación de HyperNCD forma las regiones con
-DBSCAN, un algoritmo de agrupamiento por densidad. Dos puntos pertenecen al
-mismo grupo si se puede ir de uno a otro pasando por puntos separados por menos
-de un radio dado, que es 0{,}5\,m en la configuración de SemanticPOSS; los
-puntos sin vecinos dentro de ese radio quedan fuera de toda región. Se aplica sobre las coordenadas de los puntos de las clases novedosas. Los descriptores $F_i$ de los puntos de una región $r$ se promedian en uno solo,
+Una región es una agrupación de puntos vecinos que el método trata como una sola
+unidad. HyperNCD las forma con DBSCAN, un agrupamiento por densidad: dos puntos
+pertenecen al mismo grupo si se puede ir de uno a otro pasando por puntos
+separados por menos de un radio dado, y los puntos sin vecinos dentro del radio
+quedan fuera de toda región. Los descriptores $F_i$ de los puntos de una región
+$r$ se promedian en uno solo,
 \begin{equation}
 \nom{Freg}{F^{(r)}}=\frac{1}{|r|}\sum_{i\in r}\nom{Fi}{F_i}.
 \label{eq:reg-prom}
@@ -444,15 +443,12 @@ simultáneamente en la explicación de una novedosa.
 \subsubsection{Hiperarista}
 \label{sec:hiperarista}
 
-Elemento $e_i\in\mathcal{E}$ formado por una región $r_i$
-(Sección~\ref{sec:region}) y sus \nom{M}{$M$} regiones más afines según la afinidad
-\nom{Sb}{$S_b$}. Los nodos del hipergrafo son por tanto regiones y no prototipos. Como
-una sección contiene muchas más regiones que clases, cada hiperarista conecta
-un subconjunto selectivo de nodos, lo que no ocurriría con solo $K$ prototipos.
-Los autores de HyperNCD reportan $M=8$ como valor óptimo. Cada región recibe
-después el promedio de los descriptores de su hiperarista, ponderado por la
-afinidad, y es ese descriptor enriquecido el que se compara con los
-prototipos:
+Elemento $e_i\in\mathcal{E}$ formado por una región $r_i$ y sus \nom{M}{$M$} regiones
+más afines según la afinidad \nom{Sb}{$S_b$}. Los nodos del hipergrafo son por
+tanto regiones y no prototipos. Los autores de HyperNCD reportan $M=8$ como valor
+óptimo. Cada región recibe después el promedio de los descriptores de su
+hiperarista, ponderado por la afinidad, y es ese descriptor enriquecido el que se
+compara con los prototipos:
 \begin{equation}
 \hat{F}^{(r)}=\sum_{j\in\nom{Nr}{\mathcal{N}_M(r)}}\nom{St}{\tilde{S}}_{rj}\,\nom{Freg}{F^{(j)}},\qquad
 \tilde{S}_{rj}=\frac{\nom{Sb}{S_b}^{(rj)}}{\sum_{l\in\mathcal{N}_M(r)}S_b^{(rl)}},
