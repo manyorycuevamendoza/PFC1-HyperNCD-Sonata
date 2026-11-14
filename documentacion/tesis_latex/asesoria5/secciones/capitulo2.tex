@@ -336,13 +336,9 @@ su misma resolución. Así recupera el detalle fino que el submuestreo perdió.
 
 El muestreo por rejilla es la discretización que la rutina de preparación de
 Sonata aplica a la nube antes del codificador, y el índice inverso, la tabla que
-permite deshacerla.
-La nube se desplaza para centrarla en planta y apoyarla
-en $z=0$, se divide en celdas de 2\,cm por defecto y de cada celda ocupada se
-conserva un punto. El color se lleva al rango de 0 a 1. Los nueve valores de
-cada punto conservado, posición, color y normal, forman la entrada del
-codificador. El índice inverso anota, para cada punto de la entrada, la celda en
-la que cayó.
+permite deshacerla. La nube se divide en celdas de 2\,cm y de cada celda ocupada
+se conserva un punto. El índice inverso anota, para cada punto de la entrada, la
+celda en la que cayó.
 
 Con el índice inverso, el descriptor de cada celda se
 devuelve a todos los puntos de $S$ que cayeron en ella, de
