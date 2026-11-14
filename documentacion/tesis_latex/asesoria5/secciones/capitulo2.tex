@@ -254,12 +254,10 @@ la razón por la que este trabajo sustituye $f_{\mathrm{geo}}$.
 \label{sec:serializacion}
 
 Ordenamiento de los puntos mediante una curva de llenado de espacio, de tipo Z o
-Hilbert, para que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad
-dentro de una secuencia unidimensional. La secuencia se corta en parches
-contiguos y dentro de cada uno se aplica atención, la operación con que un
-transformador combina la información de los elementos de un conjunto. Es el
-mecanismo que permite a PTv3~\cite{wu2024ptv3}, la red del codificador, aplicar
-atención con costo lineal.
+Hilbert, para que la proximidad en $\mathbb{R}^3$ se traduzca en proximidad dentro
+de una secuencia unidimensional. La secuencia se corta en parches contiguos y la
+atención se aplica solo dentro de cada uno, lo que da a PTv3~\cite{wu2024ptv3} un
+costo lineal.
 
 \paragraph*{Codificador PTv3}\phantomsection
 \label{sec:codificador-ptv3}
