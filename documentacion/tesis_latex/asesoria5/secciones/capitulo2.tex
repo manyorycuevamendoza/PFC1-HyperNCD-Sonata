@@ -74,12 +74,9 @@ metros y conserva ese detalle.
 \label{sec:knn}
 
 La vecindad (KNN) de un punto $i$ es el conjunto \nom{vec}{$\mathcal{N}_q(i)$} de los
-\nom{q}{$q$} puntos más próximos a él en distancia euclídea. La nube se indexa en
-un árbol $k$-d, que divide el espacio de forma recursiva y evita comparar cada
-punto con todos los demás.
-
-Esta vecindad se usa para decidir si un punto está aislado y hacia dónde mira la
-superficie, en ambos casos con $q=20$.
+\nom{q}{$q$} puntos más próximos a él en distancia euclídea; en este trabajo,
+$q=20$. La nube se indexa en un árbol $k$-d, que divide el espacio de forma
+recursiva y evita comparar cada punto con todos los demás.
 
 \paragraph*{Filtrado Estadístico de Valores Atípicos (SOR)}\phantomsection
 \label{sec:sor}
