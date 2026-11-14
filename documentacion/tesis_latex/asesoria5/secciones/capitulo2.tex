@@ -103,9 +103,8 @@ está más lejos que lo normal más $\lambda$ desviaciones:
 Un $\lambda$ menor descarta más puntos, pero puede borrar detalle fino; un $q$ mayor
 hace la estimación más estable.
 
-Limpia la nube antes de voxelizarla, para que los
-puntos espurios no se promedien con los válidos. Con $q=20$ y $\lambda=2$, en el
-escaneo de prueba descarta 406\,485 de 8\,590\,904 puntos (4,73\,\%).
+Limpia la nube antes de voxelizarla, para que los puntos espurios no se promedien
+con los válidos. Se usa $q=20$ y $\lambda=2$.
 
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
@@ -130,9 +129,6 @@ reduce los registros que las describen. Con vóxeles de 5\,cm, los 8\,184\,419
 puntos del escaneo de prueba quedan en 610\,637 representantes, el 7,46\,\% de
 los registros anteriores; el 92,54\,\% restante no era ruido, sino mediciones
 redundantes de una misma porción de superficie.
-
-Los Módulos~2 y~3 aplican además su propia discretización sobre esta salida (Secciones~\ref{sec:rejilla}
-y~\ref{sec:gridsample}).
 
 \subsection{Normal de Superficie y su Estimación}
 \label{sec:normales}
