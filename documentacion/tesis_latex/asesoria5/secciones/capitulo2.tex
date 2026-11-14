@@ -45,8 +45,7 @@ registro de punto guarda las coordenadas como enteros, más atributos como la
 intensidad del retorno, la clase y, según el formato, el color RGB en 16~bits.
 Para recuperar las coordenadas reales, la cabecera declara por cada eje una
 \emph{escala} y un \emph{desplazamiento}: coordenada real = entero $\times$
-escala + desplazamiento. De cada punto se toman la posición $(x,y,z)$ y el color
-$(R,G,B)$, llevado de 16~bits al rango 0 a 255.
+escala + desplazamiento.
 
 \subsection{Centrado de Coordenadas}
 \label{sec:centrado}
@@ -133,8 +132,9 @@ y nueve columnas en precisión simple,
 \nom{S}{S}=\left[\,\nom{xyz}{x\;\;y\;\;z}\;\;\nom{rgb}{R\;\;G\;\;B}\;\;\nom{n}{n_x\;\;n_y\;\;n_z}\,\right],
 \label{eq:sj}
 \end{equation}
-con la posición centrada, el color y la normal unitaria. Como el autovector no fija
-el sentido de la normal, la implementación invierte las que apuntan hacia abajo
+De cada punto del LAS se conservan la posición $(x,y,z)$, que se centra, y el color
+$(R,G,B)$, llevado de 16~bits al rango 0 a 255; la normal se estima y queda
+unitaria. Como el autovector no fija el sentido de la normal, la implementación invierte las que apuntan hacia abajo
 para que todas cumplan $n_z\geq 0$; así no distingue la cara interior de un muro
 de la exterior.
 
