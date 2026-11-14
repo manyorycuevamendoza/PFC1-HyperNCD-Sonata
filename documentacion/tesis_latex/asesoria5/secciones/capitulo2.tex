@@ -66,9 +66,13 @@ El centrado traslada la nube al origen restándole el centro de su caja envolven
 \nom{c}{c}=\tfrac{1}{2}\left(\nom{minmax}{\min}_i \nom{xi}{x_i}+\nom{minmax}{\max}_i \nom{xi}{x_i}\right),\qquad \nom{xip}{x_i'}=\nom{xi}{x_i}-\nom{c}{c} ,
 \label{eq:centrado}
 \end{equation}
-El vector \nom{c}{$c$} se guarda para revertir el centrado. Las coordenadas del
-levantamiento son proyectadas y en el eje norte superan los 8 millones de metros;
-en precisión simple eso solo distingue pasos de un metro, y por eso se centran.
+El vector \nom{c}{$c$} se guarda para revertir el centrado.
+
+Las coordenadas del levantamiento son números muy grandes: en el eje norte superan
+los 8 millones de metros. En precisión simple, que guarda unos siete dígitos, a esa
+magnitud dos valores consecutivos están a un metro, y puntos separados por
+centímetros quedarían iguales. Restar el centro reduce las coordenadas a decenas de
+metros y conserva ese detalle.
 
 Este desplazamiento no es el de la cabecera LAS (Ec.~\eqref{eq:las-escala}), que
 decodifica los enteros: el centrado se aplica después.
