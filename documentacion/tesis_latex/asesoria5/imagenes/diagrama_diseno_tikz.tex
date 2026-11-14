@@ -72,8 +72,7 @@
   \begin{minipage}{\linewidth}\centering\scriptsize
   \adjustbox{max width=\linewidth}{\enlaceec{eq:embedding}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:atencion}{$\mathrm{Atn}(\mathbf{H}_p)=\mathrm{softmax}\big(\mathbf{H}_pW_Q(\mathbf{H}_pW_K)^{\top}\!/\sqrt{d}\big)\,\mathbf{H}_pW_V$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:upcast}{$\tilde{f}_j=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]$}}\\[4pt]
-  \adjustbox{max width=\linewidth}{\enlaceec{eq:inverso}{$f_{\mathrm{ssl}}(x^i)=\tilde{f}_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}}\\[4pt]
+  \adjustbox{max width=\linewidth}{\enlaceec{eq:upcast}{$f_{\mathrm{ssl}}(x^i)=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}}\\[4pt]
   \adjustbox{max width=\linewidth}{\enlaceec{eq:probe}{$\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right)$}}
 \end{minipage}};
 

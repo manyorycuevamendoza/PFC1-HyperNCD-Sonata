@@ -341,24 +341,16 @@ preprocesamiento, casi todos los puntos quedan solos en su celda.
 \paragraph*{Propagación Inversa del Submuestreo}\phantomsection
 \label{sec:upcast}
 
-También llamada \emph{up-cast}, devuelve las características del codificador a
-la resolución de entrada reutilizando los índices de agrupamiento que el propio
-submuestreo registró. Es necesaria porque el codificador entrega su salida
-submuestreada varias veces. En los dos primeros pasos, desde la etapa más gruesa,
-las características se concatenan con las de la etapa anterior, la 5 con la 4 y
-el resultado con la 3, y en los restantes solo se copian:
+También llamada \emph{up-cast}, devuelve las características del codificador a la
+resolución de entrada reutilizando los índices de agrupamiento que el propio
+submuestreo registró. Cada punto $x^i$ de $S$ recibe las características de las
+tres últimas etapas en la celda en la que cayó:
 \begin{equation}
-\nom{ftil}{\tilde{f}_j}=\left[\,\nom{h}{\mathbf{h}^{(3)}}_{\nom{pis}{\pi_3(j)}}\,;\,\nom{h}{\mathbf{h}^{(4)}}_{\nom{pis}{\pi_4(j)}}\,;\,\nom{h}{\mathbf{h}^{(5)}}_{\nom{pis}{\pi_5(j)}}\,\right]\in\mathbb{R}^{192+384+512},
+\nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})=\left[\,\nom{h}{\mathbf{h}^{(3)}}_{\nom{pis}{\pi_3(\nom{inv}{\mathrm{inv}(i)})}}\,;\,\nom{h}{\mathbf{h}^{(4)}}_{\nom{pis}{\pi_4(\mathrm{inv}(i))}}\,;\,\nom{h}{\mathbf{h}^{(5)}}_{\nom{pis}{\pi_5(\mathrm{inv}(i))}}\,\right]\in\mathbb{R}^{192+384+512},
 \label{eq:upcast}
 \end{equation}
-donde $j$ es un punto de la rejilla y $\pi_s(j)$ la celda de la etapa
-$s$ que lo contiene, obtenida encadenando los índices del submuestreo.
-Por último, con el índice inverso cada punto de $S$ recibe el descriptor de la celda en la que cayó,
-\begin{equation}
-\nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})=\nom{ftil}{\tilde{f}}_{\nom{inv}{\mathrm{inv}(i)}},
-\label{eq:inverso}
-\end{equation}
-donde $\mathrm{inv}(i)$ es esa celda. 
+donde $\mathrm{inv}(i)$ es esa celda y $\pi_s(j)$ la celda de la etapa $s$ que
+contiene a la celda $j$, obtenida encadenando los índices del submuestreo.
 
 \subsection{Corte de Sección y Reconstrucción de Superficie}
 \label{sec:caja}
