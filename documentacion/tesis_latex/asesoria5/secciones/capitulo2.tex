@@ -499,11 +499,10 @@ En la formulación del artículo, un punto conocido puede recibir una etiqueta s
 \nom{ytil}{\tilde{y}_i}=(1-\nom{eps}{\epsilon})\,\nom{ytil}{e_{y_i}}+\frac{\nom{eps}{\epsilon}}{\nom{Ck}{|\mathcal{C}_k|}}\,\mathbf{1},
 \label{eq:suavizado}
 \end{equation}
-donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás. El artículo fija
-$\epsilon=0{,}15$. Sin embargo, la ruta ejecutada en esta tesis no expone la
-opción \texttt{--label\_smoothing}: construye objetivos \emph{one-hot} para las
-clases conocidas. Los puntos del conjunto novedoso reciben las pseudo-etiquetas
-de Sinkhorn-Knopp (Ec.~\eqref{eq:sk-plan}).
+donde $e_{y_i}$ vale 1 en la clase real y 0 en las demás. La ejecución de esta tesis
+no lo usa: construye objetivos \emph{one-hot} para las clases conocidas, y los
+puntos del conjunto novedoso reciben las pseudo-etiquetas de Sinkhorn-Knopp
+(Ec.~\eqref{eq:sk-plan}).
 
 \paragraph*{Normalización de Sinkhorn-Knopp}\phantomsection
 \label{sec:sinkhorn}
@@ -534,12 +533,7 @@ pesos parecidos, con una tolerancia que fija $\gamma$. El resultado es
 \label{eq:sk-plan}
 \end{equation}
 y la fila $Y_i$ es la pseudo-etiqueta del punto $i$, repartida entre las clases
-novedosas. En el entrenamiento de M2, $\epsilon_{\mathrm{sk}}=0{,}1$ y la
-iteración se repite hasta que se estabiliza; en el Módulo~4 sobre la Catedral,
-$\epsilon_{\mathrm{sk}}=0{,}05$, con tres iteraciones y con cada región pesada por
-los puntos que contiene. Aunque el programa
-tiene 10 como valor por defecto de $\gamma$, las corridas de SemanticPOSS y ArCH
-analizadas se lanzaron con $\gamma=1$ y pueden reducirlo adaptativamente.
+novedosas.
 
 
 \subsection{Arquitectura de HyperNCD}
