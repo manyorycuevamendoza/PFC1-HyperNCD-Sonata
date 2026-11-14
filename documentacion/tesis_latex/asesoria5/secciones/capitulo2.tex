@@ -327,16 +327,13 @@ su misma resolución. Así recupera el detalle fino que el submuestreo perdió.
 \label{sec:gridsample}
 
 El muestreo por rejilla es la discretización que la rutina de preparación de
-Sonata aplica a la nube antes del codificador, y el índice inverso, la tabla que
-permite deshacerla. La nube se divide en celdas de 2\,cm y de cada celda ocupada
-se conserva un punto. El índice inverso anota, para cada punto de la entrada, la
-celda en la que cayó.
-
-Con el índice inverso, el descriptor de cada celda se
-devuelve a todos los puntos de $S$ que cayeron en ella, de
-modo que $f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos que entregó el
-Módulo~1. Como la celda de 2\,cm es menor que el vóxel de 5\,cm del
-preprocesamiento, casi todos los puntos quedan solos en su celda.
+Sonata aplica a la nube antes del codificador: la divide en celdas de 2\,cm y
+conserva un punto por celda ocupada. El índice inverso es la tabla que anota, para
+cada punto de la entrada, la celda en la que cayó; con ella, el descriptor de cada
+celda vuelve a todos los puntos de $S$ que cayeron en ella, de modo que
+$f_{\mathrm{ssl}}$ queda definido sobre los mismos puntos del Módulo~1. Como la
+celda es más fina que el vóxel del preprocesamiento, casi todos los puntos quedan
+solos en su celda.
 
 \paragraph*{Propagación Inversa del Submuestreo}\phantomsection
 \label{sec:upcast}
