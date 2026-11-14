@@ -91,16 +91,11 @@ superficie, en ambos casos con $q=20$.
 Descarta los puntos aislados. Un levantamiento en bruto contiene puntos que no
 pertenecen a ninguna superficie, como reflejos en vidrios, personas que cruzaron
 durante el escaneo y mediciones sueltas en el límite del alcance del sensor, y se
-reconocen porque quedan lejos de sus vecinos. Primero se calcula, para cada punto,
-su distancia media a los $q$ vecinos más cercanos,
-\begin{equation}
-\nom{dbar}{\bar d_i}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j\in\nom{vec}{\mathcal{N}_q(i)}}\nom{norma}{\lVert}\nom{xi}{x_i}-\nom{xi}{x_j}\nom{norma}{\rVert} ,
-\label{eq:sor-dist}
-\end{equation}
-Luego se obtienen el promedio $\mu$ y la desviación estándar $\sigma$ de esas
-distancias sobre toda la sección, que dicen cuál es la distancia normal entre
-vecinos. El punto se conserva solo si no está más lejos que lo normal más
-$\lambda$ desviaciones:
+reconocen porque quedan lejos de sus vecinos. Para cada punto se mide su distancia
+media a los $q$ vecinos más cercanos, \nom{dbar}{$\bar d_i$}; con todas esas
+distancias se obtienen su promedio $\mu$ y su desviación estándar $\sigma$, que
+dicen cuál es la distancia normal entre vecinos. El punto se conserva solo si no
+está más lejos que lo normal más $\lambda$ desviaciones:
 \begin{equation}
 \nom{dbar}{\bar d_i}\le\nom{musigma}{\mu}+\nom{lam}{\lambda}\,\nom{musigma}{\sigma} ,
 \label{eq:sor}
