@@ -1,0 +1,21 @@
+{
+  "puntos_etiquetados": 440161,
+  "muestra": 100000,
+  "coseno_original_adaptado": {
+    "media": 0.541342556476593,
+    "p5": 0.2719980478286743
+  },
+  "original": {
+    "var_pca_3": 0.25391849875450134,
+    "var_pca_10": 0.442869633436203,
+    "rango_efectivo": 97.71458928092535,
+    "estabilidad_kmeans": 0.7315519703763754
+  },
+  "adaptado": {
+    "var_pca_3": 0.2811925411224365,
+    "var_pca_10": 0.5378706455230713,
+    "rango_efectivo": 64.30436170573428,
+    "estabilidad_kmeans": 0.6745571714832401
+  },
+  "ari_kmeans_original_adaptado": 0.2868811078682297
+}

@@ -11,9 +11,9 @@
 \setcounter{table}{0}\renewcommand{\thetable}{C.\arabic{table}}
 \setcounter{equation}{0}\renewcommand{\theequation}{C.\arabic{equation}}
 
-Sonata es un Point Transformer~V3 (PTv3) usado solo como codificador: cinco
+Sonata es un Point Transformer~V3 (PTv3) usado solo como codificador, cinco
 etapas jerárquicas, sin decodificador, con $108{,}46$~M de parámetros. La
-configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-sonata}:
+configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-sonata}.
 el recuento de parámetros de la Tabla~\ref{tab:params-sonata}, hecho capa por capa,
 da exactamente el total que el modelo declara al cargarse.
 
@@ -50,7 +50,7 @@ máximo se toma canal a canal.
   fl/.style={-{Latex[length=1.6mm]}, thick},
   tap/.style={-{Latex[length=1.4mm]}, dashed, black!55}
 ]
-\node[io] (in) {\textbf{Interfaz de entrada:} $N$ puntos $\times$ 9 canales (coordenadas, color, normal), rejilla $g=2$\,cm};
+\node[io] (in) {\textbf{Interfaz de entrada.} $N$ puntos $\times$ 9 canales (coordenadas, color, normal), rejilla $g=2$\,cm};
 \node[pre, below=2.6mm of in] (pre)
   {\textbf{Preprocesamiento:} serialización (orden Z / Hilbert) $+$ \emph{embedding} lineal $9\rightarrow48$};
 
@@ -95,7 +95,7 @@ máximo se toma canal a canal.
    \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ interfaz\quad
    \tikz\node[draw,rounded corners,fill=purple!12,minimum height=2.6mm,minimum width=3.5mm]{};\ salida usada};
 \end{tikzpicture}
-\caption[Arquitectura del \emph{encoder} de Sonata]{Arquitectura del \emph{encoder} de Sonata: cinco etapas sin
+\caption[Arquitectura del \emph{encoder} de Sonata]{Arquitectura del \emph{encoder} de Sonata, cinco etapas sin
 decodificador. Las líneas discontinuas marcan las etapas que forman
 $f_{\mathrm{ssl}}$. Elaboración propia.}
 \label{fig:arq-sonata}

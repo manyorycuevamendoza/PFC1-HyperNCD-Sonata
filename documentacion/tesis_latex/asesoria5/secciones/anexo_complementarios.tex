@@ -45,7 +45,7 @@ Extracción en PL13 & 13,9\,s, 34,60\,GB (A6000) & 20,3\,s, 7,40\,GB (L4) \\
 \end{tabular}
 \end{table}
 
-La memoria de la última fila no es comparable entre columnas: el equipo es
+La memoria de la última fila no es comparable entre columnas, el equipo es
 distinto y el adaptado se extrajo con la atención \texttt{SDPA} de PyTorch, que
 usa mucha menos memoria que la atención densa del original.
 
@@ -53,7 +53,7 @@ usa mucha menos memoria que la atención densa del original.
 \centering
 \includegraphics[width=\linewidth]{imagenes/sonata_adaptado_m3.png}
 \caption[Sonata original y adaptado sobre PL13]{Comparación del descriptor de
-Sonata original y adaptado sobre PL13: similitud por coseno, componentes
+Sonata original y adaptado sobre PL13, similitud por coseno, componentes
 principales y $k$-means. Elaboración propia.}
 \label{fig:g-sonata-m3}
 \end{figure}
@@ -82,7 +82,7 @@ en una GPU T4. Elaboración propia.}
 Con una sola semilla el orden de los métodos cambia. La Tabla~\ref{tab:g-una}
 muestra que M4 queda por debajo de M4 base con M2 de ArCH y Sonata original
 (50,6 frente a 52,9), mientras que con diez semillas queda por encima (52,5
-frente a 51,4; Tabla~\ref{tab:m2-m4-semillas}). Por eso la comparación se repite
+frente a 51,4, Tabla~\ref{tab:m2-m4-semillas}). Por eso la comparación se repite
 con diez semillas y se reporta su dispersión.
 
 \begin{table}[!htbp]

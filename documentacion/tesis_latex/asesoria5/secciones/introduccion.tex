@@ -12,7 +12,7 @@ como construido y la documentación de obra~\cite{wang2019construction}. Lo que 
 aparece es la etiqueta. El archivo sabe dónde hay materia, pero no qué elemento
 es cada cosa, y esa carencia bloquea el paso de la nube al modelo BIM y al
 informe estructural o de conservación~\cite{wang2019construction}. Hoy ese
-trabajo se hace a mano: construir el conjunto ArCH exigió anotar punto por punto
+trabajo se hace a mano, construir el conjunto ArCH exigió anotar punto por punto
 diecisiete escenas de edificios históricos~\cite{matrone2020benchmark}. No existe
 un programa que automatice esa tarea sobre clases no catalogadas, y ese vacío es
 el que este proyecto busca cubrir.
@@ -23,10 +23,10 @@ base, Pierdicca et al.~\cite{pierdicca2020dgcnn} adaptan una red de grafos
 dinámicos con normales y color, con buenos resultados en muros y techos pero
 caídas en columnas y arcos, y Matrone et al.~\cite{matrone2020benchmark}
 confirman ese desbalance. Grilli y Remondino~\cite{grilli2020generalisation}
-muestran el límite: un modelo entrenado sobre un edificio pierde desempeño en
+muestran el límite, un modelo entrenado sobre un edificio pierde desempeño en
 otro de tipología distinta, porque sus descriptores geométricos no son estables
 entre construcciones. Una tesis previa de UTEC~\cite{tesisutec2024} llega al
-mismo resultado: su modelo dejó de reconocer columnas y arcos al pasar de un
+mismo resultado, su modelo dejó de reconocer columnas y arcos al pasar de un
 patio a una capilla del mismo inmueble, y la única salida fue etiquetar a mano y
 reentrenar.
 
@@ -52,13 +52,13 @@ probable el descriptor geométrico calculado a mano sobre el que arma sus
 prototipos, el tipo de señal que Sonata~\cite{wu2025sonata} identifica
 como un atajo, y propone reemplazarlo por su codificador auto-supervisado
 congelado. Además, el checkpoint entrenado con SemanticPOSS no se transfiere a la
-catedral, pues concentra 98,4\,\% de los puntos en una sola cabeza; por ello M2
+catedral, pues concentra 98,4\,\% de los puntos en una sola cabeza, por ello M2
 se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio corresponde al
 patrimonio arquitectónico.
 
-El Capítulo~I presenta la revisión crítica de la literatura; el Capítulo~II, el
-marco teórico y el análisis de arquitectura; el Capítulo~III, el marco
-metodológico; y el Capítulo~IV, los resultados obtenidos y sus límites.
+El Capítulo~I presenta la revisión crítica de la literatura, el Capítulo~II, el
+marco teórico y el análisis de arquitectura, el Capítulo~III, el marco
+metodológico, y el Capítulo~IV, los resultados obtenidos y sus límites.
 
 \introsection{Formulación del problema}
 
@@ -101,13 +101,13 @@ la diferencia de resolución entre PTv3 y la rejilla de Minkowski con
 \emph{up-cast} y \emph{cache} por sección.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item \textit{Herramientas y trabajo computacional:} pesos públicos de Sonata,
-Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch; módulo de fusión e
+\item \textit{Herramientas y trabajo computacional} pesos públicos de Sonata,
+Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch, módulo de fusión e
 inferencia congelada sobre cada sección.
-\item \textit{Resultado verificable:} repositorio con ambas ramas congeladas,
+\item \textit{Resultado verificable} repositorio con ambas ramas congeladas,
 archivos de descriptores y el híbrido produciendo
 $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ sobre una sección de control.
-\item \textit{Conclusión asociada:} si la sustitución es viable dentro del
+\item \textit{Conclusión asociada} si la sustitución es viable dentro del
 hipergrafo.
 \end{itemize}
 
@@ -118,12 +118,12 @@ semillas de agrupamiento. Los parámetros activos se documentan desde el código
 y los registros de ejecución.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item \textit{Herramientas y trabajo computacional:} entrenamiento de M2 con
+\item \textit{Herramientas y trabajo computacional} entrenamiento de M2 con
 ArCH, inferencia congelada, agrupamiento con diez semillas y métricas mIoU, NMI
 y dominancia.
-\item \textit{Resultado verificable:} tabla comparativa de las cuatro
+\item \textit{Resultado verificable} tabla comparativa de las cuatro
 configuraciones, con media y desviación estándar del agrupamiento.
-\item \textit{Conclusión asociada:} si la fusión mejora numéricamente la línea
+\item \textit{Conclusión asociada} si la fusión mejora numéricamente la línea
 base y si la diferencia supera la dispersión observada.
 \end{itemize}
 
@@ -135,10 +135,10 @@ y OE2. Consiste en medir el $\Delta$mIoU de las clases novedosas
 , geométrica, auto-supervisada y concatenación,  y fijar el rango favorable.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item \textit{Herramientas:} el mIoU con emparejamiento húngaro, que decide qué
-grupo descubierto corresponde a qué clase real; los índices ARI y NMI; la brecha
-cerrada $G$ (Ec.~\eqref{eq:G}); y visualizaciones PCA.
-\item \textit{Resultado verificable:} tabla comparativa, estudio de ablación y
+\item \textit{Herramientas} el mIoU con emparejamiento húngaro, que decide qué
+grupo descubierto corresponde a qué clase real, los índices ARI y NMI, la brecha
+cerrada $G$ (Ec.~\eqref{eq:G}), y visualizaciones PCA.
+\item \textit{Resultado verificable} tabla comparativa, estudio de ablación y
 curva de degradación que fija el rango declarado.
 \end{itemize}
 
@@ -170,11 +170,11 @@ El levantamiento se recibe como archivos LAS (Sección~\ref{sec:las}) y la unida
 de trabajo es la \textbf{sección espacial} (Sección~\ref{sec:seccion}). Una sección es el conjunto de
 archivos que se preprocesan juntos, y las secciones funcionan como particiones de
 entrenamiento y evaluación. El preprocesamiento
-aplica dos reducciones de naturaleza distinta: el filtrado SOR descarta los
+aplica dos reducciones de naturaleza distinta, el filtrado SOR descarta los
 puntos estadísticamente aislados y la voxelización agrupa los puntos de cada cubo
 de 5\,cm en un solo representante, sin descartar ruido. Las cifras medidas están
 en la Tabla~\ref{tab:m1-metadatos}. El vóxel de 5\,cm es un límite, no una
-preferencia: por debajo, con muy pocos puntos por clase novedosa, la diferencia
+preferencia, por debajo, con muy pocos puntos por clase novedosa, la diferencia
 entre el modelo base y el híbrido dejaría de distinguirse del ruido entre
 corridas.
 

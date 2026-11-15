@@ -4,7 +4,7 @@
 El reconocimiento de elementos arquitectónicos en nubes de puntos del patrimonio
 construido es un tema interdisciplinario, que reúne la ingeniería civil y la
 computación. Este marco teórico define los conceptos que sustentan el diseño de la
-tesis (Figura~\ref{fig:diseno}): los del objeto de estudio, los de computación y
+tesis (Figura~\ref{fig:diseno}), los del objeto de estudio, los de computación y
 los algoritmos, y las métricas con que se evalúa el modelo.
 
 % =====================================================================
@@ -48,7 +48,7 @@ retorno, la clase y, según el formato, el color RGB.
 \label{sec:centrado}
 
 El centrado resta el centro \nom{c}{$c$} de la caja envolvente para trasladar la nube
-al origen y conservar la precisión centimétrica; $c$ se guarda para revertirlo:
+al origen y conservar la precisión centimétrica, $c$ se guarda para revertirlo
 \begin{equation}
 \nom{c}{c}=\tfrac{1}{2}\left(\nom{minmax}{\min}_i \nom{xi}{x_i}+\nom{minmax}{\max}_i \nom{xi}{x_i}\right),\qquad \nom{xip}{x_i'}=\nom{xi}{x_i}-\nom{c}{c} ,
 \label{eq:centrado}
@@ -58,7 +58,7 @@ al origen y conservar la precisión centimétrica; $c$ se guarda para revertirlo
 \label{sec:knn}
 
 La vecindad (KNN) de un punto $i$ es el conjunto \nom{vec}{$\mathcal{N}_q(i)$} de los
-\nom{q}{$q$} puntos más próximos a él en distancia euclídea; en este trabajo,
+\nom{q}{$q$} puntos más próximos a él en distancia euclídea, en este trabajo,
 $q=20$. La nube se indexa en un árbol $k$-d, que divide el espacio de forma
 recursiva y evita comparar cada punto con todos los demás.
 
@@ -76,38 +76,38 @@ globales. Conserva el punto cuando
 \subsection{Vóxel y Voxelización}
 \label{sec:voxel}
 
-Un vóxel es una celda cúbica; la voxelización sustituye los puntos de cada celda $v$
-por un representante cuya posición y color son el promedio del grupo:
+Un vóxel es una celda cúbica, la voxelización sustituye los puntos de cada celda $v$
+por un representante cuya posición y color son el promedio del grupo
 \begin{equation}
 \nom{xv}{\bar x_v}=\frac{1}{\nom{xv}{|v|}}\nomop{suma}{\sum}_{i\in \nom{xv}{v}}\nom{xi}{x_i} ,
 \label{eq:voxel}
 \end{equation}
-Reduce los registros y homogeneiza la densidad sin eliminar superficies: solo
+Reduce los registros y homogeneiza la densidad sin eliminar superficies, solo
 disminuye los puntos que las describen. Se usa un vóxel de 5\,cm.
 
 \subsection{Normal de Superficie y su Estimación}
 \label{sec:normales}
 
-La normal \nom{n}{$n_i$} es el vector unitario perpendicular. El escáner no la mide:
-se estima con la covarianza de $q$ vecinos \nom{pbar}{$p_j$} y centroide \nom{pbar}{$\bar p$}:
+La normal \nom{n}{$n_i$} es el vector unitario perpendicular. El escáner no la mide.
+se estima con la covarianza de $q$ vecinos \nom{pbar}{$p_j$} y centroide \nom{pbar}{$\bar p$}
 \begin{equation}
 \nom{cov}{C}=\frac{1}{\nom{q}{q}}\nomop{suma}{\sum}_{j=1}^{q}\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)\left(\nom{pbar}{p_j}-\nom{pbar}{\bar p}\right)^{\nom{T}{\top}}.
 \label{eq:normal}
 \end{equation}
-\noindent Los autovectores de \nom{cov}{$C$} indican las direcciones de dispersión; la
+\noindent Los autovectores de \nom{cov}{$C$} indican las direcciones de dispersión, la
 normal es el de menor autovalor, pues corresponde a la menor variación.
 
 \subsection{Sección Espacial}
 \label{sec:seccion}
 
 Una sección es la porción del levantamiento procesada en una corrida. Su salida
-\nom{S}{$S$} tiene \nom{N}{$N$} filas y nueve columnas en precisión simple:
+\nom{S}{$S$} tiene \nom{N}{$N$} filas y nueve columnas en precisión simple
 \begin{equation}
 \nom{S}{S}=\left[\,\nom{xyz}{x\;\;y\;\;z}\;\;\nom{rgb}{R\;\;G\;\;B}\;\;\nom{n}{n_x\;\;n_y\;\;n_z}\,\right],
 \label{eq:sj}
 \end{equation}
 Cada fila contiene posición centrada, color escalado a 0--255 y normal unitaria
-orientada con $n_z\geq 0$; por ello no distingue las caras interior y exterior de un muro.
+orientada con $n_z\geq 0$, por ello no distingue las caras interior y exterior de un muro.
 
 \subsection{Segmentación Semántica y Clases}
 \label{sec:segsem}
@@ -115,7 +115,7 @@ orientada con $n_z\geq 0$; por ello no distingue las caras interior y exterior d
 \phantomsection\label{sec:clases}La segmentación semántica asigna una clase a cada punto de $P$, sin separar
 instancias de una misma clase. \nom{Ck}{$\mathcal{C}_k$} reúne las clases etiquetadas y
 \nom{Cn}{$\mathcal{C}_n$}, las presentes sin etiquetas, con $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$ y
-$\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$; en patrimonio, $\mathcal{C}_n$ contiene elementos sin catálogo previo.
+$\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$, en patrimonio, $\mathcal{C}_n$ contiene elementos sin catálogo previo.
 
 % =====================================================================
 \section{Computación}
@@ -127,13 +127,13 @@ $\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$; en patrimonio, $\mathcal{C}_n$ con
 
 Un descriptor es el vector numérico que resume el contenido de un punto o de una
 región. HyperNCD~\cite{zhang2026hyperncd} describe cada punto concatenando dos
-componentes:
+componentes
 \begin{equation}
 \nom{Fi}{F_i}=\left[\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})\nom{concat}{;}\,\nom{fgeo}{f_{\mathrm{geo}}}(\nom{xi}{x^i})\right].
 \label{eq:hyperncd3}
 \end{equation}
 Este trabajo sustituye el segundo componente por el descriptor
-auto-supervisado:
+auto-supervisado
 \begin{equation}
 \nom{Fi}{F_i}=\left[\nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})\nom{concat}{;}\,\nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})\right].
 \label{eq:hibrido}
@@ -143,9 +143,9 @@ La propuesta conserva $f_{\mathrm{sem}}$ y sustituye únicamente el segundo comp
 \subsubsection{Descriptor Semántico}
 \label{sec:fsem}
 
-Vector supervisado de 96 canales de la MinkowskiUNet-34C de HyperNCD; codifica la
+Vector supervisado de 96 canales de la MinkowskiUNet-34C de HyperNCD, codifica la
 semejanza con las clases de entrenamiento. Cada punto cae en una celda de lado
-$\nom{ell}{\ell}=5$\,cm con característica 1; color y normal no entran a $\nom{Unet}{U_\theta}$:
+$\nom{ell}{\ell}=5$\,cm con característica 1, color y normal no entran a $\nom{Unet}{U_\theta}$
 \begin{equation}
 \nom{vcel}{\mathbf{v}_i}=\left\lfloor \frac{\nom{xi}{x_i}}{\nom{ell}{\ell}}\right\rfloor,\qquad a_{\mathbf{v}}=1,
 \label{eq:cuant}
@@ -154,14 +154,14 @@ $\nom{ell}{\ell}=5$\,cm con característica 1; color y normal no entran a $\nom{
 \nom{fsem}{f_{\mathrm{sem}}}(\nom{xi}{x^i})=\nom{Unet}{U_\theta}(\mathcal{V})_{\nom{vcel}{\mathbf{v}_i}}\in\mathbb{R}^{96},
 \label{eq:fsem}
 \end{equation}
-donde $\mathcal{V}$ reúne las celdas ocupadas; los puntos de una celda comparten descriptor.
+donde $\mathcal{V}$ reúne las celdas ocupadas, los puntos de una celda comparten descriptor.
 
 \subsubsection{Descriptor Geométrico Analítico}
 \label{sec:fgeo}
 
 Vector analítico, sin aprendizaje, formado por la linealidad, planaridad y
 dispersión obtenidas de los autovalores
-\nom{eig}{$\lambda_1\geq\lambda_2\geq\lambda_3$}. El artículo usa 15 vecinos; la
+\nom{eig}{$\lambda_1\geq\lambda_2\geq\lambda_3$}. El artículo usa 15 vecinos, la
 implementación usa la región del punto y concatena su centroide, dando dimensión 6,
 \begin{equation}
 \nom{g}{g^{(r)}}=\left[\frac{\nom{eig}{\lambda_1}-\nom{eig}{\lambda_2}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_2}-\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;\frac{\nom{eig}{\lambda_3}}{\nom{eig}{\lambda_1}},\;c^{(r)}\right]\in\mathbb{R}^{6},
@@ -196,7 +196,7 @@ y guardarla en disco.
 \paragraph*{Atajo Geométrico}\phantomsection
 \label{sec:atajo}
 
-Falla diagnosticada por Sonata: la representación se limita a pistas geométricas
+Falla diagnosticada por Sonata, la representación se limita a pistas geométricas
 accesibles, como normal, altura o curvatura, en vez de aprender semántica. Esto
 motiva que el trabajo sustituya $f_{\mathrm{geo}}$.
 
@@ -214,7 +214,7 @@ atención y MLP, y reúne tres etapas en 1088 dimensiones (\hyperref[sec:arq-son
 
 \phantomsection\label{sec:convdispersa}Una rejilla dispersa almacena solo los vóxeles ocupados como coordenadas y
 características, evitando guardar el volumen vacío. Su convolución combina cada
-vóxel con vecinos ocupados mediante pesos aprendidos; esta vecindad métrica difiere
+vóxel con vecinos ocupados mediante pesos aprendidos, esta vecindad métrica difiere
 de la serialización y es la operación base de la red que produce $f_{\mathrm{sem}}$.
 
 \paragraph*{MinkowskiUNet-34C}\phantomsection
@@ -247,7 +247,7 @@ quedan solos en su celda.
 \label{sec:upcast}
 
 El \emph{up-cast} concatena para cada punto $x^i$ de $S$ las tres últimas etapas de su
-celda, usando los índices del submuestreo:
+celda, usando los índices del submuestreo
 \begin{equation}
 \nom{fssl}{f_{\mathrm{ssl}}}(\nom{xi}{x^i})=\left[\,\nom{h}{\mathbf{h}^{(3)}}_{\nom{pis}{\pi_3(\nom{inv}{\mathrm{inv}(i)})}}\,;\,\nom{h}{\mathbf{h}^{(4)}}_{\nom{pis}{\pi_4(\mathrm{inv}(i))}}\,;\,\nom{h}{\mathbf{h}^{(5)}}_{\nom{pis}{\pi_5(\mathrm{inv}(i))}}\,\right]\in\mathbb{R}^{192+384+512},
 \label{eq:upcast}
@@ -259,7 +259,7 @@ contiene a la celda $j$, obtenida encadenando los índices del submuestreo.
 \label{sec:caja}
 
 La caja de sección (\emph{section box}) muestra los puntos dentro de un volumen y el
-corte oculta los situados a un lado de un plano; ambos permiten inspeccionar el
+corte oculta los situados a un lado de un plano, ambos permiten inspeccionar el
 interior. \phantomsection\label{sec:poisson}La reconstrucción de Poisson convierte una nube con normales en una malla
 cerrada cuya orientación se ajusta a ellas. Así exporta un elemento segmentado en
 formatos de modelado 3D como OBJ, PLY o STL.
@@ -283,23 +283,23 @@ $i$ se denota \nom{y}{$\hat{y}_i$}.
 \subsection{Región o Superpunto}
 \label{sec:region}
 
-Una región agrupa puntos vecinos; DBSCAN conecta los separados por menos de un
-radio y excluye los aislados. Sus descriptores $F_i$ se promedian:
+Una región agrupa puntos vecinos, DBSCAN conecta los separados por menos de un
+radio y excluye los aislados. Sus descriptores $F_i$ se promedian
 \begin{equation}
 \nom{Freg}{F^{(r)}}=\frac{1}{|r|}\sum_{i\in r}\nom{Fi}{F_i}.
 \label{eq:reg-prom}
 \end{equation}
 Como DBSCAN uniría todo el interior de la Catedral, se usan celdas cúbicas de
-0{,}75\,m; razonar sobre ellas reduce los nodos del hipergrafo.
+0{,}75\,m, razonar sobre ellas reduce los nodos del hipergrafo.
 
 \subsection{Prototipo}
 \label{sec:prototipo}
 \label{sec:formproto}
 
 El prototipo \nom{Pk}{$P_k$} representa un grupo y hay uno por clase. HyperNCD asigna
-la puntuación coseno $z_{i,k}$; \emph{softmax}, tras escalarla por 10, genera pesos
+la puntuación coseno $z_{i,k}$, \emph{softmax}, tras escalarla por 10, genera pesos
 \nom{s}{$s_{i,k}$} que suman 1. Su matriz \nom{Sp}{$S_p$} es la asignación suave y cada
-prototipo, el promedio ponderado de los descriptores:
+prototipo, el promedio ponderado de los descriptores.
 \par\noindent\begin{minipage}[t]{0.56\linewidth}
 \vspace{0pt}
 \begin{equation}
@@ -326,13 +326,13 @@ simultáneamente en la explicación de una novedosa.
 \label{sec:hiperarista}
 
 La hiperarista $e_i$ agrupa una región $r_i$ con sus \nom{M}{$M=8$} más afines según
-\nom{Sb}{$S_b$}; su descriptor ponderado por afinidad se compara con los prototipos:
+\nom{Sb}{$S_b$}, su descriptor ponderado por afinidad se compara con los prototipos
 \begin{equation}
 \hat{F}^{(r)}=\sum_{j\in\nom{Nr}{\mathcal{N}_M(r)}}\nom{St}{\tilde{S}}_{rj}\,\nom{Freg}{F^{(j)}},\qquad
 \tilde{S}_{rj}=\frac{\nom{Sb}{S_b}^{(rj)}}{\sum_{l\in\mathcal{N}_M(r)}S_b^{(rl)}},
 \label{eq:hiper-agr}
 \end{equation}
-donde $\mathcal{N}_M(r)$ reúne las $M$ regiones más afines; los nodos son regiones.
+donde $\mathcal{N}_M(r)$ reúne las $M$ regiones más afines, los nodos son regiones.
 M2 incluye la propia entre las $M$ y M4 la añade, normalizando el resultado.
 
 \subsubsection{Afinidad entre Prototipos}
@@ -342,12 +342,12 @@ M2 incluye la propia entre las $M$ y M4 la añade, normalizando el resultado.
 Combina la afinidad semántica \nom{Ss}{$S_s$}, coseno entre descriptores regionales,
 con la geométrica \nom{Sg}{$S_g$}, un núcleo gaussiano sobre $g$. $S_g$ vale 1 para
 igual forma y posición y cae con la distancia según la escala \nom{tau}{$\tau$}.
-Aunque $g$ se excluye de $F_i$, permanece en la afinidad. Ambos criterios se combinan:
+Aunque $g$ se excluye de $F_i$, permanece en la afinidad. Ambos criterios se combinan
 \begin{equation}
 \nom{Sb}{S_b}=\nom{alpha}{\alpha}\,\nom{Sg}{S_g}+(1-\nom{alpha}{\alpha})\,\nom{Ss}{S_s},\qquad \nom{alpha}{\alpha}\nom{en}{\in}[0,1],
 \label{eq:afinidad}
 \end{equation}
-donde \nom{alpha}{$\alpha$} reparte el peso: 1 usa solo forma y 0, solo significado. La
+donde \nom{alpha}{$\alpha$} reparte el peso, 1 usa solo forma y 0, solo significado. La
 propuesta incorpora $f_{\mathrm{ssl}}$ en $S_s$ y mantiene $g$ en $S_g$, sin duplicarlos.
 
 \subsection{Pseudo-etiquetas y Sinkhorn-Knopp}
@@ -365,14 +365,14 @@ Normalización iterativa que equilibra las clases y evita concentrar las
 pseudo-etiquetas en la más frecuente.
 
 La variante semi-relajada forma \nom{Q}{$Q$} con un \emph{softmax} de temperatura 0{,}1
-sobre $\nom{B}{B}$ salidas y alterna dos escalas hasta estabilizarse:
+sobre $\nom{B}{B}$ salidas y alterna dos escalas hasta estabilizarse
 \begin{equation}
 \nom{uv}{u}\leftarrow\frac{1/\nom{B}{B}}{\nom{Q}{Q}\,\nom{uv}{v}},\qquad
 \nom{uv}{v}\leftarrow\left(\frac{1/\nom{Cn}{|\mathcal{C}_n|}}{\nom{Q}{Q}^{\nom{T}{\top}}\nom{uv}{u}}\right)^{\nom{gamma}{\gamma}/(\nom{gamma}{\gamma}+\nom{epssk}{\epsilon_{\mathrm{sk}}})},
 \label{eq:sk-iter}
 \end{equation}
 La primera fija el peso por punto y la segunda equilibra las clases con tolerancia
-$\gamma$; al estabilizarse, cada fila \nom{Y}{$Y_i$} es la pseudo-etiqueta del punto $i$.
+$\gamma$, al estabilizarse, cada fila \nom{Y}{$Y_i$} es la pseudo-etiqueta del punto $i$.
 
 
 \subsection{Arquitectura de HyperNCD}
@@ -381,12 +381,12 @@ $\gamma$; al estabilizarse, cada fila \nom{Y}{$Y_i$} es la pseudo-etiqueta del p
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{imagenes/arq_hyperncd_paper.png}
-\caption[Flujo original de HyperNCD]{Flujo original de HyperNCD. Fuente: Zhang et al.~\cite{zhang2026hyperncd},
+\caption[Flujo original de HyperNCD]{Flujo original de HyperNCD. Adaptado de Zhang et al.~\cite{zhang2026hyperncd},
 Fig.~2.}
 \label{fig:arq-hyperncd-paper}
 \end{figure}
 
-El método se organiza en cuatro etapas:
+El método se organiza en cuatro etapas.
 
 \begin{enumerate}\setlength{\itemsep}{2pt}
 \item \textbf{Codificador de características} (\emph{Feature Encoder}). La nube,
@@ -395,7 +395,7 @@ asigna a cada punto un vector de características (\emph{point-level feature}).
 En la implementación es la MinkowskiUNet-34C que produce $f_{\mathrm{sem}}$.
 \item \textbf{Agrupamiento en prototipos} (\emph{Prototype cluster}). Una
 convolución unidimensional seguida de \emph{softmax} reparte los puntos entre $K$
-prototipos (Sección~\ref{sec:prototipo}); cada prototipo pasa a ser un nodo del
+prototipos (Sección~\ref{sec:prototipo}), cada prototipo pasa a ser un nodo del
 hipergrafo (\emph{hypernode}).
 \item \textbf{Generación de hiperaristas} (\emph{Hyperedge generation}). Cada
 prototipo se une a sus $M$ más afines según la afinidad $S_b$ de la
@@ -404,7 +404,7 @@ lote se forma un grupo de hiperaristas.
 \item \textbf{Hipergrafo de prototipos y pseudo-etiquetas}
 (\emph{Prototype-based hypergraph}). Las hiperaristas se reajustan a medida que
 llegan lotes nuevos. Un prototipo cuya afinidad con uno conocido supera un umbral
-recibe la etiqueta de esa clase; si no, se considera novedoso y recibe una
+recibe la etiqueta de esa clase, si no, se considera novedoso y recibe una
 etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
 \end{enumerate}
 
@@ -414,13 +414,13 @@ etiqueta nueva. Esas pseudo-etiquetas vuelven al entrenamiento.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.62\linewidth]{imagenes/arq_sonata_paper.png}
-\caption[Auto-destilación de Sonata]{Marco de auto-destilación de Sonata. Fuente: Wu et
+\caption[Auto-destilación de Sonata]{Marco de auto-destilación de Sonata. Adaptado de Wu et
 al.~\cite{wu2025sonata}, Fig.~5.}
 \label{fig:arq-sonata-paper}
 \end{figure}
 
-Sonata~\cite{wu2025sonata} preentrena un codificador sin etiquetas; este trabajo lo usa
-congelado. La Figura~\ref{fig:arq-sonata-paper} resume dos propiedades que explican $f_{\mathrm{ssl}}$:
+Sonata~\cite{wu2025sonata} preentrena un codificador sin etiquetas, este trabajo lo usa
+congelado. La Figura~\ref{fig:arq-sonata-paper} resume dos propiedades que explican $f_{\mathrm{ssl}}$.
 
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item \textbf{Auto-destilación.} Dos copias de la misma red, estudiante y
@@ -430,7 +430,7 @@ contexto que el maestro, para acertar tiene que aprender qué es el punto y no
 solo su geometría local.
 \item \textbf{Codificador sin decodificador y \emph{up-cast}.} La red es un PTv3
 al que se le quitó el decodificador, porque este favorecía el atajo geométrico
-(Sección~\ref{sec:atajo}); para conservar información de varias escalas, las
+(Sección~\ref{sec:atajo}), para conservar información de varias escalas, las
 características se devuelven a la resolución de las etapas anteriores mediante
 el \emph{up-cast} (Sección~\ref{sec:upcast}).
 \end{itemize}
@@ -443,19 +443,19 @@ el \emph{up-cast} (Sección~\ref{sec:upcast}).
 \subsection{IoU y mIoU}
 \label{sec:iou}
 
-Para una clase $c$, la intersección sobre unión se define como:
+Para una clase $c$, la intersección sobre unión se define como
 \begin{equation}
 \nom{iou}{\mathrm{IoU}_c}=\frac{\nom{tp}{TP_c}}{\nom{tp}{TP_c}+\nom{tp}{FP_c}+\nom{tp}{FN_c}},
 \label{eq:iou}
 \end{equation}
-Mide cuánto coinciden los puntos predichos de una clase con los reales: vale 1
+Mide cuánto coinciden los puntos predichos de una clase con los reales, vale 1
 si coinciden todos y 0 si no coincide ninguno.
 
 
 \paragraph*{IoU Media (mIoU)}\phantomsection
 \label{sec:miou}
 
-La métrica agregada es el promedio de la anterior sobre un conjunto de clases:
+La métrica agregada es el promedio de la anterior sobre un conjunto de clases
 \begin{equation}
 \nom{miou}{\mathrm{mIoU}}(\nom{conj}{\mathcal{S}})=\frac{1}{\nom{card}{|}\nom{conj}{\mathcal{S}}\nom{card}{|}}\nomop{suma}{\sum}_{c\in\mathcal{S}}\nom{iou}{\mathrm{IoU}_c},
 \qquad
@@ -469,7 +469,7 @@ Se reporta por separado como mIoU \emph{known}, mIoU \emph{novel} y mIoU
 \subsection{Medidas de Agrupamiento}
 \label{sec:hungaro}
 
-Como $\mathcal{C}_n$ no tiene etiquetas, se busca la correspondencia de mayor IoU total:
+Como $\mathcal{C}_n$ no tiene etiquetas, se busca la correspondencia de mayor IoU total
 \begin{equation}
 \nom{sigstar}{\sigma^{*}}=\nomop{argmax}{\arg\max}_{\sigma\in\mathfrak{S}_{|\mathcal{C}_n|}}
 \nomop{suma}{\sum}_{c\in\mathcal{C}_n}\nom{iou}{\mathrm{IoU}}\bigl(\nom{y}{\hat{y}}=\nom{perm}{\sigma}(\nom{clase}{c}),\;\nom{ytrue}{y}=\nom{clase}{c}\bigr).
@@ -480,7 +480,7 @@ Así, cada grupo descubierto recibe el nombre de una clase real.
 \paragraph*{Índice de Rand Ajustado (ARI)}\phantomsection
 \label{sec:ari}
 
-Compara la agrupación descubierta con la real, corrigiendo el azar: vale 1 si
+Compara la agrupación descubierta con la real, corrigiendo el azar, vale 1 si
 coinciden y cerca de 0 si la coincidencia es aleatoria.
 
 
@@ -508,7 +508,7 @@ clasificador.
 \label{sec:ganancia}
 
 Diferencia de mIoU sobre las clases novedosas entre el modelo híbrido y la línea
-base:
+base
 \begin{equation}
 \nom{delta}{\Delta\mathrm{mIoU}^{\mathrm{novel}}}=
 \nom{supsub}{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}}-\nom{supsub}{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}.
@@ -521,19 +521,19 @@ novedosas.
 \label{sec:brecha}
 
 Esta métrica propuesta normaliza la ganancia por la brecha entre clases conocidas
-y novedosas de la línea base:
+y novedosas de la línea base
 \begin{equation}
 \nom{G}{G}=\frac{\nom{supsub}{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}}-\nom{supsub}{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}}
 {\nom{supsub}{\mathrm{mIoU}^{\mathrm{known}}_{\mathrm{base}}}-\nom{supsub}{\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}}}.
 \label{eq:G}
 \end{equation}
-\nom{G}{$G$} es adimensional: 0 indica que no hay aporte, 1 que las clases novedosas
+\nom{G}{$G$} es adimensional, 0 indica que no hay aporte, 1 que las clases novedosas
 alcanzan la calidad de las conocidas y un valor negativo, degradación.
 
 \paragraph*{Atribución por Etapas}\phantomsection
 \label{sec:metricas-hibrido}
 
-La evaluación se realiza antes y después del razonamiento: el \emph{linear probing}
+La evaluación se realiza antes y después del razonamiento, el \emph{linear probing}
 mide el descriptor y el mIoU, el resultado final. Así se distingue si la mejora
 proviene de la representación o del hipergrafo.
 
@@ -554,7 +554,7 @@ implementadas. Elaboración propia.}
 \label{fig:diseno}
 \end{figure}
 
-\subsection{Módulo 1: Preprocesamiento}
+\subsection{Módulo 1, Preprocesamiento}
 \label{sec:modulo1}
 
 Convierte archivos LAS en $S$ de nueve columnas, una vez en CPU.
@@ -566,11 +566,11 @@ Convierte archivos LAS en $S$ de nueve columnas, una vez en CPU.
 \item Estima normales por vecindad (Ec.~\eqref{eq:normal}).
 \item Guarda $S$ y sus metadatos (Sección~\ref{sec:seccion}).
 \end{enumerate}
-\subsection{Módulo 2: Semántica}
+\subsection{Módulo 2, Semántica}
 \label{sec:modulo2}
 
-Recibe las coordenadas de $S$ y entrega $f_{\mathrm{sem}}(x^i)$, 96 valores por punto;
-excluye color y normal. En cada lote de dos vistas aumentadas ejecuta estos pasos:
+Recibe las coordenadas de $S$ y entrega $f_{\mathrm{sem}}(x^i)$, 96 valores por punto,
+excluye color y normal. En cada lote de dos vistas aumentadas ejecuta estos pasos.
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Cuantiza y asigna 1 a cada vóxel ocupado (Ec.~\ref{eq:cuant}).
 \item Obtiene $f_{\mathrm{sem}}$ con MinkowskiUNet-34C (Ec.~\ref{eq:fsem}).
@@ -580,10 +580,10 @@ excluye color y normal. En cada lote de dos vistas aumentadas ejecuta estos paso
 \item Optimiza las pérdidas por punto y región con AdamW.
 \end{enumerate}
 En la Catedral, M2 se usa congelado para extraer $f_{\mathrm{sem}}$, sin
-reentrenamiento. Se comparan checkpoints de SemanticPOSS y ArCH; este último se
+reentrenamiento. Se comparan checkpoints de SemanticPOSS y ArCH, este último se
 incluye por su dominio de patrimonio arquitectónico~\cite{matrone2020benchmark}.
 
-\subsection{Módulo 3: \emph{Encoder}}
+\subsection{Módulo 3, \emph{Encoder}}
 \label{sec:modulo3}
 
 Convierte las nueve columnas de $S$ en $f_{\mathrm{ssl}}$, 1088 valores por punto.
@@ -595,11 +595,11 @@ Convierte las nueve columnas de $S$ en $f_{\mathrm{ssl}}$, 1088 valores por punt
 \item Evalúa el descriptor con \emph{linear probing} (Sección~\ref{sec:probing}).
 \end{enumerate}
 
-\subsection{Módulo 4: Fusión}
+\subsection{Módulo 4, Fusión}
 \label{sec:modulo4}
 
 Recibe $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$, entrega $\hat{y}_i$ y es el único módulo modificado.
-Sus cinco operaciones ocupan cuatro recuadros; el agrupamiento aparece en la primera flecha.
+Sus cinco operaciones ocupan cuatro recuadros, el agrupamiento aparece en la primera flecha.
 \begin{enumerate}\setlength{\itemsep}{1pt}
 \item Concatenación de los descriptores en $F_i$ (Ec.~\eqref{eq:hibrido}).
 \item Agrupamiento en regiones mediante DBSCAN (Sección~\ref{sec:region}).
@@ -611,7 +611,7 @@ Sus cinco operaciones ocupan cuatro recuadros; el agrupamiento aparece en la pri
 (Secciones~\ref{sec:pseudo} y~\ref{sec:sinkhorn}).
 \end{enumerate}
 
-\subsection{Módulo 5: Salida}
+\subsection{Módulo 5, Salida}
 \label{sec:modulo5}
 
 Recibe $\hat{y}_i$, mide su calidad y la pone a disposición del ingeniero en una
@@ -633,7 +633,7 @@ plataforma.
 \paragraph*{Plataforma}
 \begin{enumerate}\setlength{\itemsep}{1pt}\setcounter{enumi}{8}
 \item Caja de sección y cortes (Sección~\ref{sec:caja}).
-\item Lista desplegable de elementos: columnas, vigas, techos y las clases
+\item Lista desplegable de elementos, columnas, vigas, techos y las clases
 novedosas.
 \item Al hacer clic en un elemento, sus puntos se resaltan en la vista.
 \item Exportación del elemento como sólido 3D (Sección~\ref{sec:poisson}).
@@ -644,7 +644,7 @@ novedosas.
 
 La Tabla~\ref{tab:estado-impl} separa lo implementado, el estado del arte y el aporte
 propio, estimado en 54\,\% durante la planificación, no como medición. PL13 y PL7 no
-tienen etiquetas; la evaluación etiquetada usa una capilla anotada de la Catedral.
+tienen etiquetas, la evaluación etiquetada usa una capilla anotada de la Catedral.
 
 \begin{table}[H]
 \centering
@@ -656,8 +656,8 @@ propia.}
 \toprule
 \textbf{Módulo} & \textbf{Implementación actual} & \textbf{Estado del arte} & \textbf{Aporte propio} \\
 \midrule
-1. Preprocesamiento & Implementado; probado en PL7 y ejecutado sobre los 23 archivos en Khipu & 20\,\% & 80\,\% \\
-2. Semántica & Entrenado con SemanticPOSS y ArCH; lector de $S$ y extracción de $f_{\mathrm{sem}}$ implementados & 90\,\% & 10\,\% \\
+1. Preprocesamiento & Implementado, probado en PL7 y ejecutado sobre los 23 archivos en Khipu & 20\,\% & 80\,\% \\
+2. Semántica & Entrenado con SemanticPOSS y ArCH, lector de $S$ y extracción de $f_{\mathrm{sem}}$ implementados & 90\,\% & 10\,\% \\
 3. \emph{Encoder} & Sonata original y adaptación a la Catedral evaluados & 60\,\% & 40\,\% \\
 4. Fusión & Implementada y comparada con varias semillas de agrupamiento & 30\,\% & 70\,\% \\
 5. Salida & mIoU, NMI, ARI, tablas por clase y visor implementados & 30\,\% & 70\,\% \\

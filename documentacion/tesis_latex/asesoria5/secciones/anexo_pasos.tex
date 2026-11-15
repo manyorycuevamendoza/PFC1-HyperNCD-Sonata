@@ -50,7 +50,7 @@ guardar $c$ para los metadatos\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {$P$ y $C$, $N$ puntos de la sección};
-\node[fop, below=of a] (b) {Para cada punto $p$: buscar sus $q$ vecinos más cercanos};
+\node[fop, below=of a] (b) {Para cada punto $p$, buscar sus $q$ vecinos más cercanos};
 \node[fop, below=of b] (c) {$d_p\leftarrow$ distancia media a esos vecinos};
 \node[fop, below=of c] (d) {$\mu,\sigma\leftarrow$ media y desviación de todos los $d_p$};
 \node[fdec, below=of d] (e) {$d_p\le\mu+\lambda\sigma$?};
@@ -69,9 +69,9 @@ guardar $c$ para los metadatos\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {$P$ y $C$ tras el filtrado};
-\node[fop, below=of a] (b) {Para cada punto: cubo $v_p=\lfloor (p-p_0)/\ell\rfloor$, con $p_0$ la esquina mínima de la nube menos $\ell/2$};
+\node[fop, below=of a] (b) {Para cada punto, cubo $v_p=\lfloor (p-p_0)/\ell\rfloor$, con $p_0$ la esquina mínima de la nube menos $\ell/2$};
 \node[fop, below=of b] (c) {Agrupar los puntos que caen en el mismo cubo};
-\node[fop, below=of c] (d) {Por cubo ocupado: promedio de posición y de color};
+\node[fop, below=of c] (d) {Por cubo ocupado, promedio de posición y de color};
 \node[fdato, below=of d] (e) {$P'$ y $C'$, un representante por cubo ocupado};
 \foreach \u/\v in {a/b,b/c,c/d,d/e} \draw[ffl] (\u) -- (\v);
 \end{tikzpicture}
@@ -84,7 +84,7 @@ guardar $c$ para los metadatos\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {$P'$, los representantes del Paso~4};
-\node[fop, below=of a] (b) {Para cada representante: sus $q$ vecinos};
+\node[fop, below=of a] (b) {Para cada representante, sus $q$ vecinos};
 \node[fop, below=of b] (c) {$\Sigma_p\leftarrow$ covarianza de los vecinos};
 \node[fop, below=of c] (d) {$n_p\leftarrow$ autovector del menor autovalor};
 \node[fdec, below=of d] (e) {$n_{p,z}<0$?};
@@ -143,9 +143,9 @@ cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {$S$ de la sección, $N$ puntos};
-\node[fop, below=of a] (b) {Trasladar: restar el centro de la caja en $x,y$ y el mínimo de $z$};
+\node[fop, below=of a] (b) {Trasladar, restar el centro de la caja en $x,y$ y el mínimo de $z$};
 \node[fop, below=of b] (c) {Dividir en celdas de lado $g$ y elegir un punto al azar por celda};
-\node[fop, below=of c] (d) {Guardar el índice inverso: celda de cada punto de $S$};
+\node[fop, below=of c] (d) {Guardar el índice inverso, celda de cada punto de $S$};
 \node[fop, below=of d] (e) {Dividir el color entre 255};
 \node[fdato, below=of e] (f) {Puntos de la rejilla e índice inverso de $N$ entradas};
 \foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
@@ -159,11 +159,11 @@ cargar $\Phi$ en PTv3, pasarlo a la GPU y fijarlo en modo de inferencia\;
 \centering\setstretch{1}
 \begin{tikzpicture}[font=\scriptsize, node distance=4mm]
 \node[fdato] (a) {Puntos de la rejilla $\times$ 9 valores};
-\node[fop, below=of a] (b) {\textbf{4.1 Embedding:} 9 $\rightarrow$ 48 valores};
-\node[fop, below=of b] (c) {\textbf{4.2 Serialización:} orden Z y Hilbert, parches de 1024};
-\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5:} bloques con atención (Ec.~\ref{eq:bloque}); \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
-\node[fop, below=of d] (e) {\textbf{4.4 Up-cast:} concatenar etapas 3, 4 y 5 (Ec.~\ref{eq:upcast})};
-\node[fdato, below=of e] (f) {$f_{\mathrm{ssl}}$: 1088 valores por punto de la rejilla};
+\node[fop, below=of a] (b) {\textbf{4.1 Embedding.} 9 $\rightarrow$ 48 valores};
+\node[fop, below=of b] (c) {\textbf{4.2 Serialización.} orden Z y Hilbert, parches de 1024};
+\node[fop, below=of c] (d) {\textbf{4.3 Etapas 1 a 5.} Bloques con atención (Ec.~\ref{eq:bloque}), \emph{pooling} entre etapas (Ec.~\ref{eq:pooling})};
+\node[fop, below=of d] (e) {\textbf{4.4 Up-cast.} concatenar etapas 3, 4 y 5 (Ec.~\ref{eq:upcast})};
+\node[fdato, below=of e] (f) {$f_{\mathrm{ssl}}$, 1088 valores por punto de la rejilla};
 \foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[ffl] (\u) -- (\v);
 \end{tikzpicture}
 \caption[Inferencia de Sonata]{Inferencia de Sonata. Elaboración propia.}

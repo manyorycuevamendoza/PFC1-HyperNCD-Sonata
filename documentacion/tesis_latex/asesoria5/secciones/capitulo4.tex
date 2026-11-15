@@ -1,9 +1,9 @@
 \chapter{RESULTADOS}
 \label{cap:resultados}
 
-Este capítulo sigue la estructura del Capítulo~\ref{cap:metodo}: cada título lleva
+Este capítulo sigue la estructura del Capítulo~\ref{cap:metodo}. Cada título lleva
 entre corchetes el enlace a su sección homóloga del método, de modo que ambos
-capítulos se corresponden uno a uno. Las tres unidades se ejecutaron:
+capítulos se corresponden uno a uno. Las tres unidades se ejecutaron. Fueron el
 preprocesamiento de los escaneos, extracción de descriptores y evaluación de
 M2 a M4. Se distingue siempre entre la corrida de entrenamiento de HyperNCD, que
 fue una, y las semillas posteriores del agrupamiento, que fueron diez.
@@ -13,12 +13,12 @@ fue una, y las semillas posteriores del agrupamiento, que fueron diez.
 \section[Diagrama de Flujo General]{Diagrama de Flujo General\espejo{sec:diagrama-flujo}}
 \label{sec:res-flujo}
 
-Se ejecutaron las seis etapas de la Figura~\ref{fig:flujo}. E0 está en la
-Sección~\ref{sec:res-unidad1}; E1 y E2, en la Sección~\ref{sec:res-u3-proc}; E3, en
-la Sección~\ref{sec:res-unidad2}; E4, en la Sección~\ref{sec:res-u3-rep}, y E5, en
-la Sección~\ref{sec:res-u3-traza}.
+Se ejecutaron las seis etapas de la Figura~\ref{fig:flujo}. E0 y E1 están en la
+Sección~\ref{sec:res-unidad1}. E2 y E3 están en las Secciones~\ref{sec:res-unidad2}
+y~\ref{sec:res-u3-proc}. E4 está en la Sección~\ref{sec:res-u3-rep} y E5 en la
+Sección~\ref{sec:res-u3-traza}.
 
-La frontera de disco funciona en ambos sentidos: las ramas congeladas escriben
+La frontera de disco funciona en ambos sentidos, ya que las ramas semántica y auto-supervisada escriben
 sus descriptores y la etapa de fusión los lee sin mantener a la vez en memoria
 los entornos de HyperNCD y Sonata.
 
@@ -30,7 +30,7 @@ los entornos de HyperNCD y Sonata.
 Cada etapa corrió en el equipo que indica la Tabla~\ref{tab:res-hardware}, con
 los programas y guiones del repositorio y las órdenes del
 \hyperref[sec:anexo-software]{Anexo~A}. La memoria de GPU de la fila de M2 es la
-que informa \texttt{nvidia-smi}; el pico que registra PyTorch para esa misma
+que informa \texttt{nvidia-smi}, el pico que registra PyTorch para esa misma
 extracción es menor, 3{,}2\,GB, porque no cuenta el contexto de CUDA.
 
 \begin{table}[!htbp]
@@ -45,8 +45,8 @@ extracción es menor, 3{,}2\,GB, porque no cuenta el contexto de CUDA.
 M1, PL13 y PL7 & Laptop local & 12{,}0 y 14{,}4\,s & --- \\
 M1, 23 archivos & Khipu, CPU & 1\,079\,s en total & --- \\
 Sonata, PL13 & Khipu, RTX A6000 & 13{,}9\,s & 34{,}60\,GB \\
-Entrenamiento de M2, ArCH & Colab, T4 & 75{,}0\,min & 9{,}5\,GB (GPU); 4{,}91\,GB (RAM) \\
-M2 sobre la capilla & Colab, T4 & 42{,}7\,s & 5{,}28\,GB (GPU); 4{,}49\,GB (RAM) \\
+Entrenamiento de M2, ArCH & Colab, T4 & 75{,}0\,min & 9{,}5\,GB (GPU), 4{,}91\,GB (RAM) \\
+M2 sobre la capilla & Colab, T4 & 42{,}7\,s & 5{,}28\,GB (GPU), 4{,}49\,GB (RAM) \\
 Sonata, capilla & Colab, L4 & 26{,}6\,s & 10{,}49\,GB \\
 M4, capilla & CPU local & 68 a 80\,s & --- \\
 \bottomrule
@@ -62,10 +62,10 @@ M4, capilla & CPU local & 68 a 80\,s & --- \\
 \subsection[Estructura y Contrato de los Módulos]{Estructura y Contrato de los Módulos\espejo{sec:contrato}}
 \label{sec:res-contrato}
 
-El contrato de la Tabla~\ref{tab:contrato} es el diseño; la
+El contrato de la Tabla~\ref{tab:contrato} es el diseño, la
 Tabla~\ref{tab:res-contrato} indica qué se ejecutó de cada módulo. La diferencia
 principal es que M2 y M4 no se ejecutaron como módulos entrenados dentro del
-mismo ciclo: M2 se entrenó antes y se aplicó congelado, y M4 operó después, sobre
+mismo ciclo. M2 se entrenó antes y se aplicó sin reentrenar, y M4 operó después, sobre
 los descriptores guardados.
 
 \begin{table}[!htbp]
@@ -77,10 +77,10 @@ los descriptores guardados.
 \toprule
 \textbf{Módulo} & \textbf{Salida del contrato} & \textbf{Ejecutado} \\
 \midrule
-M1 & Matriz $S$ de 9 columnas (Tabla~\ref{tab:m1-metadatos}) & 23 archivos; PL13, PL7 y la capilla verificados \\
-M2 & $f_{\mathrm{sem}}$ de 96 dimensiones, logits e índice inverso & Entrenado con SemanticPOSS y con ArCH; extraído una vez por escena con el checkpoint congelado \\
-M3 & $f_{\mathrm{ssl}}$ de 1088 valores con índice inverso (Tabla~\ref{tab:npz}) & Sonata congelado, original y adaptado, una vez por escena \\
-M4 & Etiqueta $\hat{y}_i$ por punto & Fusión posterior en CPU: regiones de 0{,}75\,m, afinidad, hiperaristas y prototipos con Sinkhorn--Knopp; sin gradientes \\
+M1 & Matriz $S$ de 9 columnas (Tabla~\ref{tab:m1-metadatos}) & 23 archivos, PL13, PL7 y la capilla verificados \\
+M2 & $f_{\mathrm{sem}}$ de 96 dimensiones, logits e índice inverso & Entrenado con SemanticPOSS y con ArCH, extraído una vez por escena con el checkpoint ya entrenado \\
+M3 & $f_{\mathrm{ssl}}$ de 1088 valores con índice inverso (Tabla~\ref{tab:npz}) & Sonata, original y adaptado, una vez por escena \\
+M4 & Etiqueta $\hat{y}_i$ por punto & Fusión posterior en CPU, con regiones de 0{,}75\,m, afinidad, hiperaristas y prototipos con Sinkhorn--Knopp, sin gradientes \\
 M5 & Métricas y visor & mIoU uno a uno, NMI, ARI, IoU por clase y visor 3D \\
 \bottomrule
 \end{tabularx}
@@ -90,7 +90,7 @@ M5 & Métricas y visor & mIoU uno a uno, NMI, ARI, IoU por clase y visor 3D \\
 \subsection[Visor 3D del Proyecto]{Visor 3D del Proyecto\espejo{sec:visor}}
 \label{sec:res-visor}
 
-Al dibujar los descriptores de PL13 (Figura~\ref{fig:visor-pl13-etapas}), el
+Al dibujar los descriptores de la capilla (Figura~\ref{fig:escena-etapas}), el
 visor verificó que el archivo \texttt{.npz} corresponde a la matriz $S$ de la que
 salió. Con la capilla etiquetada, el mismo visor produjo los mapas de clases y de
 cabezas de M2 usados en este capítulo.
@@ -104,24 +104,24 @@ cabezas de M2 usados en este capítulo.
 \subsection[Datos de Entrada y Ejecución]{Datos de Entrada y Ejecución\espejo{sec:u1-datos}}
 \label{sec:res-u1-datos}
 
-El procedimiento se ejecutó sobre dos escaneos de la Catedral de Lima, PL13 y
-PL7, en el equipo local de la Sección~\ref{sec:hardware-repo}. PL13 es el
-escaneo principal, porque es el que después pasa por Sonata en la
-Sección~\ref{sec:res-unidad2}, de modo que todo el análisis sigue al mismo
-escaneo de principio a fin. PL7 se presenta al lado como segundo ejemplo, para
-mostrar que el procedimiento se comporta igual en otro escaneo. PL13 es el
-1{,}40\,\% del levantamiento y PL7 el 1{,}46\,\%.
+El procedimiento se ejecutó sobre la capilla etiquetada, que es la escena que se
+evalúa en todo el trabajo, y sobre dos escaneos sin etiquetas de la Catedral de
+Lima, PL13 y PL7, que se usaron al inicio para probar el programa
+(Sección~\ref{sec:hardware-repo}). Las Unidades~2 y~3 siguen a la capilla de
+principio a fin, de modo que cada módulo se mide sobre la misma escena. PL13 y PL7
+quedan como ejemplos de que el procedimiento se comporta igual en otros escaneos,
+y son el 1{,}40\,\% y el 1{,}46\,\% del levantamiento.
 
-Las dos pruebas usaron los valores por defecto de la
-Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}).
-Las figuras de nubes de esta sección dibujan 200\,000 puntos tomados al azar,
-salvo donde se indique.
+Las tres pruebas usaron los valores por defecto de la
+Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}). Las figuras de
+la capilla dibujan 250\,000 puntos tomados al azar y no muestran la clase
+\emph{otro}, que reúne lo que no se etiquetó y confunde la lectura, aunque sí
+cuenta en los conteos.
 
-
-\paragraph*{Escena de control.} Para medir con etiquetas se usó una capilla de la
+\paragraph*{Capilla etiquetada.} Para medir con etiquetas se usó una capilla de la
 Catedral anotada con cinco clases (arco, columna, cúpula, pared y techo) más
 \emph{otro}. El Módulo~1 la redujo de 3\,380\,661 puntos a 3\,277\,440 tras el
-filtrado (3{,}1\,\%) y a 1\,135\,946 tras la voxelización, en 9{,}3\,s; las
+filtrado (3{,}1\,\%) y a 1\,135\,946 tras la voxelización, en 9{,}3\,s, las
 etiquetas se transfirieron con una distancia mediana de 1{,}2\,cm y máxima de
 3{,}6\,cm. La Tabla~\ref{tab:capilla-clases} muestra que el vóxel conserva entre
 31 y 36\,\% de cada clase, de modo que no sesga su proporción.
@@ -145,35 +145,49 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 \end{tabular}
 \end{table}
 
+La Figura~\ref{fig:captura-m1} muestra la capilla tras el Módulo~1, con el color
+real y con la clase de cada punto, tal como los dibuja el visor del proyecto
+(Sección~\ref{sec:res-visor}). El vóxel de 5\,cm deja la nube más rala, pero se
+siguen reconociendo la cúpula con su farol, los arcos de la nave y las paredes
+laterales, y cada pieza conserva su forma. Eso es lo que necesitan los módulos
+siguientes, que reciben solo esta nube.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/captura_m1.png}
+\caption[La capilla tras el Módulo 1]{La capilla tras el Módulo~1, con el color real y con la clase real de cada punto, sin la clase \emph{otro}. Capturas del visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}). Elaboración propia.}
+\label{fig:captura-m1}
+\end{figure}
+
 \FloatBarrier
 \subsection[Procedimiento]{Procedimiento\espejo{sec:u1-procedimiento}}
 \label{sec:res-u1-procedimiento}
 
 Los seis pasos se ejecutaron como los define la
-Sección~\ref{sec:u1-procedimiento}; su evidencia visual está en el
+Sección~\ref{sec:u1-procedimiento}, su evidencia visual está en el
 \hyperref[sec:anexo-evidencia-m1]{Anexo~E}.
 
-La escritura final dejó la matriz $S$ de PL13 en 28{,}9\,MB y la de PL7 en
-22{,}0\,MB, cada una junto a su archivo de metadatos
+La escritura final dejó la matriz $S$ de la capilla en 39\,MB, la de PL13 en
+28{,}9\,MB y la de PL7 en 22{,}0\,MB, cada una junto a su archivo de metadatos
 (Tabla~\ref{tab:m1-metadatos}).
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Metadatos de PL13 y PL7]{Metadatos de PL13 y PL7. Los campos se describen en el Paso~6 de la Sección~\ref{sec:u1-procedimiento}. Elaboración propia.}
+\caption[Metadatos de la capilla, PL13 y PL7]{Metadatos de la capilla etiquetada, PL13 y PL7. Los campos se describen en el Paso~6 de la Sección~\ref{sec:u1-procedimiento}. Elaboración propia.}
 \label{tab:m1-metadatos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Campo} & \textbf{PL13} & \textbf{PL7} \\
+\textbf{Campo} & \textbf{Capilla} & \textbf{PL13} & \textbf{PL7} \\
 \midrule
-\texttt{voxel} & 0{,}05 & 0{,}05 \\
-\texttt{q} & 20 & 20 \\
-\texttt{lambda} & 2 & 2 \\
-\texttt{offset\_utm} & \multicolumn{2}{l}{Columna \emph{Centro} de la Tabla~\ref{tab:m1-centrado}} \\
-\texttt{n\_crudo} & 8\,239\,904 & 8\,590\,904 \\
-\texttt{n\_sor} & 8\,020\,796 & 8\,184\,419 \\
-\texttt{n\_voxel} & 803\,099 & 610\,637 \\
-\texttt{segundos} & 12{,}0 & 14{,}4 \\
+\texttt{voxel} & 0{,}05 & 0{,}05 & 0{,}05 \\
+\texttt{q} & 20 & 20 & 20 \\
+\texttt{lambda} & 2 & 2 & 2 \\
+\texttt{offset\_utm} & Registrado en el archivo de metadatos & \multicolumn{2}{l}{Columna \emph{Centro} de la Tabla~\ref{tab:m1-centrado}} \\
+\texttt{n\_crudo} & 3\,380\,661 & 8\,239\,904 & 8\,590\,904 \\
+\texttt{n\_sor} & 3\,277\,440 & 8\,020\,796 & 8\,184\,419 \\
+\texttt{n\_voxel} & 1\,135\,946 & 803\,099 & 610\,637 \\
+\texttt{segundos} & 9{,}3 & 12{,}0 & 14{,}4 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -196,8 +210,15 @@ Khipu, con los mismos parámetros. Los 23 archivos LAS
 archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL13 y de PL7
 en esa corrida coinciden exactamente con los de las pruebas locales de la
 Tabla~\ref{tab:m1-metadatos}, que es la comprobación de repetición descrita en
-la Sección~\ref{sec:u1-reproducibilidad}: la unidad da el mismo resultado en dos
+la Sección~\ref{sec:u1-reproducibilidad}. La unidad da el mismo resultado en dos
 máquinas distintas.
+
+\paragraph*{Qué dice el Módulo~1.} El preprocesamiento redujo 589\,708\,290 puntos
+a 17\,807\,859, cerca del 3\,\%, y esa reducción hace posible que la sección
+completa quepa en la GPU. El hallazgo es que la salida es reproducible en los
+conteos, pero el orden de las filas puede cambiar entre versiones de Open3D, por lo
+que cada archivo de descriptores debe usarse con la matriz $S$ con que se
+calculó.
 
 % =====================================================================
 \FloatBarrier
@@ -209,13 +230,13 @@ máquinas distintas.
 \label{sec:res-rama-sem}
 
 La rama se ejecutó dos veces sobre la capilla con el mismo programa, una con el
-checkpoint de SemanticPOSS y otra con el de ArCH, siempre congelada. Cada
+checkpoint de SemanticPOSS y otra con el de ArCH, siempre sin reentrenar. Cada
 ejecución produjo $f_{\mathrm{sem}}$ de 96 dimensiones, las puntuaciones de las
 cabezas y el índice inverso, en 42{,}7\,s sobre una GPU T4 con ArCH
 (Sección~\ref{sec:res-entorno}). La Tabla~\ref{tab:m2-novedoso} resume cómo se
 comporta cada checkpoint como clasificador punto a punto, antes de cualquier
 fusión. Con SemanticPOSS, M2 marca como novedoso el 99{,}1\,\% de la escena y casi
-todas las clases reales, incluida la pared, caen en una sola cabeza; con ArCH solo
+todas las clases reales, incluida la pared, caen en una sola cabeza, con ArCH solo
 se marca el 12{,}6\,\% y la proporción depende de la clase: el arco, la clase más
 ajena a lo conocido, se marca en 58{,}0\,\% y la pared en 1{,}0\,\%. El mIoU uno a
 uno de las cabezas sin \emph{otro} pasa de 0{,}093 a 0{,}426.
@@ -239,33 +260,51 @@ Pared marcada como novedosa & 98{,}9\,\% & 1{,}0\,\% \\
 \end{tabular}
 \end{table}
 
-El rango efectivo bajo no es señal de colapso: en SemanticPOSS también es bajo
+La Figura~\ref{fig:captura-m2} muestra lo que predice cada cabeza sobre la
+capilla. Con SemanticPOSS casi todos los puntos caen en una sola cabeza, la misma
+para la cúpula, las paredes y los arcos, y casi toda la escena se marca como
+novedosa. Con ArCH las cabezas se reparten por piezas, la cúpula queda en una
+cabeza, las paredes laterales en otra y el techo en una tercera, y el 87\,\% de
+los puntos se marca como conocido. Los arcos de la nave son lo que queda marcado
+como novedoso, que es lo esperado porque el arco fue una de las clases
+novedosas del entrenamiento con ArCH.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/captura_m2.png}
+\caption[Predicción de M2 sobre la capilla]{Predicción de M2 sobre la capilla con el checkpoint de SemanticPOSS y con el de ArCH. Arriba, la cabeza que predice cada punto. Abajo, si el punto se marca como novedoso o como conocido. Sin la clase \emph{otro}. Capturas del visor del proyecto. Elaboración propia.}
+\label{fig:captura-m2}
+\end{figure}
+
+El rango efectivo bajo no es señal de colapso, porque en SemanticPOSS también es bajo
 (entre 4 y 5) donde el modelo funciona. Lo que delata el colapso es el reparto de
 cabezas y el NMI (Sección~\ref{sec:res-u3-proc}).
 
+\paragraph*{Qué dice el Módulo~2.} HyperNCD no está roto. En su propio dominio, la
+validación de SemanticPOSS da un mIoU de 0{,}375, casi el 0{,}384 que guarda el
+punto de control. El colapso aparece al salir de ese dominio, con el 98{,}4\,\% de
+la capilla en una sola cabeza. Al entrenar con ArCH esa cabeza baja a 44{,}6\,\% y
+el NMI sin \emph{other} sube de 0{,}027 a 0{,}439. El hallazgo es que para
+esta escena importa más con qué se entrena HyperNCD que cómo se fusiona después.
+Queda sin separar qué parte del dominio pesa, si el contenido, la escala o el
+patrón del LiDAR, y el entrenamiento con ArCH se hizo una sola vez.
+
 \FloatBarrier
-\subsection[Rama Auto-supervisada Congelada]{Rama Auto-supervisada Congelada\espejo{sec:rama-ssl}}
+\subsection[Rama Auto-supervisada, Sonata Original y Adaptado]{Rama Auto-supervisada, Sonata Original y Adaptado\espejo{sec:rama-ssl}}
 \label{sec:res-rama-ssl}
 
-Se ejecutó sobre PL13 en Khipu. En el clúster
-el archivo se llama \texttt{PL13'\_SCN0001.las}, con apóstrofo, y el guion de
-lanzamiento lo quita al nombrar la salida, que queda como
-\texttt{PL13\_SCN0001}. La entrada fue la matriz $S$ de PL13 generada en Khipu
-(Sección~\ref{sec:res-u1-repro}), en 15{,}8 segundos.
-
+Se ejecutó sobre la capilla etiquetada en Colab, una vez con los pesos originales
+y otra con los adaptados, con el mismo programa y los mismos parámetros. La
+entrada fue la matriz $S$ de la capilla (Sección~\ref{sec:res-u1-datos}). Antes se
+había probado el programa sobre PL13 en Khipu, donde el archivo se llama
+\texttt{PL13'\_SCN0001.las}, con apóstrofo, y el guion de lanzamiento lo quita al
+nombrar la salida.
 
 \FloatBarrier
 \subsubsection*{Paso 1. Carga de la matriz}
 
-Se leen 803\,099 filas en 0{,}3 segundos; es la salida del Paso~6 de la
-Unidad~1 (Figura~\ref{fig:m3-paso1}).
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.4\linewidth]{imagenes/m3_paso1_entrada.png}
-\caption[Matriz $S$ de PL13, entrada de Sonata]{Matriz $S$ de PL13, entrada de Sonata. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:m3-paso1}
-\end{figure}
+Se leen 1\,135\,946 filas en 0{,}1 segundos, es la salida del Paso~6 de la
+Unidad~1 (Figura~\ref{fig:escena-etapas}).
 
 \FloatBarrier
 \subsubsection*{Paso 2. Carga del modelo}
@@ -286,47 +325,49 @@ toda celda contiene un solo punto.
 \subsubsection*{Paso 4. Inferencia}
 
 El tiempo, el rendimiento y la memoria de la inferencia están en la
-Tabla~\ref{tab:salidas-p2}. La Figura~\ref{fig:visor-pl13-etapas} muestra los
-descriptores con la primera vista de la Sección~\ref{sec:revision-descriptores}.
-Cada panel dibuja 100\,000 puntos al azar, por eso la
-reducción de la Unidad~1 no se aprecia entre los dos primeros; se aprecia en la
-Figura~\ref{fig:m1-paso4-pl13}.
+Tabla~\ref{tab:salidas-p2}. La Figura~\ref{fig:escena-etapas} muestra la capilla
+cruda, tras la Unidad~1 y con los descriptores, usando la primera vista de la
+Sección~\ref{sec:revision-descriptores}. Cada panel dibuja 250\,000 puntos al
+azar, por eso la reducción de 1\,338\,355 a 440\,161 puntos etiquetados no se
+aprecia entre los dos primeros paneles. En el tercero, la cúpula se ve verde, el
+arco y las paredes morado y azul, y el techo amarillo y rosa, de modo que
+Sonata separa las piezas de la capilla sin haber visto una sola etiqueta.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.8\linewidth]{imagenes/visor_pl13_entrada_m1_m3.png}
-\caption[PL13 en sus tres etapas]{PL13 crudo, tras la Unidad~1 y con los descriptores de Sonata. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:visor-pl13-etapas}
+\includegraphics[width=0.85\linewidth]{imagenes/escena_etapas.png}
+\caption[La capilla en tres etapas]{La capilla etiquetada cruda, tras la Unidad~1 y con los descriptores de Sonata original, en planta y de costado. Solo se dibujan las piezas etiquetadas, sin la clase \emph{otro}. Elaboración propia.}
+\label{fig:escena-etapas}
 \end{figure}
 
 \FloatBarrier
 \subsubsection*{Paso 5. Escritura}
 
 El contenido del archivo \texttt{.npz} está en la Tabla~\ref{tab:npz} y su
-tamaño en la Tabla~\ref{tab:salidas-p2}. Tiene cinco
-campos y no seis porque esta extracción se hizo antes de que el programa
-guardara la semilla.
+tamaño en la Tabla~\ref{tab:salidas-p2}. Tiene seis
+campos, incluida la semilla del muestreo, que valió 0.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Archivo de descriptores de PL13]{Archivo de descriptores de PL13. Los campos se describen en el Paso~5 de la Sección~\ref{sec:rama-ssl}. Elaboración propia.}
+\caption[Archivo de descriptores de la capilla]{Archivo de descriptores de la capilla. Los campos se describen en el Paso~5 de la Sección~\ref{sec:rama-ssl}. Elaboración propia.}
 \label{tab:npz}
 \begin{tabular}{@{}ll@{}}
 \toprule
-\textbf{Campo} & \textbf{Valor en PL13} \\
+\textbf{Campo} & \textbf{Valor en la capilla} \\
 \midrule
-\texttt{feat} & $796\,315\times 1088$, precisión media \\
-\texttt{coord} & $796\,315\times 3$ \\
-\texttt{inverse} & $803\,099$ entradas \\
+\texttt{feat} & $1\,133\,238\times 1088$, precisión media \\
+\texttt{coord} & $1\,133\,238\times 3$ \\
+\texttt{inverse} & $1\,135\,946$ entradas \\
 \texttt{grid\_size} & 0{,}02\,m \\
-\texttt{n\_original} & 803\,099 \\
+\texttt{n\_original} & $1\,135\,946$ \\
+\texttt{semilla} & 0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \FloatBarrier
-\subsubsection*{Observables\espejo{sec:observables}}
+\subsubsection*{Mediciones de control de cada extracción\espejo{sec:observables}}
 \label{sec:res-observables}
 
 Los valores esperados y medidos están en la Tabla~\ref{tab:salidas-p2}.
@@ -334,29 +375,30 @@ Los valores esperados y medidos están en la Tabla~\ref{tab:salidas-p2}.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Observables de Sonata en PL13: esperado y medido]{Observables de Sonata en PL13: esperado y medido. Para qué sirve cada uno se explica en la Sección~\ref{sec:observables}. Elaboración propia.}
+\caption[Mediciones de control de Sonata en la capilla, esperado y medido]{Mediciones de control de Sonata original en la capilla, esperado y medido. Para qué sirve cada una se explica en la Sección~\ref{sec:observables}. Elaboración propia.}
 \label{tab:salidas-p2}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xll@{}}
 \toprule
 \textbf{Observable} & \textbf{Esperado} & \textbf{Medido} \\
 \midrule
 Dimensión de $f_{\mathrm{ssl}}$ & 1088 & 1088 \\
-Puntos retenidos tras el muestreo por rejilla & --- & 796\,315 de 803\,099, el 99{,}2\,\% \\
-VRAM pico & Cota de 4{,}2\,GB & 34{,}60\,GB \\
-Tiempo de inferencia por sección & --- & 13{,}9\,s \\
-Rendimiento en puntos por segundo & --- & 57\,397 \\
-Tamaño del archivo de descriptores & --- & 680\,MB \\
+Puntos retenidos tras el muestreo por rejilla & --- & 1\,133\,238 de 1\,135\,946, el 99{,}8\,\% \\
+VRAM pico & Cota de 4{,}2\,GB & 10{,}49\,GB \\
+Tiempo de inferencia por sección & --- & 26{,}6\,s \\
+Rendimiento en puntos por segundo & --- & 42\,644 \\
+Tamaño del archivo de descriptores & --- & 992\,MB \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La memoria es el observable que más se aparta de lo esperado. La cota de
-4{,}2\,GB se calculó para una sección de $3\times10^{5}$ puntos, y PL13 entró a
-Sonata con 796\,315, unas 2{,}7 veces más, por lo que las dos cifras no se
-comparan directamente. Lo que sí indica la medición es cuánto margen queda: una
-sección de unos $8\times10^{5}$ puntos ocupa el 72\,\% de los 48\,GB de la GPU.
-Ese es el dato con que se planificarán las secciones mayores, en lugar de la
-cota.
+La memoria es la medición que más se aparta de lo esperado. La cota de 4{,}2\,GB
+se calculó para una sección de $3\times10^{5}$ puntos, y la capilla entró a Sonata
+con 1\,133\,238, unas 3{,}8 veces más, por lo que las dos cifras no se comparan
+directamente. Lo que sí indica la medición es cuánto margen queda. Con la
+atención de PyTorch, una sección de más de un millón de puntos ocupa 10{,}49\,GB y
+cabe en una GPU de 16\,GB, mientras que con atención densa en Khipu una sección de
+unos $8\times10^{5}$ puntos ocupó 34{,}60\,GB. Ese es el dato con que se
+planificarán las secciones mayores, en lugar de la cota.
 
 \FloatBarrier
 \subsubsection*{Revisión de los descriptores\espejo{sec:revision-descriptores}}
@@ -364,25 +406,97 @@ cota.
 
 La primera vista, las
 componentes principales, es el tercer panel de la
-Figura~\ref{fig:visor-pl13-etapas}; las otras dos están en la
-Figura~\ref{fig:sonata-pl13}, desde la misma cámara.
+Figura~\ref{fig:escena-etapas}, las otras dos están en la
+Figura~\ref{fig:escena-descriptores}, sobre los puntos etiquetados de la capilla.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.6\linewidth]{imagenes/visor_pl13_descriptores_m3_sin_pca.png}
-\caption[Similitud y $k$-means de los descriptores de PL13]{Similitud y $k$-means de los descriptores de PL13. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:sonata-pl13}
+\includegraphics[width=0.6\linewidth]{imagenes/escena_descriptores.png}
+\caption[Similitud y $k$-means de los descriptores de la capilla]{Similitud coseno con un punto de la cúpula y $k$-means de ocho grupos sobre los descriptores de Sonata original en la capilla, sin la clase \emph{otro}. Elaboración propia.}
+\label{fig:escena-descriptores}
 \end{figure}
 
-Sobre la misma muestra, las tres primeras componentes principales explican el
-25{,}3\,\% de la varianza, las diez primeras el 43{,}4\,\% y el rango efectivo
-es de 110{,}6 sobre 1088 dimensiones. Esto significa dos cosas. La primera es que
-el color de la vista de componentes principales, que usa solo tres, muestra una
-cuarta parte de la información de los descriptores; dos puntos del mismo color
-pueden diferir en el resto. La segunda es que los descriptores no han colapsado:
+Sobre una muestra de 100\,000 puntos, las tres primeras componentes principales
+explican el 25{,}4\,\% de la varianza, las diez primeras el 44{,}3\,\% y el rango
+efectivo es de 97{,}7 sobre 1088 dimensiones. Esto significa dos cosas. La primera
+es que el color de la vista de componentes principales, que usa solo tres, muestra
+una cuarta parte de la información de los descriptores, dos puntos del mismo color
+pueden diferir en el resto. La segunda es que los descriptores no han colapsado, porque
 el rango efectivo valdría 1 si todos apuntaran en la misma dirección
-(Sección~\ref{sec:revision-descriptores}), y equivale aquí a unas 110
-direcciones independientes.
+(Sección~\ref{sec:revision-descriptores}), y equivale aquí a unas 98
+direcciones independientes. En la Figura~\ref{fig:escena-descriptores} se ve además
+que el $k$-means parte la cúpula en anillos horizontales y que la similitud con un
+punto de la cúpula es alta en su mismo anillo y baja en los demás. El descriptor
+distingue alturas dentro de una misma pieza, lo que explica que una clase como la
+cúpula se reparta en varios grupos.
+
+\subsubsection*{Adaptación de Sonata a la Catedral\espejo{sec:variante-sonata}}
+
+La adaptación entrenó 30 épocas de 105 iteraciones, 3\,150 en total, y tardó unos
+103 minutos en una GPU L4 de Colab, con 13,3\,GB de puntos de control. Hubo además
+una corrida inválida de unos 42 minutos por un error de configuración, que cuenta
+como costo de depuración. Los pesos del \emph{teacher} cambiaron 8,35\,\% en
+norma, y los 453 tensores cambiaron. La Tabla~\ref{tab:sonata-adaptado} compara
+los dos descriptores sobre la capilla, sin etiquetas.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Sonata original y adaptado sobre la capilla]{Sonata original y adaptado sobre los puntos etiquetados de la capilla, sin usar etiquetas para medir. Muestra de 100\,000 puntos. Elaboración propia a partir de \texttt{experimentacion/escena\_capilla\_etiquetada/}.}
+\label{tab:sonata-adaptado}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Medida} & \textbf{Original} & \textbf{Adaptado} \\
+\midrule
+Coseno punto a punto, centrado (media y percentil 5) & \multicolumn{2}{c}{0,54 y 0,27} \\
+Rango efectivo de $f_{\mathrm{ssl}}$ & 97,7 & 64,3 \\
+Varianza de la PCA, 3 y 10 componentes & 0,254 y 0,443 & 0,281 y 0,538 \\
+Estabilidad del \emph{k}-means ($K=8$) entre semillas & 0,73 & 0,67 \\
+ARI del \emph{k}-means, original contra adaptado & \multicolumn{2}{c}{0,29} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El descriptor adaptado es bastante distinto del original y menos rico, pues su
+rango efectivo baja de 97,7 a 64,3, y el $k$-means es menos estable. En PL13 se
+midió lo mismo antes de tener etiquetas y salió parecido, con un rango de 110,5 a
+81,3 y un coseno medio de 0,54. Con etiquetas, el M3 adaptado rinde menos que el
+original en la capilla ($34{,}3\pm1{,}7$ frente a $45{,}4\pm8{,}5$,
+Tabla~\ref{tab:m2-m4-semillas}). En la capilla los dos descriptores se extrajeron
+en el mismo entorno de Colab, con la misma semilla y la misma atención de PyTorch,
+y por eso la diferencia del coseno de 0,54 viene de los pesos y no del equipo. En
+cambio, en PL13 el original se había extraído en el clúster con atención densa, y
+ese descriptor no se usa para comparar. Lo que sigue sin conocerse es la
+variabilidad de la adaptación, porque se hizo una sola corrida con un lote de una
+escena. El tiempo y la memoria de la extracción en la capilla son casi iguales,
+26{,}6\,s y 27{,}0\,s con 10{,}49\,GB, de modo que la adaptación no cambia el
+costo de usar el modelo.
+
+La Figura~\ref{fig:captura-m3} muestra el agrupamiento de M3 sobre la capilla,
+con la clase que se le asigna a cada grupo y con los aciertos y los errores, para
+una semilla. Con Sonata original la cúpula queda bien definida, con su farol, y
+los errores se concentran en la parte baja de la nave y en los bordes de los
+arcos. Con Sonata adaptado los errores se extienden a la cúpula, parte de la cual
+se confunde con techo y con columna, y por eso baja el mIoU. Es una sola semilla,
+y la Tabla~\ref{tab:m2-m4-semillas} da la diferencia con diez.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/captura_m3.png}
+\caption[Agrupamiento de M3 sobre la capilla]{Agrupamiento de M3 sobre la capilla con $K=8$, con Sonata original y adaptado. Arriba, la clase que toma cada grupo. Abajo, aciertos y errores. Sin la clase \emph{otro}. Capturas del visor del proyecto. Elaboración propia.}
+\label{fig:captura-m3}
+\end{figure}
+
+\paragraph*{Qué dice el Módulo~3.} Sonata original da descriptores con estructura
+y sin colapso, con un rango efectivo de unas 110 direcciones, y por sí solo agrupa
+bien la cúpula, la pared y el techo, aunque el arco y la columna, que son las
+clases finas, quedan atrás. Su resultado cambia mucho entre semillas del
+agrupamiento ($\pm8{,}5$), así que una sola corrida puede engañar, como pasó con la
+primera cifra de 53,4. La adaptación a la Catedral cambió el descriptor y lo dejó
+menos rico, y con etiquetas rindió peor. En la capilla los dos descriptores salen
+del mismo entorno, así que el empeoramiento viene de los pesos. Como se hizo un
+solo entrenamiento con lote de una escena, el resultado es que esa adaptación no
+ayudó, no que adaptar no pueda ayudar.
 
 \FloatBarrier
 \subsection[Punto de Fusión]{Punto de Fusión\espejo{sec:fusion}}
@@ -393,8 +507,88 @@ en CPU y con NumPy y SciPy, sin retropropagación hacia ninguno de los dos
 codificadores. Sobre la capilla agrupó los puntos en unas 3\,800 regiones de
 0{,}75\,m y tardó entre 68 y 80\,s. Su resultado, repetido con diez semillas,
 está en la Tabla~\ref{tab:m2-m4-semillas} y en la
-Figura~\ref{fig:m4-semillas}; el desglose por clase, en la
+Figura~\ref{fig:m4-semillas}, el desglose por clase, en la
 Tabla~\ref{tab:iou-clase}.
+
+La Figura~\ref{fig:escena-m1-m4} muestra la escena con la etiqueta real y con el
+agrupamiento de cada método, en planta y de costado. Cada grupo se pinta con la
+clase que le toca en el emparejamiento uno a uno, y los grupos sin pareja quedan
+en gris oscuro. La cúpula se recupera en los cuatro métodos, y M3 la delimita
+mejor, hasta el farol de la parte alta. M2 y M4 dejan sin clase una franja en la
+base de la cúpula. El arco aparece en rojo sobre el arco real en los cuatro
+métodos, pero en M3 el rojo se extiende también a muros y bordes que no son arco,
+lo que explica su IoU de 18{,}7 en la Tabla~\ref{tab:iou-clase}. La parte baja de
+la nave, que en la etiqueta es \emph{otro} y no se evalúa, se reparte entre
+columna, techo y grupos sin clase. Es una sola semilla, y las diferencias de 49{,}0
+a 52{,}9 entre métodos son menores que la dispersión entre semillas, así que la
+figura sirve para ver qué clase se gana o se pierde y no como un ranking.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/escena_m1_m4.png}
+\caption[Escena etiquetada y agrupamiento de cada método]{Escena etiquetada y agrupamiento de M2, M3, M4 base y M4 con $K=8$, en planta y de costado, con M2 de ArCH y Sonata original, una semilla. Cada grupo toma la clase que le da el emparejamiento uno a uno, sin \emph{otro}. Elaboración propia.}
+\label{fig:escena-m1-m4}
+\end{figure}
+
+\subsubsection*{Barrido de fusiones\espejo{sec:barrido-fusion}}
+
+El barrido probó 39 configuraciones por combinación, con cinco semillas, para ver
+si alguna fusión determinista supera al pegado normalizado (M4 base de la
+Sección~\ref{sec:fusion}). La Tabla~\ref{tab:barrido} muestra las dos
+configuraciones que mejoran en las cuatro combinaciones y la estimación honesta,
+con la configuración elegida en una mitad de la escena y medida en la otra.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Barrido de fusiones]{Cambio del mIoU uno a uno (puntos) respecto del M4 con pegado normalizado (primera columna, mIoU \%), $K=8$, cinco semillas. «Conf. M2» pondera por la confianza del M2, «Prod.\ $0{,}1$» es el producto con peso 0,1 para $f_{\mathrm{sem}}$, «Honesta» es la mejora con la configuración elegida en una mitad de la escena y medida en la otra. Elaboración propia a partir de \texttt{experimentacion/modulo4\_fusion/resultados/}.}
+\label{tab:barrido}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrr@{}}
+\toprule
+\textbf{Combinación} & \textbf{M4 (pegado)} & \textbf{Conf. M2} & \textbf{Prod. $0{,}1$} & \textbf{Honesta} \\
+\midrule
+SemanticPOSS + Sonata original & 42,1 & $+6,6$ & $+6,7$ & $+8,8$ \\
+SemanticPOSS + Sonata adaptado & 33,0 & $+5,8$ & $+4,7$ & $+18,2$ \\
+ArCH + Sonata original & 51,7 & $+1,3$ & $+1,8$ & $-0,2$ \\
+ArCH + Sonata adaptado & 46,9 & $+1,4$ & $+1,3$ & $+1,1$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/fusion_barrido_combos.png}
+\caption[Fusiones frente al M4 de pegado normalizado]{Cambio del mIoU de las fusiones
+con mejor peor caso frente al M4 de pegado normalizado, en las cuatro combinaciones
+($K=8$, cinco semillas). Elaboración propia.}
+\label{fig:barrido-combos}
+\end{figure}
+
+Con el M2 de ArCH ninguna fusión mejora de forma significativa, pues las ganancias de
+$+1{,}3$ a $+1{,}8$ puntos son menores que la desviación entre semillas, de 0,8 a
+2,2, y la estimación honesta es de $-0{,}2$ y $+1{,}1$. Con el M2 colapsado las
+fusiones sí «rescatan» a M4. El producto, el mínimo, la confianza y el blanqueo
+llevan de $\sim$42 a $\sim$50 puntos. El blanqueo quita la dirección dominante de
+un $f_{\mathrm{sem}}$ colapsado, con uno sano no aporta y a veces perjudica, hasta
+$-16$ puntos en el peor caso de una familia. Elegir la mejor configuración con las
+mismas etiquetas infla el resultado. La de 57,3 de la primera corrida no se repitió
+con cinco semillas ni en otras combinaciones. La base de la tabla es la media de
+cinco semillas (51,7), no la de diez de la Tabla~\ref{tab:m2-m4-semillas} (52,5).
+La fusión basada en los descriptores, por tanto, no mejora lo que ya da el pegado
+normalizado cuando el M2 funciona.
+
+\paragraph*{Qué dice el Módulo~4.} Hay tres hallazgos. El primero es que la ventaja
+de $f_{\mathrm{ssl}}$ sobre los rasgos geométricos hechos a mano, que con el M2
+colapsado parecía de unos 20 puntos, dependía de ese colapso. Con el M2 de ArCH,
+M4 queda en $52{,}5\pm2{,}5$ y M4 base en $51{,}4\pm1{,}7$, una diferencia de 1{,}1
+puntos dentro del ruido. El segundo es que la fusión sí aporta estabilidad. M3 solo
+llega a $45{,}4\pm8{,}5$ y M4 sube más de 7 puntos con la tercera parte de la
+dispersión, pero M4 base logra lo mismo, de modo que ese beneficio viene de un
+$f_{\mathrm{sem}}$ sano y no de Sonata. El tercero es que ninguna fusión
+determinista probada supera al pegado normalizado cuando el M2 funciona, y que
+elegir la configuración con las mismas etiquetas que la evalúan infla el resultado.
+Con una escena y un entrenamiento de M2, la propuesta de usar Sonata en lugar de
+los rasgos geométricos queda como viable pero no demostrada como mejora.
 
 % =====================================================================
 \FloatBarrier
@@ -415,9 +609,9 @@ código y de los registros y se reúnen en la Tabla~\ref{tab:res-parametros}.
 \toprule
 \textbf{Etapa} & \textbf{Valores efectivos} \\
 \midrule
-M2, entrenamiento ArCH & 30 épocas; lote 4; 60\,000 puntos por muestra; vóxel 5\,cm; AdamW con tasa 1\,e$-$3 y mínima 1\,e$-$5, programación coseno; $\gamma=1$; $\beta=1$; DBSCAN 0{,}5\,m; semilla 0 \\
-M2, pérdida y Sinkhorn & Escala 10 sobre las puntuaciones; $\epsilon_{\mathrm{sk}}=0{,}1$; $\alpha=0{,}5$, $\tau=0{,}1$, $M=8$ en la afinidad regional \\
-M4 & Regiones de 0{,}75\,m; $\alpha=0{,}5$; $M=8$; $\tau=1$ con $g$ estandarizado; $\epsilon_{\mathrm{sk}}=0{,}05$; $\gamma=1$; 15 iteraciones; $K=8$; diez semillas \\
+M2, entrenamiento ArCH & 30 épocas, lote 4, 60\,000 puntos por muestra, vóxel 5\,cm, AdamW con tasa 1\,e$-$3 y mínima 1\,e$-$5, programación coseno, $\gamma=1$, $\beta=1$, DBSCAN 0{,}5\,m, semilla 0 \\
+M2, pérdida y Sinkhorn & Escala 10 sobre las puntuaciones, $\epsilon_{\mathrm{sk}}=0{,}1$, $\alpha=0{,}5$, $\tau=0{,}1$, $M=8$ en la afinidad regional \\
+M4 & Regiones de 0{,}75\,m, $\alpha=0{,}5$, $M=8$, $\tau=1$ con $g$ estandarizado, $\epsilon_{\mathrm{sk}}=0{,}05$, $\gamma=1$, 15 iteraciones, $K=8$, diez semillas \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -426,7 +620,7 @@ M4 & Regiones de 0{,}75\,m; $\alpha=0{,}5$; $M=8$; $\tau=1$ con $g$ estandarizad
 \subsection[Función de Cada Paso y Efecto de Omitirlo]{Función de Cada Paso y Efecto de Omitirlo\espejo{sec:param-funcion}}
 
 Los efectos que la Tabla~\ref{tab:funcion} atribuye a cada paso se observan en
-las salidas: el descarte del filtrado en las zonas ralas (Figura~\ref{fig:m1-paso3}),
+las salidas, como el descarte del filtrado en las zonas ralas (Figura~\ref{fig:m1-paso3}),
 la pérdida de superficies próximas por el vóxel (Figura~\ref{fig:cubo-pl7}), las
 normales ruidosas de las zonas ralas (Figura~\ref{fig:m1-paso5}) y la retención
 casi total de la rejilla de Sonata (Tabla~\ref{tab:salidas-p2}).
@@ -434,7 +628,7 @@ casi total de la rejilla de Sonata (Tabla~\ref{tab:salidas-p2}).
 \FloatBarrier
 \subsection[Pruebas de los Parámetros]{Pruebas de los Parámetros\espejo{sec:param-criterio}}
 
-Ninguna de las pruebas P0 a P5 se ejecutó; la elección de cada valor es la que
+Ninguna de las pruebas P0 a P5 se ejecutó, la elección de cada valor es la que
 declara la Tabla~\ref{tab:parametros}. Lo que sí se comprobó es que la
 extracción de Sonata retiene el 99{,}2\,\% de los puntos con la rejilla de 2\,cm
 (Tabla~\ref{tab:salidas-p2}), de modo que el vóxel de 5\,cm del Módulo~1 es el
@@ -444,7 +638,7 @@ que fija la resolución.
 \subsection[Replicación del Procedimiento]{Replicación del Procedimiento\espejo{sec:param-replicacion}}
 
 La replicación de la configuración de referencia está en la
-Sección~\ref{sec:res-u1-repro}: el preprocesamiento dio los mismos conteos en la
+Sección~\ref{sec:res-u1-repro}. El preprocesamiento dio los mismos conteos en la
 laptop y en Khipu. La extracción de Sonata fija ahora una semilla y la guarda en el archivo, pero la
 extracción de PL13 se hizo antes de ese cambio, de modo que su repetición exacta
 no está comprobada.
@@ -461,10 +655,10 @@ no está comprobada.
 \subsubsection*{E1. Diagnóstico de dominio}
 
 El checkpoint de SemanticPOSS se aplicó primero a escenas de su propio dominio
-como control positivo (Tabla~\ref{tab:m2-control}): allí funciona, y en la
+como control positivo (Tabla~\ref{tab:m2-control}). Allí funciona, y en la
 capilla colapsa en una sola cabeza. Submuestrear la capilla a 80\,000 puntos, la
 densidad de un LiDAR, no lo corrige. No es, entonces, un error de la extracción ni
-un mal checkpoint, sino una brecha de dominio; el experimento no separa cuánto
+un mal checkpoint, sino una brecha de dominio, el experimento no separa cuánto
 pesan el contenido, la escala y el sensor.
 
 \begin{table}[!htbp]
@@ -490,14 +684,14 @@ PL13 y PL7, sin etiquetas & 82{,}5 y 81{,}4\,\% & 4 & --- & --- \\
 ArCH \cite{matrone2020benchmark} se eligió porque contiene la geometría y las
 clases propias del patrimonio arquitectónico, como arcos, columnas y bóvedas,
 ausentes del dominio urbano de SemanticPOSS. Se usaron 15 escenas para
-entrenamiento y dos de prueba como validación; seis clases fueron conocidas
+entrenamiento y dos de prueba como validación, seis clases fueron conocidas
 (molduras, piso, puerta/ventana, muro, escaleras y techo), tres novedosas (arco,
 columna y bóveda) y \emph{other} se ignoró en la métrica principal. La
 configuración está en la Tabla~\ref{tab:res-parametros}.
 
 El mejor checkpoint alcanzó 48{,}93\,\% de mIoU de validación en la época~20 y el
 de la época 30, 48{,}47\,\%. El archivo del mejor se llama
-\texttt{epoch=20-step=860} y su metadato interno dice época 21; aquí se nombra por
+\texttt{epoch=20-step=860} y su metadato interno dice época 21, aquí se nombra por
 el archivo. Es una única corrida. La Figura~\ref{fig:m2-arch-curvas} muestra que
 la pérdida baja de 4{,}90 a 2{,}64 y que la validación se aplana hacia la época
 20, y la Tabla~\ref{tab:m2-arch-clases}, que las clases extensas obtienen los
@@ -522,18 +716,18 @@ IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_arch_curvas.png}
 \caption[Curvas de entrenamiento de M2 con ArCH]{Entrenamiento de M2 con ArCH
-durante 30 épocas: pérdida de entrenamiento, mIoU de validación con su mejor
-época en la 20 (0,489) y IoU por clase; las clases novedosas van en línea
+durante 30 épocas, con pérdida de entrenamiento, mIoU de validación con su mejor
+época en la 20 (0,489) y IoU por clase, las clases novedosas van en línea
 discontinua. Elaboración propia.}
 \label{fig:m2-arch-curvas}
 \end{figure}
 
 \subsubsection*{E3. Transferencia a la capilla}
 
-La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla: con ArCH
+La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla. Con ArCH
 la cabeza dominante baja a menos de la mitad y el NMI y el mIoU uno a uno se
 multiplican por más de cuatro. Los dos checkpoints de ArCH son casi idénticos. La
-selección por validación elige el de la época 20; el de la época 30 rinde 1{,}9
+selección por validación elige el de la época 20, el de la época 30 rinde 1{,}9
 puntos más en la capilla, pero esa escena no se usó para elegir, y la fusión de
 las secciones siguientes se hizo con el de la época 30. La
 Figura~\ref{fig:m2-dominio} añade la entropía de las cabezas y el rango efectivo,
@@ -563,7 +757,7 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 33,6\,\% & 35,5\,\% \\
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_dominio_capilla.png}
 \caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de dominio
-de M2 sobre la escena de control: checkpoint de SemanticPOSS (época~8) frente a
+de M2 sobre la escena de control, con el checkpoint de SemanticPOSS (época~8) frente a
 los checkpoints de ArCH (épocas 20 y 30). Se reportan cabeza dominante, rango
 efectivo de $f_{\mathrm{sem}}$, entropía normalizada y NMI. Elaboración propia.}
 \label{fig:m2-dominio}
@@ -585,7 +779,7 @@ tiene 13 cabezas y rotula solo las primeras nueve. Elaboración propia.}
 
 La comparación final se repitió con diez semillas de inicialización del
 agrupamiento, con $K=8$, asignación uno a uno y sin \emph{other}. Estas
-repeticiones no reentrenan ninguna red: miden la estabilidad de la etapa final,
+repeticiones no reentrenan ninguna red. Miden la estabilidad de la etapa final,
 no la de HyperNCD ni la de Sonata. La Tabla~\ref{tab:m2-m4-semillas} reúne las
 cuatro combinaciones de M2 (SemanticPOSS o ArCH) y de Sonata (original o adaptado
 a la Catedral) y la Figura~\ref{fig:m4-semillas} las dibuja con su mínimo y
@@ -613,35 +807,76 @@ ArCH + Sonata adaptado & $48,4\pm1,1$ & $34,3\pm1,7$ & $51,4\pm1,7$ & $47,0\pm0,
 \includegraphics[width=\linewidth]{imagenes/m4_semillas.png}
 \caption[Comparación M2--M4 con diez semillas y cuatro combinaciones]{mIoU uno a
 uno sin \emph{other}, media y desviación de diez semillas de agrupamiento
-($K=8$), para M2, M3, M4 base y M4 en las cuatro combinaciones; los puntos
+($K=8$), para M2, M3, M4 base y M4 en las cuatro combinaciones, los puntos
 negros marcan mínimo y máximo. Elaboración propia.}
 \label{fig:m4-semillas}
 \end{figure}
 
 La tabla permite sustentar tres lecturas. Primera, la ganancia mayor proviene de
-adaptar el dominio de M2: con ArCH, M2 sube 12{,}5 puntos (de 35,9 a 48,4), M4 base
+adaptar el dominio de M2. Con ArCH, M2 sube 12{,}5 puntos (de 35,9 a 48,4), M4 base
 sube 18{,}9 y M4 sube 9{,}1. Segunda, el aporte de Sonata depende del estado de
-M2: cuando M2 está colapsado, la fusión M4 supera a su base en 10{,}9 puntos
+M2. Cuando M2 está colapsado, la fusión M4 supera a su base en 10{,}9 puntos
 (43,4 frente a 32,5), pero con M2 de ArCH la diferencia es de 1{,}1 punto (52,5
 frente a 51,4), menor que las desviaciones de 1,7 y 2,5 y con rangos que se
 solapan, de modo que se observa una mejora numérica, no una superioridad
-demostrada. Tercera, el Sonata adaptado a la Catedral empeora: M3 baja de 45,4 a
+demostrada. Tercera, el Sonata adaptado a la Catedral empeora. M3 baja de 45,4 a
 34,3 y, con ArCH, M4 queda en 47,0, por debajo de su base. La dispersión alta de
 M3 con Sonata original, de $\pm8{,}5$, indica que ese agrupamiento es inestable. Los resultados con una sola semilla, las variantes de fusión, la adaptación de Sonata y la sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~G}.
+
+\paragraph*{Cada módulo por separado.} La Tabla~\ref{tab:modulos-solos} junta, sobre
+la capilla, lo que cuesta y lo que acierta cada módulo por sí solo, con sus dos
+variantes. El mIoU de M2 y de M3 es el del agrupamiento que usa solo ese
+descriptor, y es la misma columna de la Tabla~\ref{tab:m2-m4-semillas}. Esa tabla
+no incluye los tiempos ni qué aporta cada experimento, y esta sí.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{3pt}
+\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{otro}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original. Los tiempos de M2 son de máquinas y medidas distintas, por lo que no se comparan entre sí. Elaboración propia a partir de los registros de medición.}
+\label{tab:modulos-solos}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.4cm}r>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Módulo} & \textbf{Qué entra y sale} & \textbf{Tiempo} & \textbf{mIoU} & \textbf{Cambio} \\
+\midrule
+M1 & 3\,380\,661 a 1\,135\,946 puntos & 9{,}3\,s & --- & --- \\
+\midrule
+M2 original (SemanticPOSS) & A 927\,988 vóxeles, $f_{\mathrm{sem}}$ de 96 valores & Extracción 1{,}8\,s & $35{,}9\pm0{,}6$ & --- \\
+M2 adaptado (ArCH) & Igual & Entrenamiento 75\,min, extracción 42{,}7\,s & $48{,}4\pm1{,}1$ & $+12{,}5$ \\
+\midrule
+M3 original & A 1\,133\,238 puntos, $f_{\mathrm{ssl}}$ de 1088 valores & Extracción 26{,}6\,s & $45{,}4\pm8{,}5$ & --- \\
+M3 adaptado & Igual & Adaptación 103\,min, extracción 27{,}0\,s & $34{,}3\pm1{,}7$ & $-11{,}1$ \\
+\midrule
+M4 base, con M2 de ArCH & $f_{\mathrm{sem}}$ y $f_{\mathrm{geo}}$ & 68 a 80\,s & $51{,}4\pm1{,}7$ & --- \\
+M4, con M2 de ArCH y Sonata original & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ & 68 a 80\,s & $52{,}5\pm2{,}5$ & $+1{,}1$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Leída por filas, la tabla dice qué aporta cada experimento. Entrenar HyperNCD con
+ArCH sube 12{,}5 puntos a M2 y cuesta 75 minutos de GPU, que es el mayor beneficio
+por costo del trabajo. Adaptar Sonata cuesta 103 minutos y baja 11{,}1 puntos a M3,
+sin cambiar el tiempo de extracción. Fusionar con el mejor M2 sube 4{,}1 puntos
+sobre M2 solo y 7{,}1 sobre M3 solo, y apenas 1{,}1 sobre M4 base. Los acuerdos con
+las cifras de una sola semilla de las primeras corridas se pierden. Aquella cifra
+de 53{,}4 para M3 era una semilla afortunada, y la media de diez es 45{,}4, por eso
+estas cifras reemplazan a las anteriores. El detalle de la comparación está en la
+Tabla~\ref{tab:m2-m4-semillas}, el desglose por clase en la
+Tabla~\ref{tab:iou-clase} y los tiempos en la Tabla~\ref{tab:res-hardware}.
 
 \FloatBarrier
 \subsection[Trazabilidad de la Métrica]{Trazabilidad de la Métrica\espejo{sec:trazabilidad}}
 \label{sec:res-u3-traza}
 
-El IoU de cada clase es $TP/(TP+FP+FN)$ y vale 0 si la clase no tiene puntos reales ni asignados; el NMI usa normalización aritmética. La Tabla~\ref{tab:iou-clase} descompone el mIoU por clase para una semilla, con
-$K=8$, asignación uno a uno y sin \emph{other}; la
+El IoU de cada clase es $TP/(TP+FP+FN)$ y vale 0 si la clase no tiene puntos reales ni asignados, el NMI usa normalización aritmética. La Tabla~\ref{tab:iou-clase} descompone el mIoU por clase para una semilla, con
+$K=8$, asignación uno a uno y sin \emph{other}, la
 Figura~\ref{fig:m4-iou-clase} muestra todas las combinaciones, con y sin
 \emph{other}. La clase que domina cada agregado es distinta. En M3 domina la
 cúpula, con 80{,}5, mientras el arco apenas llega a 18{,}7. Con M2 de ArCH el arco
-mejora (M2, 48{,}0; M4 base, 49{,}8; M4, 42{,}3), porque ArCH sí lo conoce, pero la
-cúpula en M4 cae de 80{,}5 a 43{,}0: $f_{\mathrm{sem}}$ pesa más en la fusión y
+mejora (M2, 48{,}0, M4 base, 49{,}8, M4, 42{,}3), porque ArCH sí lo conoce, pero la
+cúpula en M4 cae de 80{,}5 a 43{,}0, porque $f_{\mathrm{sem}}$ pesa más en la fusión y
 separa peor la cúpula que $f_{\mathrm{ssl}}$. La columna es la más baja en todos
-los métodos, entre 22 y 29. El M2 de ArCH, por tanto, no mejora todas las clases:
+los métodos, entre 22 y 29. El M2 de ArCH, por tanto, no mejora todas las clases, porque
 cambia cuáles se ganan y cuáles se pierden.
 
 \begin{table}[!htbp]
@@ -675,37 +910,99 @@ No se calcularon la ganancia $\Delta\mathrm{mIoU}^{\mathrm{novel}}$, la brecha
 cerrada $G$ ni la sonda lineal. Las dos primeras requieren una línea base
 supervisada y una separación entre clases conocidas y novedosas que la evaluación
 por agrupamiento de la capilla no define, porque allí ninguna clase tiene etiqueta
-de entrenamiento; la sonda lineal tiene su programa, pero no se corrió.
+de entrenamiento, la sonda lineal tiene su programa, pero no se corrió.
+
+\subsubsection*{Escena etiquetada y métricas\espejo{sec:escena-etiquetada}}
+
+La capilla etiquetada quedó con 1\,135\,946 puntos tras el Módulo~1. En la evaluación sin
+\emph{other} las clases tienen 173\,886 puntos de pared, 110\,152 de cúpula, 75\,056 de techo,
+47\,789 de arco y 33\,278 de columna, arco y columna son las más pequeñas. Las métricas de
+esta escena son las de las Tablas~\ref{tab:m2-m4-semillas} y~\ref{tab:iou-clase}.
+
+\subsubsection*{Umbral y dificultad por clase\espejo{sec:umbral-dificultad}}
+
+El umbral de 70\,\% se aplica al IoU de cada clase. La Tabla~\ref{tab:umbral}
+muestra el IoU por clase del mejor modelo (M2 de ArCH con Sonata original) y del
+peor (M2 de SemanticPOSS con Sonata adaptado), medio de diez semillas. Las clases
+van ordenadas por el IoU del mejor modelo, que es su dificultad experimental, el
+peor modelo conserva el mismo orden.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[IoU por clase frente al umbral de 70\,\%]{IoU por clase (\%), media $\pm$ desviación de diez semillas, $K=8$, asignación uno a uno y sin \emph{other}. Elaboración propia a partir de \texttt{experimentacion/modulo4\_fusion/resultados/referencias\_semillas.json}.}
+\label{tab:umbral}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrrr@{}}
+\toprule
+\textbf{Modelo} & \textbf{Pared} & \textbf{Techo} & \textbf{Cúpula} & \textbf{Arco} & \textbf{Columna} \\
+\midrule
+Mejor & $71,9\pm3,6$ & $68,0\pm3,5$ & $51,7\pm8,2$ & $42,5\pm0,9$ & $28,4\pm1,3$ \\
+Peor & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2$ & $19,0\pm1,6$ & $13,3\pm1,2$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/caso_grafico_iou_10semillas.png}
+\caption[IoU por clase frente al umbral de 70\,\%]{IoU por clase del mejor y el peor modelo,
+media de diez semillas con su desviación, frente al umbral de 70\,\%. Elaboración propia.}
+\label{fig:caso-iou}
+\end{figure}
+
+Solo la pared del mejor modelo cumple el umbral (71,9), el techo queda en 68,0 y el
+peor modelo no cumple en ninguna clase. La brecha media al umbral es de 17,9 puntos
+en el mejor y de 36,3 en el peor. Las desviaciones muestran que la cúpula es la clase
+más inestable ($\pm8{,}2$).
+
+Para saber si el orden de las clases refleja su forma y no solo el modelo, se midió
+la geometría de cada una sin usar ningún modelo, sobre la capilla etiquetada y sobre
+los archivos LAS por pieza (Tabla~\ref{tab:geometria} y
+Figura~\ref{fig:caso-geometria}). El tamaño de la clase correlaciona con el IoU
+($+0{,}90$ de Spearman) y la linealidad lo hace de forma inversa ($-0{,}90$). Arco y
+columna son las más pequeñas, las más alargadas y las que más mezclan sus bordes con
+otras clases. Un índice simple, el promedio de los rangos de cuatro medidas, ordena
+las clases como pared, techo, cúpula y arco y columna empatadas, el mismo orden del
+IoU. El número de piezas que hizo el etiquetador (arco, 8, pared, 6) no guarda
+relación con el IoU ($-0{,}15$). Refleja cómo se etiquetó, no la dificultad.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Geometría de cada clase de la capilla]{Medidas geométricas por clase, independientes del modelo. Elaboración propia a partir de la capilla etiquetada y de los archivos LAS por pieza.}
+\label{tab:geometria}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Clase} & \textbf{\% de la escena} & \textbf{Linealidad} & \textbf{Vecinos de otra clase (\%)} & \textbf{Piezas} \\
+\midrule
+Pared & 15,3 & 0,194 & 1,2 & 6 \\
+Techo & 6,6 & 0,198 & 0,8 & 1 \\
+Cúpula & 9,7 & 0,272 & 0,5 & 1 \\
+Arco & 4,2 & 0,380 & 2,5 & 8 \\
+Columna & 2,9 & 0,351 & 2,9 & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{imagenes/caso_grafico_geometria.png}
+\caption[Geometría de las clases frente al IoU]{Cuatro medidas geométricas frente al
+IoU del mejor modelo (media de diez semillas). Cada punto es una clase. Elaboración propia.}
+\label{fig:caso-geometria}
+\end{figure}
+
+Con cinco clases las correlaciones son solo orientativas, y los archivos por pieza
+son puntos crudos, sin el voxel de 5\,cm del Módulo~1. El umbral de 70\,\% es una
+meta propia del proyecto, pues ninguno de los siete artículos consultados fija un IoU
+mínimo aceptable.
 
 \FloatBarrier
 \subsection[Verificación Empírica del Entorno de Cómputo]{Verificación Empírica del Entorno de Cómputo\espejo{sec:entorno-computo}}
 \label{sec:res-entorno}
 
 El entrenamiento de ArCH usó en promedio 62{,}8\,\% de la GPU y 74{,}7\,\% de la
-CPU a razón de 2,5 minutos por época; los tiempos y las memorias restantes están
+CPU a razón de 2,5 minutos por época, los tiempos y las memorias restantes están
 en la Tabla~\ref{tab:res-hardware} y el uso de recursos en el tiempo, en la
 Figura~\ref{fig:g-recursos} del \hyperref[sec:anexo-complementarios]{Anexo~G}.
 
-% =====================================================================
-\FloatBarrier
-\section[Riesgos y Mitigación]{Riesgos y Mitigación\espejo{sec:riesgos}}
-
-\paragraph*{(i) Disponibilidad de la nube anotada.} El riesgo se materializó: los
-23 archivos LAS llegaron sin etiquetas (Sección~\ref{sec:u1-datos}). Se mitigó
-con la capilla etiquetada, de una sola escena, lo que limita lo que se puede
-generalizar.
-
-\paragraph*{(ii) Acceso y configuración del clúster.} Verificado: la Unidad~2
-corrió en la GPU asignada (Sección~\ref{sec:res-hardware}). El entrenamiento de M2
-y las evaluaciones finales corrieron en Colab.
-
-\paragraph*{(iii) Desplazamiento de dominio.} Se materializó y se atendió con el
-entrenamiento con ArCH (Sección~\ref{sec:res-u3-proc}).
-
-% =====================================================================
-\FloatBarrier
-\section[Resumen de los Resultados]{Resumen de los Resultados\espejo{sec:conclusion-metodo}}
-
-Las tres unidades produjeron las salidas declaradas por el método. La evidencia es
-exploratoria: una escena, una corrida de entrenamiento y diez repeticiones solo
-del agrupamiento. Las conclusiones están en el capítulo siguiente.

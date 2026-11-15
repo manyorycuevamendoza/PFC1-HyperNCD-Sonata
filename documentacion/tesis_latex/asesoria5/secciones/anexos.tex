@@ -24,9 +24,9 @@ Elaboración propia.}
 \textbf{Herramienta} & \textbf{Uso} & \textbf{Módulo} \\
 \midrule
 \texttt{laspy} & Lectura por bloques del archivo LAS & 1 \\
-Open3D & Filtrado SOR, voxelización y estimación de normales; reconstrucción de Poisson para exportar el sólido & 1, 5 \\
+Open3D & Filtrado SOR, voxelización y estimación de normales, reconstrucción de Poisson para exportar el sólido & 1, 5 \\
 NumPy & Apilado de coordenadas y color, centrado, y almacenamiento de $S$ y de $f_{\mathrm{ssl}}$ en disco & 1, 3 \\
-PyTorch & Entrenamiento de la rama semántica y del módulo de prototipos; inferencia de Sonata & 2, 3, 4 \\
+PyTorch & Entrenamiento de la rama semántica y del módulo de prototipos, inferencia de Sonata & 2, 3, 4 \\
 MinkowskiEngine & Rejilla dispersa y convoluciones de la MinkowskiUNet-34C & 2 \\
 Pointcept, \texttt{spconv} & Codificador PTv3 de Sonata con sus pesos públicos & 3 \\
 Código oficial de HyperNCD & Prototipos, hipergrafo y pseudo-etiquetas & 2, 4 \\
@@ -50,10 +50,10 @@ prueba. Elaboración propia.}
 \textbf{Archivo} & \textbf{Función} \\
 \midrule
 \multicolumn{2}{@{}l}{\textbf{Del sistema}}\\
-\texttt{PL7\_SCN0001.las} & Entrada del Módulo~1: escaneo en bruto \\
-\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1: matriz $S$, entrada del Módulo~3 \\
-\texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1: parámetros, centro restado y conteos \\
-\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13: $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
+\texttt{PL7\_SCN0001.las} & Entrada del Módulo~1, escaneo en bruto \\
+\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1, matriz $S$, entrada del Módulo~3 \\
+\texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1, parámetros, centro restado y conteos \\
+\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13, $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
 \midrule
 \multicolumn{2}{@{}l}{\textbf{De inspección y documentación}}\\
 \texttt{PL7\_muestra\_100.csv} & Cien puntos del archivo LAS en texto, para examinar sus campos \\
@@ -78,11 +78,11 @@ verificados por los autores sobre los nodos asignados.}
 \toprule
 \textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
 \midrule
-GPU & CUDA $\geq$ 8.0, una sola unidad; el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}); A100 con particiones MIG en \texttt{ag001} \\
-VRAM & Pico medido de 34{,}60\,GB en PL13 (803\,099 puntos); los pesos del codificador (108{,}46\,M parámetros) ocupan 0{,}43\,GB & 48\,GB (49\,140\,MiB) \\
+GPU & CUDA $\geq$ 8.0, una sola unidad, el diseño por secciones evita el multi-GPU & 1$\times$ RTX A6000 (\texttt{ds001}, \texttt{g002}), A100 con particiones MIG en \texttt{ag001} \\
+VRAM & Pico medido de 34{,}60\,GB en PL13 (803\,099 puntos), los pesos del codificador (108{,}46\,M parámetros) ocupan 0{,}43\,GB & 48\,GB (49\,140\,MiB) \\
 RAM del nodo & Debe alojar la sección completa antes de voxelizar & 64\,GB solicitados por corrida \\
-Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres; \texttt{/local} por nodo \\
-\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos; driver 610.57.04 \\
+Almacenamiento & \emph{Cache} de $f_{ssl}$, legible desde ambos entornos & \texttt{/home} compartido, 16\,TB libres, \texttt{/local} por nodo \\
+\emph{Toolkit} CUDA & 11.3 para MinkowskiEngine (HyperNCD) y 12.4 para PTv3 (Sonata) & 11.8 y 12.4 vía módulos, driver 610.57.04 \\
 Conectividad & Descarga de pesos preentrenados y datos & Solo desde el nodo de acceso \\
 Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \bottomrule
@@ -91,7 +91,7 @@ Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 
 \paragraph*{Visor 3D del proyecto.}
 El programa \texttt{visor\_3d.py}, descrito en la Sección~\ref{sec:visor}, genera
-una página web con Plotly que muestra un escaneo en sus distintas etapas: la
+una página web con Plotly que muestra un escaneo en sus distintas etapas, la
 entrada cruda, los puntos que descarta el filtrado SOR en rojo, la matriz $S$
 con su color real y con sus normales, y los descriptores de Sonata. Todas las
 etapas comparten la misma cámara, así que cambiar de botón no cambia el ángulo,
@@ -159,9 +159,9 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:pbar}{$p_j,\;\bar p$} & Vecinos de un punto y su centroide local & Ec.~\eqref{eq:normal} \\
 \leavevmode\hypertarget{nom:cov}{$C$} & Matriz de covarianza de la vecindad & Ec.~\eqref{eq:normal} \\
 \leavevmode\hypertarget{nom:n}{$n_i$} & Normal unitaria del punto $i$ & $(n_x,n_y,n_z)$ \\
-\leavevmode\hypertarget{nom:rgb}{$R,\;G,\;B$} & Color del punto: rojo, verde y azul & 0 a 255 \\
+\leavevmode\hypertarget{nom:rgb}{$R,\;G,\;B$} & Color del punto, rojo, verde y azul & 0 a 255 \\
 \leavevmode\hypertarget{nom:T}{$\top$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Traspuesta de un vector o de una matriz} \\
-\leavevmode\hypertarget{nom:S}{$S$} & Sección preprocesada: posición, color y normal & 9 columnas por punto \\
+\leavevmode\hypertarget{nom:S}{$S$} & Sección preprocesada, posición, color y normal & 9 columnas por punto \\
 \leavevmode\hypertarget{nom:Ck}{$\mathcal{C}_k$} & Conjunto de clases conocidas (etiquetadas) & Por sección \\
 \leavevmode\hypertarget{nom:Cn}{$\mathcal{C}_n$} & Conjunto de clases novedosas (sin etiqueta) & Hasta 6 por sección \\
 \leavevmode\hypertarget{nom:fsem}{$f_{\mathrm{sem}}$} & Descriptor semántico (MinkowskiUNet-34C) & 96 dimensiones \\
@@ -172,9 +172,9 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:h}{$\mathbf{h}_i^{(s)}$} & Características del punto $i$ en la etapa $s$ del codificador & 48 a 512 canales \\
 \leavevmode\hypertarget{nom:Wp}{$W_p$} & Pesos del \emph{pooling} entre etapas & Ec.~\eqref{eq:pooling} \\
 \leavevmode\hypertarget{nom:pis}{$\pi_s(j)$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Celda de la etapa $s$ que contiene al punto $j$} \\
-\leavevmode\hypertarget{nom:inv}{$\mathrm{inv}(i)$} & Índice inverso: celda en la que cayó el punto $i$ de $S$ & Ec.~\eqref{eq:upcast} \\
-\leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Concatenación: el vector $b$ colocado a continuación del vector $a$} \\
-\leavevmode\hypertarget{nom:ell}{$\ell$} & Lado de la celda de cuantización de M2 & 5\,cm; Ec.~\eqref{eq:cuant} \\
+\leavevmode\hypertarget{nom:inv}{$\mathrm{inv}(i)$} & Índice inverso, celda en la que cayó el punto $i$ de $S$ & Ec.~\eqref{eq:upcast} \\
+\leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Concatenación, el vector $b$ colocado a continuación del vector $a$} \\
+\leavevmode\hypertarget{nom:ell}{$\ell$} & Lado de la celda de cuantización de M2 & 5\,cm, Ec.~\eqref{eq:cuant} \\
 \leavevmode\hypertarget{nom:vcel}{$\mathbf{v}_i$} & Celda de la rejilla a la que pertenece el punto $i$ & Ec.~\eqref{eq:cuant} \\
 \leavevmode\hypertarget{nom:Unet}{$U_\theta$} & Red MinkowskiUNet-34C de M2 con pesos $\theta$ & Ec.~\eqref{eq:fsem} \\
 \leavevmode\hypertarget{nom:wk}{$w_k$} & Vector de pesos del prototipo $k$ del clasificador por coseno & Ec.~\eqref{eq:cabeza} \\
@@ -192,15 +192,15 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:Sg}{$S_g$} & Afinidad geométrica entre regiones & Núcleo gaussiano \\
 \leavevmode\hypertarget{nom:Ss}{$S_s$} & Afinidad semántica entre regiones & Coseno \\
 \leavevmode\hypertarget{nom:Sb}{$S_b$} & Afinidad combinada & Ec.~\eqref{eq:afinidad} \\
-\leavevmode\hypertarget{nom:alpha}{$\alpha$} & Balance geométrico-semántico en $S_b$ & $[0,1]$; 0{,}5 en la implementación \\
-\leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano; un valor pequeño solo considera afines a las regiones muy próximas & 0{,}1 \\
+\leavevmode\hypertarget{nom:alpha}{$\alpha$} & Balance geométrico-semántico en $S_b$ & $[0,1]$, 0{,}5 en la implementación \\
+\leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano, un valor pequeño solo considera afines a las regiones muy próximas & 0{,}1 \\
 \leavevmode\hypertarget{nom:M}{$M$} & Vecinos por hiperarista & 8 \\
 \leavevmode\hypertarget{nom:B}{$B$} & Puntos sin etiqueta del lote & Variable \\
 \leavevmode\hypertarget{nom:Q}{$Q$} & Matriz de partida de Sinkhorn-Knopp & Sección~\ref{sec:sinkhorn} \\
 \leavevmode\hypertarget{nom:epssk}{$\epsilon_{\mathrm{sk}}$} & Temperatura de Sinkhorn-Knopp & 0{,}1 \\
 \leavevmode\hypertarget{nom:uv}{$u,\;v$} & Vectores de escala de Sinkhorn-Knopp & Ec.~\eqref{eq:sk-iter} \\
 \leavevmode\hypertarget{nom:gamma}{$\gamma$} & Tolerancia al desequilibrio entre clases novedosas & 1 en las corridas registradas \\
-\leavevmode\hypertarget{nom:Y}{$Y$} & Pseudo-etiquetas: fila $i$ para el punto $i$ & Sección~\ref{sec:sinkhorn} \\
+\leavevmode\hypertarget{nom:Y}{$Y$} & Pseudo-etiquetas, fila $i$ para el punto $i$ & Sección~\ref{sec:sinkhorn} \\
 \leavevmode\hypertarget{nom:y}{$\hat{y}_i$} & Etiqueta asignada al punto $i$ & Clase conocida o novedosa \\
 \leavevmode\hypertarget{nom:clase}{$c$ (subíndice)} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una clase del conjunto $\mathcal{S}$} \\
 \leavevmode\hypertarget{nom:conj}{$\mathcal{S}$} & Conjunto de clases sobre el que se calcula una métrica & $\mathcal{C}_k$, $\mathcal{C}_n$ o $\mathcal{C}$ \\
@@ -215,17 +215,17 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:nmiv}{$\mathrm{NMI}$} & Información mutua normalizada & Sección~\ref{sec:nmi} \\
 \leavevmode\hypertarget{nom:probe}{$W,\;b$} & Pesos y sesgo del clasificador lineal del \emph{linear probing} & Ec.~\eqref{eq:probe} \\
 \leavevmode\hypertarget{nom:delta}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}$} & Ganancia absoluta en clases novedosas & Ec.~\eqref{eq:delta} \\
-\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{mIoU del modelo $b$ (\emph{hib}: híbrido; \emph{base}: línea base) sobre las clases $a$ (\emph{novel}: novedosas; \emph{known}: conocidas)} \\
+\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{mIoU del modelo $b$ (\emph{hib}, híbrido, \emph{base}, línea base) sobre las clases $a$ (\emph{novel}, novedosas, \emph{known}, conocidas)} \\
 \leavevmode\hypertarget{nom:G}{$G$} & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \midrule
 \multicolumn{3}{@{}l}{\textbf{Índices y operadores}}\\
-\leavevmode\hypertarget{nom:idx}{$i,\;j,\;k$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Índices: $i$ y $j$ recorren puntos, vecinos o regiones; $k$, prototipos} \\
+\leavevmode\hypertarget{nom:idx}{$i,\;j,\;k$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Índices, $i$ y $j$ recorren puntos, vecinos o regiones, $k$, prototipos} \\
 \leavevmode\hypertarget{nom:suma}{$\sum$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Suma de los términos que indica el subíndice} \\
 \leavevmode\hypertarget{nom:minmax}{$\min,\;\max$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Mínimo y máximo, tomados eje por eje} \\
 \leavevmode\hypertarget{nom:argmax}{$\arg\max$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Elemento para el que la expresión toma su valor más alto} \\
 \leavevmode\hypertarget{nom:norma}{$\lVert\cdot\rVert$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Longitud de un vector (norma euclídea)} \\
 \leavevmode\hypertarget{nom:prod}{$\langle\cdot,\cdot\rangle$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Producto escalar de dos vectores} \\
-\leavevmode\hypertarget{nom:card}{$|\cdot|$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Número de elementos de un conjunto; aplicado a un número, su valor absoluto} \\
+\leavevmode\hypertarget{nom:card}{$|\cdot|$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Número de elementos de un conjunto, aplicado a un número, su valor absoluto} \\
 \leavevmode\hypertarget{nom:en}{$\in$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Pertenece a} \\
 \leavevmode\hypertarget{nom:binom}{$\binom{m}{2}$} & Número de pares que se pueden formar con $m$ elementos & $m(m-1)/2$ \\
 \end{longtable}

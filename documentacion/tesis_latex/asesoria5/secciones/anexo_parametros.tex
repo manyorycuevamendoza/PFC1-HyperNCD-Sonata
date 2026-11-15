@@ -14,7 +14,7 @@
 
 
 Antes de discutir valores hay que justificar que cada paso exista. La
-Tabla~\ref{tab:funcion} lo resume; el título de cada paso enlaza con su
+Tabla~\ref{tab:funcion} lo resume, el título de cada paso enlaza con su
 descripción.
 
 \begin{table}[!htbp]
@@ -29,7 +29,7 @@ descripción.
 \midrule
 \multicolumn{3}{@{}l}{\textit{Unidad 1}}\\
 \hyperref[sec:u1-p1]{1. Carga} & Limita la memoria y deja el color en la escala de Sonata & Sonata recibiría color hasta 65\,535 en vez de 255 \\
-\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión: en UTM, la precisión simple redondea $y$ a pasos de 1\,m; centrada, a micrómetros & Molduras y aristas se perderían por redondeo \\
+\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión, en UTM, la precisión simple redondea $y$ a pasos de 1\,m, centrada, a micrómetros & Molduras y aristas se perderían por redondeo \\
 \hyperref[sec:u1-p3]{3. Filtrado SOR} & Retira puntos sueltos antes de que se promedien en el vóxel o tuerzan una normal & Sonata recibiría posiciones y normales de superficies que no existen \\
 \hyperref[sec:u1-p4]{4. Voxelización} & Iguala la densidad y reduce la nube para que quepa en la GPU & Las zonas cercanas al escáner dominarían y la nube no cabría \\
 \hyperref[sec:u1-p5]{5. Normales} & Da a Sonata su tercera entrada, que el escáner no mide & Sonata no tendría su entrada completa \\
@@ -49,17 +49,17 @@ descripción.
 
 
 Cada prueba cambia un solo parámetro sobre la misma sección, deja fijos los
-demás y mide la salida con cuatro indicadores:
+demás y mide la salida con cuatro indicadores.
 \begin{enumerate}
-\item \textbf{Rugosidad $r$}: distancia media de cada punto al plano de sus
+\item \textbf{Rugosidad $r$}, distancia media de cada punto al plano de sus
 vecinos. Baja si se limpia ruido, pero también si se borra detalle, por eso no
 se lee sola.
-\item \textbf{Dispersión angular}: cuánto difiere cada normal de las de sus
+\item \textbf{Dispersión angular}, cuánto difiere cada normal de las de sus
 vecinos.
-\item \textbf{ARI y NMI} (Sección~\ref{sec:hungaro}): cuánto se
+\item \textbf{ARI y NMI} (Sección~\ref{sec:hungaro}), cuánto se
 parecen los grupos de $k$-means de los descriptores a los de la configuración
 de referencia. Cerca de 1, el parámetro no cambia lo que recibe el Módulo~4.
-\item \textbf{Costo}: puntos que quedan, tiempo y memoria.
+\item \textbf{Costo}, puntos que quedan, tiempo y memoria.
 \end{enumerate}
 Se elige el valor más barato a partir del cual los indicadores dejan de mejorar.
 Si quitar un paso no cambia nada, se retira del procedimiento. La
@@ -76,9 +76,9 @@ Tabla~\ref{tab:pruebas} resume las seis pruebas.
 \textbf{Prueba} & \textbf{Qué cambia} & \textbf{Valores} & \textbf{Qué se espera ver} \\
 \midrule
 P0 & Tamaño de bloque & 1, 5 y 20 millones & Ninguna diferencia en $S$ \\
-P1 & Filtrado: con o sin, $q$ y $\lambda$ & Sin filtrado; $q$ de 10 a 40; $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
-P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm; $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
-P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en paredes y en aristas; requiere separar este valor del $q$ del filtrado en el código \\
+P1 & Filtrado, con o sin, $q$ y $\lambda$ & Sin filtrado, $q$ de 10 a 40, $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
+P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm, $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
+P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en paredes y en aristas, requiere separar este valor del $q$ del filtrado en el código \\
 P4 & Precisión del \texttt{.npz} & Media y simple & Si la precisión media cambia los descriptores (ARI) \\
 P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria sin cambiar los descriptores \\
 \bottomrule
@@ -103,9 +103,9 @@ programas es una opción de la línea de órdenes con un valor por defecto
 excepción es el tamaño de parche del codificador, fijo en el programa, que la
 \enlace{sec:param-p5}{prueba~P5} convierte en opción.
 \item La Unidad~1 no tiene pasos aleatorios
-(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}); la
+(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}), la
 comprobación en dos máquinas está en la Sección~\ref{sec:res-u1-repro}.
-\item Cada corrida deja constancia de lo que hizo: los metadatos de la
+\item Cada corrida deja constancia de lo que hizo, los metadatos de la
 \enlace{sec:unidad1}{Unidad~1} (Paso~6) y los campos del archivo de
 descriptores de la \enlace{sec:rama-ssl}{Unidad~2} (Paso~5).
 \item El código, la instalación y los pesos están en el
@@ -172,7 +172,7 @@ Hay tres. El primero es el orden de las filas
 configuración que deje muchos más representantes, por ejemplo un vóxel menor,
 puede no caber en los 48\,GB de la GPU, y en ese caso la falta de memoria se
 reporta como resultado de la configuración y no se reduce la nube para que
-quepa. El tercero es el tamaño de la sección: si la memoria crece con el número
+quepa. El tercero es el tamaño de la sección, si la memoria crece con el número
 de puntos, las secciones más grandes no cabrán en una sola pasada y su
 replicación depende de la división en bloques de la
 Sección~\ref{sec:observables} o de la \enlace{sec:param-p5}{prueba~P5}.
