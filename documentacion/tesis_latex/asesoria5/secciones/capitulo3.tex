@@ -127,11 +127,9 @@ $S \leftarrow [P \mid C \mid N]$ y guardar con los metadatos \tcp*{Paso 6}
 \end{figure}
 
 \paragraph*{Pasos 1 y 2.}\etiquetahija{sec:u1-p1}\etiquetahija{sec:u1-p2} El archivo se lee por bloques de cinco
-millones de puntos para no pedir toda la memoria, y el color de 16 bits se lleva a
-0 a 255. Las coordenadas UTM son números de cientos de miles y de millones, que
-pierden precisión, y por eso se resta el centro de la caja
-(Ecuación~\ref{eq:centrado}). El centro se guarda para devolver cualquier
-resultado a su posición real.
+millones de puntos y el color se lleva a 0 a 255 (Sección~\ref{sec:las}). Como las
+coordenadas UTM son números muy grandes, se resta el centro de la caja
+(Sección~\ref{sec:centrado}), que se guarda para revertirlo.
 
 \paragraph*{Paso 3.}\etiquetahija{sec:u1-p3} El escaneo trae puntos sueltos que no pertenecen a ninguna
 superficie. Se descarta el punto cuya distancia media $\bar d_i$ a sus $q$ vecinos
