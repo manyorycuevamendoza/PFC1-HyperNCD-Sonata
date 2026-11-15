@@ -546,10 +546,8 @@ escaneos con que se adaptó Sonata. Los grupos no tienen nombre, así que primer
 emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro}), como indica
 el Algoritmo~\ref{alg:evaluacion}. La clase \emph{otro} no se cuenta, y se agrupan
 todos los puntos de la escena para que las dos variantes de HyperNCD se midan sobre
-los mismos puntos. Además del mIoU se guardan por clase los falsos positivos, los
-falsos negativos, la precisión, el recall y el F1, y se calcula la asignación por
-mayoría, que castiga a las clases pequeñas, por lo que el resultado principal es el
-uno a uno.
+los mismos puntos. También se calcula la asignación por mayoría, que castiga a las
+clases pequeñas, por lo que el resultado principal es el uno a uno.
 
 \begin{algorithm}[!htbp]
 \small
