@@ -252,17 +252,13 @@ igual. Se probaron primero sobre PL7 y PL13, sin etiquetas, y se aplican a la ca
 etiquetada sin dibujar la clase \emph{otro}, que reúne lo no etiquetado y confunde
 la lectura.
 
-\paragraph*{Adaptación de Sonata a la Catedral.}\etiquetahija{sec:variante-sonata} Sonata adaptado se obtiene
-siguiendo el entrenamiento de Sonata original, con su mismo objetivo y sin
-etiquetas, con 21 de los 23 escaneos. PL7 y PL13 se dejaron fuera para revisar el
-resultado en escaneos que el modelo no vio. Un estudiante aprende a imitar a un
-\emph{teacher} que es su promedio móvil, ambos sobre la misma escena con recortes al
-azar, como indica el Algoritmo~\ref{alg:adaptacion}. Se usó Pointcept con la
-configuración de preentrenamiento de Sonata, en la GPU L4, con
-lote de una escena, que es mucho menor que el original. Se hizo una sola vez, por lo
-que no se conoce su variabilidad. En la capilla el descriptor original y el adaptado
-se extrajeron en el mismo entorno de Colab, con la misma semilla y atención, de modo
-que sus diferencias se deben a los pesos.
+\paragraph*{Adaptación de Sonata a la Catedral.}\etiquetahija{sec:variante-sonata} Sonata adaptado sigue el
+entrenamiento de Sonata original, con su mismo objetivo y sin etiquetas, con 21 de los
+23 escaneos. PL7 y PL13 se dejaron fuera para revisar el resultado en escaneos que el
+modelo no vio. Un estudiante imita a un \emph{teacher}, su promedio móvil, sobre
+recortes al azar de la misma escena (Algoritmo~\ref{alg:adaptacion}). Se usó Pointcept
+con su configuración de preentrenamiento, en la GPU L4 y con lote de una escena, mucho
+menor que el original.
 
 \begin{algorithm}[!htbp]
 \small
