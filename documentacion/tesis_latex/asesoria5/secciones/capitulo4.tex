@@ -1179,3 +1179,43 @@ CPU a razón de 2,5 minutos por época, los tiempos y las memorias restantes est
 en la Tabla~\ref{tab:res-hardware} y el uso de recursos en el tiempo, en la
 Figura~\ref{fig:g-recursos} del \hyperref[sec:anexo-complementarios]{Anexo~G}.
 
+
+% =====================================================================
+\FloatBarrier
+\section{Correspondencia con los Objetivos}
+\label{sec:res-objetivos}
+
+Esta sección vuelve a los objetivos de la introducción y dice, con la métrica de
+salida de cada uno, si se cumplió. Un objetivo se da por cumplido cuando existe el
+producto que pedía y su métrica se midió con el protocolo del
+Capítulo~\ref{cap:metodo}, aunque el resultado no haya sido el esperado. La
+Tabla~\ref{tab:objetivos} resume la correspondencia, y las cifras salen de las
+tablas de este capítulo.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption[Correspondencia entre objetivos y resultados]{Correspondencia entre los objetivos y los resultados, con la métrica de salida de cada uno. Elaboración propia a partir de los resultados de este capítulo.}
+\label{tab:objetivos}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.45\hsize}X>{\raggedright\arraybackslash\hsize=1.0\hsize}X>{\raggedright\arraybackslash\hsize=1.7\hsize}X>{\raggedright\arraybackslash\hsize=0.85\hsize}X@{}}
+\toprule
+\textbf{Objetivo} & \textbf{Qué pedía} & \textbf{Resultado y métrica de salida} & \textbf{Cumplimiento} \\
+\midrule
+General & Construir y medir un sistema híbrido y cuantificar la mejora del mIoU sobre la Catedral & Sistema construido y medido en la capilla. M4 llega a $52{,}5\pm2{,}5$, frente a $51{,}4\pm1{,}7$ de M4 base, $48{,}4\pm1{,}1$ de M2 y $45{,}4\pm8{,}5$ de M3, con diez semillas & Cumplido en lo que mide, la mejora sobre M4 base no es concluyente \\
+OE1 & Integrar Sonata en el módulo de prototipos con un bloque de fusión que sustituya $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ & M4 produce $F_i$ con $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ sobre la capilla en 68 a 80\,s, con el índice inverso y la caché por sección. La sonda lineal confirma que $f_{\mathrm{ssl}}$ contiene las clases, con 79{,}7 y 80{,}5 de mIoU & Cumplido \\
+OE2 & Comparar M2, M3, M4 base y M4 con un protocolo común y cuantificar la variabilidad por semillas & Cuatro combinaciones de modelos por cuatro agrupamientos, con diez semillas, media y desviación (Tabla~\ref{tab:m2-m4-semillas}), el criterio de diferencia real y un barrido de 39 fusiones & Cumplido \\
+OE3 & Cuantificar la mejora, analizar el IoU por clase y delimitar el rango de operación & Mejoras evaluadas con el criterio de diferencia real (M2 con ArCH $+12{,}5$, M3 adaptado $-11{,}1$, M4 contra M4 base $+1{,}1$, que no es real), IoU por clase y umbral de 70\,\%. No se calcularon $\Delta\mathrm{mIoU}^{\mathrm{novel}}$, la brecha $G$ ni la curva de degradación & Cumplido en parte \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los resultados responden a la hipótesis de la introducción con una respuesta
+matizada. Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ es viable y da la media
+más alta, pero con un M2 que funciona la mejora de 1{,}1 puntos queda dentro del
+ruido, y la mayor ganancia observada viene de entrenar HyperNCD con patrimonio
+arquitectónico, con $+12{,}5$ puntos. Adaptar Sonata no mejoró el agrupamiento,
+aunque no dañó el descriptor. Los resultados proceden de una escena y de un
+entrenamiento por modelo, de modo que el rango de operación no se puede fijar
+todavía y queda como trabajo futuro. En conjunto, el avance cumple los objetivos de
+construcción y de evaluación y deja abierta la cuantificación de la mejora.
