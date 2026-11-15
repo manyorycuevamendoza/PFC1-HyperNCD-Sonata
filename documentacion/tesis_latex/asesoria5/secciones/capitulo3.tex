@@ -272,7 +272,7 @@ $S \leftarrow [P \mid C \mid N]$ \quad guardar $S$ y metadatos\;
 
 \FloatBarrier
 \subsubsection*{Paso 1. Carga}
-\phantomsection\label{sec:u1-p1}
+\etiquetahija{sec:u1-p1}
 
 El archivo se abre con \texttt{laspy} y se lee en bloques de cinco millones de
 puntos, para no pedir toda la memoria de una vez. De cada punto se conservan la
@@ -294,7 +294,7 @@ $P \leftarrow \emptyset$ \quad $C \leftarrow \emptyset$\;
 \end{algorithm}
 
 \subsubsection*{Paso 2. Centrado}
-\phantomsection\label{sec:u1-p2}
+\etiquetahija{sec:u1-p2}
 
 Las coordenadas vienen en el sistema UTM, con valores de cientos de miles y de
 millones. Con números tan grandes se pierde precisión, así que a todos los puntos
@@ -314,7 +314,7 @@ guardar $c$ en los metadatos\;
 \end{algorithm}
 
 \subsubsection*{Paso 3. Filtrado SOR}
-\phantomsection\label{sec:u1-p3}
+\etiquetahija{sec:u1-p3}
 
 El escaneo trae puntos sueltos que no pertenecen a ninguna superficie. Para cada
 punto se mide la distancia media a sus $q$ vecinos más cercanos. Si esa distancia
@@ -337,7 +337,7 @@ conservar los puntos con $\bar d_i \leq \mu + \lambda\sigma$\;
 \end{algorithm}
 
 \subsubsection*{Paso 4. Voxelización}
-\phantomsection\label{sec:u1-p4}
+\etiquetahija{sec:u1-p4}
 
 El escáner mide muchos más puntos cerca de él que lejos. Para igualar la densidad,
 el espacio se divide en cubos de lado $\ell$ y los puntos de cada cubo se
@@ -362,7 +362,7 @@ $p_0 \leftarrow \min P - \ell/2$ \tcp*{esquina de la rejilla}
 \end{algorithm}
 
 \subsubsection*{Paso 5. Normales}
-\phantomsection\label{sec:u1-p5}
+\etiquetahija{sec:u1-p5}
 
 La normal indica hacia dónde mira la superficie en cada punto, y el escáner no la
 mide. Se estima con los $q$ vecinos de cada punto, según la
@@ -385,7 +385,7 @@ lejos del escáner.
 \end{algorithm}
 
 \subsubsection*{Paso 6. Escritura}
-\phantomsection\label{sec:u1-p6}
+\etiquetahija{sec:u1-p6}
 
 Se guarda la matriz $S$ (Ecuación~\ref{eq:sj}), con una fila por punto y sus nueve
 valores, en precisión simple. Junto a ella se escribe un archivo de metadatos con
@@ -613,13 +613,13 @@ Figura~\ref{fig:flujo-sonata}.
 
 \FloatBarrier
 \subsubsection*{Paso 1. Carga de la matriz}
-\phantomsection\label{sec:u2-p1}
+\etiquetahija{sec:u2-p1}
 
 El programa lee la matriz $S$ y la separa en posición, color y normal, que son las
 tres entradas que espera Sonata.
 
 \subsubsection*{Paso 2. Carga del modelo}
-\phantomsection\label{sec:u2-p2}
+\etiquetahija{sec:u2-p2}
 
 El modelo se carga con las líneas siguientes, que usan los pesos públicos de
 \texttt{facebook/sonata} y, con la opción \texttt{--pesos}, los adaptados. Se
@@ -636,7 +636,7 @@ modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata",
 \end{lstlisting}
 
 \subsubsection*{Paso 3. Preparación}
-\phantomsection\label{sec:u2-p3}
+\etiquetahija{sec:u2-p3}
 
 El programa traslada la nube para que su centro en $x$ e $y$ y su punto más bajo
 queden en el origen. Después la muestrea con una rejilla de lado $g=2$\,cm, el
@@ -646,7 +646,7 @@ punto de $S$. Ese índice permite devolver después los descriptores a cada punt
 (Ec.~\eqref{eq:upcast}). Por último divide el color entre 255.
 
 \subsubsection*{Paso 4. Inferencia}
-\phantomsection\label{sec:u2-p4}
+\etiquetahija{sec:u2-p4}
 
 El programa pasa la nube preparada por el codificador de Sonata, sin calcular
 gradientes. El codificador tiene cinco etapas seguidas. Cada etapa agrupa los
@@ -677,7 +677,7 @@ Entre etapas la celda pasa de 2 a 4, 8, 16 y 32\,cm, y los canales de 48 a 96, 1
 orden, porque cada una usa la salida de la anterior.
 
 \subsubsection*{Paso 5. Escritura}
-\phantomsection\label{sec:u2-p5}
+\etiquetahija{sec:u2-p5}
 
 El programa guarda en un archivo \texttt{.npz} todo lo necesario para usar los
 descriptores sin volver a ejecutar Sonata. Guarda los descriptores en precisión
@@ -686,7 +686,7 @@ rejilla, el número de puntos de $S$ y la semilla del muestreo del Paso~3.
 
 \FloatBarrier
 \subsubsection*{Mediciones de control de cada extracción}
-\phantomsection\label{sec:observables}
+\etiquetahija{sec:observables}
 
 Cada extracción deja seis mediciones, que se fijaron antes de ejecutar. Sirven para
 saber si la corrida salió como se esperaba y cuánto cuesta repetirla en otra
@@ -718,7 +718,7 @@ con un margen de solape y cada bloque se procesa por separado.
 
 \FloatBarrier
 \subsubsection*{Revisión de los descriptores}
-\phantomsection\label{sec:revision-descriptores}
+\etiquetahija{sec:revision-descriptores}
 
 Los descriptores se revisan de dos maneras. La primera no usa etiquetas y sirve
 para cualquier escaneo. La segunda usa la escena etiquetada y mide el acierto, y se
@@ -751,7 +751,7 @@ reúne lo que no se etiquetó y confunde la lectura.
 
 \FloatBarrier
 \subsubsection*{Adaptación de Sonata a la Catedral}
-\phantomsection\label{sec:variante-sonata}
+\etiquetahija{sec:variante-sonata}
 
 Sonata adaptado se obtiene siguiendo el entrenamiento de Sonata original, con su
 mismo objetivo y sin etiquetas, sobre escaneos de la Catedral. La
@@ -934,7 +934,7 @@ Antes de tener datos reales, el módulo se probó sobre una escena sintética. E
 prueba está en el \hyperref[sec:m4-simulado]{Anexo~D}.
 
 \subsubsection*{Barrido de fusiones}
-\phantomsection\label{sec:barrido-fusion}
+\etiquetahija{sec:barrido-fusion}
 
 Unir los dos descriptores normalizados es la forma más simple de fusionar. Para
 saber si otra forma funciona mejor, se probaron variantes que solo cambian la
@@ -1047,9 +1047,9 @@ aporta cada paso y qué pasaría sin él.
 \FloatBarrier
 \subsection{Pruebas de los Parámetros}
 \label{sec:param-criterio}
-\phantomsection\label{sec:param-p0}\phantomsection\label{sec:param-p1}%
-\phantomsection\label{sec:param-p2}\phantomsection\label{sec:param-p3}%
-\phantomsection\label{sec:param-p4}\phantomsection\label{sec:param-p5}%
+\etiquetahija{sec:param-p0}\etiquetahija{sec:param-p1}%
+\etiquetahija{sec:param-p2}\etiquetahija{sec:param-p3}%
+\etiquetahija{sec:param-p4}\etiquetahija{sec:param-p5}%
 
 Para comprobar los valores de los Módulos~1 y~3 se definieron seis pruebas, de P0 a
 P5. Todas siguen el mismo esquema, que resume el Algoritmo~\ref{alg:prueba} y la
@@ -1366,7 +1366,7 @@ reales. Esta sección describe esa escena, cómo se calcula la métrica y contra
 umbral se compara.
 
 \subsubsection*{Escena etiquetada y métricas}
-\phantomsection\label{sec:escena-etiquetada}
+\etiquetahija{sec:escena-etiquetada}
 
 La escena de prueba es una capilla de la Catedral, que entregó el asesor
 etiquetada a mano (Figura~\ref{fig:m1-clases}). Tiene cinco clases, arco, columna,
@@ -1433,7 +1433,7 @@ se queda con varios grupos y las pequeñas quedan sin ninguno. Por eso el result
 principal es la asignación uno a uno.
 
 \subsubsection*{Umbral y dificultad por clase}
-\phantomsection\label{sec:umbral-dificultad}
+\etiquetahija{sec:umbral-dificultad}
 
 El IoU de cada clase se compara con un umbral de 70\,\%, el mismo para todas las
 clases. Es una meta propia del proyecto, porque ninguno de los artículos
@@ -1444,7 +1444,7 @@ modelo. Se miden su tamaño, qué tan alargada es, cuánto cambian sus normales,
 cuántos de sus puntos tocan a otra clase y la forma de cada pieza etiquetada.
 
 \subsubsection*{Sonda lineal}
-\phantomsection\label{sec:sonda-lineal}
+\etiquetahija{sec:sonda-lineal}
 
 El agrupamiento mezcla dos preguntas, si el descriptor contiene la información de
 las clases y si el Módulo~4 la aprovecha. La sonda lineal las separa, porque mide

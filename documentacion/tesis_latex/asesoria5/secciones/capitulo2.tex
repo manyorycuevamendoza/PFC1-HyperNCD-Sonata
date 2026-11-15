@@ -112,7 +112,7 @@ orientada con $n_z\geq 0$, por ello no distingue las caras interior y exterior d
 \subsection{Segmentación Semántica y Clases}
 \label{sec:segsem}
 
-\phantomsection\label{sec:clases}La segmentación semántica asigna una clase a cada punto de $P$, sin separar
+\etiquetahija{sec:clases}La segmentación semántica asigna una clase a cada punto de $P$, sin separar
 instancias de una misma clase. \nom{Ck}{$\mathcal{C}_k$} reúne las clases etiquetadas y
 \nom{Cn}{$\mathcal{C}_n$}, las presentes sin etiquetas, con $\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$ y
 $\mathcal{C}=\mathcal{C}_k\cup\mathcal{C}_n$, en patrimonio, $\mathcal{C}_n$ contiene elementos sin catálogo previo.
@@ -203,7 +203,7 @@ motiva que el trabajo sustituya $f_{\mathrm{geo}}$.
 \subsection{Serialización y Codificador PTv3}
 \label{sec:serializacion}
 
-\phantomsection\label{sec:codificador-ptv3}El PTv3 de Sonata~\cite{wu2024ptv3} ordena los puntos con curvas Z o Hilbert y
+\etiquetahija{sec:codificador-ptv3}El PTv3 de Sonata~\cite{wu2024ptv3} ordena los puntos con curvas Z o Hilbert y
 forma parches de 1024, donde aplica atención~\cite{vaswani2017attention} con costo lineal.
 Luego proyecta nueve valores a 48 características, combina convolución dispersa,
 atención y MLP, y reúne tres etapas en 1088 dimensiones (\hyperref[sec:arq-sonata]{Anexo~C}).
@@ -212,7 +212,7 @@ atención y MLP, y reúne tres etapas en 1088 dimensiones (\hyperref[sec:arq-son
 \label{sec:rejilla}
 \label{sec:tensor}
 
-\phantomsection\label{sec:convdispersa}Una rejilla dispersa almacena solo los vóxeles ocupados como coordenadas y
+\etiquetahija{sec:convdispersa}Una rejilla dispersa almacena solo los vóxeles ocupados como coordenadas y
 características, evitando guardar el volumen vacío. Su convolución combina cada
 vóxel con vecinos ocupados mediante pesos aprendidos, esta vecindad métrica difiere
 de la serialización y es la operación base de la red que produce $f_{\mathrm{sem}}$.
@@ -260,7 +260,7 @@ contiene a la celda $j$, obtenida encadenando los índices del submuestreo.
 
 La caja de sección (\emph{section box}) muestra los puntos dentro de un volumen y el
 corte oculta los situados a un lado de un plano, ambos permiten inspeccionar el
-interior. \phantomsection\label{sec:poisson}La reconstrucción de Poisson convierte una nube con normales en una malla
+interior. \etiquetahija{sec:poisson}La reconstrucción de Poisson convierte una nube con normales en una malla
 cerrada cuya orientación se ajusta a ellas. Así exporta un elemento segmentado en
 formatos de modelado 3D como OBJ, PLY o STL.
 
