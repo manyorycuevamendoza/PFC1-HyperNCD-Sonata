@@ -164,15 +164,14 @@ producen sobre la misma matriz $S$ los descriptores que el Módulo~4 une.
 \subsection{Rama Semántica}
 \label{sec:rama-sem}
 
-La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). La variante
-\emph{original} usa SemanticPOSS, con escenas de calle y 13 clases, 9 conocidas y 4
-novedosas (plantas, edificio, suelo y auto). La \emph{adaptada} usa ArCH
-\cite{matrone2020benchmark}, un conjunto de patrimonio con 10 clases, seis conocidas y
-tres novedosas (arco, columna y bóveda), y se ignora la clase \emph{other}. Se entrena
-con 15 escenas y se valida con 2, que son las de prueba oficiales y no una prueba
+La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). La
+\emph{original} usa SemanticPOSS, con 13 clases, 9 conocidas y 4 novedosas. La
+\emph{adaptada} usa ArCH \cite{matrone2020benchmark}, un conjunto de patrimonio con 10
+clases, seis conocidas y tres novedosas (arco, columna y bóveda). Se entrena con 15
+escenas y se valida con 2, que son las de prueba oficiales y no una prueba
 independiente. Ambas se entrenan desde cero, la original con lote de 2 y la adaptada
-como muestran el Algoritmo~\ref{alg:m2} y la Figura~\ref{fig:flujo-m2}, que incluyen
-la extracción de $f_{\mathrm{sem}}$ sin reentrenar.
+como muestra el Algoritmo~\ref{alg:m2} (Figura~\ref{fig:flujo-m2}), que incluye la
+extracción de $f_{\mathrm{sem}}$.
 
 \begin{algorithm}[!htbp]
 \small
