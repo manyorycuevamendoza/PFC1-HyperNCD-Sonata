@@ -211,12 +211,10 @@ $(f_{\mathrm{sem}},\, \text{cabeza}) \leftarrow U_\theta(\textsc{Cuantizar}(S,\,
 La rama auto-supervisada es el Módulo~3, Sonata (Sección~\ref{sec:modulo3}). La
 variante \emph{original} es el modelo público de Meta \cite{wu2025sonata},
 entrenado con escenas de interiores y de calle. La \emph{adaptada} es el mismo
-modelo tras seguir entrenándolo, sin etiquetas, con escaneos de la Catedral. Se
-hicieron las dos para entender si un modelo que ya vio la Catedral la describe mejor
-que uno que nunca la vio. La extracción es igual en ambos casos y solo cambia el
-archivo de pesos. Se hace una vez por sección con \texttt{extraer\_features.py}, en
-cinco pasos. Se lee $S$ y se separa en posición, color y normal. Se carga el modelo
-con las líneas siguientes, con \texttt{--pesos} para la variante adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
+modelo tras seguir entrenándolo, sin etiquetas, con escaneos de la Catedral. La
+extracción es igual y solo cambia el archivo de pesos. Se hace una vez por sección
+con \texttt{extraer\_features.py}, en cinco pasos. Se lee $S$, se separa en posición,
+color y normal, y se carga el modelo como sigue, con \texttt{--pesos} para la adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
 \begin{lstlisting}[style=comando]
 config = dict(enc_patch_size=[1024 for _ in range(5)], enable_flash=False)
 modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config=config).cuda()
