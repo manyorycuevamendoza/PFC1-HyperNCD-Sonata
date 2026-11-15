@@ -145,7 +145,7 @@ resultado a su posición real.
 superficie. Se descarta el punto cuya distancia media $\bar d_i$ a sus $q$ vecinos
 supera la media de toda la nube en más de $\lambda$ desviaciones
 (Ecuación~\ref{eq:sor}). Se filtra antes de voxelizar para que esos puntos no se
-promedien con los válidos, y es el único paso que descarta información.
+promedien con los válidos, y es el único paso que descarta puntos por ser ruido.
 
 \paragraph*{Paso 4.}\etiquetahija{sec:u1-p4} El escáner mide más puntos cerca que lejos. Para igualar la densidad se
 sustituyen los puntos de cada cubo de lado $\ell$ por uno solo, con su posición y
