@@ -38,7 +38,8 @@ extracción es menor, 3{,}2\,GB, porque no cuenta el contexto de CUDA.
 \setstretch{1}\small
 \caption[Equipo, tiempo y memoria de cada etapa]{Equipo, tiempo y memoria de cada etapa ejecutada. Elaboración propia a partir de los registros de medición.}
 \label{tab:res-hardware}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xlrr@{}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=0.95\hsize}X>{\raggedright\arraybackslash\hsize=0.95\hsize}X>{\raggedright\arraybackslash\hsize=1.0\hsize}X@{}}
 \toprule
 \textbf{Etapa} & \textbf{Equipo} & \textbf{Tiempo} & \textbf{Memoria pico} \\
 \midrule
