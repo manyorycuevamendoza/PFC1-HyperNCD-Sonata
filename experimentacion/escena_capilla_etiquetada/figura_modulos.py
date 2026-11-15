@@ -27,13 +27,13 @@ def herramienta(ax, cx, y, nombre):
     """Logo si existe, y etiqueta de texto si no."""
     if nombre in LOGOS:
         im = LOGOS[nombre]
-        h = 0.34
+        h = 0.46
         w = h * im.shape[1] / im.shape[0]
-        w = min(w, 0.9)
+        w = min(w, 1.1)
         h = w * im.shape[0] / im.shape[1]
         ax.imshow(im, extent=(cx - w / 2, cx + w / 2, y, y + h), zorder=4, aspect="auto")
     else:
-        ax.text(cx, y + 0.17, nombre, ha="center", va="center", fontsize=6.6, color="#202030", zorder=5,
+        ax.text(cx, y + 0.22, nombre, ha="center", va="center", fontsize=7.4, color="#202030", zorder=5,
                 bbox=dict(boxstyle="round,pad=0.22", fc="white", ec="#8a8aa0", lw=0.7))
 
 
@@ -42,21 +42,21 @@ def tira(nombre_archivo, titulo, pasos):
     n = len(pasos)
     ancho = 9.4
     paso_x = ancho / n
-    fig, ax = plt.subplots(figsize=(ancho, 1.62), dpi=190)
+    fig, ax = plt.subplots(figsize=(ancho, 2.4), dpi=190)
     ax.set_xlim(0, ancho)
-    ax.set_ylim(0, 1.62)
+    ax.set_ylim(0, 2.4)
     ax.axis("off")
-    ax.text(0.05, 1.52, titulo, fontsize=8.6, fontweight="bold", va="center", color="#202030")
+    ax.text(0.05, 2.25, titulo, fontsize=11, fontweight="bold", va="center", color="#202030")
     for i, (tipo, texto, tools) in enumerate(pasos):
         x = i * paso_x + 0.06
         w = paso_x - 0.2
-        ax.add_patch(FancyBboxPatch((x, 0.5), w, 0.9, boxstyle="round,pad=0.015,rounding_size=0.07",
+        ax.add_patch(FancyBboxPatch((x, 0.72), w, 1.35, boxstyle="round,pad=0.015,rounding_size=0.07",
                                     fc=COLOR[tipo], ec="#44445a", lw=1.0))
-        ax.text(x + w / 2, 0.95, texto, ha="center", va="center", fontsize=7.0, color="#202030", linespacing=1.12)
+        ax.text(x + w / 2, 1.4, texto, ha="center", va="center", fontsize=8.6, color="#202030", linespacing=1.12)
         for k, t in enumerate(tools):
-            herramienta(ax, x + w * (k + 1) / (len(tools) + 1), 0.07, t)
+            herramienta(ax, x + w * (k + 1) / (len(tools) + 1), 0.1, t)
         if i < n - 1:
-            ax.add_patch(FancyArrowPatch((x + w + 0.01, 0.95), (x + w + 0.17, 0.95), arrowstyle="-|>", mutation_scale=11,
+            ax.add_patch(FancyArrowPatch((x + w + 0.01, 1.4), (x + w + 0.17, 1.4), arrowstyle="-|>", mutation_scale=11,
                                          lw=1.6, color="#33334a"))
     fig.subplots_adjust(0, 0, 1, 1)
     fig.savefig(os.path.join(IM, nombre_archivo))
@@ -75,7 +75,7 @@ tira("flujo_m1.png", "Módulo 1. Preprocesamiento", [
 tira("flujo_m2.png", "Módulo 2. HyperNCD", [
     ("dato", "ArCH o\nSemanticPOSS", ["numpy"]),
     ("paso", "Bloques de 10 m,\n60 000 puntos", ["numpy"]),
-    ("modelo", "Entrenamiento\n30 épocas", ["MinkowskiEngine", "pytorch"]),
+    ("modelo", "Entrenamiento\n30 épocas", ["Minkowski", "pytorch"]),
     ("paso", "Pseudo-etiquetas\nSinkhorn-Knopp", ["pytorch"]),
     ("modelo", "Mejor modelo\npor validación", ["pytorch"]),
     ("dato", "f_sem de la\nescena (.npz)", ["numpy"]),

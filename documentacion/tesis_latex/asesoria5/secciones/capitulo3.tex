@@ -39,7 +39,7 @@ evalúan.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.8\linewidth]{imagenes/flujo_general.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_general.png}
 \caption[Flujo general del proyecto]{Flujo general del proyecto. Elaboración propia.}
 \label{fig:flujo}
 \end{figure}
@@ -74,7 +74,7 @@ Figura~\ref{fig:dependencias}.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.8\linewidth]{imagenes/flujo_dependencias.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_dependencias.png}
 \caption[Dependencia entre los módulos]{Dependencia entre los módulos. M2 y M3 corren en paralelo y los dos necesitan la salida de M1. Elaboración propia.}
 \label{fig:dependencias}
 \end{figure}
@@ -140,7 +140,7 @@ $S \leftarrow [P \mid C \mid N]$ y guardar con los metadatos \tcp*{Paso 6}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.93\linewidth]{imagenes/flujo_m1.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_m1.png}
 \caption[Flujo del Módulo 1]{Flujo del Módulo~1 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m1}
 \end{figure}
@@ -224,7 +224,7 @@ $(f_{\mathrm{sem}},\, \text{cabeza}) \leftarrow U_\theta(\textsc{Cuantizar}(S,\,
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.93\linewidth]{imagenes/flujo_m2.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_m2.png}
 \caption[Flujo del Módulo 2]{Flujo del Módulo~2 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m2}
 \end{figure}
@@ -270,7 +270,7 @@ $f_{\mathrm{ssl}} \leftarrow [u_3,\,u_4,\,u_5]$ con $u_e$ la salida $x_e$ devuel
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.93\linewidth]{imagenes/flujo_m3.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_m3.png}
 \caption[Flujo del Módulo 3]{Flujo del Módulo~3 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m3}
 \end{figure}
@@ -361,7 +361,7 @@ $\hat y_i \leftarrow \arg\max_k Q_{r(i),k}$ para cada punto $i$\;
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.93\linewidth]{imagenes/flujo_m4.png}
+\includegraphics[width=\linewidth]{imagenes/flujo_m4.png}
 \caption[Flujo del Módulo 4]{Flujo del Módulo~4 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m4}
 \end{figure}
@@ -422,7 +422,7 @@ Grupos $K$ y semillas & 8 y 10 & Cercano al número de clases de la escena, y es
 \label{sec:param-funcion}
 
 Cada paso hace un trabajo que los siguientes necesitan, como limitar la memoria,
-quitar puntos sueltos, igualar la densidad o dar a Sonata la normal que espera. La
+quitar puntos sueltos o dar a Sonata la normal que espera. La
 Tabla~\ref{tab:funcion}, en el \hyperref[sec:anexo-parametros]{Anexo~H}, dice qué
 aporta cada paso y qué pasaría sin él.
 
@@ -591,10 +591,8 @@ se repite al revés. Se corrió sobre Sonata original y adaptado, con una semill
 \subsection{Verificación Empírica del Entorno de Cómputo}
 \label{sec:entorno-computo}
 
-Cada entorno se probó antes de usarlo. En Khipu lo más difícil fue compilar
-MinkowskiEngine con CUDA~11.8 para HyperNCD, y se dio por bueno cuando una corrida
-corta de entrenamiento llegó hasta el final. En Colab cada sesión comprueba que las
-librerías carguen y que la GPU responda. Las corridas largas se ejecutaron con un
-monitor de tiempo, memoria y GPU, y cada experimento deja un registro con sus
-parámetros, su costo y sus métricas, para que ninguna cifra dependa de la memoria
-de quien la corrió.
+Cada entorno se probó antes de usarlo. En Khipu se compiló MinkowskiEngine con
+CUDA~11.8 para HyperNCD y se comprobó con una corrida corta de entrenamiento, y en
+Colab cada sesión verifica que las librerías carguen y que la GPU responda. Las
+corridas largas se ejecutaron con un monitor de tiempo, memoria y GPU, y cada
+experimento deja un registro con sus parámetros, costo y métricas.
