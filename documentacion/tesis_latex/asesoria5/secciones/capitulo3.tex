@@ -189,13 +189,10 @@ producen sobre la misma matriz $S$ los descriptores que el Módulo~4 une.
 \subsection{Rama Semántica}
 \label{sec:rama-sem}
 
-La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). Se trabaja
-en dos fases, el entrenamiento con un conjunto etiquetado y la extracción de
-$f_{\mathrm{sem}}$ sobre cada escena, sin seguir entrenando. Se entrenaron dos
-variantes que solo se diferencian en los datos. La \emph{original} usa
+La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). Se entrenaron
+dos variantes que solo se diferencian en los datos. La \emph{original} usa
 SemanticPOSS, el conjunto del artículo, con escenas de calle y 13 clases, de las
-que 9 son conocidas (persona, ciclista, tronco, señal de tránsito, poste, basurero,
-cono o piedra, cerca y bicicleta) y 4 novedosas (plantas, edificio, suelo y auto). La
+que 9 son conocidas y 4 novedosas (plantas, edificio, suelo y auto). La
 \emph{adaptada} usa ArCH \cite{matrone2020benchmark}, un conjunto de patrimonio con
 10 clases, de las que son conocidas las molduras, el piso, la puerta o ventana, la
 pared, la escalera y la cubierta. Se toman como novedosas el arco, la columna y la
@@ -203,7 +200,8 @@ bóveda, porque son lo que interesa descubrir en la Catedral, y se ignora la cla
 \emph{other}. Se hicieron las dos para saber si el modelo funciona mejor en la
 Catedral cuando aprende de edificios parecidos a ella. ArCH se cortó en bloques de
 10\,m, con 15 escenas para entrenar y 2 para validar, y se entrena desde cero con
-la misma receta. El Algoritmo~\ref{alg:m2} resume el entrenamiento y la extracción.
+la misma receta. El Algoritmo~\ref{alg:m2} resume el entrenamiento y la extracción
+de $f_{\mathrm{sem}}$ sobre cada escena, sin seguir entrenando.
 
 \begin{algorithm}[!htbp]
 \small
