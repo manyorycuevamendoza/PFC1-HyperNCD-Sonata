@@ -530,15 +530,12 @@ umbral se compara.
 \paragraph*{Escena etiquetada y métricas.}\etiquetahija{sec:escena-etiquetada} La escena de prueba es una capilla de
 la Catedral que entregó el asesor etiquetada a mano (Figura~\ref{fig:m1-clases}).
 Tiene cinco clases, arco, columna, cúpula, pared y techo, y una clase \emph{otro}
-con lo que no se etiquetó. Llega como un archivo LAS por pieza, y la clase de cada
-punto de $S$ se toma de la pieza más cercana, porque el Módulo~1 filtra y promedia
-puntos. No se usó para entrenar ningún modelo y es una capilla distinta de los 21
-escaneos con que se adaptó Sonata. Los grupos no tienen nombre, así que primero se
-emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro}), como indica
-el Algoritmo~\ref{alg:evaluacion}. La clase \emph{otro} no se cuenta, y se agrupan
-todos los puntos de la escena para que las dos variantes de HyperNCD se midan sobre
-los mismos puntos. También se calcula la asignación por mayoría, que castiga a las
-clases pequeñas, por lo que el resultado principal es el uno a uno.
+con lo que no se etiquetó, que no se cuenta. Cada punto de $S$ toma la clase de la
+pieza más cercana, porque el Módulo~1 filtra y promedia. No entrenó ningún modelo ni
+está entre los 21 escaneos con que se adaptó Sonata. Los grupos no tienen nombre, así
+que se emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro} y
+Algoritmo~\ref{alg:evaluacion}). La asignación por mayoría castiga a las clases
+pequeñas, por lo que el resultado principal es el uno a uno.
 
 \begin{algorithm}[!htbp]
 \small
