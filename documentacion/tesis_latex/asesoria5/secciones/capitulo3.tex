@@ -240,22 +240,8 @@ memoria, y se contuvo con parches de 1024 puntos en Khipu y con la atención de
 PyTorch en Colab. Después se traslada la nube y se muestrea con una rejilla de
 $g=2$\,cm, la de su entrenamiento, guardando un índice inverso
 (Sección~\ref{sec:gridsample}), se calcula $f_{\mathrm{ssl}}$ sin gradiente
-(Algoritmo~\ref{alg:inferencia-sonata}) y se escribe un \texttt{.npz} con los
+(Figura~\ref{fig:flujo-m3} y \hyperref[sec:analisis-componentes]{Anexo~C}) y se escribe un \texttt{.npz} con los
 descriptores, las posiciones, el índice inverso y la semilla del muestreo.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Inferencia de Sonata sobre una sección.}
-\label{alg:inferencia-sonata}
-\KwIn{nube preparada con posición, color y normal, en una rejilla de 2\,cm}
-\KwOut{descriptor $f_{\mathrm{ssl}}$ de 1088 valores por punto}
-$x \leftarrow \textsc{Embedding}(\text{nube})$ \tcp*{48 canales}
-\For{etapa $e=1$ \KwTo $5$}{
-  $x_e \leftarrow \textsc{BloquesAtención}_e(\textsc{Serializar}(x,\, 1024))$ \tcp*{3, 3, 3, 12 y 3 bloques}
-  \lIf{$e<5$}{$x \leftarrow \textsc{Pooling}(x_e)$ \tcp*{celda $\times 2$, más canales}}
-}
-$f_{\mathrm{ssl}} \leftarrow [u_3,\,u_4,\,u_5]$ con $u_e$ la salida $x_e$ devuelta a la rejilla de 2\,cm \tcp*{$192+384+512=1088$}
-\end{algorithm}
 
 \begin{figure}[!htbp]
 \centering
