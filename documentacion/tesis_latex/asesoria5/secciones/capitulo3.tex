@@ -442,20 +442,19 @@ se repite con las semillas 0 a~9 (\hyperref[sec:anexo-parametros]{Anexo~H}).
 \subsection{Procedimiento Experimental}
 \label{sec:procedimiento}
 
-HyperNCD y Sonata nunca se entrenan juntos. Cada uno se prepara por separado, guarda
-sus descriptores y la fusión trabaja después con esos archivos. Las dos variantes de
-HyperNCD se cruzan con las dos de Sonata, de modo que hay cuatro combinaciones, y en
-cada una se miden los cuatro agrupamientos. Cada experimento responde a un objetivo
-específico de la introducción y parte de una pregunta con una expectativa escrita,
-que muestra la Tabla~\ref{tab:preguntas}. Cada experimento entrega una medida. X0 da
-los conteos, X1 a X3 el reparto de cabezas, el NMI y el mIoU de HyperNCD, X4 y X5 el
+HyperNCD y Sonata nunca se entrenan juntos. Cada uno guarda sus descriptores y la
+fusión usa esos archivos. Las dos variantes de HyperNCD se cruzan con las dos de
+Sonata, y en cada una de las cuatro combinaciones se miden los cuatro agrupamientos.
+Cada experimento responde a un objetivo específico, parte de una pregunta con una
+expectativa escrita (Tabla~\ref{tab:preguntas}) y entrega una medida. X0 da los
+conteos, X1 a X3 el reparto de cabezas, el NMI y el mIoU de HyperNCD, X4 y X5 el
 mIoU de cada agrupamiento, X6 el de cada fusión, X7 la media y la desviación, y X8 el
 IoU por clase y las medidas geométricas. Las expectativas de X2 y X3 se plantearon
-después de ver el resultado de X1, y las demás antes de ejecutar. Además, X1 se
-acompañó de un diagnóstico de dominio que compara tres puntos de control de HyperNCD
-sobre SemanticPOSS, la capilla, la capilla submuestreada a 80\,000 puntos, PL7 y
-PL13, con el porcentaje de la cabeza dominante, el rango efectivo y el NMI, para
-separar el dominio de la densidad y de un error del modelo.
+tras ver X1, y las demás antes de ejecutar. X1 incluye un diagnóstico de dominio que
+compara tres puntos de control de HyperNCD sobre SemanticPOSS, la capilla, la capilla
+submuestreada a 80\,000 puntos, PL7 y PL13, con el porcentaje de la cabeza dominante,
+el rango efectivo y el NMI, para separar el dominio de la densidad y de un error del
+modelo.
 
 \begin{table}[!htbp]
 \centering
