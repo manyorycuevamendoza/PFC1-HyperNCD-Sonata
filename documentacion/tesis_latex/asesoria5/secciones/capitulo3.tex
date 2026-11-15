@@ -89,7 +89,8 @@ Hugging Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 \section{Diseño General del Sistema}
 \label{sec:diseno}
 
-El sistema tiene cuatro módulos. El Módulo~1 limpia cada escaneo y lo convierte en
+El sistema tiene cuatro módulos de procesamiento y un quinto de salida y
+evaluación, que es el Módulo~5 del marco teórico. El Módulo~1 limpia cada escaneo y lo convierte en
 una matriz con posición, color y normal por punto. El Módulo~2 es HyperNCD, que
 aprende con etiquetas de otro conjunto de datos y entrega un descriptor semántico
 por punto. El Módulo~3 es Sonata, que aprende sin etiquetas y entrega un descriptor
@@ -147,7 +148,7 @@ M1 & Archivos LAS de la sección & Matriz $S$ de 9 columnas, con posición, colo
 M2 & Posiciones de $S$ & $f_{\mathrm{sem}}$, 96 valores por punto, rejilla de 5\,cm & Entrenamiento una vez, extracción una vez por escena \\
 M3 & $S$ completa & $f_{\mathrm{ssl}}$, 1088 valores por punto, rejilla de 2\,cm, con índice inverso & Adaptación una vez, extracción una vez por sección \\
 M4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Grupo de cada punto & Una vez por semilla \\
-Evaluación & Grupos y etiquetas reales & mIoU, IoU por clase, NMI y ARI & Una vez por corrida \\
+M5, evaluación & Grupos y etiquetas reales & mIoU, IoU por clase, NMI y ARI & Una vez por corrida \\
 \bottomrule
 \end{tabularx}
 \end{table}

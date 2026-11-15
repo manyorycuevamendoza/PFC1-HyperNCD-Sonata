@@ -46,7 +46,7 @@ M1, capilla & Colab & 9{,}3\,s & --- \\
 M1, 23 archivos & Khipu, CPU & 1\,079\,s en total & --- \\
 Sonata, PL13 & Khipu, RTX A6000 & 13{,}9\,s & 34{,}60\,GB \\
 Entrenamiento de M2, ArCH & Colab, T4 & 75{,}0\,min & 9{,}5\,GB (GPU), 4{,}91\,GB (RAM) \\
-M2 sobre la capilla & Colab, T4 & 42{,}7\,s & 5{,}28\,GB (GPU), 4{,}49\,GB (RAM) \\
+M2 sobre la capilla & Colab, T4 & 1{,}7\,s de inferencia, 42{,}7\,s en total & 5{,}28\,GB (GPU), 4{,}49\,GB (RAM) \\
 Sonata, capilla & Colab, L4 & 26{,}6\,s & 10{,}49\,GB \\
 M4, capilla & CPU local & 68 a 80\,s & --- \\
 \bottomrule
@@ -129,7 +129,7 @@ etiquetas se transfirieron con una distancia mediana de 1{,}2\,cm y máxima de
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Clases de la escena de control antes y después del Módulo 1]{Puntos por clase de la capilla etiquetada antes y después del Módulo~1. Elaboración propia.}
+\caption[Clases de la capilla antes y después del Módulo 1]{Puntos por clase de la capilla etiquetada antes y después del Módulo~1. Elaboración propia.}
 \label{tab:capilla-clases}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
@@ -232,7 +232,7 @@ calculó.
 La rama se ejecutó dos veces sobre la capilla con el mismo programa, una con el
 checkpoint de SemanticPOSS y otra con el de ArCH, siempre sin reentrenar. Cada
 ejecución produjo $f_{\mathrm{sem}}$ de 96 dimensiones, las puntuaciones de las
-cabezas y el índice inverso, en 42{,}7\,s sobre una GPU T4 con ArCH
+cabezas y el índice inverso, con 1{,}7\,s de inferencia sobre una GPU T4 con ArCH, y 42{,}7\,s en total con la carga del modelo y la escritura
 (Sección~\ref{sec:res-entorno}). La Tabla~\ref{tab:m2-novedoso} resume cómo se
 comporta cada checkpoint como clasificador punto a punto, antes de cualquier
 fusión. Con SemanticPOSS, M2 marca como novedoso el 99{,}1\,\% de la escena y casi
@@ -797,7 +797,7 @@ va cada clase real.
 \begin{table}[!htbp]
 \centering
 \small
-\caption[Transferencia de M2 a la capilla con tres checkpoints]{Transferencia de M2 a la escena de control de la Catedral de Lima. Elaboración propia a partir del resumen del experimento de dominio.}
+\caption[Transferencia de M2 a la capilla con tres checkpoints]{Transferencia de M2 a la capilla etiquetada de la Catedral de Lima. Elaboración propia a partir del resumen del experimento de dominio.}
 \label{tab:m2-dominio}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
@@ -817,7 +817,7 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 33,6\,\% & 35,5\,\% \\
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_dominio_capilla.png}
 \caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de dominio
-de M2 sobre la escena de control, con el checkpoint de SemanticPOSS (época~8) frente a
+de M2 sobre la capilla etiquetada, con el checkpoint de SemanticPOSS (época~8) frente a
 los checkpoints de ArCH (épocas 20 y 30). Se reportan cabeza dominante, rango
 efectivo de $f_{\mathrm{sem}}$, entropía normalizada y NMI. Elaboración propia.}
 \label{fig:m2-dominio}
@@ -893,7 +893,7 @@ no incluye los tiempos ni qué aporta cada experimento, y esta sí.
 \centering
 \setstretch{1}\small
 \setlength{\tabcolsep}{3pt}
-\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{otro}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original. Los tiempos de M2 son de máquinas y medidas distintas, por lo que no se comparan entre sí. Elaboración propia a partir de los registros de medición.}
+\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{otro}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original. El tiempo de M2 y el de M3 son los de la inferencia sola. Elaboración propia a partir de los registros de medición.}
 \label{tab:modulos-solos}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.4cm}r>{\raggedright\arraybackslash}p{1.8cm}@{}}
 \toprule
@@ -901,10 +901,10 @@ no incluye los tiempos ni qué aporta cada experimento, y esta sí.
 \midrule
 M1 & 3\,380\,661 a 1\,135\,946 puntos & 9{,}3\,s & --- & --- \\
 \midrule
-M2 original (SemanticPOSS) & A 927\,988 vóxeles, $f_{\mathrm{sem}}$ de 96 valores & Extracción 1{,}8\,s & $35{,}9\pm0{,}6$ & --- \\
-M2 adaptado (ArCH) & Igual & Entrenamiento 75\,min, extracción 42{,}7\,s & $48{,}4\pm1{,}1$ & $+12{,}5$ \\
+M2 original (SemanticPOSS) & A 927\,988 vóxeles, $f_{\mathrm{sem}}$ de 96 valores & Inferencia 1{,}8\,s & $35{,}9\pm0{,}6$ & --- \\
+M2 adaptado (ArCH) & Igual & Entrenamiento 75\,min, inferencia 1{,}7\,s & $48{,}4\pm1{,}1$ & $+12{,}5$ \\
 \midrule
-M3 original & A 1\,133\,238 puntos, $f_{\mathrm{ssl}}$ de 1088 valores & Extracción 26{,}6\,s & $45{,}4\pm8{,}5$ & --- \\
+M3 original & A 1\,133\,238 puntos, $f_{\mathrm{ssl}}$ de 1088 valores & Inferencia 26{,}6\,s & $45{,}4\pm8{,}5$ & --- \\
 M3 adaptado & Igual & Adaptación 103\,min, extracción 27{,}0\,s & $34{,}3\pm1{,}7$ & $-11{,}1$ \\
 \midrule
 M4 base, con M2 de ArCH & $f_{\mathrm{sem}}$ y $f_{\mathrm{geo}}$ & 68 a 80\,s & $51{,}4\pm1{,}7$ & --- \\

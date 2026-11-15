@@ -44,9 +44,9 @@ una sola cabeza, el NMI de 0,027 y el mIoU uno a uno de 7,7\,\% al excluir
 categorías de patrimonio arquitectónico, entre ellas arcos, columnas y bóvedas.
 El modelo entrenado con ArCH~\cite{matrone2020benchmark}, en su último
 checkpoint (época 30), redujo la cabeza dominante a 44,6\,\%, elevó el NMI sin
-\emph{other} a 0,439 y el mIoU uno a uno a 35,5\,\%, el mejor checkpoint por
+\emph{other} a 0,439 y el mIoU uno a uno de sus cabezas, usadas como clasificador, a 35,5\,\%, el mejor checkpoint por
 validación dio 44,5\,\%, 0,437 y 33,6\,\%. Así, M2 pasó a producir
-una representación semántica útil para la escena de control.
+una representación semántica útil para la capilla etiquetada.
 
 \item La integración implementada no es un entrenamiento de extremo a extremo.
 HyperNCD y Sonata se preparan por separado, cada uno en su variante original y adaptada, y se ejecutan sin actualizar pesos. M2 extrae un descriptor
