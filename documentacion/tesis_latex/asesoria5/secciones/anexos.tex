@@ -90,13 +90,12 @@ Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \end{table}
 
 \paragraph*{Visor 3D del proyecto.}
-El programa \texttt{visor\_3d.py}, descrito en la Sección~\ref{sec:visor}, genera
-una página web con Plotly que muestra un escaneo en sus distintas etapas, la
-entrada cruda, los puntos que descarta el filtrado SOR en rojo, la matriz $S$
-con su color real y con sus normales, y los descriptores de Sonata. Todas las
-etapas comparten la misma cámara, así que cambiar de botón no cambia el ángulo,
-y la página exporta cada etapa a PNG con el mismo encuadre. Las figuras de la
-data de entrada y preprocesada del Capítulo~3 se obtuvieron así.
+El programa \texttt{visor\_3d.py} (Sección~\ref{sec:visor}) genera una página web
+con Plotly que muestra un escaneo en sus etapas, la entrada cruda, los puntos que
+descarta el SOR en rojo, la matriz $S$ con su color y sus normales, y los
+descriptores de Sonata. Todas las etapas comparten la cámara y cada una se exporta
+a PNG con el mismo encuadre. Así se obtuvieron las figuras de la entrada y del
+preprocesamiento.
 
 \paragraph*{Comandos en el clúster Khipu.}
 Los guiones se lanzan desde la carpeta del repositorio, con los archivos LAS en
