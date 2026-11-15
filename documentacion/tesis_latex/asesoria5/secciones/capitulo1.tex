@@ -215,7 +215,7 @@ etiquetadas cuando les toca su turno, y en el descubrimiento de clases novedosas
 nunca lo están.
 
 Sus resultados interesan en tres bloques. Primero, la grilla conjunta de
-$\lambda_2$ y $\lambda_3$, el máximo es 46,58 en $(0{,}2;\,0{,}5)$ y el mínimo,
+$\lambda_2$ y $\lambda_3$, el máximo es 46,58 en $(0{,}2$ y $0{,}5)$ y el mínimo,
 45,1, de modo que toda la grilla cabe en 1,48 puntos de mIoU
 \cite[Tabla~4]{su2025brdl}. Segundo, la ablación de las dos estrategias
 (Tabla~\ref{tab:ablacion-brdl}). Tercero, el entrenamiento multi-paso, donde una clase se queda en $0{,}00$ de mIoU
@@ -293,7 +293,7 @@ comparación (A2) y resolver el puente entre las dos estructuras espaciales (A4)
 \item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico.} Reemplazar
 $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$, el codificador de Sonata,
 conservando íntegro el razonamiento por hipergrafo. Así,
-$F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
+$F_i = [f_{\mathrm{sem}},\, f_{\mathrm{ssl}}]$ y cualquier variación de
 la métrica es atribuible a ese reemplazo y a nada más.
 
 \item[\textbf{A2}] \textbf{Auditoría de la implementación de referencia y
@@ -329,7 +329,7 @@ escala entre ramas (A5), calibrar de forma conjunta los parámetros de la afinid
 
 \begin{enumerate}
 \item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas
-heterogéneas.} El descriptor híbrido $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ une dos
+heterogéneas.} El descriptor híbrido $F_i=[f_{\mathrm{sem}},f_{\mathrm{ssl}}]$ une dos
 ramas de escala distinta, con 96 componentes entrenadas junto con el resto del
 modelo y 1088 componentes que no se entrenan junto con el resto, cuyo rango no está normalizado contra el de
 la rama semántica. Sin corrección, la rama más ancha domina la similitud por

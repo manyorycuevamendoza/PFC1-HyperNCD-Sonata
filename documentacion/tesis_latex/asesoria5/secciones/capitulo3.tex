@@ -1,11 +1,9 @@
 \chapter{MARCO METODOLÓGICO}
 \label{cap:metodo}
 
-Este capítulo explica cómo se hizo el proyecto, con el detalle necesario para
-repetirlo. Empieza con el flujo general, el hardware y el diseño del sistema.
-Después describe cada módulo en el orden en que se ejecuta, del Módulo~1 al
-Módulo~4, y termina con la evaluación. Aquí solo se describe el procedimiento. Los
-valores medidos están en el Capítulo~\ref{cap:resultados}.
+Este capítulo explica cómo se hizo el proyecto, con lo necesario para entenderlo y
+repetirlo. Sigue el orden en que se ejecuta, del Módulo~1 al Módulo~4, y termina con
+la evaluación. Los valores medidos están en el Capítulo~\ref{cap:resultados}.
 
 % Estilos comunes de los diagramas de flujo del capítulo.
 \tikzset{
@@ -30,753 +28,283 @@ valores medidos están en el Capítulo~\ref{cap:resultados}.
 }
 
 % =====================================================================
-\FloatBarrier
 \section{Diagrama de Flujo General}
 \label{sec:diagrama-flujo}
 
-La Figura~\ref{fig:flujo} muestra las seis etapas del proyecto, de E0 a E5, en el
-orden en que se ejecutan. La letra E indica etapa, para no confundirlas con los
-pasos internos de cada módulo. El levantamiento se prepara una sola vez. Con la
-nube preparada se trabajan los dos modelos, que no dependen uno del otro. Al final
-sus descriptores se fusionan, se agrupan y se evalúan.
+La Figura~\ref{fig:flujo} muestra las seis etapas del proyecto, de E0 a E5. La
+letra E indica etapa, para no confundirla con los pasos de cada módulo. El
+levantamiento se prepara una sola vez, luego se trabajan los dos modelos, que no
+dependen uno del otro, y al final sus descriptores se fusionan, se agrupan y se
+evalúan.
 
 \begin{figure}[!htbp]
-\centering\setstretch{1}
-\begin{tikzpicture}[font=\scriptsize, node distance=6mm and 7mm,
-  et/.style={draw, rounded corners, fill=blue!10, text width=3.5cm, minimum height=1.9cm, align=center, inner sep=3pt},
-  ed/.style={et, fill=orange!18}]
-\node[ed] (e0) {\textbf{E0. Datos}\\ 23 archivos LAS de la Catedral de Lima, sin etiquetas};
-\node[et, right=of e0] (e1) {\textbf{E1. Preparación (M1)}\\ Limpieza y transformación de cada escaneo a la matriz $S$ que usan M2 y M3};
-\node[et, right=of e1] (e2) {\textbf{E2. Modelo semántico (M2)}\\ Entrenamiento de HyperNCD y extracción de $f_{\mathrm{sem}}$};
-\node[et, below=of e2] (e3) {\textbf{E3. Modelo auto-supervisado (M3)}\\ Sonata original y adaptado, extracción de $f_{\mathrm{ssl}}$};
-\node[et, left=of e3] (e4) {\textbf{E4. Fusión y agrupamiento (M4)}\\ Unión de $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$, $K=8$ grupos, diez semillas};
-\node[ed, left=of e4] (e5) {\textbf{E5. Evaluación}\\ mIoU uno a uno, IoU por clase, NMI y ARI};
-\draw[mfl] (e0) -- (e1);
-\draw[mfl] (e1) -- (e2);
-\draw[mfl] (e1.south) -- ++(0,-0.25) -| ([xshift=-8mm]e3.north);
-\draw[mfl] (e2) -- (e3.north -| e2);
-\draw[mfl] (e3) -- (e4);
-\draw[mfl] (e4) -- (e5);
-\end{tikzpicture}
+\centering
+\includegraphics[width=0.8\linewidth]{imagenes/flujo_general.png}
 \caption[Flujo general del proyecto]{Flujo general del proyecto. Elaboración propia.}
 \label{fig:flujo}
 \end{figure}
 
-En E2 y E3 se entrenan y se analizan los dos modelos que describen la geometría.
-E2 corresponde a HyperNCD y E3 a Sonata. Las dos etapas leen la misma matriz $S$
-y escriben sus descriptores en disco, de modo que E4 los usa sin volver a ejecutar
-ningún modelo.
-
 % =====================================================================
-\FloatBarrier
 \section{Hardware y Repositorio}
 \label{sec:hardware-repo}
 
-Se trabajó con tres equipos. El preprocesamiento y la extracción con Sonata
-original se ejecutaron en el clúster Khipu de UTEC, con una GPU RTX A6000 de
-48\,GB. El entrenamiento de HyperNCD, la adaptación de Sonata y sus extracciones se
-ejecutaron en Google Colab, con GPU T4 de 16\,GB y L4 de 22{,}5\,GB. La fusión y la
-evaluación se ejecutaron en una laptop, sin GPU. Los recursos del clúster están en
-la Tabla~\ref{tab:hardware} y las versiones del entorno en el
-\hyperref[sec:anexo-software]{Anexo~A}. Todo el código está en el repositorio del
+El preprocesamiento del levantamiento se ejecutó en el clúster Khipu de UTEC, con
+una GPU RTX A6000 de 48\,GB. El entrenamiento de HyperNCD, la adaptación de Sonata
+y las extracciones sobre la capilla se ejecutaron en Google Colab, con GPU T4 de
+16\,GB y L4 de 22{,}5\,GB, y la fusión y la evaluación en una laptop sin GPU. Las
+versiones del entorno están en el \hyperref[sec:anexo-software]{Anexo~A}. El código
+está en el repositorio del
 proyecto,\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}}
-que es liviano porque no guarda los archivos LAS, los pesos ni las salidas. Los
-pesos de Sonata se descargan de
-Hugging Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
+que no guarda los archivos LAS, los pesos ni las salidas. Los pesos de Sonata se
+descargan de Hugging Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 
 % =====================================================================
-\FloatBarrier
 \section{Diseño General del Sistema}
 \label{sec:diseno}
 
 El sistema tiene cuatro módulos de procesamiento y un quinto de salida y
-evaluación, que es el Módulo~5 del marco teórico. El Módulo~1 limpia cada escaneo y lo convierte en
-una matriz con posición, color y normal por punto. El Módulo~2 es HyperNCD, que
-aprende con etiquetas de otro conjunto de datos y entrega un descriptor semántico
-por punto. El Módulo~3 es Sonata, que aprende sin etiquetas y entrega un descriptor
-auto-supervisado por punto. El Módulo~4 une los dos descriptores, agrupa los puntos
-y entrega una etiqueta de grupo para cada uno. Al final se comparan los grupos con
-las etiquetas reales de una escena de prueba. La explicación completa de cada
-módulo, con sus fórmulas, está en la Sección~\ref{sec:diseno-teorico} y se resume
-en la Figura~\ref{fig:diseno}.
-
-Los Módulos~2 y~3 trabajan en paralelo, porque ninguno usa la salida del otro. Los
-dos dependen del Módulo~1, que debe terminar antes, ya que su matriz $S$ es la
-entrada de ambos. Solo se encuentran en el Módulo~4. La
-Figura~\ref{fig:dependencias} muestra esa dependencia. Como son independientes,
-cada modelo se ejecuta una vez, guarda su salida y esa salida se reutiliza en
-todas las repeticiones de la fusión.
+evaluación, descritos en la Sección~\ref{sec:diseno-teorico}. El Módulo~1 limpia
+cada escaneo y lo convierte en una matriz con posición, color y normal por punto.
+El Módulo~2 es HyperNCD, que aprende con etiquetas de otro conjunto y entrega un
+descriptor semántico por punto. El Módulo~3 es Sonata, que aprende sin etiquetas y
+entrega un descriptor auto-supervisado. El Módulo~4 une los dos descriptores y
+agrupa los puntos. Los Módulos~2 y~3 trabajan en paralelo, porque ninguno usa la
+salida del otro, pero los dos esperan a que el Módulo~1 termine, como muestra la
+Figura~\ref{fig:dependencias}.
 
 \begin{figure}[!htbp]
-\centering\setstretch{1}
-\begin{tikzpicture}[font=\scriptsize, node distance=7mm and 12mm,
-  mo/.style={draw, rounded corners, fill=blue!10, text width=3.0cm, minimum height=1.0cm, align=center}]
-\node[mo, fill=orange!18] (m1) {\textbf{M1}\\ Preprocesamiento, matriz $S$};
-\node[mo, above right=1mm and 12mm of m1] (m2) {\textbf{M2}\\ HyperNCD, $f_{\mathrm{sem}}$};
-\node[mo, below right=1mm and 12mm of m1] (m3) {\textbf{M3}\\ Sonata, $f_{\mathrm{ssl}}$};
-\node[mo, right=40mm of m1] (m4) {\textbf{M4}\\ Fusión y agrupamiento};
-\node[mo, fill=orange!18, right=of m4] (ev) {\textbf{Evaluación}\\ mIoU y otras métricas};
-\draw[mfl] (m1) -- (m2.west);
-\draw[mfl] (m1) -- (m3.west);
-\draw[mfl] (m2.east) -- (m4);
-\draw[mfl] (m3.east) -- (m4);
-\draw[mfl] (m4) -- (ev);
-\end{tikzpicture}
+\centering
+\includegraphics[width=0.8\linewidth]{imagenes/flujo_dependencias.png}
 \caption[Dependencia entre los módulos]{Dependencia entre los módulos. M2 y M3 corren en paralelo y los dos necesitan la salida de M1. Elaboración propia.}
 \label{fig:dependencias}
 \end{figure}
 
-\FloatBarrier
 \subsection{Estructura y Contrato de los Módulos}
 \label{sec:contrato}
 
-Cada módulo recibe y entrega un objeto con una forma fija. La
-Tabla~\ref{tab:contrato} declara esas formas, para detectar cualquier
-incompatibilidad antes de programar.
+Cada módulo recibe y entrega un objeto de forma fija. El Módulo~1 entrega la matriz
+$S$, el Módulo~2 96 valores por punto sobre una rejilla de 5\,cm y el Módulo~3 1088
+sobre una de 2\,cm. Como las rejillas difieren, cada archivo guarda un índice
+inverso que devuelve el descriptor a los puntos de $S$
+(Sección~\ref{sec:gridsample}), y el Módulo~4 entrega un grupo por punto.
 
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Contrato de los módulos]{Contrato de los módulos. Elaboración propia.}
-\label{tab:contrato}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}@{}}
-\toprule
-\textbf{Módulo} & \textbf{Entrada} & \textbf{Salida} & \textbf{Frecuencia} \\
-\midrule
-M1 & Archivos LAS de la sección & Matriz $S$ de 9 columnas, con posición, color y normal & Una vez por sección \\
-M2 & Posiciones de $S$ & $f_{\mathrm{sem}}$, 96 valores por punto, rejilla de 5\,cm & Entrenamiento una vez, extracción una vez por escena \\
-M3 & $S$ completa & $f_{\mathrm{ssl}}$, 1088 valores por punto, rejilla de 2\,cm, con índice inverso & Adaptación una vez, extracción una vez por sección \\
-M4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ alineados & Grupo de cada punto & Una vez por semilla \\
-M5, evaluación & Grupos y etiquetas reales & mIoU, IoU por clase, NMI y ARI & Una vez por corrida \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Los Módulos~2 y~3 usan rejillas distintas. Sus salidas se alinean punto a punto
-con el índice inverso (Sección~\ref{sec:gridsample}), que se guarda junto con los
-descriptores.
-
-\FloatBarrier
 \subsection{Visor 3D del Proyecto}
 \label{sec:visor}
 
-Para revisar las nubes se construyó un visor propio, que genera una página web y
-se abre en el navegador sin instalar nada. El visor creció con el proyecto, porque
-cada prueba pedía ver algo nuevo. La primera versión mostraba un escaneo en las
-etapas del Módulo~1 y los descriptores de Sonata. La versión actual muestra una
-escena del Módulo~1 al Módulo~4, permite comparar las variantes de HyperNCD y de
-Sonata lado a lado con la misma cámara, y pinta los aciertos y los errores de cada
-clase. El código está en la carpeta \texttt{experimentacion} del
+Para revisar las nubes se construyó un visor propio, una página web que se abre
+sin instalar nada, que muestra la escena del Módulo~1 al Módulo~4 y compara las
+variantes de cada modelo lado a lado. Su código está en la carpeta
+\texttt{experimentacion} del
 repositorio.\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata/tree/main/experimentacion}}
-Los programas principales son \texttt{visor\_3d.py}, para un escaneo, y
-\texttt{evaluacion\_etiquetada/generar\_visor\_escena.py}, para la escena de prueba.
-Antes de dibujar, el visor comprueba que los descriptores correspondan a la matriz
-$S$ (\enlace{sec:u1-reproducibilidad}{verificación del Módulo~1}).
 
 % =====================================================================
-\FloatBarrier
 \section{Unidad 1. Preprocesamiento}
 \label{sec:unidad1}
 
 La primera unidad es el Módulo~1 (Sección~\ref{sec:modulo1}). Convierte un escaneo
-en bruto, en formato LAS, en la matriz $S$ que usan los dos modelos. Está en el
-programa \texttt{preprocesar.py} del repositorio.
+en bruto en la matriz $S$ que usan los dos modelos, con el programa
+\texttt{preprocesar.py}.
 
-\FloatBarrier
 \subsection{Datos de Entrada y Ejecución}
 \label{sec:u1-datos}
 
 La Catedral de Lima se recibe como 23 archivos LAS, que suman 20{,}05\,GB y
-589\,708\,290 puntos. Cada archivo es un escaneo independiente y no trae etiquetas.
-La Tabla~\ref{tab:datos-antes-despues} muestra las columnas que tiene un punto al
-entrar y las que tiene al salir. De la entrada solo se usan la posición y el color
-(Sección~\ref{sec:las}).
+589\,708\,290 puntos, sin etiquetas. De cada punto se usan la posición y el color
+(Sección~\ref{sec:las}). A la salida cada punto es una fila de $S$, con $x,y,z$
+centradas en el origen, $R,G,B$ de 0 a 255 y una normal calculada. La unidad de
+trabajo es la sección (Sección~\ref{sec:seccion}), que en este levantamiento es un
+archivo. En Khipu el guion \texttt{preprocesar.sbatch} recorre los archivos de uno
+en uno, y salta los que ya tienen salida, de modo que un trabajo interrumpido se
+retoma sin repetir lo hecho.
 
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Datos al entrar y al salir del Módulo~1]{Columnas de cada punto al entrar y al salir del Módulo~1. Elaboración propia.}
-\label{tab:datos-antes-despues}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
- & \textbf{Entrada, archivo LAS} & \textbf{Salida, matriz $S$} \\
-\midrule
-Posición & $x$, $y$, $z$ en metros, sistema UTM & $x$, $y$, $z$ en metros, centradas en el origen \\
-Color & $R$, $G$, $B$ de 16 bits, de 0 a 65\,535 & $R$, $G$, $B$ de 0 a 255 \\
-Normal & No existe & $n_x$, $n_y$, $n_z$, calculada \\
-Otros campos & Intensidad, número de retorno y clase & Se descartan \\
-Puntos & Todos los del escaneo, con ruido y densidad desigual & Uno por vóxel de 5\,cm, sin puntos sueltos \\
-Archivos & Un \texttt{.las} por escaneo & Un \texttt{.npy} con $S$ y un \texttt{.json} con los metadatos \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-La unidad de trabajo es la sección (Sección~\ref{sec:seccion}). En el levantamiento
-se usó un archivo por sección, de modo que hay 23 secciones. El programa se lanza
-en Khipu con el guion \texttt{preprocesar.sbatch}, que recorre los archivos de uno
-en uno dentro de un solo trabajo, con un límite de cuatro horas. El único
-paralelismo es el interno de Open3D. Si un archivo ya tiene su salida, el guion lo
-salta, así que un trabajo interrumpido se retoma sin repetir lo hecho. Cada archivo
-se lee por bloques de cinco millones de puntos, pero la sección completa debe caber
-en la memoria del nodo. Los comandos exactos están en el
-\hyperref[sec:anexo-software]{Anexo~A} y cada trabajo deja su registro en la
-carpeta \texttt{logs}.
-
-\FloatBarrier
 \subsection{Procedimiento}
 \label{sec:u1-procedimiento}
 
-El programa realiza seis pasos, que resume la Figura~\ref{fig:flujo-u1}. Tiene tres
-parámetros, el tamaño de vóxel $\ell=5$\,cm, el número de vecinos $q=20$ y el
-umbral del filtrado $\lambda=2$. El pseudocódigo de cada paso está en el
-\hyperref[sec:anexo-pasos]{Anexo~F}.
-
-\begin{figure}[!htbp]
-\centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} Archivo LAS de $N$ puntos};
-\node[mpaso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga por bloques y centrado};
-\node[mpaso, below=of b] (c) {\textbf{Paso 3.} Filtrado SOR, con $q$ y $\lambda$};
-\node[mpaso, below=of c] (d) {\textbf{Paso 4.} Voxelización al lado $\ell$};
-\node[mpaso, below=of d] (e) {\textbf{Paso 5.} Normales con $q$ vecinos};
-\node[mdat, below=of e] (f) {\textbf{Paso 6. Salida.} Matriz $S$ y metadatos};
-\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo del preprocesamiento]{Flujo del preprocesamiento. Elaboración propia.}
-\label{fig:flujo-u1}
-\end{figure}
-
-El Algoritmo~\ref{alg:preprocesamiento} escribe los seis pasos en pseudocódigo,
-y los párrafos siguientes explican cada uno.
+El programa hace seis pasos, que escribe el Algoritmo~\ref{alg:m1}. Tiene tres
+parámetros, el lado del vóxel $\ell=5$\,cm, el número de vecinos $q=20$ y el umbral
+$\lambda=2$.
 
 \begin{algorithm}[!htbp]
 \small
 \caption{Preprocesamiento de un escaneo.}
-\label{alg:preprocesamiento}
+\label{alg:m1}
 \KwIn{archivo LAS, lado del vóxel $\ell$, vecinos $q$, umbral $\lambda$}
-\KwOut{matriz $S$ de nueve columnas y archivo de metadatos}
-$(P, C) \leftarrow \textsc{LeerPorBloques}(\text{archivo},\, 5\times10^{6})$ \tcp*{posición y color}
-$C \leftarrow C/256$ \tcp*{de 16 bits a 0--255}
-$c \leftarrow (\min P + \max P)/2$ \quad $P \leftarrow P - c$ \tcp*{centrado, se guarda $c$}
-\ForEach{punto $p_i\in P$}{
-  $\bar d_i \leftarrow$ distancia media de $p_i$ a sus $q$ vecinos más cercanos\;
-}
-$P \leftarrow \{p_i \mid \bar d_i \leq \mu+\lambda\sigma\}$ \tcp*{filtrado SOR}
-$(P, C) \leftarrow \textsc{Voxelizar}(P, C, \ell)$ \tcp*{un punto promedio por vóxel}
-\ForEach{punto $p_i\in P$}{
-  $n_i \leftarrow$ autovector menor de la covarianza de sus $q$ vecinos\;
-  \lIf{$n_{i,z}<0$}{$n_i \leftarrow -n_i$}
-}
-$S \leftarrow [P \mid C \mid N]$ \quad guardar $S$ y metadatos\;
+\KwOut{matriz $S$ de nueve columnas y metadatos}
+$(P, C) \leftarrow$ posición y color leídos por bloques, con $C \leftarrow C/256$ \tcp*{Paso 1}
+$c \leftarrow (\min P + \max P)/2$ \quad $P \leftarrow P - c$ \tcp*{Paso 2, centrado}
+conservar los puntos $p_i$ con $\bar d_i \leq \mu+\lambda\sigma$ \tcp*{Paso 3, filtrado SOR}
+$(P, C) \leftarrow$ un punto promedio por vóxel de lado $\ell$ \tcp*{Paso 4}
+$n_i \leftarrow$ autovector menor de la covarianza de los $q$ vecinos, con $n_{i,z}\geq 0$ \tcp*{Paso 5}
+$S \leftarrow [P \mid C \mid N]$ y guardar con los metadatos \tcp*{Paso 6}
 \end{algorithm}
 
-\FloatBarrier
-\subsubsection*{Paso 1. Carga}
-\etiquetahija{sec:u1-p1}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.93\linewidth]{imagenes/flujo_m1.png}
+\caption[Flujo del Módulo 1]{Flujo del Módulo~1 con la herramienta de cada paso. Elaboración propia.}
+\label{fig:flujo-m1}
+\end{figure}
 
-El archivo se abre con \texttt{laspy} y se lee en bloques de cinco millones de
-puntos, para no pedir toda la memoria de una vez. De cada punto se conservan la
-posición y el color. El color viene en 16 bits y se divide entre 256 para llevarlo
-al rango de 0 a 255.
+\paragraph*{Pasos 1 y 2.}\etiquetahija{sec:u1-p1}\etiquetahija{sec:u1-p2} El archivo se lee por bloques de cinco
+millones de puntos para no pedir toda la memoria, y el color de 16 bits se lleva a
+0 a 255. Las coordenadas UTM son números de cientos de miles y de millones, que
+pierden precisión, y por eso se resta el centro de la caja
+(Ecuación~\ref{eq:centrado}). El centro se guarda para devolver cualquier
+resultado a su posición real.
 
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 1 del Módulo~1, carga.}
-\label{alg:m1-paso1}
-\KwIn{archivo LAS de $N$ puntos}
-\KwOut{posiciones $P$ y colores $C$ de 0 a 255}
-$P \leftarrow \emptyset$ \quad $C \leftarrow \emptyset$\;
-\ForEach{bloque $B$ de $5\times10^{6}$ puntos del archivo}{
-  añadir a $P$ las posiciones $x,y,z$ de $B$\;
-  añadir a $C$ los colores $R,G,B$ de $B$\;
-}
-\lIf{el color usa 16 bits}{$C \leftarrow C/256$}
-\end{algorithm}
+\paragraph*{Paso 3.}\etiquetahija{sec:u1-p3} El escaneo trae puntos sueltos que no pertenecen a ninguna
+superficie. Se descarta el punto cuya distancia media $\bar d_i$ a sus $q$ vecinos
+supera la media de toda la nube en más de $\lambda$ desviaciones
+(Ecuación~\ref{eq:sor}). Se filtra antes de voxelizar para que esos puntos no se
+promedien con los válidos, y es el único paso que descarta información.
 
-\subsubsection*{Paso 2. Centrado}
-\etiquetahija{sec:u1-p2}
+\paragraph*{Paso 4.}\etiquetahija{sec:u1-p4} El escáner mide más puntos cerca que lejos. Para igualar la densidad se
+sustituyen los puntos de cada cubo de lado $\ell$ por uno solo, con su posición y
+color promedio (Ecuación~\ref{eq:voxel}). El vóxel fija también el límite de
+resolución, porque dos superficies a menos de $\ell$ dejan de distinguirse.
 
-Las coordenadas vienen en el sistema UTM, con valores de cientos de miles y de
-millones. Con números tan grandes se pierde precisión, así que a todos los puntos
-se les resta el centro de la caja que los contiene, según la
-Ecuación~\ref{eq:centrado}. La forma de la nube no cambia. El centro restado se
-guarda en los metadatos para poder devolver cualquier resultado a su posición real.
+\paragraph*{Pasos 5 y 6.}\etiquetahija{sec:u1-p5}\etiquetahija{sec:u1-p6} El escáner no mide la normal, y se estima con los $q$ vecinos
+de cada punto (Ecuación~\ref{eq:normal}), orientada hacia arriba para que sea
+consistente. Se guarda la matriz $S$ (Ecuación~\ref{eq:sj}) en precisión simple, con
+un archivo de metadatos que registra los parámetros, el centro restado, los
+conteos de cada paso y el tiempo.
 
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 2 del Módulo~1, centrado.}
-\label{alg:m1-paso2}
-\KwIn{posiciones $P$ en coordenadas UTM}
-\KwOut{posiciones centradas y centro $c$}
-$c \leftarrow (\min P + \max P)/2$ \tcp*{por eje, centro de la caja}
-$P \leftarrow P - c$\;
-guardar $c$ en los metadatos\;
-\end{algorithm}
-
-\subsubsection*{Paso 3. Filtrado SOR}
-\etiquetahija{sec:u1-p3}
-
-El escaneo trae puntos sueltos que no pertenecen a ninguna superficie. Para cada
-punto se mide la distancia media a sus $q$ vecinos más cercanos. Si esa distancia
-supera la media de toda la nube en más de $\lambda$ desviaciones estándar, el punto
-se descarta, según la Ecuación~\ref{eq:sor}. Se filtra antes de voxelizar para que
-esos puntos no se promedien con los válidos. Es el paso más lento y el único que
-descarta información sin vuelta atrás.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 3 del Módulo~1, filtrado SOR.}
-\label{alg:m1-paso3}
-\KwIn{$P$, $C$, vecinos $q$, umbral $\lambda$}
-\KwOut{$P$ y $C$ sin puntos sueltos}
-\ForEach{punto $p_i$}{
-  $\bar d_i \leftarrow$ distancia media de $p_i$ a sus $q$ vecinos más cercanos\;
-}
-$\mu,\, \sigma \leftarrow$ media y desviación estándar de todos los $\bar d_i$\;
-conservar los puntos con $\bar d_i \leq \mu + \lambda\sigma$\;
-\end{algorithm}
-
-\subsubsection*{Paso 4. Voxelización}
-\etiquetahija{sec:u1-p4}
-
-El escáner mide muchos más puntos cerca de él que lejos. Para igualar la densidad,
-el espacio se divide en cubos de lado $\ell$ y los puntos de cada cubo se
-sustituyen por uno solo, con su posición y su color promedio, según la
-Ecuación~\ref{eq:voxel}. El vóxel fija también el límite de resolución, porque dos
-superficies separadas por menos de $\ell$ dejan de distinguirse.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 4 del Módulo~1, voxelización.}
-\label{alg:m1-paso4}
-\KwIn{$P$, $C$ filtrados, lado del vóxel $\ell$}
-\KwOut{un representante $(P', C')$ por vóxel ocupado}
-$p_0 \leftarrow \min P - \ell/2$ \tcp*{esquina de la rejilla}
-\ForEach{punto $p_i$}{
-  $v_i \leftarrow \lfloor (p_i - p_0)/\ell \rfloor$ \tcp*{vóxel al que cae}
-}
-\ForEach{vóxel ocupado $v$}{
-  $P'_v \leftarrow$ promedio de las posiciones de sus puntos\;
-  $C'_v \leftarrow$ promedio de los colores de sus puntos\;
-}
-\end{algorithm}
-
-\subsubsection*{Paso 5. Normales}
-\etiquetahija{sec:u1-p5}
-
-La normal indica hacia dónde mira la superficie en cada punto, y el escáner no la
-mide. Se estima con los $q$ vecinos de cada punto, según la
-Ecuación~\ref{eq:normal}. Todas las normales se orientan con $n_z\geq 0$ para que
-sean consistentes. La estimación es menos fiable en las zonas con pocos puntos,
-lejos del escáner.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 5 del Módulo~1, normales.}
-\label{alg:m1-paso5}
-\KwIn{representantes $P'$, vecinos $q$}
-\KwOut{normal unitaria $n_i$ de cada representante}
-\ForEach{punto $p_i$ de $P'$}{
-  $\mathcal{N}_q(i) \leftarrow$ sus $q$ vecinos más cercanos\;
-  $\Sigma_i \leftarrow$ covarianza de $\mathcal{N}_q(i)$\;
-  $n_i \leftarrow$ autovector del menor autovalor de $\Sigma_i$\;
-  \lIf{$n_{i,z}<0$}{$n_i \leftarrow -n_i$}
-}
-\end{algorithm}
-
-\subsubsection*{Paso 6. Escritura}
-\etiquetahija{sec:u1-p6}
-
-Se guarda la matriz $S$ (Ecuación~\ref{eq:sj}), con una fila por punto y sus nueve
-valores, en precisión simple. Junto a ella se escribe un archivo de metadatos con
-los parámetros usados, el centro restado en el Paso~2, el número de puntos tras
-cada paso y el tiempo total.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Paso 6 del Módulo~1, escritura.}
-\label{alg:m1-paso6}
-\KwIn{$P'$, $C'$, normales $N$, centro $c$ y conteos de cada paso}
-\KwOut{archivo de la matriz $S$ y archivo de metadatos}
-$S \leftarrow [\,P' \mid C' \mid N\,]$ en precisión simple\;
-guardar $S$\;
-guardar $\ell$, $q$, $\lambda$, $c$, los conteos y el tiempo total en el archivo de metadatos\;
-\end{algorithm}
-
-\FloatBarrier
 \subsection{Verificación y Reproducibilidad}
 \label{sec:u1-reproducibilidad}
 
-El programa no tiene pasos aleatorios, así que la misma entrada produce la misma
-salida. Se ejecuta con una orden como la siguiente.
-\begin{lstlisting}[style=comando]
-python preprocesar.py --input PL13_SCN0001.las \
-       --output PL13_SCN0001_preprocesado \
-       --voxel 0.05 --q 20 --lam 2
-\end{lstlisting}
-Una repetición se comprueba comparando los conteos del archivo de metadatos con los
-de la corrida de referencia, que deben coincidir exactamente. Lo que se repite son
-los puntos, no su orden de filas. Por eso cada archivo de descriptores debe usarse
-con la misma matriz $S$ con la que se calculó. El visor de la
-Sección~\ref{sec:visor} comprueba esa correspondencia y se detiene con un aviso si
-no se cumple.
+El programa no tiene pasos aleatorios, así que la misma entrada da la misma salida.
+Se ejecuta con \texttt{python preprocesar.py --input escaneo.las --output salida
+--voxel 0.05 --q 20 --lam 2}, y se comprueba comparando los conteos de los
+metadatos con los de una corrida de referencia. Lo que se repite son los puntos y no
+su orden de filas, por eso cada archivo de descriptores debe usarse con la matriz
+$S$ con la que se calculó, y el visor se detiene con un aviso si no corresponden.
 
 % =====================================================================
-\FloatBarrier
 \section{Unidad 2. Extracción de Descriptores y Fusión}
 \label{sec:unidad2}
 
-La segunda unidad abarca los Módulos~2, 3 y~4, en ese orden. Los Módulos~2 y~3
-producen, sobre la misma matriz $S$, los dos descriptores que el Módulo~4 une.
+La segunda unidad abarca los Módulos~2, 3 y~4, en ese orden. Los dos primeros
+producen sobre la misma matriz $S$ los descriptores que el Módulo~4 une.
 
-\FloatBarrier
 \subsection{Rama Semántica}
 \label{sec:rama-sem}
 
 La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). Se trabaja
-en dos fases. Primero se entrena el modelo con un conjunto de datos etiquetado.
-Después se carga el modelo entrenado y se extrae $f_{\mathrm{sem}}$ una vez por
-escena, sin seguir entrenando. La Figura~\ref{fig:flujo-m2} resume las dos fases.
+en dos fases, el entrenamiento con un conjunto etiquetado y la extracción de
+$f_{\mathrm{sem}}$ sobre cada escena, sin seguir entrenando. Se entrenaron dos
+variantes que solo se diferencian en los datos. La \emph{original} usa
+SemanticPOSS, el conjunto del artículo, con escenas de calle y 13 clases, de las
+que 9 son conocidas (persona, ciclista, tronco, señal de tránsito, poste, basurero,
+cono o piedra, cerca y bicicleta) y 4 novedosas (plantas, edificio, suelo y auto). La
+\emph{adaptada} usa ArCH \cite{matrone2020benchmark}, un conjunto de patrimonio con
+10 clases, de las que son conocidas las molduras, el piso, la puerta o ventana, la
+pared, la escalera y la cubierta. Se toman como novedosas el arco, la columna y la
+bóveda, porque son lo que interesa descubrir en la Catedral, y se ignora la clase
+\emph{other}. Se hicieron las dos para saber si el modelo funciona mejor en la
+Catedral cuando aprende de edificios parecidos a ella. ArCH se cortó en bloques de
+10\,m, con 15 escenas para entrenar y 2 para validar, y se entrena desde cero con
+la misma receta. El Algoritmo~\ref{alg:m2} resume el entrenamiento y la extracción.
+
+\begin{algorithm}[!htbp]
+\small
+\caption{Entrenamiento y extracción de HyperNCD.}
+\label{alg:m2}
+\KwIn{escenas etiquetadas con clases conocidas y novedosas, matriz $S$ de la escena}
+\KwOut{modelo con el mejor mIoU de validación y $f_{\mathrm{sem}}$ de la escena}
+\For{época $e=1$ \KwTo $30$}{
+  \ForEach{lote de 4 bloques de 10\,m con 60\,000 puntos y vóxel de 5\,cm}{
+    $f_{\mathrm{sem}},\, z \leftarrow U_\theta(X)$ \tcp*{descriptor y puntuaciones de las cabezas}
+    $Y \leftarrow \textsc{SinkhornKnopp}(z)$ \tcp*{pseudo-etiquetas de las clases novedosas}
+    $\theta \leftarrow \textsc{AdamW}(\theta, \nabla_\theta (L_{\mathrm{pt}} + \beta L_{\mathrm{reg}}))$\;
+  }
+  guardar el modelo si mejora el mIoU de validación\;
+}
+$(f_{\mathrm{sem}},\, \text{cabeza}) \leftarrow U_\theta(\textsc{Cuantizar}(S,\, 5\,\mathrm{cm}))$ \tcp*{extracción sin gradiente}
+\end{algorithm}
 
 \begin{figure}[!htbp]
 \centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} Conjunto etiquetado, SemanticPOSS o ArCH};
-\node[mpaso, below=of a] (b) {\textbf{Fase 1.} Entrenamiento de HyperNCD con clases conocidas y novedosas};
-\node[mmod, below=of b] (c) {Modelo entrenado, se guarda el mejor por validación};
-\node[mpaso, below=of c] (d) {\textbf{Fase 2.} Extracción sobre la matriz $S$ de la escena, sin gradiente};
-\node[mdat, below=of d] (e) {\textbf{Salida.} Archivo \texttt{.npz} con $f_{\mathrm{sem}}$, cabezas e índice inverso};
-\foreach \u/\v in {a/b, b/c, c/d, d/e} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo de la rama semántica]{Flujo de la rama semántica. Elaboración propia.}
+\includegraphics[width=0.93\linewidth]{imagenes/flujo_m2.png}
+\caption[Flujo del Módulo 2]{Flujo del Módulo~2 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m2}
 \end{figure}
 
-Se entrenaron dos variantes, que solo se diferencian en los datos
-(Tabla~\ref{tab:datasets-m2}). Se llama HyperNCD \emph{original} al entrenado con
-SemanticPOSS, que es el conjunto del artículo de HyperNCD y contiene escenas de
-calle. Se llama HyperNCD \emph{adaptado} al entrenado con ArCH
-\cite{matrone2020benchmark}, un conjunto de patrimonio arquitectónico. Se hicieron
-las dos variantes para saber si el modelo funciona mejor en la Catedral cuando
-aprende de edificios parecidos a ella. El adaptado se entrena desde cero, con la
-misma receta, para que la única diferencia sean los datos.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Conjuntos de entrenamiento de HyperNCD]{Conjuntos de entrenamiento de las dos variantes de HyperNCD. Elaboración propia.}
-\label{tab:datasets-m2}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
- & \textbf{SemanticPOSS, original} & \textbf{ArCH, adaptado} \\
-\midrule
-Contenido & Calles de un campus, con LiDAR móvil & Iglesias y edificios históricos \\
-Clases & 13. Persona, ciclista, auto, tronco, plantas, señal de tránsito, poste, basurero, edificio, cono o piedra, cerca, bicicleta y suelo & 10. Arco, columna, molduras, piso, puerta o ventana, pared, escalera, bóveda, cubierta y \emph{other} \\
-Conocidas & 9 clases de la partición~0, persona, ciclista, tronco, señal de tránsito, poste, basurero, cono o piedra, cerca y bicicleta & Molduras, piso, puerta o ventana, pared, escalera y cubierta \\
-Novedosas & 4 clases de la partición~0, plantas, edificio, suelo y auto & Arco, columna y bóveda \\
-Ignorada & Sin etiqueta & \emph{other} \\
-Preparación & La del artículo de HyperNCD & 15 escenas para entrenar y 2 para validar, vóxel de 5\,cm, bloques de 10\,m \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Para entrenar la variante adaptada se preparó ArCH \cite{matrone2020benchmark}
-con el Algoritmo~\ref{alg:preparacion-arch}. El conjunto trae 17 escenas
-etiquetadas, 15 para entrenar y 2 para probar, que suman 136 millones de puntos, y
-se publica con licencia CC BY-NC-SA, por lo que se cita en la tesis. Pesa unos
-10\,GB, así que se descargó desde Colab directo al Drive, sin pasar por la laptop.
-Las escenas son demasiado grandes para entrar completas a la GPU, por eso se
-cortan en bloques de 10\,m, que son la unidad de entrenamiento. La clase
-\emph{other} se ignora, porque reúne lo que no tiene una clase definida.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Preparación de ArCH para entrenar HyperNCD.}
-\label{alg:preparacion-arch}
-\KwIn{17 escenas etiquetadas de ArCH, lado del bloque de 10\,m}
-\KwOut{bloques de entrenamiento y bloques de validación}
-descargar las escenas al Drive desde Colab\;
-\ForEach{escena}{
-  contar los puntos de cada clase y guardar el resumen\;
-  cortar la escena en bloques de 10\,m de lado\;
-  marcar la clase \emph{other} como ignorada\;
-}
-asignar los bloques de las 15 escenas de entrenamiento a entrenamiento\;
-asignar los bloques de las 2 escenas de prueba a validación\;
-\end{algorithm}
-
-En ArCH se eligieron como novedosas el arco, la columna y la bóveda porque son los
-elementos que interesa descubrir en la Catedral. Cada muestra de entrenamiento toma
-hasta 60\,000 puntos de un bloque, y las regiones de las clases novedosas se forman
-con DBSCAN de radio 0{,}5\,m. Las dos escenas de prueba de ArCH se usan como
-validación para elegir el mejor modelo, así que su mIoU no cuenta como una prueba
-externa.
-
-El entrenamiento sigue el Algoritmo~\ref{alg:entrenamiento-m2}. En cada paso el
-modelo ve un bloque pequeño de la escena. Aprende a clasificar las clases
-conocidas con sus etiquetas y a separar las novedosas con pseudo-etiquetas que él
-mismo genera, sin usar etiquetas de esas clases. Al final de cada época se mide el
-mIoU en las escenas de validación y se conserva el mejor modelo.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Entrenamiento de HyperNCD.}
-\label{alg:entrenamiento-m2}
-\KwIn{escenas etiquetadas, clases conocidas $\mathcal{C}_k$ y novedosas $\mathcal{C}_n$}
-\KwOut{modelo con el mejor mIoU de validación}
-$\mathrm{mejor} \leftarrow 0$\;
-\For{época $e=1$ \KwTo $30$}{
-  \ForEach{lote de 4 muestras}{
-    $X \leftarrow \textsc{Bloque}(\text{escena},\, 10\,\mathrm{m},\, 60\,000\text{ puntos},\, \text{vóxel }5\,\mathrm{cm})$\;
-    $f_{\mathrm{sem}},\, z \leftarrow U_\theta(X)$ \tcp*{descriptor y puntuaciones de las cabezas}
-    $\mathcal{R}_n \leftarrow \textsc{DBSCAN}(X_{\text{novedoso}},\, 0{,}5\,\mathrm{m})$\;
-    $Y \leftarrow \textsc{SinkhornKnopp}(z)$ \tcp*{pseudo-etiquetas de $\mathcal{C}_n$}
-    $L \leftarrow L_{\mathrm{pt}} + \beta\, L_{\mathrm{reg}}$\;
-    $\theta \leftarrow \textsc{AdamW}(\theta, \nabla_\theta L)$\;
-  }
-  $m \leftarrow \mathrm{mIoU}(\text{validación})$\;
-  \If{$m>\mathrm{mejor}$}{guardar el modelo \quad $\mathrm{mejor} \leftarrow m$}
-}
-\end{algorithm}
-
-La extracción está en el programa \texttt{predecir\_hyperncd.py}. Recibe la matriz
-$S$ y un modelo entrenado, y entrega un archivo \texttt{.npz}. Se ejecuta una vez
-por escena y por modelo, y no actualiza ningún peso. Realiza cinco pasos, que
-resume la Figura~\ref{fig:flujo-extraccion-m2} y el
-Algoritmo~\ref{alg:extraccion-m2}.
-
-\begin{figure}[!htbp]
-\centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} Matriz $S$ de la escena y modelo entrenado};
-\node[mpaso, below=of a] (b) {\textbf{Paso 1.} Leer solo las posiciones de $S$};
-\node[mpaso, below=of b] (c) {\textbf{Paso 2.} Cargar el modelo, de SemanticPOSS o de ArCH};
-\node[mpaso, below=of c] (d) {\textbf{Paso 3.} Cuantizar a una rejilla de 5\,cm y guardar el índice inverso};
-\node[mmod, below=of d] (e) {\textbf{Paso 4.} Pasar la red sin gradiente};
-\node[mdat, below=of e] (f) {\textbf{Paso 5. Salida.} Archivo \texttt{.npz} con $f_{\mathrm{sem}}$, cabezas e índice inverso};
-\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo de la extracción con HyperNCD]{Flujo de la extracción con HyperNCD. Elaboración propia.}
-\label{fig:flujo-extraccion-m2}
-\end{figure}
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Extracción de $f_{\mathrm{sem}}$ con HyperNCD.}
-\label{alg:extraccion-m2}
-\KwIn{matriz $S$ de la escena, pesos $\theta$ del modelo entrenado}
-\KwOut{$f_{\mathrm{sem}}$, cabeza de cada punto e índice inverso}
-$P \leftarrow$ columnas de posición $x,y,z$ de $S$ \tcp*{sin color ni normal}
-$(V, \mathrm{inv}) \leftarrow \textsc{Cuantizar}(P,\, 5\,\mathrm{cm})$ \tcp*{una celda por punto}
-$U_\theta \leftarrow \textsc{CargarModelo}(\theta)$ \tcp*{modo evaluación}
-$(f_{\mathrm{sem}},\, z) \leftarrow U_\theta(V)$ \tcp*{sin gradiente, 96 valores y puntuaciones}
-$\text{cabeza} \leftarrow \arg\max_k z_{\cdot,k}$ \tcp*{cabeza que predice cada punto}
-guardar $f_{\mathrm{sem}}$, cabeza e $\mathrm{inv}$\;
-\end{algorithm}
-
-El modelo se carga sin cambiar ningún peso. Con SemanticPOSS se usa el
-punto de control de la época 8, que fue el mejor en su validación, y con ArCH el de
-la época 20, que fue el mejor en la suya. La Sección~\ref{sec:fusion} dice cómo se
-usa luego el archivo.
-
-\FloatBarrier
 \subsection{Rama Auto-supervisada, Sonata Original y Adaptado}
 \label{sec:rama-ssl}
 
-La rama auto-supervisada es el Módulo~3, Sonata (Sección~\ref{sec:modulo3}). Se
-usaron dos variantes. Sonata \emph{original} es el modelo público de Meta
-\cite{wu2025sonata}, entrenado con escenas de interiores y de calle. Sonata
-\emph{adaptado} es el mismo modelo después de seguir entrenándolo, sin etiquetas,
-con escaneos de la Catedral. Se hicieron las dos variantes para entender si un
-modelo que ya vio la Catedral la describe mejor que uno que nunca la vio. La
-extracción es igual en los dos casos y solo cambia el archivo de pesos. Esta
-sección describe primero la extracción y después la adaptación.
-
-La extracción está en el programa \texttt{extraer\_features.py}. Recibe la matriz
-$S$ y entrega un archivo \texttt{.npz} con los descriptores. Se ejecuta una vez por
-sección y no actualiza el modelo. Realiza cinco pasos, que resume la
-Figura~\ref{fig:flujo-sonata}.
-
-\begin{figure}[!htbp]
-\centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} Matriz $S$ de la sección};
-\node[mpaso, below=of a] (b) {\textbf{Pasos 1 y 2.} Carga de $S$ y de los pesos, originales o adaptados};
-\node[mpaso, below=of b] (c) {\textbf{Paso 3.} Centrado y rejilla de lado $g$};
-\node[mmod, below=of c] (d) {\textbf{Paso 4.} Codificador de Sonata, sin gradiente};
-\node[mdat, below=of d] (e) {\textbf{Paso 5. Salida.} Archivo \texttt{.npz} con $f_{\mathrm{ssl}}$};
-\foreach \u/\v in {a/b, b/c, c/d, d/e} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo de la extracción con Sonata]{Flujo de la extracción con Sonata. Elaboración propia.}
-\label{fig:flujo-sonata}
-\end{figure}
-
-\FloatBarrier
-\subsubsection*{Paso 1. Carga de la matriz}
-\etiquetahija{sec:u2-p1}
-
-El programa lee la matriz $S$ y la separa en posición, color y normal, que son las
-tres entradas que espera Sonata.
-
-\subsubsection*{Paso 2. Carga del modelo}
-\etiquetahija{sec:u2-p2}
-
-El modelo se carga con las líneas siguientes, que usan los pesos públicos de
-\texttt{facebook/sonata} y, con la opción \texttt{--pesos}, los adaptados. Se
-desactiva FlashAttention porque no se pudo instalar en el clúster, y Sonata calcula
-entonces la atención completa, que da el mismo resultado pero gasta mucha más
-memoria. Para contenerla, en Khipu se limitó el parche a 1024 puntos y se usó una
-GPU de 48\,GB, y en Colab se reemplazó ese cálculo por la atención de PyTorch,
-equivalente y más liviana. Los pesos públicos se descargan una sola vez desde el
-nodo de acceso, porque los nodos con GPU no tienen internet.
+La rama auto-supervisada es el Módulo~3, Sonata (Sección~\ref{sec:modulo3}). La
+variante \emph{original} es el modelo público de Meta \cite{wu2025sonata},
+entrenado con escenas de interiores y de calle. La \emph{adaptada} es el mismo
+modelo tras seguir entrenándolo, sin etiquetas, con escaneos de la Catedral. Se
+hicieron las dos para entender si un modelo que ya vio la Catedral la describe mejor
+que uno que nunca la vio. La extracción es igual en ambos casos y solo cambia el
+archivo de pesos. Se hace una vez por sección con \texttt{extraer\_features.py}, en
+cinco pasos. Se lee $S$ y se separa en posición, color y normal. Se carga el modelo
+con las líneas siguientes, con \texttt{--pesos} para la variante adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
 \begin{lstlisting}[style=comando]
 config = dict(enc_patch_size=[1024 for _ in range(5)], enable_flash=False)
-modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata",
-                     custom_config=config).cuda()
+modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config=config).cuda()
 \end{lstlisting}
-
-\subsubsection*{Paso 3. Preparación}
-\etiquetahija{sec:u2-p3}
-
-El programa traslada la nube para que su centro en $x$ e $y$ y su punto más bajo
-queden en el origen. Después la muestrea con una rejilla de lado $g=2$\,cm, el
-mismo con que se entrenó Sonata (Sección~\ref{sec:gridsample}). Conserva un punto
-al azar por celda y guarda un índice inverso, que dice a qué celda pertenece cada
-punto de $S$. Ese índice permite devolver después los descriptores a cada punto
-(Ec.~\eqref{eq:upcast}). Por último divide el color entre 255.
-
-\subsubsection*{Paso 4. Inferencia}
-\etiquetahija{sec:u2-p4}
-
-El programa pasa la nube preparada por el codificador de Sonata, sin calcular
-gradientes. El codificador tiene cinco etapas seguidas. Cada etapa agrupa los
-puntos en celdas más grandes y los describe con más valores. Al final, las salidas
-de las últimas etapas se devuelven a la rejilla de 2\,cm y se unen en un solo
-descriptor de 1088 valores. El Algoritmo~\ref{alg:inferencia-sonata} resume el
-recorrido. Las fórmulas están en la Sección~\ref{sec:codificador-ptv3} y el detalle
-de cada etapa en el \hyperref[sec:arq-sonata]{Anexo~C}.
+La instrucción desactiva FlashAttention, que no se pudo instalar en el clúster. Sonata
+calcula entonces la atención completa, que da el mismo resultado pero gasta más
+memoria, y se contuvo con parches de 1024 puntos en Khipu y con la atención de
+PyTorch en Colab. Después se traslada la nube y se muestrea con una rejilla de
+$g=2$\,cm, la de su entrenamiento, guardando un índice inverso
+(Sección~\ref{sec:gridsample}), se calcula $f_{\mathrm{ssl}}$ sin gradiente
+(Algoritmo~\ref{alg:inferencia-sonata}) y se escribe un \texttt{.npz} con los
+descriptores, las posiciones, el índice inverso y la semilla del muestreo.
 
 \begin{algorithm}[!htbp]
 \small
 \caption{Inferencia de Sonata sobre una sección.}
 \label{alg:inferencia-sonata}
 \KwIn{nube preparada con posición, color y normal, en una rejilla de 2\,cm}
-\KwOut{descriptor $f_{\mathrm{ssl}}$ de 1088 valores por punto de la rejilla}
+\KwOut{descriptor $f_{\mathrm{ssl}}$ de 1088 valores por punto}
 $x \leftarrow \textsc{Embedding}(\text{nube})$ \tcp*{48 canales}
 \For{etapa $e=1$ \KwTo $5$}{
-  $\text{parches} \leftarrow \textsc{Serializar}(x,\, 1024)$ \tcp*{orden Z y Hilbert}
-  $x_e \leftarrow \textsc{BloquesAtención}_e(\text{parches})$ \tcp*{3, 3, 3, 12 y 3 bloques}
+  $x_e \leftarrow \textsc{BloquesAtención}_e(\textsc{Serializar}(x,\, 1024))$ \tcp*{3, 3, 3, 12 y 3 bloques}
   \lIf{$e<5$}{$x \leftarrow \textsc{Pooling}(x_e)$ \tcp*{celda $\times 2$, más canales}}
 }
-$u_e \leftarrow \textsc{DevolverARejilla}(x_e)$ para $e\in\{3,4,5\}$\;
-$f_{\mathrm{ssl}} \leftarrow [u_3,\,u_4,\,u_5]$ \tcp*{$192+384+512=1088$}
+$f_{\mathrm{ssl}} \leftarrow [u_3,\,u_4,\,u_5]$ con $u_e$ la salida $x_e$ devuelta a la rejilla de 2\,cm \tcp*{$192+384+512=1088$}
 \end{algorithm}
-
-Entre etapas la celda pasa de 2 a 4, 8, 16 y 32\,cm, y los canales de 48 a 96, 192,
-384 y 512. Dentro de la GPU los parches se calculan a la vez. Las etapas van en
-orden, porque cada una usa la salida de la anterior.
-
-\subsubsection*{Paso 5. Escritura}
-\etiquetahija{sec:u2-p5}
-
-El programa guarda en un archivo \texttt{.npz} todo lo necesario para usar los
-descriptores sin volver a ejecutar Sonata. Guarda los descriptores en precisión
-media, la posición de cada punto de la rejilla, el índice inverso, el lado de la
-rejilla, el número de puntos de $S$ y la semilla del muestreo del Paso~3.
-
-\FloatBarrier
-\subsubsection*{Mediciones de control de cada extracción}
-\etiquetahija{sec:observables}
-
-Cada extracción deja seis mediciones, que se fijaron antes de ejecutar. Sirven para
-saber si la corrida salió como se esperaba y cuánto cuesta repetirla en otra
-sección. La Tabla~\ref{tab:observables} dice qué es cada una. Todas salen del
-registro que imprime el programa, salvo el tamaño del archivo, que se lee del
-disco.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Mediciones de control de la extracción]{Mediciones de control de la extracción con Sonata. Elaboración propia.}
-\label{tab:observables}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.75\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=1.15\hsize}X@{}}
-\toprule
-\textbf{Medición} & \textbf{Qué es} & \textbf{Para qué sirve} \\
-\midrule
-Dimensión de $f_{\mathrm{ssl}}$ & Cuántos valores describen a cada punto & Debe ser 1088, que es lo que espera el Módulo~4 \\
-Puntos retenidos & Puntos que quedan tras la rejilla de 2\,cm & Indica la resolución real y el tamaño de la salida \\
-Memoria máxima de la GPU & Mayor uso de memoria durante la corrida & Dice si la sección cabe en la GPU disponible \\
-Tiempo de inferencia & Segundos que tarda una sección & Es el costo real de la extracción \\
-Puntos por segundo & Puntos procesados por segundo & Permite estimar el tiempo de otras secciones \\
-Tamaño del archivo & Espacio que ocupa el \texttt{.npz} & Permite calcular el almacenamiento del proyecto \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Si un escaneo es demasiado grande para la memoria de la GPU, se divide en bloques
-con un margen de solape y cada bloque se procesa por separado.
-
-\FloatBarrier
-\subsubsection*{Revisión de los descriptores}
-\etiquetahija{sec:revision-descriptores}
-
-Los descriptores se revisan de dos maneras. La primera no usa etiquetas y sirve
-para cualquier escaneo. La segunda usa la escena etiquetada y mide el acierto, y se
-describe en la Sección~\ref{sec:trazabilidad}. La revisión sin etiquetas está en el
-programa \texttt{visualizar\_features.py} y en el visor, y sigue el
-Algoritmo~\ref{alg:revision}.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Revisión de los descriptores sin etiquetas.}
-\label{alg:revision}
-\KwIn{descriptores $f_{\mathrm{ssl}}$ de una sección}
-\KwOut{tres vistas en el visor y dos medidas de dispersión}
-$M \leftarrow \textsc{Muestra}(f_{\mathrm{ssl}},\, 100\,000,\, \text{semilla }0)$\;
-$M \leftarrow (M-\bar M)/\lVert M-\bar M\rVert$ \tcp*{centrar y normalizar a largo 1}
-$\text{vista}_1 \leftarrow$ tres primeras componentes principales de $M$, como color\;
-$\text{vista}_2 \leftarrow \langle M_i, M_q\rangle$ para cada punto $i$ \tcp*{coseno con un punto de consulta $q$}
-$\text{vista}_3 \leftarrow \textsc{KMeans}(M,\, 8,\, 30)$ \tcp*{ocho grupos, 30 iteraciones}
-$p_k \leftarrow$ varianza normalizada de la componente $k$\;
-$\text{rango} \leftarrow \exp\!\big(-\sum_k p_k\ln p_k\big)$ \tcp*{rango efectivo}
-\end{algorithm}
-
-En la primera vista, un mismo color indica descriptores parecidos. El rango
-efectivo vale 1 si todos los descriptores apuntan en una sola dirección y 1088 si
-se reparten por igual. Estas vistas se probaron primero sobre PL7 y PL13, dos
-escaneos de la Catedral sin etiquetas, y se aplican a la capilla etiquetada, que es
-la escena de prueba del proyecto, para que todos los módulos se miren sobre la
-misma escena. En las vistas de la capilla no se dibuja la clase \emph{otro}, porque
-reúne lo que no se etiquetó y confunde la lectura.
-
-\FloatBarrier
-\subsubsection*{Adaptación de Sonata a la Catedral}
-\etiquetahija{sec:variante-sonata}
-
-Sonata adaptado se obtiene siguiendo el entrenamiento de Sonata original, con su
-mismo objetivo y sin etiquetas, sobre escaneos de la Catedral. La
-Figura~\ref{fig:flujo-adaptacion} resume el procedimiento.
 
 \begin{figure}[!htbp]
 \centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} 21 escaneos de la Catedral, ya preprocesados, sin etiquetas};
-\node[mpaso, below=of a] (b) {\textbf{Paso 1.} Cargar los pesos públicos de Sonata como punto de partida};
-\node[mpaso, below=of b] (c) {\textbf{Paso 2.} Entrenar 30 épocas con el objetivo auto-supervisado de Sonata};
-\node[mpaso, below=of c] (d) {\textbf{Paso 3.} Tomar el modelo \emph{teacher} de la última época y exportarlo};
-\node[mpaso, below=of d] (e) {\textbf{Paso 4.} Extraer $f_{\mathrm{ssl}}$ con los pesos adaptados};
-\node[mdat, below=of e] (f) {\textbf{Salida.} Pesos adaptados y descriptores adaptados};
-\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo de la adaptación de Sonata]{Flujo de la adaptación de Sonata. Elaboración propia.}
-\label{fig:flujo-adaptacion}
+\includegraphics[width=0.93\linewidth]{imagenes/flujo_m3.png}
+\caption[Flujo del Módulo 3]{Flujo del Módulo~3 con la herramienta de cada paso. Elaboración propia.}
+\label{fig:flujo-m3}
 \end{figure}
 
-En el entrenamiento de Sonata un modelo estudiante aprende a imitar a un modelo
-\emph{teacher}, que a su vez es un promedio móvil del estudiante. Ambos ven la
-misma escena con recortes y cambios al azar, y no hace falta ninguna etiqueta. El
-Algoritmo~\ref{alg:adaptacion} resume el bucle de la adaptación.
+\paragraph*{Mediciones de control.}\etiquetahija{sec:observables} Cada extracción deja seis mediciones, que se fijaron
+antes de ejecutar y salen del registro del programa. Son la dimensión de
+$f_{\mathrm{ssl}}$, que debe ser 1088, los puntos retenidos por la rejilla, la
+memoria máxima de la GPU, el tiempo de inferencia, los puntos por segundo y el
+tamaño del archivo. Dicen si la corrida salió como se esperaba y cuánto cuesta
+repetirla en otra sección.
+
+\paragraph*{Revisión de los descriptores.}\etiquetahija{sec:revision-descriptores} Los descriptores se revisan sin
+etiquetas con \texttt{visualizar\_features.py} y con el visor. Sobre una muestra de
+100\,000 puntos centrada y normalizada, se colorea con las tres primeras
+componentes principales, se pinta la similitud coseno con un punto de consulta y se
+agrupa con $k$-means en ocho grupos. Se calcula además el rango efectivo, que vale 1
+si todos los descriptores apuntan en una sola dirección y 1088 si se reparten por
+igual. Se probaron primero sobre PL7 y PL13, sin etiquetas, y se aplican a la capilla
+etiquetada sin dibujar la clase \emph{otro}, que reúne lo no etiquetado y confunde
+la lectura.
+
+\paragraph*{Adaptación de Sonata a la Catedral.}\etiquetahija{sec:variante-sonata} Sonata adaptado se obtiene
+siguiendo el entrenamiento de Sonata original, con su mismo objetivo y sin
+etiquetas, con 21 de los 23 escaneos. PL7 y PL13 se dejaron fuera para revisar el
+resultado en escaneos que el modelo no vio. Un estudiante aprende a imitar a un
+\emph{teacher} que es su promedio móvil, ambos sobre la misma escena con recortes al
+azar, como indica el Algoritmo~\ref{alg:adaptacion}. Se usó Pointcept con la
+configuración de preentrenamiento de Sonata, en una GPU de 22{,}5\,GB de Colab, con
+lote de una escena, que es mucho menor que el original. Se hizo una sola vez, por lo
+que no se conoce su variabilidad. En la capilla el descriptor original y el adaptado
+se extrajeron en el mismo entorno de Colab, con la misma semilla y atención, de modo
+que sus diferencias se deben a los pesos. Antes de tener etiquetas se compararon con
+medidas que no las necesitan, que son el cambio relativo de los pesos, el coseno
+punto a punto, el rango efectivo y la estabilidad del $k$-means.
 
 \begin{algorithm}[!htbp]
 \small
@@ -788,8 +316,7 @@ $\theta_{\mathrm{est}} \leftarrow \theta_0$ \quad $\theta_{\mathrm{teacher}} \le
 \For{época $e=1$ \KwTo $30$}{
   \For{iteración $t=1$ \KwTo $105$}{
     $V \leftarrow \textsc{Vistas}(\text{escena},\, 32\,768)$ \tcp*{recortes y cambios al azar}
-    $a \leftarrow \theta_{\mathrm{est}}(V)$ \quad $b \leftarrow \theta_{\mathrm{teacher}}(V)$\;
-    $L \leftarrow \textsc{Autodestilación}(a, b)$\;
+    $L \leftarrow \textsc{Autodestilación}(\theta_{\mathrm{est}}(V),\, \theta_{\mathrm{teacher}}(V))$\;
     $\theta_{\mathrm{est}} \leftarrow \textsc{Actualizar}(\theta_{\mathrm{est}}, \nabla L,\, 2\times10^{-4})$\;
     $\theta_{\mathrm{teacher}} \leftarrow m\,\theta_{\mathrm{teacher}} + (1-m)\,\theta_{\mathrm{est}}$ \tcp*{promedio móvil}
   }
@@ -797,49 +324,24 @@ $\theta_{\mathrm{est}} \leftarrow \theta_0$ \quad $\theta_{\mathrm{teacher}} \le
 exportar $\theta_{\mathrm{teacher}}$\;
 \end{algorithm}
 
-Antes de tener etiquetas, la adaptación se evaluó con medidas que no las
-necesitan, reunidas en el Algoritmo~\ref{alg:comparacion-sin-etiquetas}. Responden
-a una pregunta simple, cuánto cambió el descriptor y si quedó más o menos rico que
-el original. Por sí solas no dicen si el descriptor acierta más, y para eso sirve
-la escena etiquetada de la Sección~\ref{sec:trazabilidad}.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Comparación sin etiquetas entre Sonata original y adaptado.}
-\label{alg:comparacion-sin-etiquetas}
-\KwIn{pesos $\theta_{\mathrm{orig}}$ y $\theta_{\mathrm{adapt}}$, descriptores de una sección con cada uno}
-\KwOut{cinco medidas de cambio}
-$\delta \leftarrow \lVert\theta_{\mathrm{adapt}}-\theta_{\mathrm{orig}}\rVert\,/\,\lVert\theta_{\mathrm{orig}}\rVert$ \tcp*{cambio relativo de los pesos}
-$c_i \leftarrow$ coseno entre los descriptores centrados del punto $i$ \tcp*{parecido punto a punto}
-$\text{rango}_{\mathrm{orig}},\, \text{rango}_{\mathrm{adapt}} \leftarrow$ rango efectivo de cada descriptor\;
-\ForEach{descriptor}{
-  agrupar con $k$-means en 8 grupos y varias semillas\;
-  estabilidad $\leftarrow$ ARI medio entre las semillas\;
-}
-$\mathrm{ARI}_{o,a} \leftarrow$ ARI entre los grupos del original y los del adaptado\;
-\end{algorithm}
-
-Se usaron 21 de los 23 escaneos. PL7 y PL13 se dejaron fuera para revisar el
-resultado en escaneos que el modelo no vio. El entrenamiento usa Pointcept, con la
-configuración de preentrenamiento de Sonata. Cada época tiene 105 iteraciones, con
-un lote de una escena, 32\,768 puntos por vista y tasa de aprendizaje
-$2\times10^{-4}$, en una GPU de 22{,}5\,GB de Colab. El lote de una escena se debe
-a la memoria disponible y es mucho menor que el del entrenamiento original de
-Sonata. La adaptación se hizo una sola vez, por lo que no se conoce su
-variabilidad. En la capilla, el descriptor original y el adaptado se extrajeron en
-el mismo entorno de Colab, con la misma semilla y la misma atención, de modo que
-sus diferencias se deben a los pesos. En PL13, en cambio, el original se extrajo en
-Khipu y el adaptado en Colab, y esa comparación no separa el efecto de los pesos
-del efecto del equipo. Por eso las dos variantes se comparan por su rendimiento en
-la escena de prueba.
-
-\FloatBarrier
 \subsection{Punto de Fusión}
 \label{sec:fusion}
 
 El Módulo~4 (Sección~\ref{sec:modulo4}) recibe los dos descriptores ya guardados y
-agrupa los puntos de la escena. No entrena nada y corre en CPU. Sigue el
-Algoritmo~\ref{alg:fusion}.
+agrupa los puntos de la escena, sin entrenar nada y en CPU, como indica el
+Algoritmo~\ref{alg:fusion}. Se alinean los descriptores con los puntos, se divide la
+escena en regiones de 0{,}75\,m con al menos 30 puntos, y cada región toma el
+promedio de sus descriptores. Los descriptores se normalizan y se unen
+(Ecuación~\ref{eq:hibrido}), y la afinidad entre regiones mezcla su parecido
+geométrico y semántico con peso $\alpha=0{,}5$ (Ecuación~\ref{eq:afinidad}). Cada
+región se enlaza con sus $M=8$ más afines, y 15 iteraciones asignan las regiones a
+$K=8$ prototipos con el equilibrio de Sinkhorn--Knopp, que evita que un grupo se
+quede con casi todas. Cada punto recibe el grupo de su región. Con este algoritmo se
+obtienen cuatro agrupamientos que solo cambian el descriptor de la región. M2 usa
+solo $f_{\mathrm{sem}}$, M3 solo $f_{\mathrm{ssl}}$, M4 base $f_{\mathrm{sem}}$ con
+seis rasgos geométricos hechos a mano, y M4 $f_{\mathrm{sem}}$ con
+$f_{\mathrm{ssl}}$. La prueba del módulo sobre una escena sintética está en el
+\hyperref[sec:m4-simulado]{Anexo~D}.
 
 \begin{algorithm}[!htbp]
 \small
@@ -847,154 +349,41 @@ Algoritmo~\ref{alg:fusion}.
 \label{alg:fusion}
 \KwIn{matriz $S$, $f_{\mathrm{sem}}$, $f_{\mathrm{ssl}}$, número de grupos $K$, semilla}
 \KwOut{grupo $\hat y_i$ de cada punto}
-$(f_{\mathrm{sem}}, f_{\mathrm{ssl}}) \leftarrow \textsc{Alinear}(S, f_{\mathrm{sem}}, f_{\mathrm{ssl}})$ \tcp*{índices inversos}
-$\mathcal{R} \leftarrow \textsc{Regiones}(S,\, 0{,}75\,\mathrm{m})$ \quad descartar $r$ con $|r|<30$\;
-\ForEach{región $r\in\mathcal{R}$}{
-  $F^{(r)} \leftarrow [\overline{f_{\mathrm{sem}}}^{\,r},\, \overline{f_{\mathrm{ssl}}}^{\,r}]$ \tcp*{Ec.~\eqref{eq:hibrido}}
-}
-$S_b \leftarrow \textsc{Afinidad}(F, g)$ \tcp*{Ec.~\eqref{eq:afinidad}}
-$\mathcal{N}_M(r) \leftarrow$ las $M=8$ regiones más afines a $r$\;
+$\mathcal{R} \leftarrow \textsc{Regiones}(S,\, 0{,}75\,\mathrm{m})$ con $|r|\geq 30$ \tcp*{descriptores alineados con el índice inverso}
+$F^{(r)} \leftarrow [\overline{f_{\mathrm{sem}}}^{\,r},\, \overline{f_{\mathrm{ssl}}}^{\,r}]$ para cada región $r$ \tcp*{Ec.~\eqref{eq:hibrido}}
+$S_b \leftarrow \textsc{Afinidad}(F, g)$ \tcp*{Ec.~\eqref{eq:afinidad}, con las $M=8$ regiones más afines}
 $P \leftarrow \textsc{PrototiposIniciales}(F, K, \text{semilla})$\;
 \For{$t=1$ \KwTo $15$}{
-  $Q \leftarrow \textsc{SinkhornKnopp}(F, P)$ \tcp*{asignación equilibrada}
-  $P_k \leftarrow \sum_r Q_{r,k}\, F^{(r)}$ para cada $k$ \tcp*{prototipos nuevos}
+  $Q \leftarrow \textsc{SinkhornKnopp}(F, P)$ \quad $P_k \leftarrow \sum_r Q_{r,k}\, F^{(r)}$\;
 }
-$\hat y_i \leftarrow \arg\max_k Q_{r(i),k}$ para cada punto $i$ \tcp*{el de su región}
+$\hat y_i \leftarrow \arg\max_k Q_{r(i),k}$ para cada punto $i$\;
 \end{algorithm}
-
-La Figura~\ref{fig:flujo-m4} muestra los cinco pasos del módulo, y los párrafos
-siguientes explican cada uno.
 
 \begin{figure}[!htbp]
 \centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {\textbf{Entrada.} Matriz $S$, $f_{\mathrm{sem}}$, $f_{\mathrm{ssl}}$, $K$ y semilla};
-\node[mpaso, below=of a] (b) {\textbf{Paso 1.} Alinear los descriptores con los puntos de $S$};
-\node[mpaso, below=of b] (c) {\textbf{Paso 2.} Dividir la escena en regiones de 0{,}75\,m};
-\node[mpaso, below=of c] (d) {\textbf{Paso 3.} Unir descriptores y calcular la afinidad entre regiones};
-\node[mmod, below=of d] (e) {\textbf{Paso 4.} Prototipos con Sinkhorn--Knopp, 15 iteraciones};
-\node[mpaso, below=of e] (f) {\textbf{Paso 5.} Dar a cada punto el grupo de su región};
-\node[mdat, below=of f] (g) {\textbf{Salida.} Grupo de cada punto};
-\foreach \u/\v in {a/b, b/c, c/d, d/e, e/f, f/g} \draw[mfl] (\u) -- (\v);
-\end{tikzpicture}
-\caption[Flujo del Módulo 4]{Flujo del Módulo~4. Elaboración propia.}
+\includegraphics[width=0.93\linewidth]{imagenes/flujo_m4.png}
+\caption[Flujo del Módulo 4]{Flujo del Módulo~4 con la herramienta de cada paso. Elaboración propia.}
 \label{fig:flujo-m4}
 \end{figure}
 
-\paragraph*{Paso 1. Alineación.} HyperNCD trabaja en una rejilla de 5\,cm y Sonata
-en una de 2\,cm, así que sus descriptores no tienen el mismo número de filas. Cada
-descriptor se lleva a los puntos de $S$ con su índice inverso, y desde ahí cada
-punto tiene sus dos descriptores.
-
-\paragraph*{Paso 2. Regiones.} Agrupar millones de puntos uno por uno sería lento
-y ruidoso. La escena se divide en celdas cúbicas de 0{,}75\,m y se descartan las
-que tienen menos de 30 puntos. Cada celda es una región y su descriptor es el
-promedio de los descriptores de sus puntos. Desde aquí el agrupamiento trabaja con
-regiones.
-
-\paragraph*{Paso 3. Descriptor y afinidad.} Cada descriptor se normaliza y los dos
-se unen en uno solo (Ec.~\eqref{eq:hibrido}). La afinidad entre dos regiones mezcla
-su parecido geométrico, medido con un núcleo gaussiano sobre sus centroides, y su
-parecido semántico, medido con el coseno entre descriptores
-(Ec.~\eqref{eq:afinidad}), con peso $\alpha=0{,}5$. Cada región se enlaza con sus
-$M=8$ regiones más afines y forma con ellas una hiperarista.
-
-\paragraph*{Paso 4. Prototipos.} Se eligen $K$ prototipos iniciales con la semilla.
-En cada una de las 15 iteraciones se mide qué tan cerca está cada región de cada
-prototipo, se reparten las regiones con el algoritmo de Sinkhorn--Knopp, que evita
-que un solo grupo se quede con casi todas, y cada prototipo pasa a ser el promedio
-ponderado de sus regiones. El número de grupos $K$ es 8, cercano al de clases de la
-escena, y se comprueba también con $K=12$ en la evaluación y con $K=6$ en el barrido.
-
-\paragraph*{Paso 5. Etiqueta.} Cada punto recibe el grupo de su región. Todo el
-procedimiento es determinista salvo por los prototipos iniciales, que dependen de
-la semilla.
-
-Con este mismo algoritmo se obtienen cuatro agrupamientos, que solo cambian lo que
-entra al descriptor de la región (Tabla~\ref{tab:agrupamientos}). Así se mide qué
-aporta cada descriptor.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Los cuatro agrupamientos]{Los cuatro agrupamientos que se comparan. Elaboración propia.}
-\label{tab:agrupamientos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Agrupamiento} & \textbf{Descriptor de cada región} & \textbf{Qué mide} \\
-\midrule
-M2 & Solo $f_{\mathrm{sem}}$, 96 valores & Lo que aporta HyperNCD por sí solo \\
-M3 & Solo $f_{\mathrm{ssl}}$, 1088 valores & Lo que aporta Sonata por sí solo \\
-M4 base & $f_{\mathrm{sem}}$ y $f_{\mathrm{geo}}$, 6 valores de linealidad, planaridad, dispersión y centroide & La fusión del artículo de HyperNCD, con rasgos geométricos hechos a mano \\
-M4 & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ & La fusión propuesta, con Sonata en lugar de los rasgos a mano \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Antes de tener datos reales, el módulo se probó sobre una escena sintética. Esa
-prueba está en el \hyperref[sec:m4-simulado]{Anexo~D}.
-
-\subsubsection*{Barrido de fusiones}
-\etiquetahija{sec:barrido-fusion}
-
-Unir los dos descriptores normalizados es la forma más simple de fusionar. Para
-saber si otra forma funciona mejor, se probaron variantes que solo cambian la
-afinidad entre regiones y dejan igual el resto del algoritmo. Se cambian tres
-cosas, que resume la Tabla~\ref{tab:ejes-barrido}. El promedio ponderado y la
-fusión de redes vienen del agrupamiento multivista
-\cite{wang2014snf,kumar2011coregularized,chao2017survey}. El producto, el mínimo y
-el peso por confianza son variantes propias. Todas son deterministas y no usan
-etiquetas para agrupar, las etiquetas solo sirven para evaluar.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Ejes del barrido de fusiones]{Ejes del barrido de fusiones. Elaboración propia.}
-\label{tab:ejes-barrido}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Eje} & \textbf{Opciones} & \textbf{Qué cambia} \\
-\midrule
-Preprocesado & Descriptores tal cual, restar la media, o restar la media y aplicar componentes principales con blanqueo ($f_{\mathrm{sem}}$ a 32 y $f_{\mathrm{ssl}}$ a 64 dimensiones) & Que ninguna dimensión domine el coseno \\
-Modo de combinar & Promedio ponderado, producto, mínimo, peso según la confianza de HyperNCD en cada región, y fusión de redes de similitud & Cómo se mezclan las dos similitudes \\
-Peso de $f_{\mathrm{sem}}$ & 0{,}1, 0{,}25, 0{,}5, 0{,}75 y 0{,}9, solo en el promedio ponderado y el producto & Cuánto pesa cada descriptor \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-En total son 39 configuraciones por cada combinación de modelos, cada una con cinco
-semillas. Las 13 de cada preprocesado salen de 5 pesos con el promedio ponderado,
-5 con el producto y una con cada uno de los otros tres modos. La unión simple con
-peso 0{,}5 es la fusión del Módulo~4. Como solo hay una escena de prueba, se divide en dos mitades. La mejor
-configuración se elige con el mIoU de una mitad y se reporta en la otra, en los dos
-sentidos. Así el resultado no depende de haber elegido con las mismas etiquetas con
-que se mide. El Algoritmo~\ref{alg:barrido} resume esa selección.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Barrido de fusiones con selección en dos mitades.}
-\label{alg:barrido}
-\KwIn{escena de prueba, descriptores, 39 configuraciones $\mathcal{G}$, semillas 0 a 4}
-\KwOut{mIoU de la mejor configuración, medido en la mitad que no la eligió}
-$(A, B) \leftarrow \textsc{DividirEnDosMitades}(\text{escena})$\;
-\ForEach{$(E, R)\in\{(A,B),(B,A)\}$}{
-  \ForEach{configuración $g\in\mathcal{G}$}{
-    $m_g \leftarrow$ media de $\mathrm{mIoU}(\textsc{Agrupar}(E, g, s))$ para $s=0,\dots,4$\;
-  }
-  $g^{*} \leftarrow \arg\max_g m_g$\;
-  $v_R \leftarrow \mathrm{mIoU}(\textsc{Agrupar}(R, g^{*}))$\;
-}
-reportar $v_{B}$ y $v_{A}$\;
-\end{algorithm}
+Para saber si otra forma de fusionar funciona mejor, se probó un barrido de 39
+configuraciones por combinación de modelos, cada una con cinco semillas, que cambian
+solo la afinidad entre regiones. Varían el preprocesado de los descriptores (igual,
+restar la media, o restarla y aplicar componentes principales con blanqueo), el modo
+de combinar las similitudes (promedio ponderado, producto, mínimo, confianza de
+HyperNCD en cada región o fusión de redes de similitud \cite{wang2014snf}) y el peso
+de $f_{\mathrm{sem}}$, de 0{,}1 a 0{,}9. El promedio ponderado y la fusión de redes
+vienen del agrupamiento multivista \cite{kumar2011coregularized,chao2017survey}, y
+las demás son variantes propias. Como hay una sola escena, esta se divide en dos
+mitades, y la mejor configuración se elige en una y se reporta en la otra, en los dos
+sentidos.\etiquetahija{sec:barrido-fusion}
 
 % =====================================================================
-\FloatBarrier
 \section{Justificación de los Parámetros del Procedimiento}
 \label{sec:parametros}
 
-Cada módulo fija algunos valores, como el tamaño del vóxel o el número de vecinos.
-La Tabla~\ref{tab:parametros} reúne los valores de los cuatro módulos, en orden, y
-dice de dónde sale cada uno.
+La Tabla~\ref{tab:parametros} reúne los valores de los cuatro módulos, de dónde
+sale cada uno y qué prueba lo comprueba.
 
 \begin{table}[!htbp]
 \centering
@@ -1007,36 +396,28 @@ dice de dónde sale cada uno.
 \textbf{Parámetro} & \textbf{Valor} & \textbf{Por qué este valor} & \textbf{Prueba} \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 1}}\\
-Tamaño de bloque & $5\times10^{6}$ & Solo limita la memoria, no cambia el resultado & P0 \\
-Escala del color & $/256$ & Sonata espera color de 0 a 255 & --- \\
-Vecinos $q$ del filtrado & 20 & Valor por defecto de Open3D & P1 \\
-Umbral $\lambda$ & 2 & Valor por defecto de Open3D & P1 \\
+Tamaño de bloque & $5\times10^{6}$ & Solo limita la memoria & P0 \\
+Vecinos $q$ y umbral $\lambda$ & 20 y 2 & Valores por defecto de Open3D & P1 \\
 Lado del vóxel $\ell$ & 5\,cm & Valor inicial & P2 \\
 Vecinos de las normales & 20 & Comparte el $q$ del filtrado & P3 \\
-Precisión de $S$ & Simple & Solo afecta al tamaño en disco & P4 \\
+Precisión de $S$ & Simple & Solo afecta al tamaño en disco & --- \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 2}}\\
-Rejilla & 5\,cm & La misma del Módulo~1 & --- \\
 Bloque y puntos por muestra & 10\,m y 60\,000 & Lo que cabe en la GPU de entrenamiento & --- \\
-Radio de DBSCAN & 0{,}5\,m & Valor del artículo de HyperNCD & --- \\
-Épocas & 30 & La validación deja de mejorar antes & --- \\
+Radio de DBSCAN y épocas & 0{,}5\,m y 30 & Valor del artículo y límite de la validación & --- \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 3}}\\
-Tamaño de parche & 1024 & Límite de memoria sin FlashAttention & P5 \\
-Rejilla $g$ & 2\,cm & Es la del entrenamiento de Sonata & P2 \\
+Parche y rejilla $g$ & 1024 y 2\,cm & Memoria sin FlashAttention y entrenamiento de Sonata & P2, P5 \\
 Precisión del \texttt{.npz} & Media & Solo afecta al tamaño en disco & P4 \\
 Adaptación & 30 épocas, lote 1 & Lo que cabe en la GPU de Colab & --- \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 4 y evaluación}}\\
-Región & 0{,}75\,m, 30 puntos & Regiones con suficientes puntos para promediar & --- \\
-Vecinas $M$ e iteraciones & 8 y 15 & Valores de HyperNCD & --- \\
-Grupos $K$ & 8, con 6 y 12 & Cercano al número de clases de la escena & --- \\
-Semillas & 10 & Para medir la estabilidad del agrupamiento & --- \\
+Región, vecinas $M$ e iteraciones & 0{,}75\,m, 8 y 15 & Regiones con puntos suficientes y valores de HyperNCD & --- \\
+Grupos $K$ y semillas & 8 y 10 & Cercano al número de clases de la escena, y estabilidad del agrupamiento & --- \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\FloatBarrier
 \subsection{Función de Cada Paso y Efecto de Omitirlo}
 \label{sec:param-funcion}
 
@@ -1045,192 +426,52 @@ quitar puntos sueltos, igualar la densidad o dar a Sonata la normal que espera. 
 Tabla~\ref{tab:funcion}, en el \hyperref[sec:anexo-parametros]{Anexo~H}, dice qué
 aporta cada paso y qué pasaría sin él.
 
-\FloatBarrier
 \subsection{Pruebas de los Parámetros}
 \label{sec:param-criterio}
-\etiquetahija{sec:param-p0}\etiquetahija{sec:param-p1}%
-\etiquetahija{sec:param-p2}\etiquetahija{sec:param-p3}%
-\etiquetahija{sec:param-p4}\etiquetahija{sec:param-p5}%
 
-Para comprobar los valores de los Módulos~1 y~3 se definieron seis pruebas, de P0 a
-P5. Todas siguen el mismo esquema, que resume el Algoritmo~\ref{alg:prueba} y la
-Figura~\ref{fig:flujo-prueba}. Cada prueba cambia un solo parámetro sobre la misma
-sección y deja fijos los demás. La lista de pruebas, con los valores que recorre
-cada una, está en la Tabla~\ref{tab:pruebas} del
-\hyperref[sec:anexo-parametros]{Anexo~H}. Las pruebas P0 a P3 solo usan el
-Módulo~1 y se ejecutaron en la laptop sobre la capilla etiquetada. Las pruebas P4
-y P5, y el ARI y el NMI de P2, necesitan la GPU de Sonata y quedaron pendientes.
-Para P3 se agregó al programa la opción \texttt{--q-normales}, que separa los
-vecinos de las normales de los del filtrado, y para P5 la opción \texttt{--parche}.
+Para comprobar los valores de los Módulos~1 y~3 se definieron seis pruebas, P0 a
+P5, que cambian un solo parámetro sobre la misma sección y miden la rugosidad, la
+dispersión de las normales, el ARI y el NMI de los descriptores, el tiempo y la
+memoria. Se elige el valor más barato a partir del cual las medidas dejan de
+mejorar, y la lista está en la Tabla~\ref{tab:pruebas} del
+\hyperref[sec:anexo-parametros]{Anexo~H}. P0 a P3 solo usan el Módulo~1 y se
+ejecutaron en la laptop sobre la capilla etiquetada. P4 y P5, y el ARI y el NMI de
+P2, necesitan la GPU de Sonata y quedaron pendientes. Para P3 y P5 se agregaron al
+programa las opciones \texttt{--q-normales} y
+\texttt{--parche}.\etiquetahija{sec:param-p0}\etiquetahija{sec:param-p1}\etiquetahija{sec:param-p2}\etiquetahija{sec:param-p3}\etiquetahija{sec:param-p4}\etiquetahija{sec:param-p5}
 
-\begin{algorithm}[!htbp]
-\small
-\caption{Prueba de un parámetro.}
-\label{alg:prueba}
-\KwIn{sección de prueba, parámetro $p$, lista de valores $V$, configuración de referencia $c_0$}
-\KwOut{valor elegido para $p$}
-$\text{ref} \leftarrow \textsc{Ejecutar}(c_0)$\;
-\ForEach{valor $v\in V$}{
-  $\text{res}_v \leftarrow \textsc{Ejecutar}(c_0 \text{ con } p=v)$\;
-  $m_v \leftarrow (\text{rugosidad},\, \text{dispersión},\, \mathrm{ARI},\, \mathrm{NMI})$ de $\text{res}_v$ frente a ref\;
-  $\text{costo}_v \leftarrow (\text{tiempo},\, \text{memoria})$\;
-}
-$p^{*} \leftarrow$ el $v$ de menor costo tal que $m_v$ ya no mejora\;
-\end{algorithm}
-
-\begin{figure}[!htbp]
-\centering
-\begin{tikzpicture}[node distance=3mm]
-\node[mdat] (a) {Sección de prueba y configuración de referencia};
-\node[mpaso, below=of a] (b) {Cambiar un solo parámetro};
-\node[mpaso, below=of b] (c) {Ejecutar y medir calidad y costo};
-\node[fdec, below=4mm of c, font=\scriptsize] (d) {¿Quedan valores?};
-\node[mdat, below=4mm of d] (e) {Elegir el valor más barato que no empeora};
-\draw[mfl] (a) -- (b); \draw[mfl] (b) -- (c); \draw[mfl] (c) -- (d);
-\draw[mfl] (d) -- node[right, font=\tiny] {no} (e);
-\draw[mfl] (d.east) -- ++(1.6,0) node[above, pos=0.5, font=\tiny] {sí} |- (b.east);
-\end{tikzpicture}
-\caption[Flujo de una prueba de parámetros]{Flujo de una prueba de parámetros. Elaboración propia.}
-\label{fig:flujo-prueba}
-\end{figure}
-
-\FloatBarrier
 \subsection{Replicación del Procedimiento}
 \label{sec:param-replicacion}
 
-El procedimiento se puede repetir módulo por módulo, en orden. Ningún valor está
-escondido en el código, cada parámetro es una opción de la línea de órdenes y cada
-corrida guarda lo que hizo. La Tabla~\ref{tab:replicacion} dice, para cada módulo,
-dónde hay azar y cómo se controla. Los pasos para replicar una configuración y sus
-límites están en el \hyperref[sec:anexo-parametros]{Anexo~H}.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Azar y repetición de cada módulo]{Azar y repetición de cada módulo. Elaboración propia.}
-\label{tab:replicacion}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Módulo} & \textbf{Dónde hay azar} & \textbf{Cómo se repite} \\
-\midrule
-M1 & En ningún paso & La misma entrada da exactamente la misma salida \\
-M2 & En el inicio del entrenamiento & Semilla fija en~0. La extracción es determinista una vez elegido el modelo \\
-M3, extracción & En la elección de un punto por celda al preparar la nube & El programa fija y guarda la semilla \\
-M3, adaptación & En el equipo y en el orden de los datos & No se repite exacta \\
-M4 & En los prototipos iniciales & Cada agrupamiento se repite con las semillas 0 a~9 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+Cada parámetro es una opción de la línea de órdenes y cada corrida guarda lo que
+hizo. El Módulo~1 no tiene azar y se repite exacto. En el Módulo~2 el azar está en
+el entrenamiento, con semilla~0, y la extracción es determinista. En el Módulo~3 el
+único azar es la elección de un punto por celda, con semilla guardada, pero la
+adaptación depende del equipo y del orden de los datos y no se repite exacta. En
+el Módulo~4 el azar está en los prototipos iniciales, y por eso cada agrupamiento
+se repite con las semillas 0 a~9 (\hyperref[sec:anexo-parametros]{Anexo~H}).
 
 % =====================================================================
-\FloatBarrier
 \section{Unidad 3. Entrenamiento, Calibración y Evaluación}
 \label{sec:unidad3}
 
-La tercera unidad describe en qué orden se ejecuta todo, qué experimentos se
-hicieron y cómo se evalúan.
-
-\FloatBarrier
 \subsection{Procedimiento Experimental}
 \label{sec:procedimiento}
 
-El procedimiento sigue las etapas de la Figura~\ref{fig:flujo}. HyperNCD y Sonata
-nunca se entrenan juntos. Cada uno se prepara por separado, guarda sus descriptores
-y la fusión trabaja después con esos archivos. El
-Algoritmo~\ref{alg:experimento} resume una ejecución completa.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Procedimiento experimental completo.}
-\label{alg:experimento}
-\KwIn{escaneos de la Catedral, escena de prueba etiquetada, SemanticPOSS y ArCH}
-\KwOut{mIoU medio y desviación de M2, M3, M4 base y M4 en cada combinación}
-$S \leftarrow \textsc{Preprocesar}(\text{escaneos y escena de prueba})$ \tcp*{Módulo 1}
-$\mathrm{HNCD}_{\mathrm{orig}} \leftarrow \textsc{Entrenar}(\text{SemanticPOSS})$ \quad $\mathrm{HNCD}_{\mathrm{adapt}} \leftarrow \textsc{Entrenar}(\text{ArCH})$\;
-$\mathrm{Sonata}_{\mathrm{adapt}} \leftarrow \textsc{Adaptar}(\mathrm{Sonata}_{\mathrm{orig}}, \text{escaneos})$\;
-\ForEach{$h\in\{\mathrm{orig},\mathrm{adapt}\}$}{$f_{\mathrm{sem}}^{h} \leftarrow \mathrm{HNCD}_h(S)$}
-\ForEach{$s\in\{\mathrm{orig},\mathrm{adapt}\}$}{$f_{\mathrm{ssl}}^{s} \leftarrow \mathrm{Sonata}_s(S)$}
-\ForEach{$(h,s)$ y cada agrupamiento $a\in\{\mathrm{M2},\mathrm{M3},\mathrm{M4\ base},\mathrm{M4}\}$}{
-  \For{semilla $k=0$ \KwTo $9$}{
-    $\hat y \leftarrow \textsc{Fusión}(a, f_{\mathrm{sem}}^{h}, f_{\mathrm{ssl}}^{s}, K, k)$ \tcp*{Algoritmo~\ref{alg:fusion}}
-    $m_k \leftarrow \mathrm{mIoU}(\hat y)$\;
-  }
-  guardar media y desviación de $m_0,\dots,m_9$\;
-}
-\end{algorithm}
-
-Los experimentos cambian una cosa por vez, el modelo semántico, el modelo
-auto-supervisado o la forma de fusionarlos. La Tabla~\ref{tab:factores} resume lo
-que cambia y la Tabla~\ref{tab:experimentos} enumera los experimentos.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Factores y variantes del diseño experimental]{Factores y variantes del diseño experimental. Elaboración propia.}
-\label{tab:factores}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.7\hsize}X>{\raggedright\arraybackslash\hsize=1.5\hsize}X>{\raggedright\arraybackslash\hsize=0.8\hsize}X@{}}
-\toprule
-\textbf{Factor} & \textbf{Variantes} & \textbf{Qué cambia} \\
-\midrule
-HyperNCD (M2) & Original, entrenado con SemanticPOSS. Adaptado, entrenado desde cero con ArCH & Los datos de entrenamiento \\
-Sonata (M3) & Original, con los pesos públicos. Adaptado, tras seguir entrenando con la Catedral & Los pesos del modelo \\
-Agrupamiento & M2 solo, M3 solo, M4 base y M4 & Los descriptores que se agrupan \\
-Fusión (M4) & Unión normalizada y las variantes del barrido & Cómo se combinan los descriptores \\
-Grupos y semillas & $K$ de 6, 8 y 12, con 8 como principal, y diez semillas & Solo el agrupamiento \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Las dos variantes de HyperNCD se cruzan con las dos de Sonata, de modo que hay
-cuatro combinaciones, y en cada una se miden los cuatro agrupamientos, como
-muestra la Tabla~\ref{tab:combinaciones}.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Combinaciones de HyperNCD y Sonata]{Combinaciones de HyperNCD y Sonata. En cada celda se miden M2, M3, M4 base y M4. Elaboración propia.}
-\label{tab:combinaciones}
-\begin{tabularx}{\linewidth}{@{}l>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
-\toprule
- & \textbf{Sonata original} & \textbf{Sonata adaptado} \\
-\midrule
-\textbf{HyperNCD original} & Combinación 1 & Combinación 2 \\
-\textbf{HyperNCD adaptado} & Combinación 3 & Combinación 4 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Experimentos del proyecto]{Experimentos del proyecto y lo que cambia en cada uno. Elaboración propia.}
-\label{tab:experimentos}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.25\hsize}X>{\raggedright\arraybackslash\hsize=0.75\hsize}X>{\raggedright\arraybackslash\hsize=1.0\hsize}X@{}}
-\toprule
-\textbf{Id} & \textbf{Qué se hace} & \textbf{Qué cambia} & \textbf{Qué se obtiene} \\
-\midrule
-X0 & Preparar los escaneos y la escena de prueba & --- & Matriz $S$ \\
-X1 & Aplicar HyperNCD original a la escena de prueba & La escena & Reparto de cabezas, NMI y mIoU \\
-X2 & Entrenar HyperNCD con ArCH & Los datos & Modelo adaptado y su validación \\
-X3 & Aplicar HyperNCD adaptado a la escena de prueba & HyperNCD & Las mismas medidas de X1 \\
-X4 & Adaptar Sonata a la Catedral & Los pesos de Sonata & Pesos y descriptores adaptados \\
-X5 & Evaluar M2, M3, M4 base y M4 & HyperNCD y Sonata & mIoU, NMI, ARI e IoU por clase \\
-X6 & Probar otras formas de fusionar & La fusión & mIoU por configuración \\
-X7 & Repetir con diez semillas & La semilla & Media y desviación \\
-X8 & Comparar cada clase con el umbral & El orden de las clases & IoU por clase y medidas geométricas \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Cada experimento responde a un objetivo específico de la introducción y parte de
-una pregunta con una expectativa escrita, que muestra la Tabla~\ref{tab:preguntas}.
-OE1 es integrar Sonata en el módulo de prototipos, OE2 es evaluar la configuración
-del híbrido y OE3 es cuantificar la mejora y delimitar su rango. Las expectativas
-de X2 y X3 se plantearon después de observar el resultado de X1, y las demás antes
-de ejecutar el experimento. Así se puede comparar lo que se esperaba con lo que
-salió.
+HyperNCD y Sonata nunca se entrenan juntos. Cada uno se prepara por separado, guarda
+sus descriptores y la fusión trabaja después con esos archivos. Las dos variantes de
+HyperNCD se cruzan con las dos de Sonata, de modo que hay cuatro combinaciones, y en
+cada una se miden los cuatro agrupamientos. Cada experimento responde a un objetivo
+específico de la introducción y parte de una pregunta con una expectativa escrita,
+que muestra la Tabla~\ref{tab:preguntas}. Cada experimento entrega una medida. X0 da
+los conteos, X1 a X3 el reparto de cabezas, el NMI y el mIoU de HyperNCD, X4 y X5 el
+mIoU de cada agrupamiento, X6 el de cada fusión, X7 la media y la desviación, y X8 el
+IoU por clase y las medidas geométricas. Las expectativas de X2 y X3 se plantearon
+después de ver el resultado de X1, y las demás antes de ejecutar. Además, X1 se
+acompañó de un diagnóstico de dominio que compara tres puntos de control de HyperNCD
+sobre SemanticPOSS, la capilla, la capilla submuestreada a 80\,000 puntos, PL7 y
+PL13, con el porcentaje de la cabeza dominante, el rango efectivo y el NMI, para
+separar el dominio de la densidad y de un error del modelo.
 
 \begin{table}[!htbp]
 \centering
@@ -1255,77 +496,28 @@ X8 & OE3 & ¿Qué clases superan el umbral de 70\,\% y por qué unas son más di
 \end{tabularx}
 \end{table}
 
-Aparte del diseño cruzado se hizo un experimento para entender por qué HyperNCD
-colapsa en la capilla. La pregunta es si la causa es el dominio de entrenamiento o
-un error del checkpoint, de la extracción o de la densidad de los puntos. Para
-separarlas se compararon varias escenas con tres checkpoints, como indica el
-Algoritmo~\ref{alg:dominio}. El control positivo es la parte más importante. Si el
-modelo también colapsara en SemanticPOSS, que es su dominio, el problema no sería
-el dominio. La capilla submuestreada a 80\,000 puntos imita la densidad de un
-LiDAR móvil y sirve para descartar que la densidad sea la causa. Las medidas no
-dependen de qué clase representa cada cabeza, y por eso se pueden comparar entre
-escenas distintas. Son el porcentaje de puntos en la cabeza dominante, el número de
-cabezas con más del 1\,\% de los puntos, la entropía normalizada, el rango
-efectivo de $f_{\mathrm{sem}}$ y, donde hay etiquetas, el NMI, el ARI y el mIoU
-uno a uno. Después se repitió con el modelo entrenado en ArCH para ver si el
-colapso desaparecía.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Experimento sobre el colapso de HyperNCD.}
-\label{alg:dominio}
-\KwIn{checkpoints de HyperNCD, escenas de control}
-\KwOut{medidas de colapso por escena y por checkpoint}
-\ForEach{checkpoint $c$ entre la época 8, la época 4 y el último guardado}{
-  \ForEach{escena $e$ entre SemanticPOSS 03, SemanticPOSS 00, capilla, capilla a 80\,000 puntos, PL7 y PL13}{
-    $(f_{\mathrm{sem}},\, \text{cabeza}) \leftarrow \textsc{Extraer}(c, e)$ \tcp*{mismo código de la extracción}
-    medir cabeza dominante, cabezas usadas, entropía y rango efectivo\;
-    \lIf{la escena tiene etiquetas}{medir NMI, ARI y mIoU uno a uno}
-  }
-}
-comparar el control positivo con la capilla\;
-\end{algorithm}
-
-\FloatBarrier
 \subsection{Protocolo de Repetición}
 \label{sec:repeticiones}
 
 El entrenamiento de HyperNCD con ArCH y la adaptación de Sonata se hicieron una vez
-cada uno, por lo que sus resultados no son promedios de varios entrenamientos. Lo
-que sí se repite es el agrupamiento, que se ejecuta con diez semillas en cada
-combinación. Se reportan la media y la desviación estándar de esas diez semillas.
-Esa desviación mide qué tan estable es el agrupamiento y no equivale a entrenar
-diez veces los modelos.
+cada uno. Lo que se repite es el agrupamiento, con diez semillas por combinación, y
+se reportan la media y la desviación, que miden la estabilidad del agrupamiento y no
+equivalen a entrenar diez veces los modelos. Las
+secciones del levantamiento son independientes y pueden repartirse entre varias GPU,
+y la aceleración es el menor entre el número de GPU y el de secciones, porque una
+sección no se reparte entre unidades.
 
 \paragraph*{Criterio para decidir si una diferencia es real.} Con una sola escena y
 un solo entrenamiento de cada modelo, hace falta una regla escrita antes de mirar
-los resultados. Una diferencia entre dos métodos se toma como real solo si supera
-la mayor de las dos desviaciones de sus diez semillas y tiene el mismo signo en las
-dos mitades de la escena y en las combinaciones de modelos donde se mide. Si no lo
-cumple, se reporta como una diferencia dentro del ruido. Aun cuando lo cumple, vale
-solo para esta escena y no para la Catedral entera. La regla es conservadora a
-propósito, porque las semillas miden la estabilidad del agrupamiento y no la
-variación entre escenas ni entre entrenamientos. El Algoritmo~\ref{alg:criterio}
-la resume.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Criterio para decidir si una diferencia es real.}
-\label{alg:criterio}
-\KwIn{mIoU de diez semillas de los métodos $A$ y $B$, en cada mitad de la escena y en cada combinación}
-\KwOut{diferencia real o dentro del ruido}
-$\Delta \leftarrow \bar m_A - \bar m_B$ \tcp*{diferencia de las medias}
-$s \leftarrow \max(\sigma_A, \sigma_B)$ \tcp*{mayor desviación de las diez semillas}
-\eIf{$|\Delta| > s$ y el signo de $\Delta$ es el mismo en las dos mitades y en las combinaciones}{
-  reportar la diferencia como real, solo para esta escena\;
-}{
-  reportar la diferencia como dentro del ruido\;
-}
-\end{algorithm}
+los resultados. Una diferencia entre dos métodos se toma como real solo si supera la
+mayor de las dos desviaciones de sus diez semillas y tiene el mismo signo en las dos
+mitades de la escena y en las combinaciones donde se mide. Si no lo cumple, se
+reporta como una diferencia dentro del ruido, y aun cumpliéndola vale solo para esta
+escena. La regla es conservadora a propósito, porque las semillas no miden la
+variación entre escenas ni entre entrenamientos.
 
 \paragraph*{Límites del diseño.} La Tabla~\ref{tab:limites} reúne lo que el diseño
-no cubre, para que los resultados se lean con ese alcance. Los dos primeros se
-deben a los datos disponibles y los demás son controles que quedaron pendientes.
+no cubre, para que los resultados se lean con ese alcance.
 
 \begin{table}[!htbp]
 \centering
@@ -1337,28 +529,16 @@ deben a los datos disponibles y los demás son controles que quedaron pendientes
 \toprule
 \textbf{Límite} & \textbf{Qué implica} & \textbf{Qué falta} \\
 \midrule
-Una sola escena etiquetada & Los resultados son de una capilla y pueden no repetirse en otras partes de la Catedral & Etiquetar más escenas \\
-Un solo entrenamiento de HyperNCD con ArCH & No se conoce la variabilidad del entrenamiento & Repetir con varias semillas \\
-Adaptación de Sonata hecha una vez, con lote de una escena & No se conoce su variabilidad y el lote es mucho menor que el original & Repetirla con un lote mayor \\
-Control del equipo solo en la capilla & En PL13 el original se extrajo en Khipu y el adaptado en Colab, así que esa comparación no separa el efecto de los pesos del efecto del equipo & Extraer PL13 con el original en Colab, en el mismo entorno que el adaptado \\
-Pruebas P4 y P5 sin correr & No se comprobó si la precisión media del archivo o un parche menor cambian el descriptor, ni el ARI y el NMI de la rejilla & Correrlas en Colab con la celda \texttt{colab\_p4\_p5.py} \\
-Sonda lineal con una semilla & Se corrió una vez, sin repetirla ni medir su variabilidad, por lo que una diferencia de menos de 2 puntos no es concluyente & Repetirla con varias semillas y más escenas \\
-Umbral de 70\,\% propio & No viene de ningún artículo, es una meta del proyecto & Fijarlo con el asesor o con la meta de patrimonio \\
-Fusión sin aprendizaje & Todas las fusiones probadas son deterministas & Una fusión aprendida, que queda para trabajos futuros \\
+Una sola escena etiquetada & Los resultados son de una capilla y pueden no repetirse en otras partes & Etiquetar más escenas \\
+Un solo entrenamiento de HyperNCD con ArCH y una sola adaptación de Sonata, con lote de una escena & No se conoce su variabilidad & Repetirlos con varias semillas y un lote mayor \\
+Control del equipo solo en la capilla & En PL13 el original se extrajo en Khipu y el adaptado en Colab, así que esa comparación no separa pesos y equipo & Extraer PL13 con el original en Colab \\
+Pruebas P4 y P5 sin correr & No se comprobó si la precisión media del archivo o un parche menor cambian el descriptor & Correrlas con GPU \\
+Sonda lineal con una semilla & Una diferencia de menos de 2 puntos no es concluyente & Repetirla con varias semillas \\
+Umbral de 70\,\% propio y fusión sin aprendizaje & No viene de ningún artículo, y todas las fusiones probadas son deterministas & Fijarlo con el asesor, y probar una fusión aprendida \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Las secciones del levantamiento son independientes, así que pueden repartirse entre
-varias GPU. Con $n_{\mathrm{gpu}}$ unidades y $n_{\mathrm{sec}}$ secciones, la
-aceleración frente a ejecutarlas una tras otra es
-\begin{equation}
-A=\min\left(n_{\mathrm{gpu}},\,n_{\mathrm{sec}}\right),
-\label{eq:aceleracion}
-\end{equation}
-porque una sección no se reparte entre unidades.
-
-\FloatBarrier
 \subsection{Trazabilidad de la Métrica}
 \label{sec:trazabilidad}
 
@@ -1366,46 +546,20 @@ La métrica principal es el mIoU, que se calcula sobre una escena con etiquetas
 reales. Esta sección describe esa escena, cómo se calcula la métrica y contra qué
 umbral se compara.
 
-\subsubsection*{Escena etiquetada y métricas}
-\etiquetahija{sec:escena-etiquetada}
-
-La escena de prueba es una capilla de la Catedral, que entregó el asesor
-etiquetada a mano (Figura~\ref{fig:m1-clases}). Tiene cinco clases, arco, columna,
-cúpula, pared y techo, y una clase \emph{otro} con todo lo que no se etiquetó.
-Llega como un archivo LAS por pieza y pasa por el Módulo~1 como cualquier escaneo.
-No se usó para entrenar ningún modelo y es una capilla distinta de los 21 escaneos
-con que se adaptó Sonata. Los escaneos PL7 y PL13, que se usaron al
-inicio para revisar los descriptores, no tienen etiquetas y no sirven para medir el
-acierto.
-
-Las etiquetas llegan como una pieza por archivo y deben convertirse en una etiqueta
-por cada punto de la matriz $S$, lo que hace el Algoritmo~\ref{alg:etiquetas}. Se
-usa el vecino más cercano porque el Módulo~1 filtra y promedia puntos, así que los
-puntos de $S$ no son los del archivo original, y esa es la forma más simple de
-heredar la clase sin inventar puntos nuevos.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Etiqueta de cada punto de la escena.}
-\label{alg:etiquetas}
-\KwIn{un archivo LAS por pieza, matriz $S$ de la escena}
-\KwOut{clase $y_i$ de cada punto de $S$}
-\ForEach{pieza}{
-  leer sus puntos y darles como clase el nombre del archivo\;
-}
-unir todas las piezas en una sola nube etiquetada $E$\;
-aplicar a $E$ el mismo centrado que recibió $S$\;
-\ForEach{punto $p_i$ de $S$}{
-  $y_i \leftarrow$ clase del punto de $E$ más cercano a $p_i$\;
-}
-guardar $y$ junto a $S$\;
-\end{algorithm}
-
-El cálculo de las métricas sigue el Algoritmo~\ref{alg:evaluacion}. Los grupos no tienen nombre,
-así que primero se emparejan con las clases reales (Sección~\ref{sec:hungaro}). La
-clase \emph{otro} no se cuenta, porque contiene elementos reales sin etiquetar. Se
-agrupan todos los puntos de la escena, y no solo los que HyperNCD marca como
-novedosos, para que las dos variantes de HyperNCD se midan sobre los mismos puntos.
+\paragraph*{Escena etiquetada y métricas.}\etiquetahija{sec:escena-etiquetada} La escena de prueba es una capilla de
+la Catedral que entregó el asesor etiquetada a mano (Figura~\ref{fig:m1-clases}).
+Tiene cinco clases, arco, columna, cúpula, pared y techo, y una clase \emph{otro}
+con lo que no se etiquetó. Llega como un archivo LAS por pieza, y la clase de cada
+punto de $S$ se toma de la pieza más cercana, porque el Módulo~1 filtra y promedia
+puntos. No se usó para entrenar ningún modelo y es una capilla distinta de los 21
+escaneos con que se adaptó Sonata. Los grupos no tienen nombre, así que primero se
+emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro}), como indica
+el Algoritmo~\ref{alg:evaluacion}. La clase \emph{otro} no se cuenta, y se agrupan
+todos los puntos de la escena para que las dos variantes de HyperNCD se midan sobre
+los mismos puntos. Además del mIoU se guardan por clase los falsos positivos, los
+falsos negativos, la precisión, el recall y el F1, y se calcula la asignación por
+mayoría, que castiga a las clases pequeñas, por lo que el resultado principal es el
+uno a uno.
 
 \begin{algorithm}[!htbp]
 \small
@@ -1414,84 +568,33 @@ novedosos, para que las dos variantes de HyperNCD se midan sobre los mismos punt
 \KwIn{grupo $\hat y_i$ de cada punto, clase real $y_i$, $K$ grupos}
 \KwOut{mIoU uno a uno, IoU por clase, NMI y ARI}
 quitar los puntos con $y_i=\text{otro}$\;
-$N_{kc} \leftarrow |\{i \mid \hat y_i=k,\, y_i=c\}|$ \tcp*{puntos de cada pareja}
-$\sigma^{*} \leftarrow \arg\max_\sigma \sum_c N_{\sigma(c),c}$ \tcp*{emparejamiento húngaro uno a uno}
-\ForEach{clase $c$}{
-  $\mathrm{IoU}_c \leftarrow TP/(TP+FP+FN)$ con el grupo $\sigma^{*}(c)$\;
-}
-$\mathrm{mIoU} \leftarrow \frac{1}{5}\sum_c \mathrm{IoU}_c$\;
-$P_c \leftarrow TP/(TP+FP)$ \quad $R_c \leftarrow TP/(TP+FN)$ \quad $F1_c \leftarrow 2P_cR_c/(P_c+R_c)$\;
+$N_{kc} \leftarrow |\{i \mid \hat y_i=k,\, y_i=c\}|$ \quad $\sigma^{*} \leftarrow \arg\max_\sigma \sum_c N_{\sigma(c),c}$ \tcp*{emparejamiento húngaro}
+$\mathrm{IoU}_c \leftarrow TP/(TP+FP+FN)$ con el grupo $\sigma^{*}(c)$ \quad $\mathrm{mIoU} \leftarrow \frac{1}{5}\sum_c \mathrm{IoU}_c$\;
 $(\mathrm{NMI}, \mathrm{ARI}) \leftarrow \textsc{Métricas}(\hat y, y)$\;
 \end{algorithm}
 
-Además del mIoU se guardan por clase los verdaderos positivos, los falsos
-positivos, los falsos negativos, la precisión, el recall y el F1. El IoU solo dice
-cuánto se acierta, y estas medidas dicen por qué se falla, si la clase pierde
-puntos o si se lleva puntos de otras. También se calcula la asignación por
-mayoría, en la que cada grupo toma la clase que más puntos tiene. Esa variante
-castiga a las clases pequeñas cuando \emph{otro} domina, porque una clase grande
-se queda con varios grupos y las pequeñas quedan sin ninguno. Por eso el resultado
-principal es la asignación uno a uno.
+\paragraph*{Umbral y dificultad por clase.}\etiquetahija{sec:umbral-dificultad} El IoU de cada clase se compara con un
+umbral de 70\,\%, el mismo para todas, que es una meta propia porque ningún
+artículo consultado fija un IoU mínimo. Las clases se ordenan por el IoU del mejor
+modelo, y a ese orden se le llama dificultad experimental. Como depende del modelo,
+también se mide la geometría de cada clase sin usar ningún modelo, con su tamaño, qué
+tan alargada es, cuánto cambian sus normales y cuántos de sus puntos tocan a otra
+clase.
 
-\subsubsection*{Umbral y dificultad por clase}
-\etiquetahija{sec:umbral-dificultad}
+\paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla dos preguntas, si el descriptor
+contiene la información de las clases y si el Módulo~4 la aprovecha. La sonda lineal
+las separa porque mide el descriptor sin fusión, con el protocolo del artículo de
+Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un $k$-NN, sobre
+$f_{\mathrm{ssl}}$ fijo en una mitad espacial de la escena y se prueba en la otra, y
+se repite al revés. Se corrió sobre Sonata original y adaptado, con una semilla.
 
-El IoU de cada clase se compara con un umbral de 70\,\%, el mismo para todas las
-clases. Es una meta propia del proyecto, porque ninguno de los artículos
-consultados fija un IoU mínimo aceptable. Las clases se ordenan por el IoU del
-mejor modelo, y a ese orden se le llama dificultad experimental. Como ese orden
-depende del modelo, también se mide la geometría de cada clase sin usar ningún
-modelo. Se miden su tamaño, qué tan alargada es, cuánto cambian sus normales,
-cuántos de sus puntos tocan a otra clase y la forma de cada pieza etiquetada.
-
-\subsubsection*{Sonda lineal}
-\etiquetahija{sec:sonda-lineal}
-
-El agrupamiento mezcla dos preguntas, si el descriptor contiene la información de
-las clases y si el Módulo~4 la aprovecha. La sonda lineal las separa, porque mide
-el descriptor sin ninguna fusión. Sigue el protocolo del artículo de Sonata
-\cite{wu2025sonata} y se resume en el Algoritmo~\ref{alg:sonda}. Se corrió sobre
-los descriptores de Sonata original y adaptado, con una semilla y dos mitades
-espaciales, y su resultado está en la Tabla~\ref{tab:sonda}.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Sonda lineal y $k$-NN sobre $f_{\mathrm{ssl}}$.}
-\label{alg:sonda}
-\KwIn{$f_{\mathrm{ssl}}$ de la escena y etiqueta $y_i$ de cada punto}
-\KwOut{mIoU de la sonda lineal y del $k$-NN}
-dividir la escena en dos zonas espaciales, una para entrenar y otra para probar\;
-$(W, b) \leftarrow$ entrenar un clasificador lineal sobre $f_{\mathrm{ssl}}$ fijo, en la zona de entrenamiento\;
-$\mathrm{mIoU}_{\mathrm{lineal}} \leftarrow$ mIoU del clasificador en la zona de prueba\;
-$\mathrm{mIoU}_{k\mathrm{NN}} \leftarrow$ mIoU de $k$-NN, con los puntos de entrenamiento como referencia\;
-\end{algorithm}
-
-\FloatBarrier
 \subsection{Verificación Empírica del Entorno de Cómputo}
 \label{sec:entorno-computo}
 
-Cada entorno se probó antes de usarlo. En Khipu lo más difícil fue instalar
-HyperNCD, porque hubo que compilar MinkowskiEngine con CUDA~11.8, y se dio por
-bueno cuando una corrida corta de entrenamiento llegó hasta el final. En Colab el
-entorno se guarda en Drive y, al empezar cada sesión, una celda comprueba que las
-librerías carguen y que la GPU responda. Todas las corridas largas se ejecutaron
-con un monitor que registra el tiempo, la memoria y el uso de la GPU. Esas cifras
-son el costo que se reporta en el Capítulo~\ref{cap:resultados}. Cada experimento
-deja además un registro propio, para que ninguna cifra de la tesis dependa de la
-memoria de quien corrió la prueba. El registro guarda qué es el experimento, de
-cuál viene, sus parámetros, su costo y sus métricas, y el visor solo muestra lo
-que está registrado. El Algoritmo~\ref{alg:registro} resume el ciclo.
-
-\begin{algorithm}[!htbp]
-\small
-\caption{Ciclo de registro de un experimento.}
-\label{alg:registro}
-\KwIn{comando del experimento}
-\KwOut{resultados y registro del experimento}
-ejecutar el comando dentro del monitor de recursos\;
-guardar el tiempo, la memoria RAM y la memoria de la GPU\;
-guardar los resultados pequeños en la carpeta del experimento, con su README\;
-escribir el registro con qué es, de cuál viene, parámetros, costo y métricas\;
-validar los registros y actualizar el índice\;
-mostrar en el visor los experimentos registrados\;
-\end{algorithm}
+Cada entorno se probó antes de usarlo. En Khipu lo más difícil fue compilar
+MinkowskiEngine con CUDA~11.8 para HyperNCD, y se dio por bueno cuando una corrida
+corta de entrenamiento llegó hasta el final. En Colab cada sesión comprueba que las
+librerías carguen y que la GPU responda. Las corridas largas se ejecutaron con un
+monitor de tiempo, memoria y GPU, y cada experimento deja un registro con sus
+parámetros, su costo y sus métricas, para que ninguna cifra dependa de la memoria
+de quien la corrió.

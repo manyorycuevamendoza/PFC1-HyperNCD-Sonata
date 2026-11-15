@@ -14,6 +14,20 @@
 \usepackage{float}
 % Librerias para insertar codigos
 \usepackage[spanish,onelanguage,ruled,vlined,linesnumbered]{algorithm2e}
+% Entrada y Salida de los algoritmos sin los dos puntos que agrega algorithm2e (KwSinDosPuntos).
+\makeatletter
+\renewcommand{\SetKwInput}[2]{%
+  \algocf@newcommand{#1}[1]{%
+    \sbox\algocf@inputbox{\hbox{\KwSty{#2} }}%
+    \ifthenelse{\boolean{algocf@hanginginout}}{\relax}{\algocf@seteveryparhanging{\relax}}%
+    \ifthenelse{\boolean{algocf@inoutnumbered}}{\relax}{\algocf@seteveryparnl{\relax}}%
+    {\let\\\algocf@newinput\hangindent=\wd\algocf@inputbox\hangafter=1\unhbox\algocf@inputbox##1\par}%
+    \algocf@linesnumbered%
+    \ifthenelse{\boolean{algocf@hanginginout}}{\relax}{\algocf@reseteveryparhanging}%
+  }}
+\makeatother
+\SetKwInput{KwIn}{Entrada}
+\SetKwInput{KwOut}{Salida}
 \SetCommentSty{textit}
 \DontPrintSemicolon % el pseudocodigo no muestra punto y coma al final de cada linea
 \usepackage{verbatim}

@@ -52,7 +52,7 @@ máximo se toma canal a canal.
 ]
 \node[io] (in) {\textbf{Interfaz de entrada.} $N$ puntos $\times$ 9 canales (coordenadas, color, normal), rejilla $g=2$\,cm};
 \node[pre, below=2.6mm of in] (pre)
-  {\textbf{Preprocesamiento:} serialización (orden Z / Hilbert) $+$ \emph{embedding} lineal $9\rightarrow48$};
+  {\textbf{Preprocesamiento.} Serialización (orden Z / Hilbert) $+$ \emph{embedding} lineal $9\rightarrow48$};
 
 \node[et, minimum width=8.0cm, below=8mm of pre] (e1)
   {\textbf{Etapa 1} $\cdot$ 3 bloques\\48 canales $\cdot$ 3 cabezas $\cdot$ rejilla $g$\\{\tiny\textcolor{black!60}{0{,}3\,\% de los parámetros}}};
@@ -72,9 +72,9 @@ máximo se toma canal a canal.
 \draw[fl] (e4) -- node[itf] {\emph{pooling}, rejilla $\times2$ $\cdot$ lineal $384\rightarrow512$} (e5);
 
 \node[io, below=8mm of e5] (out)
-  {\textbf{Interfaz de salida:} puntos de la rejilla $16g$ $\times$ 512 canales};
+  {\textbf{Interfaz de salida.} Puntos de la rejilla $16g$ $\times$ 512 canales};
 \node[io, fill=purple!12, below=2.6mm of out] (fssl)
-  {$f_{\mathrm{ssl}}$: \emph{up-cast} de las etapas 3, 4 y 5, $192+384+512=1088$};
+  {$f_{\mathrm{ssl}}$, \emph{up-cast} de las etapas 3, 4 y 5, $192+384+512=1088$};
 \draw[fl] (e5) -- (out);
 
 \coordinate (bus) at (5.25,0);

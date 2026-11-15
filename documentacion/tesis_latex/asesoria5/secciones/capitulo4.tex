@@ -62,7 +62,7 @@ M4, capilla & CPU local & 68 a 80\,s & --- \\
 \subsection[Estructura y Contrato de los Módulos]{Estructura y Contrato de los Módulos\espejo{sec:contrato}}
 \label{sec:res-contrato}
 
-El contrato de la Tabla~\ref{tab:contrato} es el diseño, la
+El contrato de cada módulo, descrito en la Sección~\ref{sec:contrato}, es el diseño, la
 Tabla~\ref{tab:res-contrato} indica qué se ejecutó de cada módulo. La diferencia
 principal es que M2 y M4 no se ejecutaron como módulos entrenados dentro del
 mismo ciclo. M2 se entrenó antes y se aplicó sin reentrenar, y M4 operó después, sobre
@@ -237,7 +237,7 @@ cabezas y el índice inverso, con 1{,}7\,s de inferencia sobre una GPU T4 con Ar
 comporta cada checkpoint como clasificador punto a punto, antes de cualquier
 fusión. Con SemanticPOSS, M2 marca como novedoso el 99{,}1\,\% de la escena y casi
 todas las clases reales, incluida la pared, caen en una sola cabeza, con ArCH solo
-se marca el 12{,}6\,\% y la proporción depende de la clase: el arco, la clase más
+se marca el 12{,}6\,\% y la proporción depende de la clase. El arco, la clase más
 ajena a lo conocido, se marca en 58{,}0\,\% y la pared en 1{,}0\,\%. El mIoU uno a
 uno de las cabezas sin \emph{otro} pasa de 0{,}093 a 0{,}426.
 
