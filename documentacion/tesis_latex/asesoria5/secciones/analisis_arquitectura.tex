@@ -38,66 +38,61 @@ máximo se toma canal a canal.
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}[
-  font=\scriptsize,
-  et/.style={draw, rounded corners, align=center, fill=orange!20,
-             minimum height=1.05cm},
-  io/.style={draw, rounded corners, align=center, fill=black!6,
-             minimum width=8.6cm, minimum height=0.55cm},
-  pre/.style={draw, rounded corners, align=center, fill=green!16,
-              minimum width=8.6cm, minimum height=0.55cm},
-  itf/.style={font=\tiny, text=black!65, fill=white, inner sep=1.5pt},
-  anot/.style={font=\tiny, text=black!60},
-  fl/.style={-{Latex[length=1.6mm]}, thick},
-  tap/.style={-{Latex[length=1.4mm]}, dashed, black!55}
+  font=\footnotesize,
+  lbl/.style={draw=black!65, line width=0.4pt, text width=5.1cm, align=center,
+              inner sep=3pt, minimum height=1.05cm},
+  txt/.style={draw=black!65, line width=0.4pt, text width=8.3cm, align=left,
+              inner sep=3pt, minimum height=1.05cm, anchor=west,
+              execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000 }},
+  fl/.style={-{Latex[length=1.5mm]}, line width=0.4pt, black!70},
+  tap/.style={line width=0.4pt, black!70}
 ]
-\node[io] (in) {\textbf{Interfaz de entrada.} $N$ puntos $\times$ 9 canales (coordenadas, color, normal), rejilla $g=2$\,cm};
-\node[pre, below=2.6mm of in] (pre)
-  {\textbf{Preprocesamiento.} Serialización (orden Z / Hilbert) $+$ \emph{embedding} lineal $9\rightarrow48$};
+\def\paso{1.4}
+\node[lbl, fill=black!5] (l0) at (0,0)
+  {\textbf{Entrada}\\[-1pt]{\scriptsize $N$ puntos $\times$ 9 canales}};
+\node[txt, fill=black!5] (t0) at (2.65,0)
+  {Una curva Z o Hilbert los ordena para que los vecinos queden juntos, y pasan de 9 a 48 canales.};
 
-\node[et, minimum width=8.0cm, below=8mm of pre] (e1)
-  {\textbf{Etapa 1} $\cdot$ 3 bloques\\48 canales $\cdot$ 3 cabezas $\cdot$ rejilla $g$\\{\tiny\textcolor{black!60}{0{,}3\,\% de los parámetros}}};
-\node[et, minimum width=7.0cm, below=9mm of e1] (e2)
-  {\textbf{Etapa 2} $\cdot$ 3 bloques\\96 canales $\cdot$ 6 cabezas $\cdot$ rejilla $2g$\\{\tiny\textcolor{black!60}{1{,}0\,\% de los parámetros}}};
-\node[et, minimum width=6.2cm, below=9mm of e2] (e3)
-  {\textbf{Etapa 3} $\cdot$ 3 bloques\\192 canales $\cdot$ 12 cabezas $\cdot$ rejilla $4g$\\{\tiny\textcolor{black!60}{4{,}1\,\% de los parámetros}}};
-\node[et, minimum width=5.4cm, below=9mm of e3, fill=orange!36] (e4)
-  {\textbf{Etapa 4} $\cdot$ 12 bloques\\384 canales $\cdot$ 24 cabezas $\cdot$ rejilla $8g$\\{\tiny\textcolor{black!70}{\textbf{65{,}3\,\% de los parámetros}}}};
-\node[et, minimum width=4.6cm, below=9mm of e4, fill=orange!28] (e5)
-  {\textbf{Etapa 5} $\cdot$ 3 bloques\\512 canales $\cdot$ 32 cabezas $\cdot$ rejilla $16g$\\{\tiny\textcolor{black!70}{29{,}0\,\% de los parámetros}}};
+\node[lbl, fill=blue!5] (l1) at (0,-1*\paso)
+  {\textbf{Etapa 1}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 48 canales $\cdot$ 3 cabezas}};
+\node[txt, fill=blue!5] (t1) at (2.65,-1*\paso)
+  {Detalle fino. Cada punto se relaciona con sus vecinos más próximos, en celdas de 2\,cm.};
 
-\draw[fl] (pre) -- (e1);
-\draw[fl] (e1) -- node[itf] {\emph{pooling}, rejilla $\times2$ $\cdot$ lineal $48\rightarrow96$} (e2);
-\draw[fl] (e2) -- node[itf] {\emph{pooling}, rejilla $\times2$ $\cdot$ lineal $96\rightarrow192$} (e3);
-\draw[fl] (e3) -- node[itf] {\emph{pooling}, rejilla $\times2$ $\cdot$ lineal $192\rightarrow384$} (e4);
-\draw[fl] (e4) -- node[itf] {\emph{pooling}, rejilla $\times2$ $\cdot$ lineal $384\rightarrow512$} (e5);
+\node[lbl, fill=blue!9] (l2) at (0,-2*\paso)
+  {\textbf{Etapa 2}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 96 canales $\cdot$ 6 cabezas}};
+\node[txt, fill=blue!9] (t2) at (2.65,-2*\paso)
+  {Con \emph{pooling} junta los puntos en celdas de 4\,cm y sube a 96 canales.};
 
-\node[io, below=8mm of e5] (out)
-  {\textbf{Interfaz de salida.} Puntos de la rejilla $16g$ $\times$ 512 canales};
-\node[io, fill=purple!12, below=2.6mm of out] (fssl)
-  {$f_{\mathrm{ssl}}$, \emph{up-cast} de las etapas 3, 4 y 5, $192+384+512=1088$};
-\draw[fl] (e5) -- (out);
+\node[lbl, fill=blue!13] (l3) at (0,-3*\paso)
+  {\textbf{Etapa 3}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 192 canales $\cdot$ 12 cabezas}};
+\node[txt, fill=blue!13] (t3) at (2.65,-3*\paso)
+  {Celdas de 8\,cm y 192 canales. Desde aquí las etapas aportan al descriptor final.};
 
-\coordinate (bus) at (5.25,0);
-\foreach \e in {e3, e4, e5}
-  \draw[dashed, black!55] (\e.east) -- (\e.east -| bus);
-\draw[dashed, black!55] (e3.east -| bus) -- (fssl.east -| bus);
-\draw[tap] (fssl.east -| bus) -- (fssl.east);
+\node[lbl, fill=blue!17] (l4) at (0,-4*\paso)
+  {\textbf{Etapa 4}\\[-1pt]{\scriptsize 12 bloques $\cdot$ 384 canales $\cdot$ 24 cabezas}};
+\node[txt, fill=blue!17] (t4) at (2.65,-4*\paso)
+  {Celdas de 16\,cm y 384 canales. Es la etapa más profunda, con 12 bloques.};
 
-\node[anot, rotate=90, anchor=south] at ($(e1.west)!0.5!(e5.west)+(-4.55,0)$)
-  {anchura $\uparrow$ \quad resolución $\downarrow$};
-\node[anot, align=center, anchor=north] at ($(e1.north west)+(-2.6,0.55)$)
-  {cada etapa repite\\el mismo bloque\\de atención};
-\draw[tap, black!40] ($(e1.north west)+(-1.1,-0.35)$) -- ($(e1.west)+(0,0.1)$);
+\node[lbl, fill=blue!21] (l5) at (0,-5*\paso)
+  {\textbf{Etapa 5}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 512 canales $\cdot$ 32 cabezas}};
+\node[txt, fill=blue!21] (t5) at (2.65,-5*\paso)
+  {Celdas de 32\,cm y 512 canales. Es la de contexto más amplio.};
 
-\node[below=3mm of fssl, font=\scriptsize] (leg)
-  {\tikz\node[draw,rounded corners,fill=orange!20,minimum height=2.6mm,minimum width=3.5mm]{};\ etapa \emph{Transformer}\quad
-   \tikz\node[draw,rounded corners,fill=green!16,minimum height=2.6mm,minimum width=3.5mm]{};\ preprocesamiento\quad
-   \tikz\node[draw,rounded corners,fill=black!6,minimum height=2.6mm,minimum width=3.5mm]{};\ interfaz\quad
-   \tikz\node[draw,rounded corners,fill=purple!12,minimum height=2.6mm,minimum width=3.5mm]{};\ salida usada};
+\node[lbl, fill=orange!15] (lf) at (0,-6.35*\paso)
+  {$\boldsymbol{f_{\mathrm{ssl}}}$\\[-1pt]{\scriptsize $192+384+512=1088$}};
+\node[txt, fill=orange!15] (tf) at (2.65,-6.35*\paso)
+  {Cada punto recibe lo de las etapas 3, 4 y 5 (\emph{up-cast}), con detalle y contexto a la vez.};
+
+\foreach \a/\b in {0/1,1/2,2/3,3/4,4/5}
+  \draw[fl] (l\a.south) -- (l\b.north);
+
+\coordinate (bus) at ($(t3.east)+(0.5,0)$);
+\foreach \e in {t3, t4, t5}
+  \draw[tap] (\e.east) -- (\e.east -| bus);
+\draw[tap] (t3.east -| bus) -- (tf.east -| bus);
+\draw[fl] (tf.east -| bus) -- (tf.east);
 \end{tikzpicture}
-\caption[Arquitectura del \emph{encoder} de Sonata]{Arquitectura del \emph{encoder} de Sonata, cinco etapas sin
-decodificador. Las líneas discontinuas marcan las etapas que forman
-$f_{\mathrm{ssl}}$. Elaboración propia.}
+\caption[Arquitectura del \emph{encoder} de Sonata]{Arquitectura del \emph{encoder} de Sonata, cinco etapas con celdas cada vez mayores. Las etapas 3, 4 y 5 forman $f_{\mathrm{ssl}}$. Elaboración propia.}
 \label{fig:arq-sonata}
 \end{figure}
 
