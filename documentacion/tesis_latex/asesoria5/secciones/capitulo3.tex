@@ -400,20 +400,20 @@ Tamaño de bloque & $5\times10^{6}$ & Solo limita la memoria & P0 \\
 Vecinos $q$ y umbral $\lambda$ & 20 y 2 & Valores por defecto de Open3D & P1 \\
 Lado del vóxel $\ell$ & 5\,cm & Valor inicial & P2 \\
 Vecinos de las normales & 20 & Comparte el $q$ del filtrado & P3 \\
-Precisión de $S$ & Simple & Solo afecta al tamaño en disco & --- \\
+Precisión de $S$ & Simple & Solo afecta al tamaño en disco & Sin prueba \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 2}}\\
-Bloque y puntos por muestra & 10\,m y 60\,000 & Lo que cabe en la GPU de entrenamiento & --- \\
-Radio de DBSCAN y épocas & 0{,}5\,m y 30 & Valor del artículo y límite de la validación & --- \\
+Bloque y puntos por muestra & 10\,m y 60\,000 & Lo que cabe en la GPU de entrenamiento & Sin prueba \\
+Radio de DBSCAN y épocas & 0{,}5\,m y 30 & Valor del artículo y límite de la validación & Sin prueba \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 3}}\\
 Parche y rejilla $g$ & 1024 y 2\,cm & Memoria sin FlashAttention y entrenamiento de Sonata & P2, P5 \\
 Precisión del \texttt{.npz} & Media & Solo afecta al tamaño en disco & P4 \\
-Adaptación & 30 épocas, lote 1 & Lo que cabe en la GPU de Colab & --- \\
+Adaptación & 30 épocas, lote 1 & Lo que cabe en la GPU de Colab & Sin prueba \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Módulo 4 y evaluación}}\\
-Región, vecinas $M$ e iteraciones & 0{,}75\,m, 8 y 15 & Regiones con puntos suficientes y valores de HyperNCD & --- \\
-Grupos $K$ y semillas & 8 y 10 & Cercano al número de clases de la escena, y estabilidad del agrupamiento & --- \\
+Región, vecinas $M$ e iteraciones & 0{,}75\,m, 8 y 15 & Regiones con puntos suficientes y valores de HyperNCD & Sin prueba \\
+Grupos $K$ y semillas & 8 y 10 & Cercano al número de clases de la escena, y estabilidad del agrupamiento & Sin prueba \\
 \bottomrule
 \end{tabularx}
 \end{table}
