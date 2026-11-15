@@ -512,15 +512,17 @@ variación entre escenas ni entre entrenamientos.
 \midrule
 Una sola escena etiquetada & Los resultados son de una capilla y pueden no repetirse en otras partes & Etiquetar más escenas \\
 \addlinespace[3pt]
-Un solo entrenamiento de HyperNCD con ArCH y una sola adaptación de Sonata & Con lote de una escena, no se conoce su variabilidad & Repetirlos con varias semillas y un lote mayor \\
+Un solo entrenamiento de HyperNCD con ArCH y una sola adaptación de Sonata & No se conoce su variabilidad, y la adaptación usó una escena por lote & Repetirlos con varias semillas y un lote mayor \\
 \addlinespace[3pt]
-Control del equipo solo en la capilla & En PL13 el original se extrajo en Khipu y el adaptado en Colab, así que esa comparación no separa pesos y equipo & Extraer PL13 con el original en Colab \\
+Mismo equipo solo en la capilla & En PL13 el original se extrajo en Khipu y el adaptado en Colab, así que la comparación no separa pesos y equipo & Extraer PL13 con el original en Colab \\
 \addlinespace[3pt]
-Pruebas P4 y P5 sin correr & No se comprobó si la precisión media del archivo o un parche menor cambian el descriptor & Correrlas con GPU \\
+Pruebas P4 y P5 sin ejecutar & No se sabe si la precisión media del archivo o un parche menor cambian el descriptor & Ejecutarlas con GPU \\
 \addlinespace[3pt]
 Sonda lineal con una semilla & Una diferencia de menos de 2 puntos no es concluyente & Repetirla con varias semillas \\
 \addlinespace[3pt]
-Umbral de 70\,\% propio y fusión sin aprendizaje & No viene de ningún artículo, y todas las fusiones probadas son deterministas & Fijarlo con el asesor, y probar una fusión aprendida \\
+Umbral de 70\,\% propio & No viene de ningún artículo & Fijarlo con el asesor \\
+\addlinespace[3pt]
+Fusión sin aprendizaje & Todas las fusiones probadas son deterministas & Probar una fusión aprendida \\
 \bottomrule
 \end{tabularx}
 \end{table}
