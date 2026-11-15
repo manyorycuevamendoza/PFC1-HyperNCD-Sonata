@@ -329,11 +329,11 @@ Algoritmo~\ref{alg:fusion}. Se divide la escena en regiones de 0{,}75\,m con al
 menos 30 puntos, cuyos descriptores se promedian, se normalizan y se unen. La
 afinidad entre regiones mezcla su parecido geométrico y semántico con peso
 $\alpha=0{,}5$, y las regiones se asignan a $K=8$ prototipos con el equilibrio de
-Sinkhorn--Knopp, que evita que un grupo se quede con casi todas. Con este algoritmo se
-obtienen cuatro agrupamientos que solo cambian el descriptor de la región. M2 usa
+Sinkhorn--Knopp, que evita que un grupo se quede con casi todas. Con él se
+obtienen cuatro agrupamientos que solo cambian el descriptor. M2 usa
 solo $f_{\mathrm{sem}}$, M3 solo $f_{\mathrm{ssl}}$, M4 base $f_{\mathrm{sem}}$ con
 seis rasgos geométricos hechos a mano, y M4 $f_{\mathrm{sem}}$ con
-$f_{\mathrm{ssl}}$. La prueba del módulo sobre una escena sintética está en el
+$f_{\mathrm{ssl}}$. Su prueba en una escena sintética está en el
 \hyperref[sec:m4-simulado]{Anexo~D}.
 
 \begin{algorithm}[!htbp]
