@@ -169,20 +169,17 @@ producen sobre la misma matriz $S$ los descriptores que el Módulo~4 une.
 \label{sec:rama-sem}
 
 La rama semántica es el Módulo~2, HyperNCD (Sección~\ref{sec:modulo2}). Se entrenaron
-dos variantes con datos distintos. La \emph{original} usa
-SemanticPOSS, el conjunto del artículo, con escenas de calle y 13 clases, 9
-conocidas y 4 novedosas (plantas, edificio, suelo y auto). La
-\emph{adaptada} usa ArCH \cite{matrone2020benchmark}, un conjunto de patrimonio con
-10 clases, de las que son conocidas las molduras, el piso, la puerta o ventana, la
-pared, la escalera y la cubierta. Se toman como novedosas el arco, la columna y la
-bóveda, porque son lo que interesa descubrir en la Catedral, y se ignora la clase
-\emph{other}. Se hicieron las dos para saber si aprender de edificios
-parecidos mejora el resultado en la Catedral. ArCH se cortó en bloques de
-10\,m, con 15 escenas para entrenar y 2 para validar, que son las de prueba oficiales
-y por eso no sirven como prueba independiente. Ambas se entrenan desde cero, la
-original con lote de 2 y la adaptada con 30 épocas y lote de 4. El
-Algoritmo~\ref{alg:m2} y la Figura~\ref{fig:flujo-m2} muestran el entrenamiento de la
-adaptada y la extracción de $f_{\mathrm{sem}}$ sobre cada escena, sin reentrenar.
+dos variantes para saber si aprender de edificios parecidos mejora el resultado en la
+Catedral. La \emph{original} usa SemanticPOSS, con escenas de calle y 13 clases, 9
+conocidas y 4 novedosas (plantas, edificio, suelo y auto). La \emph{adaptada} usa ArCH
+\cite{matrone2020benchmark}, un conjunto de patrimonio con 10 clases. Son conocidas las
+molduras, el piso, la puerta o ventana, la pared, la escalera y la cubierta, y novedosas
+el arco, la columna y la bóveda, y se ignora la clase \emph{other}. ArCH se cortó en
+bloques de 10\,m, con 15 escenas para entrenar y 2 para validar, que son las de prueba
+oficiales y no una prueba independiente. Ambas se entrenan desde cero, la original con
+lote de 2 y la adaptada con 30 épocas y lote de 4. El Algoritmo~\ref{alg:m2} y la
+Figura~\ref{fig:flujo-m2} muestran el entrenamiento de la adaptada y la extracción de
+$f_{\mathrm{sem}}$, sin reentrenar.
 
 \begin{algorithm}[!htbp]
 \small
