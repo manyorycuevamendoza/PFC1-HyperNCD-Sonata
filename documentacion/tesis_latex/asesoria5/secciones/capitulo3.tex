@@ -74,11 +74,10 @@ salida del otro, pero los dos esperan a que el Módulo~1 termine.
 \subsection{Estructura y Contrato de los Módulos}
 \label{sec:contrato}
 
-Cada módulo recibe y entrega un objeto de forma fija. El Módulo~1 entrega la matriz
-$S$, el Módulo~2 96 valores por punto sobre una rejilla de 5\,cm y el Módulo~3 1088
-sobre una de 2\,cm. Como las rejillas difieren, cada archivo guarda un índice
-inverso que devuelve el descriptor a los puntos de $S$
-(Sección~\ref{sec:gridsample}), y el Módulo~4 entrega un grupo por punto.
+El Módulo~1 produce la matriz $S$, los Módulos~2 y~3 un descriptor por punto, de 96 y
+1088 valores sobre rejillas distintas de 5 y 2\,cm, y el Módulo~4 un grupo por punto.
+Un índice inverso devuelve cada descriptor a los puntos de $S$
+(Sección~\ref{sec:gridsample}).
 
 \subsection{Visor 3D del Proyecto}
 \label{sec:visor}
