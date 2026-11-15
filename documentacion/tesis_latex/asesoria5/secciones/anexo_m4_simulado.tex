@@ -11,20 +11,17 @@
 \setcounter{figure}{0}\renewcommand{\thefigure}{D.\arabic{figure}}
 \setcounter{table}{0}\renewcommand{\thetable}{D.\arabic{table}}
 
-Esta prueba se diseñó antes de contar con el entrenamiento de ArCH y con la
-ejecución real del Módulo~4 (Sección~\ref{sec:res-unidad3}), se conserva como
-anexo porque explica, con descriptores de calidad controlada, de qué depende el
-comportamiento de la fusión. Los descriptores de los Módulos~2 y~3 se inventan
-sobre una escena sintética en la que se conoce la clase de cada punto. El
-programa es \texttt{simular\_modulo4.py}, en la carpeta
-\texttt{experimentacion/modulo4\_simulado} del repositorio, y corre en el equipo
-local en unos tres minutos, sin GPU.
+Esta prueba se diseñó antes del entrenamiento de ArCH y de la ejecución real del
+Módulo~4 (Sección~\ref{sec:res-unidad3}), y se conserva porque explica, con
+descriptores de calidad controlada, de qué depende la fusión. Los descriptores de
+los Módulos~2 y~3 se inventan sobre una escena sintética en la que se conoce la
+clase de cada punto. El programa es \texttt{simular\_modulo4.py}, en
+\texttt{experimentacion/modulo4\_simulado}, y corre en el equipo local en unos tres
+minutos, sin GPU.
 
-La prueba tiene dos límites. No entrena ninguna red, porque los descriptores
-están fijos y los prototipos se refinan alternando asignación y promedio, que es
-lo que haría el ciclo de entrenamiento con descriptores fijos. Y no predice el
-mIoU de la Catedral, porque los descriptores son inventados. Lo que muestra es
-cómo se comporta el Módulo~4 y de qué depende.
+La prueba tiene dos límites. No entrena ninguna red, porque con los descriptores
+fijos los prototipos se refinan alternando asignación y promedio, que es lo que
+haría el ciclo de entrenamiento. Y no predice el mIoU de la Catedral.
 
 \paragraph*{Escena.}
 La escena es una nave de 20 por 10\,m con 23\,600 puntos. Las clases conocidas
