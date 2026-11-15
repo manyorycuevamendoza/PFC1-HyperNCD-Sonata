@@ -151,12 +151,10 @@ conteos de cada paso y el tiempo.
 \subsection{Verificación y Reproducibilidad}
 \label{sec:u1-reproducibilidad}
 
-El programa no tiene pasos aleatorios, así que la misma entrada da la misma salida.
-Se ejecuta con \texttt{python preprocesar.py --input escaneo.las --output salida
---voxel 0.05 --q 20 --lam 2}, y se comprueba comparando los conteos de los
-metadatos con los de una corrida de referencia. Lo que se repite son los puntos y no
-su orden de filas, por eso cada archivo de descriptores debe usarse con la matriz
-$S$ con la que se calculó, y el visor se detiene con un aviso si no corresponden.
+El programa no tiene azar y da la misma salida con la misma entrada, lo que se
+comprueba comparando conteos con una corrida de referencia. Se repiten los puntos y no
+su orden de filas, por eso cada archivo de descriptores va con su matriz $S$, y el
+visor avisa si no corresponden.
 
 % =====================================================================
 \section{Unidad 2. Extracción de Descriptores y Fusión}
