@@ -214,19 +214,13 @@ entrenado con escenas de interiores y de calle. La \emph{adaptada} es el mismo
 modelo tras seguir entrenándolo, sin etiquetas, con escaneos de la Catedral. La
 extracción es igual y solo cambia el archivo de pesos. Se hace una vez por sección
 con \texttt{extraer\_features.py}, en cinco pasos. Se lee $S$, se separa en posición,
-color y normal, y se carga el modelo como sigue, con \texttt{--pesos} para la adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
-\begin{lstlisting}[style=comando]
-config = dict(enc_patch_size=[1024 for _ in range(5)], enable_flash=False)
-modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config=config).cuda()
-\end{lstlisting}
-La instrucción desactiva FlashAttention, que no se pudo instalar en el clúster. Sonata
-calcula entonces la atención completa, que da el mismo resultado pero gasta más
-memoria, y se contuvo con parches de 1024 puntos en Khipu y con la atención de
-PyTorch en Colab. Después se traslada la nube y se muestrea con una rejilla de
-$g=2$\,cm, la de su entrenamiento, guardando un índice inverso
+color y normal, y se carga el modelo (\hyperref[sec:anexo-software]{Anexo~A}), con \texttt{--pesos} para la adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
+Como FlashAttention no se pudo instalar en el clúster, la atención completa, que gasta
+más memoria, se contuvo con parches de 1024 puntos, y en Colab con la atención de
+PyTorch. La nube se muestrea con la rejilla de 2\,cm, guardando un índice inverso
 (Sección~\ref{sec:gridsample}), se calcula $f_{\mathrm{ssl}}$ sin gradiente
-(Figura~\ref{fig:flujo-m3} y \hyperref[sec:analisis-componentes]{Anexo~C}) y se escribe un \texttt{.npz} con los
-descriptores, las posiciones, el índice inverso y la semilla del muestreo.
+(Figura~\ref{fig:flujo-m3} y \hyperref[sec:analisis-componentes]{Anexo~C}) y se guarda
+en un \texttt{.npz} (Tabla~\ref{tab:archivos}).
 
 \begin{figure}[!htbp]
 \centering
