@@ -1,5 +1,39 @@
 \customchapter{CONCLUSIONES}
 
+\noindent\textbf{Cumplimiento de los objetivos.} Cada objetivo se verificó con una
+métrica de salida medida con el protocolo del Capítulo~\ref{cap:metodo}, y la
+correspondencia completa está en la Tabla~\ref{tab:objetivos}.
+
+\begin{enumerate}
+\item \textbf{OE1, integrar Sonata en el módulo de prototipos, se cumplió.} Se
+implementó el bloque que sustituye $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$, con
+el índice inverso y la caché por sección, y el módulo produce el descriptor
+compuesto sobre la capilla en 68 a 80\,s. Se verificó porque M4 corre de principio
+a fin sobre la escena etiquetada y porque la sonda lineal confirma que
+$f_{\mathrm{ssl}}$ contiene la información de las clases, con 79,7 de mIoU con
+Sonata original y 80,5 con el adaptado.
+
+\item \textbf{OE2, evaluar la configuración del híbrido, se cumplió.} M2, M3, M4 base
+y M4 se compararon con un protocolo común, en cuatro combinaciones de modelos y con
+diez semillas, con media y desviación. Se verificó con el criterio escrito de
+diferencia real, que separa las diferencias sostenidas, como los 12,5 puntos que
+gana M2 con ArCH, de las que quedan dentro del ruido, como los 1,1 puntos de M4
+sobre M4 base.
+
+\item \textbf{OE3, cuantificar la mejora y delimitar el rango de operación, se
+cumplió en parte.} La mejora se cuantificó con el IoU por clase y el umbral de
+70\,\%, que solo supera la pared con 71,9 en el mejor modelo, y con el análisis de
+la geometría de cada clase. No se calcularon la ganancia en clases novedosas, la
+brecha cerrada ni la curva de degradación, y con una sola escena el rango de
+operación no se puede fijar.
+
+\item \textbf{El objetivo general se cumplió en lo que mide.} El sistema híbrido se
+construyó y se midió sobre la Catedral. M4 llega a $52,5\pm2,5$\,\% de mIoU frente
+a $51,4\pm1,7$\,\% de M4 base, una mejora numérica que no es concluyente.
+\end{enumerate}
+
+\noindent\textbf{Resultados principales.}
+
 \begin{enumerate}
 \item El checkpoint de HyperNCD entrenado con SemanticPOSS no se transfiere de
 forma adecuada a la Catedral de Lima. La asignación de 98,4\,\% de los puntos a
@@ -26,8 +60,7 @@ $45,4\pm8,5$\,\%, M4 base $51,4\pm1,7$\,\% y M4 $52,5\pm2,5$\,\% de mIoU sin
 M4 base queda dentro de la dispersión observada. La evidencia permite afirmar
 una mejora numérica, no una superioridad concluyente de la fusión.
 
-\item La mayor parte de la ganancia proviene del dominio de M2 y no de la fusión.
-con ArCH, M2 sube 12,5 puntos y M4 base 18,9, frente a los 9,1 de M4. El aporte
+\item La mayor parte de la ganancia proviene del dominio de M2 y no de la fusión. Con ArCH, M2 sube 12,5 puntos y M4 base 18,9, frente a los 9,1 de M4. El aporte
 de $f_{\mathrm{ssl}}$ es grande cuando M2 está colapsado, 10,9 puntos de M4 sobre
 su base, y de 1,1 punto cuando M2 funciona. El Sonata adaptado a la Catedral
 empeora a M3, de 45,4 a 34,3, aunque con una sonda lineal el descriptor adaptado
