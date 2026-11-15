@@ -299,14 +299,14 @@ $\hat y_i \leftarrow \arg\max_k Q_{r(i),k}$ para cada punto $i$\;
 \label{fig:flujo-m4}
 \end{figure}
 
-Para ver si otra fusión funciona mejor, se probaron 39 configuraciones por combinación
-de modelos, con cinco semillas cada una, que cambian solo la afinidad entre regiones.
+Para ver si otra fusión mejora, se probaron 39 configuraciones por combinación
+de modelos, con cinco semillas, que cambian solo la afinidad entre regiones.
 Varían el preprocesado de los descriptores (igual, restar la media, o restarla y
-blanquear), el modo de combinar las similitudes (promedio ponderado, producto, mínimo,
+blanquear), el modo de combinar similitudes (promedio ponderado, producto, mínimo,
 confianza de HyperNCD o fusión de redes de similitud \cite{wang2014snf}) y el peso de
 $f_{\mathrm{sem}}$, de 0{,}1 a 0{,}9. El promedio ponderado y la fusión de redes vienen
 del agrupamiento multivista \cite{kumar2011coregularized,chao2017survey} y las demás son
-propias. Como hay una sola escena, se divide en dos mitades, y la mejor configuración
+propias. Con una sola escena, se divide en dos mitades, y la mejor configuración
 se elige en una y se reporta en la otra, en los dos
 sentidos.\etiquetahija{sec:barrido-fusion}
 
