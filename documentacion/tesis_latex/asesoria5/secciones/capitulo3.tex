@@ -340,13 +340,12 @@ programa las opciones \texttt{--q-normales} y
 \subsection{Replicación del Procedimiento}
 \label{sec:param-replicacion}
 
-Cada parámetro es una opción de la línea de órdenes y cada corrida guarda lo que
-hizo. El Módulo~1 no tiene azar y se repite exacto. En el Módulo~2 el azar está en
-el entrenamiento, con semilla~0, y la extracción es determinista. En el Módulo~3 el
-único azar es la elección de un punto por celda, con semilla guardada, pero la
-adaptación depende del equipo y del orden de los datos y no se repite exacta. En
-el Módulo~4 el azar está en los prototipos iniciales, y por eso cada agrupamiento
-se repite con las semillas 0 a~9 (Sección~\ref{sec:repeticiones}).
+Cada parámetro es una opción de la línea de órdenes. El Módulo~1 no tiene azar y se
+repite exacto. El azar del~2 está en el entrenamiento, con semilla~0, y su extracción
+es determinista, el del~3 es la elección de un punto por celda, con semilla guardada,
+aunque su adaptación depende del equipo y del orden de los datos, y el del~4 está en
+los prototipos iniciales, por eso cada agrupamiento se repite con las semillas 0 a~9
+(Sección~\ref{sec:repeticiones}).
 
 % =====================================================================
 \section{Unidad 3. Entrenamiento, Calibración y Evaluación}
