@@ -1,19 +1,19 @@
 % =====================================================================
-% Anexo G: resultados complementarios (adaptacion de Sonata, variantes de
+% Anexo F: resultados complementarios (adaptacion de Sonata, variantes de
 % fusion, una sola semilla y sensibilidad a K).
 % =====================================================================
 
-\section*{Anexo G. Resultados complementarios}
+\section*{Anexo F. Resultados complementarios}
 \label{sec:anexo-complementarios}
-\phantomsection\addcontentsline{toc}{section}{Anexo G. Resultados complementarios}
+\phantomsection\addcontentsline{toc}{section}{Anexo F. Resultados complementarios}
 
-\setcounter{figure}{0}\renewcommand{\thefigure}{G.\arabic{figure}}
-\setcounter{table}{0}\renewcommand{\thetable}{G.\arabic{table}}
+\setcounter{figure}{0}\renewcommand{\thefigure}{F.\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{F.\arabic{table}}
 
 Este anexo reúne los resultados que sustentan lo dicho en la
 Sección~\ref{sec:res-unidad3} pero que no hacen falta para seguir su argumento.
 
-\subsection*{G.1. Adaptación de Sonata a la Catedral}
+\subsection*{F.1. Adaptación de Sonata a la Catedral}
 
 Se continuó el preentrenamiento auto-supervisado de Sonata con 21 escaneos de la
 Catedral, sin etiquetas y sin PL7 ni PL13, que se dejaron fuera para evaluar. El
@@ -66,7 +66,7 @@ Sonata a la Catedral y de extraer sus descriptores. Elaboración propia.}
 \label{fig:g-sonata-costo}
 \end{figure}
 
-\subsection*{G.0. Recursos durante el entrenamiento de M2}
+\subsection*{F.0. Recursos durante el entrenamiento de M2}
 
 \begin{figure}[!htbp]
 \centering
@@ -77,7 +77,7 @@ en una GPU T4. Elaboración propia.}
 \label{fig:g-recursos}
 \end{figure}
 
-\subsection*{G.2. Una sola semilla frente a diez}
+\subsection*{F.2. Una sola semilla frente a diez}
 
 Con una sola semilla el orden de los métodos cambia. La Tabla~\ref{tab:g-una}
 muestra que M4 queda por debajo de M4 base con M2 de ArCH y Sonata original
@@ -102,7 +102,7 @@ M4 & 52,5 & 50,6 & 36,1 & 47,4 \\
 \end{tabularx}
 \end{table}
 
-\subsection*{G.3. Variantes de fusión}
+\subsection*{F.3. Variantes de fusión}
 
 Se probaron fusiones deterministas distintas de la concatenación, con media de
 cinco semillas, para ver si alguna gana de forma consistente
@@ -123,7 +123,7 @@ M2 y Sonata. Elaboración propia.}
 \label{fig:g-variantes}
 \end{figure}
 
-\subsection*{G.4. Sensibilidad al número de grupos}
+\subsection*{F.4. Sensibilidad al número de grupos}
 
 La Figura~\ref{fig:g-miou-k} muestra el mIoU de cada módulo para $K=6$, 8 y 12,
 con y sin \emph{other}, para el M2 de ArCH con Sonata original y adaptado, con
