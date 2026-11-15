@@ -63,10 +63,7 @@ Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 \label{sec:diseno}
 
 El sistema tiene cuatro módulos de procesamiento y un quinto de salida y
-evaluación, descritos en la Sección~\ref{sec:diseno-teorico}. El Módulo~1 prepara cada
-escaneo en una matriz con posición, color y normal. El Módulo~2 es HyperNCD, que
-aprende con etiquetas de otro conjunto, y el~3 es Sonata, que aprende sin ellas, y
-entregan un descriptor por punto. El Módulo~4 los une y agrupa. Los Módulos~2 y~3
+evaluación, descritos en la Sección~\ref{sec:diseno-teorico}. Los Módulos~2 y~3
 trabajan en paralelo, porque ninguno usa la salida del otro, y esperan al Módulo~1.
 
 \subsection{Estructura y Contrato de los Módulos}
