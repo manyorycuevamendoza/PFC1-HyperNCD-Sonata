@@ -7,9 +7,10 @@
 \setcounter{table}{0}\renewcommand{\thetable}{A.\arabic{table}}
 
 El proyecto usa tres entornos. En Khipu, \texttt{sonata-env} (Python~3.10,
-PyTorch~2.5.0, CUDA~12.4, \texttt{spconv} y Pointcept) ejecuta Sonata, y
-\texttt{hyperncd-env} (Python~3.8, PyTorch~1.10.1, MinkowskiEngine, que declara
-CUDA~11.3 y se compiló con 11.8) ejecuta HyperNCD. En el equipo local, Python~3.12.7
+PyTorch~2.5.0, CUDA~12.4, \texttt{spconv} y Pointcept) ejecutó la extracción de
+Sonata sobre PL13, y \texttt{hyperncd-env} (Python~3.8, PyTorch~1.10.1,
+MinkowskiEngine, que declara CUDA~11.3 y se compiló con 11.8) se probó con una
+corrida corta de HyperNCD. En el equipo local, Python~3.12.7
 con \texttt{laspy}~2.7.0, NumPy~2.3.5 y Open3D~0.20.0 ejecutó la prueba de la
 Unidad~1. El seguimiento de experimentos usa Weights~\&~Biases.
 
@@ -31,7 +32,7 @@ MinkowskiEngine & Rejilla dispersa y convoluciones de la MinkowskiUNet-34C & 2 \
 Pointcept, \texttt{spconv} & Codificador PTv3 de Sonata con sus pesos públicos & 3 \\
 Código oficial de HyperNCD & Prototipos, hipergrafo y pseudo-etiquetas & 2, 4 \\
 Weights \& Biases & Registro de métricas por corrida & 5 \\
-Clúster Khipu (Slurm) & Ejecución en CPU del Módulo~1 y en GPU de los Módulos~2 a~4 & 1--4 \\
+Clúster Khipu (Slurm) & Ejecución en CPU del Módulo~1 y en GPU de la extracción de Sonata sobre PL13 & 1, 3 \\
 Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 1, 3 \\
 \bottomrule
 \end{tabularx}
