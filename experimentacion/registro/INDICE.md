@@ -8,6 +8,7 @@ Generado por `registrar.py`; no editar a mano. Visor: `experimentacion/visor/ind
 |---|---|---|---|---|
 | `m1_preproceso` — Preprocesamiento de los 23 escaneos (SOR + voxel 5 cm + normales) | 2026-10-08 | hecho | Khipu (CPU, 16 nucleos) | - |
 | `escena_m1` — Escena etiquetada `listo`: preprocesamiento | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab (CPU) | - |
+| `pruebas_parametros_m1` — Pruebas de parametros P0 a P3 del Modulo 1 sobre la capilla etiquetada | 2026-11-15 | hecho P0 a P3 (1 escena, 1 corrida cada una). Pendiente P4 y P5 | Laptop CPU | - |
 
 ## M2
 
@@ -27,6 +28,7 @@ Generado por `registrar.py`; no editar a mano. Visor: `experimentacion/visor/ind
 | `m3_adaptado_e30` — Sonata adaptado a la Catedral (30 epocas, sin etiquetas) | 2026-11-08 | hecho; falta control y mIoU | Colab L4 (22.5 GB) | m1_preproceso |
 | `escena_m3_adaptado` — Escena etiquetada: Sonata adaptado a la Catedral | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab L4 | escena_m1 |
 | `escena_m3_original` — Escena etiquetada: Sonata original | 2026-11-09 | hecho (1 corrida, 1 escena) | Colab L4 | escena_m1 |
+| `sonda_lineal_capilla` — Sonda lineal y k-NN sobre f_ssl de Sonata original y adaptado en la capilla etiquetada | 2026-11-15 | hecho (1 escena, 1 semilla) | Laptop CPU (scikit-learn) | m4_arch_m3original, m4_arch_m3adaptado |
 
 ## M4
 

@@ -1,0 +1,5 @@
+prueba,condicion,q,q_normales,lam,voxel,chunk,n_sor,n_voxel,pct_descartado,segundos,r_mm_global,r_mm_ralas,disp_grados_global,disp_grados_ralas,disp_grados_planas,disp_grados_aristas,ret_g002_pct,ret_g004_pct,puntos_emparejados,S_identica_a_ref
+P3,normales con 10,20,10,2.0,0.05,5000000,3277440,1135946,3.05,9.0,11.937,9.959,25.316,14.827,11.816,52.253,99.76,91.47,200000,False
+P3,normales con 20 (referencia),20,20,2.0,0.05,5000000,3277440,1135946,3.05,7.9,11.937,9.959,16.83,10.736,7.302,42.78,99.76,91.47,200000,
+P3,normales con 30,20,30,2.0,0.05,5000000,3277440,1135946,3.05,8.3,11.937,9.959,13.394,9.52,5.813,35.31,99.76,91.47,200000,False
+P3,normales con 40,20,40,2.0,0.05,5000000,3277440,1135946,3.05,8.6,11.937,9.959,11.254,8.945,5.109,29.543,99.76,91.47,200000,False

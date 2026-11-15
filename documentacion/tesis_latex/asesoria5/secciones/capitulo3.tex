@@ -472,14 +472,13 @@ misma receta, para que la única diferencia sean los datos.
 \midrule
 Contenido & Calles de un campus, con LiDAR móvil & Iglesias y edificios históricos \\
 Clases & 13. Persona, ciclista, auto, tronco, plantas, señal de tránsito, poste, basurero, edificio, cono o piedra, cerca, bicicleta y suelo & 10. Arco, columna, molduras, piso, puerta o ventana, pared, escalera, bóveda, cubierta y \emph{other} \\
-Conocidas & 9 clases, partición~0 & Molduras, piso, puerta o ventana, pared, escalera y cubierta \\
-Novedosas & 4 clases, partición~0 & Arco, columna y bóveda \\
+Conocidas & 9 clases de la partición~0, persona, ciclista, tronco, señal de tránsito, poste, basurero, cono o piedra, cerca y bicicleta & Molduras, piso, puerta o ventana, pared, escalera y cubierta \\
+Novedosas & 4 clases de la partición~0, plantas, edificio, suelo y auto & Arco, columna y bóveda \\
 Ignorada & Sin etiqueta & \emph{other} \\
 Preparación & La del artículo de HyperNCD & 15 escenas para entrenar y 2 para validar, vóxel de 5\,cm, bloques de 10\,m \\
 \bottomrule
 \end{tabularx}
 \end{table}
-% TODO verificar cuales son las 4 clases novedosas de la particion 0 de SemanticPOSS antes de nombrarlas.
 
 Para entrenar la variante adaptada se preparó ArCH \cite{matrone2020benchmark}
 con el Algoritmo~\ref{alg:preparacion-arch}. El conjunto trae 17 escenas
@@ -1057,7 +1056,11 @@ P5. Todas siguen el mismo esquema, que resume el Algoritmo~\ref{alg:prueba} y la
 Figura~\ref{fig:flujo-prueba}. Cada prueba cambia un solo parámetro sobre la misma
 sección y deja fijos los demás. La lista de pruebas, con los valores que recorre
 cada una, está en la Tabla~\ref{tab:pruebas} del
-\hyperref[sec:anexo-parametros]{Anexo~H}.
+\hyperref[sec:anexo-parametros]{Anexo~H}. Las pruebas P0 a P3 solo usan el
+Módulo~1 y se ejecutaron en la laptop sobre la capilla etiquetada. Las pruebas P4
+y P5, y el ARI y el NMI de P2, necesitan la GPU de Sonata y quedaron pendientes.
+Para P3 se agregó al programa la opción \texttt{--q-normales}, que separa los
+vecinos de las normales de los del filtrado, y para P5 la opción \texttt{--parche}.
 
 \begin{algorithm}[!htbp]
 \small
@@ -1220,6 +1223,37 @@ X8 & Comparar cada clase con el umbral & El orden de las clases & IoU por clase 
 \end{tabularx}
 \end{table}
 
+Cada experimento responde a un objetivo específico de la introducción y parte de
+una pregunta con una expectativa escrita, que muestra la Tabla~\ref{tab:preguntas}.
+OE1 es integrar Sonata en el módulo de prototipos, OE2 es evaluar la configuración
+del híbrido y OE3 es cuantificar la mejora y delimitar su rango. Las expectativas
+de X2 y X3 se plantearon después de observar el resultado de X1, y las demás antes
+de ejecutar el experimento. Así se puede comparar lo que se esperaba con lo que
+salió.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
+\caption[Objetivo, pregunta y expectativa de cada experimento]{Objetivo, pregunta y expectativa de cada experimento. Elaboración propia.}
+\label{tab:preguntas}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.5\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X@{}}
+\toprule
+\textbf{Id} & \textbf{Objetivo} & \textbf{Pregunta} & \textbf{Qué se esperaba} \\
+\midrule
+X0 & OE1, OE2 & ¿El Módulo~1 deja una nube reproducible que conserve la proporción de cada clase? & Mismos conteos en dos máquinas y una fracción parecida de cada clase tras el vóxel \\
+X1 & OE2 & ¿El HyperNCD entrenado con SemanticPOSS sirve en la capilla? & Que separe las clases como lo hace en su propio dominio \\
+X2 & OE2 & ¿El mal resultado de X1 se debe al dominio de entrenamiento? & Que al entrenar con patrimonio el modelo deje de colapsar \\
+X3 & OE2 & ¿HyperNCD adaptado reparte mejor los puntos entre cabezas? & Menos puntos en la cabeza dominante y un NMI mayor que en X1 \\
+X4 & OE1 & ¿Seguir entrenando Sonata con la Catedral mejora su descriptor? & Un mIoU de M3 mayor que con el Sonata original \\
+X5 & OE1, OE2 & ¿Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ mejora a M4 base? & M4 por encima de M4 base, que es la hipótesis central del trabajo \\
+X6 & OE2 & ¿Alguna fusión determinista supera al pegado normalizado? & Que al menos la que pondera por la confianza de HyperNCD lo supere \\
+X7 & OE2 & ¿Las diferencias entre métodos superan la variabilidad del agrupamiento? & Que las diferencias menores que la dispersión no se puedan sostener \\
+X8 & OE3 & ¿Qué clases superan el umbral de 70\,\% y por qué unas son más difíciles? & Que las clases grandes y planas sean más fáciles que las pequeñas y alargadas \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 Aparte del diseño cruzado se hizo un experimento para entender por qué HyperNCD
 colapsa en la capilla. La pregunta es si la causa es el dominio de entrenamiento o
 un error del checkpoint, de la extracción o de la densidad de los puntos. Para
@@ -1262,6 +1296,32 @@ combinación. Se reportan la media y la desviación estándar de esas diez semil
 Esa desviación mide qué tan estable es el agrupamiento y no equivale a entrenar
 diez veces los modelos.
 
+\paragraph*{Criterio para decidir si una diferencia es real.} Con una sola escena y
+un solo entrenamiento de cada modelo, hace falta una regla escrita antes de mirar
+los resultados. Una diferencia entre dos métodos se toma como real solo si supera
+la mayor de las dos desviaciones de sus diez semillas y tiene el mismo signo en las
+dos mitades de la escena y en las combinaciones de modelos donde se mide. Si no lo
+cumple, se reporta como una diferencia dentro del ruido. Aun cuando lo cumple, vale
+solo para esta escena y no para la Catedral entera. La regla es conservadora a
+propósito, porque las semillas miden la estabilidad del agrupamiento y no la
+variación entre escenas ni entre entrenamientos. El Algoritmo~\ref{alg:criterio}
+la resume.
+
+\begin{algorithm}[!htbp]
+\small
+\caption{Criterio para decidir si una diferencia es real.}
+\label{alg:criterio}
+\KwIn{mIoU de diez semillas de los métodos $A$ y $B$, en cada mitad de la escena y en cada combinación}
+\KwOut{diferencia real o dentro del ruido}
+$\Delta \leftarrow \bar m_A - \bar m_B$ \tcp*{diferencia de las medias}
+$s \leftarrow \max(\sigma_A, \sigma_B)$ \tcp*{mayor desviación de las diez semillas}
+\eIf{$|\Delta| > s$ y el signo de $\Delta$ es el mismo en las dos mitades y en las combinaciones}{
+  reportar la diferencia como real, solo para esta escena\;
+}{
+  reportar la diferencia como dentro del ruido\;
+}
+\end{algorithm}
+
 \paragraph*{Límites del diseño.} La Tabla~\ref{tab:limites} reúne lo que el diseño
 no cubre, para que los resultados se lean con ese alcance. Los dos primeros se
 deben a los datos disponibles y los demás son controles que quedaron pendientes.
@@ -1280,7 +1340,8 @@ Una sola escena etiquetada & Los resultados son de una capilla y pueden no repet
 Un solo entrenamiento de HyperNCD con ArCH & No se conoce la variabilidad del entrenamiento & Repetir con varias semillas \\
 Adaptación de Sonata hecha una vez, con lote de una escena & No se conoce su variabilidad y el lote es mucho menor que el original & Repetirla con un lote mayor \\
 Control del equipo solo en la capilla & En PL13 el original se extrajo en Khipu y el adaptado en Colab, así que esa comparación no separa el efecto de los pesos del efecto del equipo & Extraer PL13 con el original en Colab, en el mismo entorno que el adaptado \\
-Sonda lineal sin correr & No se midió cuánta información de las clases contiene $f_{\mathrm{ssl}}$ con etiquetas, solo se mide con el agrupamiento & Correr el programa de la sonda lineal que ya existe \\
+Pruebas P4 y P5 sin correr & No se comprobó si la precisión media del archivo o un parche menor cambian el descriptor, ni el ARI y el NMI de la rejilla & Correrlas en Colab con la celda \texttt{colab\_p4\_p5.py} \\
+Sonda lineal con una semilla & Se corrió una vez, sin repetirla ni medir su variabilidad, por lo que una diferencia de menos de 2 puntos no es concluyente & Repetirla con varias semillas y más escenas \\
 Umbral de 70\,\% propio & No viene de ningún artículo, es una meta del proyecto & Fijarlo con el asesor o con la meta de patrimonio \\
 Fusión sin aprendizaje & Todas las fusiones probadas son deterministas & Una fusión aprendida, que queda para trabajos futuros \\
 \bottomrule
@@ -1387,8 +1448,9 @@ cuántos de sus puntos tocan a otra clase y la forma de cada pieza etiquetada.
 El agrupamiento mezcla dos preguntas, si el descriptor contiene la información de
 las clases y si el Módulo~4 la aprovecha. La sonda lineal las separa, porque mide
 el descriptor sin ninguna fusión. Sigue el protocolo del artículo de Sonata
-\cite{wu2025sonata} y se resume en el Algoritmo~\ref{alg:sonda}. El programa
-existe, pero no se corrió, por lo que figura entre los límites del diseño.
+\cite{wu2025sonata} y se resume en el Algoritmo~\ref{alg:sonda}. Se corrió sobre
+los descriptores de Sonata original y adaptado, con una semilla y dos mitades
+espaciales, y su resultado está en la Tabla~\ref{tab:sonda}.
 
 \begin{algorithm}[!htbp]
 \small

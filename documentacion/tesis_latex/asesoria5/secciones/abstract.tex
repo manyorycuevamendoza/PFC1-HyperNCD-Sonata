@@ -13,18 +13,25 @@ recognize only the categories they were trained on.
 
 We propose a hybrid model that starts from HyperNCD, a novel class discovery
 method, and replaces its geometric descriptor, computed with a fixed formula, with
-the self-supervised representation of Sonata, used without retraining. The cloud
-is prepared with outlier removal (SOR), voxelization and normals. Each point gets a semantic vector, learned by HyperNCD, and a
-self-supervised one, and both are combined to cluster the points.
+the self-supervised representation of Sonata. Each branch is prepared in two
+variants, an original one and one adapted to the Cathedral, and they are combined
+without joint training. The cloud is prepared with outlier removal (SOR),
+voxelization and normals. Each point gets a semantic vector, learned by HyperNCD, and a
+self-supervised one, and both are combined to cluster the points. The model is
+evaluated with mIoU and NMI on an annotated chapel, with ten clustering seeds.
 
 The results show that HyperNCD trained on urban scenes does not transfer to the
 cathedral, almost all points (98.4\%) fall into a single output of the model.
 Training it on ArCH, an architectural-heritage dataset~\cite{matrone2020benchmark},
-reduces that concentration to 44.6\% and raises the mIoU to 35.5\%. When the two
-descriptors are combined, the mean mIoU is 52.5\% against 51.4\% without Sonata, a
-difference that is not conclusive, and adapting Sonata to the cathedral does not
-improve the result. The evidence comes from one scene and one training run, so more
-scenes and repetitions are needed.
+reduces that concentration to 44.6\% and raises the mIoU of M2 from 35.9\% to
+48.4\%. With the original Sonata, combining the two descriptors gives a mean mIoU
+of 52.5\% against 51.4\% without Sonata, a difference that is not conclusive.
+Adapting Sonata to the cathedral lowers the mIoU of Sonata from 45.4\% to 34.3\%.
+In contrast, a linear probe with labels on its descriptors reaches 79.7\% with the
+original and 80.5\% with the adapted one, which indicates that the limit lies in
+the clustering and not in the descriptor.
+The evidence comes from one scene and one training run of each adapted model, so
+more scenes and repetitions are needed.
 
 \vspace{0.5em}
 

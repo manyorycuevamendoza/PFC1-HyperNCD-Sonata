@@ -1,0 +1,33 @@
+{
+  "id": "pruebas_parametros_m1",
+  "etapa": "M1",
+  "titulo": "Pruebas de parametros P0 a P3 del Modulo 1 sobre la capilla etiquetada",
+  "descripcion": "Cada prueba cambia un solo parametro de preprocesar.py (bloque, filtrado SOR con q y lambda, voxel, vecinos de las normales) y mide rugosidad y dispersion angular de las normales contra la referencia, en una muestra fija de 200 000 puntos. P4, P5 y el ARI/NMI de P2 necesitan GPU y quedan pendientes (colab_p4_p5.py).",
+  "estado": "hecho P0 a P3 (1 escena, 1 corrida cada una). Pendiente P4 y P5",
+  "fecha": "2026-11-15",
+  "entradas": [],
+  "parametros": {"q": 20, "lambda": 2.0, "voxel_m": 0.05, "q_normales": 20, "chunk": 5000000, "muestra": 200000, "escena": "capilla_etiquetada (listo)"},
+  "hardware": "Laptop CPU",
+  "costo": {"min_total": 5},
+  "metricas": {
+    "P0_S_identica_en_los_tres_bloques": true,
+    "P1_descartado_referencia_pct": 3.05,
+    "P1_rugosidad_mm_sin_filtrar": 11.2,
+    "P1_rugosidad_mm_referencia": 11.9,
+    "P2_representantes_voxel_2cm": 3235662,
+    "P2_retencion_rejilla_2cm_con_voxel_5cm_pct": 99.76,
+    "P2_retencion_rejilla_4cm_con_voxel_5cm_pct": 91.47,
+    "P3_dispersion_grados_10_vecinos": 25.3,
+    "P3_dispersion_grados_40_vecinos": 11.3
+  },
+  "resultados": {
+    "documento": "experimentacion/pruebas_parametros/README.md",
+    "json": [],
+    "imagenes": [],
+    "visores": []
+  },
+  "datos_pesados": [
+    {"que": "matrices S de cada condicion (no se guardan)", "donde": "se regeneran con correr_pruebas.py"}
+  ],
+  "notas": "La dispersion angular baja al subir los vecinos de las normales porque se suaviza, no porque mejore. El filtrado SOR no baja la rugosidad en esta escena. Se agrego --q-normales a preprocesar.py y --parche a extraer_features.py (defaults iguales al comportamiento anterior)."
+}

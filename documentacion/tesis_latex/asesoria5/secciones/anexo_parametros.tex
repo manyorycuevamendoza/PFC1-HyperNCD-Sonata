@@ -78,7 +78,7 @@ Tabla~\ref{tab:pruebas} resume las seis pruebas.
 P0 & Tamaño de bloque & 1, 5 y 20 millones & Ninguna diferencia en $S$ \\
 P1 & Filtrado, con o sin, $q$ y $\lambda$ & Sin filtrado, $q$ de 10 a 40, $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
 P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm, $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
-P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en paredes y en aristas, requiere separar este valor del $q$ del filtrado en el código \\
+P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en zonas planas y en aristas, con la opción \texttt{--q-normales} que separa este valor del $q$ del filtrado \\
 P4 & Precisión del \texttt{.npz} & Media y simple & Si la precisión media cambia los descriptores (ARI) \\
 P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria sin cambiar los descriptores \\
 \bottomrule

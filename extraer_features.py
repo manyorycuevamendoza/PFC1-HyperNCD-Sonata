@@ -32,6 +32,8 @@ def parse_args():
     ap.add_argument("--pesos", default=None,
                     help="ruta a un .pth de Sonata adaptado (formato sonata.load: "
                          "config + state_dict). Si se omite usa el preentrenado")
+    ap.add_argument("--parche", type=int, default=1024,
+                    help="tamano de parche del codificador (default: 1024)")
     ap.add_argument("--semilla", type=int, default=0,
                     help="semilla aleatoria (default: 0). La rejilla de Sonata "
                          "elige al azar un punto por celda; fijarla hace la "
@@ -58,10 +60,10 @@ def cargar_nube(ruta):
     }
 
 
-def cargar_modelo(pesos=None):
+def cargar_modelo(pesos=None, parche=1024):
     """Sonata preentrenado (o los pesos adaptados de `pesos`), sin flash-attn
     (no esta instalado en Khipu)."""
-    config = dict(enc_patch_size=[1024 for _ in range(5)], enable_flash=False)
+    config = dict(enc_patch_size=[parche for _ in range(5)], enable_flash=False)
     modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata",
                          custom_config=config).cuda()
     modelo.eval()
@@ -104,7 +106,7 @@ def main():
     print(f"      {n_original} puntos ({t_lectura:.1f}s)")
 
     print("[2/4] cargando Sonata preentrenado")
-    modelo = cargar_modelo(args.pesos)
+    modelo = cargar_modelo(args.pesos, args.parche)
 
     print(f"[3/4] transform (GridSample = {args.grid} m)")
     transform = sonata.transform.default()

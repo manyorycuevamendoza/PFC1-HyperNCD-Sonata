@@ -30,7 +30,7 @@ revisado y termina en un resultado propio que se puede verificar.}
 \multicolumn{4}{@{}l}{\textbf{OE1. Integración de Sonata en el módulo de prototipos}}\\
 A1 & Sustitución de $f_{\text{geo}}$ por $f_{\mathrm{ssl}}$
    & HyperNCD (\S\ref{sec:hyperncd}), Sonata (\S\ref{sec:sonata})
-   & Ramas congeladas y fusión posterior con métricas comparables \\
+   & Ramas independientes y fusión posterior con métricas comparables \\
 A2 & Auditoría del código y corrección de la línea base
    & HyperNCD (\S\ref{sec:hyperncd}) y su repositorio
    & Tabla artículo frente a implementación y tres decisiones metodológicas \\
@@ -160,7 +160,7 @@ cambio de dominio sigue siendo el principal riesgo declarado.
 \item \textit{Régimen congelado en exteriores.} En escaneo láser urbano el
 \emph{linear probing} queda por debajo de una PTv3 supervisada, aunque con ajuste
 fino completo la supera \cite[Tabla~8]{wu2025sonata}. La desventaja es del
-régimen congelado, que es el que adopta este proyecto, y no de la representación.
+régimen congelado, en el que este proyecto usa el descriptor al extraerlo, y no de la representación.
 
 \item \textit{Vocabularios grandes.} Con 200 clases cae a 29,3 de mIoU en
 ScanNet200, frente a 72,5 con 20 en ScanNet, lo que fija el límite superior de
@@ -173,7 +173,7 @@ problema de integración}
 \label{sec:ptv3}
 
 Presentado en CVPR 2024~\cite{wu2024ptv3}, es la red sobre la que está construido
-Sonata, el codificador que \textbf{OE1} emplea congelado es una PTv3 con pesos
+Sonata, el codificador que \textbf{OE1} emplea es una PTv3 con pesos
 auto-supervisados. Sustituye la vecindad calculada por vecinos más cercanos por
 una vecindad \emph{serializada}, los puntos se ordenan siguiendo una curva de
 llenado de espacio, la secuencia resultante se corta en parches contiguos y la
@@ -199,7 +199,7 @@ ser un objeto en memoria compartido.
 
 El costo del híbrido no viene de añadir un transformador, sino de ejecutarlo
 dentro del bucle de entrenamiento. Lo que lo hace resoluble es que el codificador
-se emplea congelado y solo en inferencia, su salida no depende de la época ni del
+se emplea solo en inferencia, sin actualizar sus pesos, y su salida no depende de la época ni del
 optimizador, así que se calcula una sola vez por sección.
 
 % =====================================================================
@@ -291,7 +291,7 @@ comparación (A2) y resolver el puente entre las dos estructuras espaciales (A4)
 
 \begin{enumerate}
 \item[\textbf{A1}] \textbf{Sustitución del descriptor geométrico.} Reemplazar
-$f_{\text{geo}}$ por $f_{\mathrm{ssl}}$, el codificador congelado de Sonata,
+$f_{\text{geo}}$ por $f_{\mathrm{ssl}}$, el codificador de Sonata,
 conservando íntegro el razonamiento por hipergrafo. Así,
 $F_i = [f_{\mathrm{sem}};\, f_{\mathrm{ssl}}]$ y cualquier variación de
 la métrica es atribuible a ese reemplazo y a nada más.
@@ -331,12 +331,12 @@ escala entre ramas (A5), calibrar de forma conjunta los parámetros de la afinid
 \item[\textbf{A5}] \textbf{Normalización de escala entre dos ramas
 heterogéneas.} El descriptor híbrido $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ une dos
 ramas de escala distinta, con 96 componentes entrenadas junto con el resto del
-modelo y 1088 componentes congeladas cuyo rango no está normalizado contra el de
+modelo y 1088 componentes que no se entrenan junto con el resto, cuyo rango no está normalizado contra el de
 la rama semántica. Sin corrección, la rama más ancha domina la similitud por
 coseno $S_s$ con la que se comparan las regiones, y el valor publicado
 $\alpha=0{,}5$ deja de repartir el peso entre forma y significado como en la
 línea base. Hacer comparables las dos ramas antes de concatenarlas es un
-requisito previo a la calibración, y el régimen congelado lo agrava porque impide que la rama auto-supervisada se reescale sola
+requisito previo a la calibración, y que la rama auto-supervisada no se entrene junto con el resto lo agrava, porque impide que se reescale sola
 durante el entrenamiento.
 
 \item[\textbf{A6}] \textbf{Calibración conjunta y verificación de

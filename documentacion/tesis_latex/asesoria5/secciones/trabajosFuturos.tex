@@ -5,6 +5,16 @@
 repetir después la extracción y el agrupamiento, para separar la variabilidad
 del aprendizaje de la variabilidad de la etapa final.
 
+\item \textbf{Adaptación de Sonata.} Repetir la adaptación con varias semillas, con
+un lote mayor que el de una escena, con otras épocas y otras tasas de aprendizaje,
+y extraer PL13 con los pesos originales en el mismo entorno de Colab para cerrar el
+control del equipo. Hoy se sabe que la adaptación hecha empeoró a M3, pero no si otra
+configuración lo mejora.
+
+\item \textbf{Origen del colapso de HyperNCD.} Separar cuánto pesan el contenido de
+la escena, su escala y el patrón del LiDAR, por ejemplo reescalando la capilla o
+ajustando M2 con pocas etiquetas de la Catedral.
+
 \item \textbf{Validación sin reutilizar el conjunto de prueba.} Reservar escenas
 de ArCH para validación o aplicar validación cruzada, manteniendo intactas las
 escenas oficiales de prueba para la evaluación final.
@@ -21,7 +31,9 @@ de la sección estudiada de la Catedral de Lima.
 \item \textbf{Ablación de la fusión.} Comparar bajo las mismas semillas el
 descriptor semántico, Sonata, la geometría manual y sus combinaciones, e
 incorporar intervalos de confianza o pruebas pareadas antes de atribuir la
-diferencia a una rama específica.
+diferencia a una rama específica. También conviene probar un agrupador aprendido,
+que decida si dos regiones vecinas son la misma estructura, y la continuidad
+espacial entre regiones, porque las bóvedas se parten en muchos grupos pequeños.
 
 \item \textbf{Clases minoritarias y ornamento fino.} Ajustar el muestreo, la
 resolución y las pérdidas para puerta/ventana, arco y escaleras, que conservaron

@@ -50,11 +50,13 @@ Rinde mal justo donde debería ser fuerte, con entre 11,8 y 47,5 mIoU en las
 clases novedosas~\cite{zhang2026hyperncd}. Este trabajo señala como causa
 probable el descriptor geométrico calculado a mano sobre el que arma sus
 prototipos, el tipo de señal que Sonata~\cite{wu2025sonata} identifica
-como un atajo, y propone reemplazarlo por su codificador auto-supervisado
-congelado. Además, el checkpoint entrenado con SemanticPOSS no se transfiere a la
+como un atajo, y propone reemplazarlo por su codificador auto-supervisado.
+Además, el checkpoint entrenado con SemanticPOSS no se transfiere a la
 catedral, pues concentra 98,4\,\% de los puntos en una sola cabeza, por ello M2
 se entrenó con ArCH~\cite{matrone2020benchmark}, cuyo dominio corresponde al
-patrimonio arquitectónico.
+patrimonio arquitectónico. De forma análoga, se probó continuar el
+preentrenamiento de Sonata con escaneos de la Catedral. Así, cada rama tiene una
+variante original y una adaptada, y el trabajo mide cuánto aporta cada una.
 
 El Capítulo~I presenta la revisión crítica de la literatura, el Capítulo~II, el
 marco teórico y el análisis de arquitectura, el Capítulo~III, el marco
@@ -82,8 +84,8 @@ novedosas en un levantamiento patrimonial real.
 Construir y medir un sistema híbrido que integre las representaciones
 auto-supervisadas de Sonata en el módulo de prototipos de HyperNCD, y cuantificar
 la mejora del mIoU en la clasificación de elementos estructurales no anotados
-sobre el levantamiento de la Catedral de Lima, mediante ramas congeladas y una
-fusión posterior sin entrenamiento conjunto.
+sobre el levantamiento de la Catedral de Lima, mediante dos ramas que se preparan por separado, cada una con su variante
+original y su variante adaptada, y una fusión posterior sin entrenamiento conjunto.
 
 \paragraph*{Objetivos Específicos}
 \addcontentsline{toc}{paragraph}{Objetivos Específicos}
@@ -96,15 +98,15 @@ y OE2, y \textbf{uno de salida analítica}, OE3.
 junta $f_{\mathrm{sem}}$, el descriptor semántico de su red supervisada, y
 $f_{\mathrm{geo}}$, el geométrico calculado a mano (Ec.~\eqref{eq:hyperncd3}). Se
 implementa el bloque de fusión que sustituye $f_{\mathrm{geo}}$ por
-$f_{\mathrm{ssl}}$, el descriptor del codificador congelado de Sonata, y resuelve
+$f_{\mathrm{ssl}}$, el descriptor del codificador de Sonata, original o adaptado a la Catedral, y resuelve
 la diferencia de resolución entre PTv3 y la rejilla de Minkowski con
 \emph{up-cast} y \emph{cache} por sección.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item \textit{Herramientas y trabajo computacional} pesos públicos de Sonata,
 Pointcept, PTv3, \texttt{spconv}, MinkowskiEngine y PyTorch, módulo de fusión e
-inferencia congelada sobre cada sección.
-\item \textit{Resultado verificable} repositorio con ambas ramas congeladas,
+inferencia sin actualizar pesos sobre cada sección.
+\item \textit{Resultado verificable} repositorio con ambas ramas y sus variantes,
 archivos de descriptores y el híbrido produciendo
 $F_i=[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ sobre una sección de control.
 \item \textit{Conclusión asociada} si la sustitución es viable dentro del
@@ -119,7 +121,7 @@ y los registros de ejecución.
 
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item \textit{Herramientas y trabajo computacional} entrenamiento de M2 con
-ArCH, inferencia congelada, agrupamiento con diez semillas y métricas mIoU, NMI
+ArCH, inferencia sin actualizar pesos, agrupamiento con diez semillas y métricas mIoU, NMI
 y dominancia.
 \item \textit{Resultado verificable} tabla comparativa de las cuatro
 configuraciones, con media y desviación estándar del agrupamiento.
@@ -153,8 +155,8 @@ está en automatizar la tarea a un nivel suficiente, no en igualar esa precisió
 El aporte no es una arquitectura nueva. Lo que se busca es establecer si un problema ya
 demostrado con supervisión completa se mantiene cuando no hay etiquetas que
 corrijan al modelo. Es un resultado incierto, medible y que ningún trabajo previo
-ha reportado, y como se mueve una sola pieza, cualquier variación se puede
-atribuir al reemplazo.
+ha reportado. Como el diseño cruza las dos variantes de cada rama y mide cada
+descriptor por separado, se puede atribuir cada variación a una pieza concreta.
 
 \introsection{Alcance y limitaciones}
 
@@ -163,7 +165,8 @@ Se trabaja sobre un único edificio, la \textbf{Catedral de Lima}, con el
 levantamiento provisto por la Facultad de Ingeniería Civil. El objeto es fijo y
 el modelo se ajusta a él, no al revés. Los resultados se declaran válidos para tipología de catedral o iglesia colonial,
 es decir nave con columnas y arcos, cubierta abovedada y fachada con torres, y no
-se extienden a vivienda ni a obra vial o industrial.
+se extienden a vivienda ni a obra vial o industrial. La evaluación con etiquetas se
+hace sobre una sola capilla de la Catedral, entregada etiquetada por el asesor.
 
 \paragraph*{Volumen de datos}
 El levantamiento se recibe como archivos LAS (Sección~\ref{sec:las}) y la unidad
@@ -197,8 +200,9 @@ donde Sonata baja a 29,3 mIoU en ScanNet200 frente a 72,5 en
 ScanNet~\cite{wu2025sonata}.
 
 \paragraph*{Exclusiones}
-Quedan fuera el preentrenamiento auto-supervisado propio, que en Sonata exigió
-140 mil escenas y 32 GPU, la detección de instancias, el vocabulario abierto y la
+Queda fuera el preentrenamiento auto-supervisado desde cero, que en Sonata exigió
+140 mil escenas y 32 GPU. Solo se hizo una adaptación corta, con 21 escaneos y una
+sola GPU. También quedan fuera la detección de instancias, el vocabulario abierto y la
 generación del modelo BIM.
 
 % Restauración de la numeración de tablas por capítulo.

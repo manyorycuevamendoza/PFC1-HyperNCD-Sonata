@@ -91,6 +91,52 @@
    }
   },
   {
+   "id": "pruebas_parametros_m1",
+   "etapa": "M1",
+   "titulo": "Pruebas de parametros P0 a P3 del Modulo 1 sobre la capilla etiquetada",
+   "descripcion": "Cada prueba cambia un solo parametro de preprocesar.py (bloque, filtrado SOR con q y lambda, voxel, vecinos de las normales) y mide rugosidad y dispersion angular de las normales contra la referencia, en una muestra fija de 200 000 puntos. P4, P5 y el ARI/NMI de P2 necesitan GPU y quedan pendientes (colab_p4_p5.py).",
+   "estado": "hecho P0 a P3 (1 escena, 1 corrida cada una). Pendiente P4 y P5",
+   "fecha": "2026-11-15",
+   "entradas": [],
+   "parametros": {
+    "q": 20,
+    "lambda": 2.0,
+    "voxel_m": 0.05,
+    "q_normales": 20,
+    "chunk": 5000000,
+    "muestra": 200000,
+    "escena": "capilla_etiquetada (listo)"
+   },
+   "hardware": "Laptop CPU",
+   "costo": {
+    "min_total": 5
+   },
+   "metricas": {
+    "P0_S_identica_en_los_tres_bloques": true,
+    "P1_descartado_referencia_pct": 3.05,
+    "P1_rugosidad_mm_sin_filtrar": 11.2,
+    "P1_rugosidad_mm_referencia": 11.9,
+    "P2_representantes_voxel_2cm": 3235662,
+    "P2_retencion_rejilla_2cm_con_voxel_5cm_pct": 99.76,
+    "P2_retencion_rejilla_4cm_con_voxel_5cm_pct": 91.47,
+    "P3_dispersion_grados_10_vecinos": 25.3,
+    "P3_dispersion_grados_40_vecinos": 11.3
+   },
+   "resultados": {
+    "documento": "experimentacion/pruebas_parametros/README.md",
+    "json": [],
+    "imagenes": [],
+    "visores": []
+   },
+   "datos_pesados": [
+    {
+     "que": "matrices S de cada condicion (no se guardan)",
+     "donde": "se regeneran con correr_pruebas.py"
+    }
+   ],
+   "notas": "La dispersion angular baja al subir los vecinos de las normales porque se suaviza, no porque mejore. El filtrado SOR no baja la rugosidad en esta escena. Se agrego --q-normales a preprocesar.py y --parche a extraer_features.py (defaults iguales al comportamiento anterior)."
+  },
+  {
    "id": "m2_epoca0",
    "etapa": "M2",
    "titulo": "HyperNCD f_sem con el checkpoint de la epoca 0 (casi sin entrenar)",
@@ -546,6 +592,49 @@
      "experimentacion/escena_capilla_etiquetada/visor/visor_escena.html"
     ]
    }
+  },
+  {
+   "id": "sonda_lineal_capilla",
+   "etapa": "M3",
+   "titulo": "Sonda lineal y k-NN sobre f_ssl de Sonata original y adaptado en la capilla etiquetada",
+   "descripcion": "Protocolo de linear probing del paper de Sonata sobre f_ssl fijo, con division espacial en bloques de 4 m y dos pliegues (entrena en una mitad, prueba en la otra y al reves). Sondas lineal, lineal balanceada y k-NN, con todas las clases y sin otro.",
+   "estado": "hecho (1 escena, 1 semilla)",
+   "fecha": "2026-11-15",
+   "entradas": [
+    "m4_arch_m3original",
+    "m4_arch_m3adaptado"
+   ],
+   "parametros": {
+    "bloque_m": 4,
+    "n_train": 120000,
+    "n_test": 60000,
+    "n_knn_train": 40000,
+    "n_knn_test": 15000,
+    "semilla": 0
+   },
+   "hardware": "Laptop CPU (scikit-learn)",
+   "costo": {
+    "min_total": 15
+   },
+   "metricas": {
+    "mIoU_sin_otro_lineal_balanceada_original": 79.7,
+    "mIoU_sin_otro_lineal_balanceada_adaptado": 80.5,
+    "mIoU_sin_otro_knn_original": 81.2,
+    "mIoU_sin_otro_knn_adaptado": 82.0,
+    "mIoU_todas_lineal_balanceada_original": 59.6,
+    "mIoU_todas_lineal_balanceada_adaptado": 64.2
+   },
+   "resultados": {
+    "documento": "experimentacion/evaluacion_etiquetada/README.md",
+    "json": [
+     "experimentacion/escena_capilla_etiquetada/resultados/sonda_lineal/sonda_original.json",
+     "experimentacion/escena_capilla_etiquetada/resultados/sonda_lineal/sonda_adaptado.json"
+    ],
+    "imagenes": [],
+    "visores": []
+   },
+   "datos_pesados": [],
+   "notas": "Con etiquetas el descriptor adaptado rinde igual o algo mejor que el original (diferencia menor que 2 puntos, una semilla), mientras que en el agrupamiento sin etiquetas baja de 45,4 a 34,3. El limite de M3 y M4 esta en como se agrupa y no en la informacion del descriptor. Arco y columna llegan a 63 a 71 IoU con la sonda y solo a 19 a 29 con el agrupamiento."
   },
   {
    "id": "m4_m2e0_m3orig",

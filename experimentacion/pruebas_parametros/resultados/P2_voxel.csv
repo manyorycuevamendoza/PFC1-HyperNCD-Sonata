@@ -1,0 +1,5 @@
+prueba,condicion,q,q_normales,lam,voxel,chunk,n_sor,n_voxel,pct_descartado,segundos,r_mm_global,r_mm_ralas,disp_grados_global,disp_grados_ralas,disp_grados_planas,disp_grados_aristas,ret_g002_pct,ret_g004_pct,puntos_emparejados,S_identica_a_ref
+P2,voxel 2 cm,20,20,2.0,0.02,5000000,3277440,3235662,3.05,13.5,9.276,7.508,19.112,10.36,8.32,43.166,98.66,52.24,199733,False
+P2,voxel 3 cm,20,20,2.0,0.03,5000000,3277440,2548503,3.05,10.8,9.761,7.835,18.654,10.421,7.968,43.537,99.23,62.14,199361,False
+P2,voxel 5 cm (referencia),20,20,2.0,0.05,5000000,3277440,1135946,3.05,7.9,11.937,9.959,16.83,10.736,7.302,42.78,99.76,91.47,200000,
+P2,voxel 10 cm,20,20,2.0,0.1,5000000,3277440,285859,3.05,7.1,20.017,19.22,15.4,13.67,9.123,31.734,99.9,98.79,119829,False

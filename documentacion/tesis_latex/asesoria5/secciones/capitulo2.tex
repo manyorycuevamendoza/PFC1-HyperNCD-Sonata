@@ -175,7 +175,7 @@ su región, componente sustituido en este trabajo, que solo codifica forma.
 \label{sec:fssl}
 
 Salida de 1088 dimensiones del PTv3 de Sonata~\cite{wu2025sonata}, preentrenado
-sobre 140 mil escenas y usado con pesos congelados. Se denota $f_{\mathrm{ssl}}$ y no
+sobre 140 mil escenas y usado en inferencia, sin actualizar sus pesos. Se denota $f_{\mathrm{ssl}}$ y no
 conoce las clases del proyecto. A diferencia de $f_{\mathrm{geo}}$, evita el atajo
 geométrico y aporta conocimiento semántico sin etiquetas, complementario a $f_{\mathrm{sem}}$.
 
@@ -186,10 +186,10 @@ Régimen de entrenamiento en el que la señal de supervisión se construye a par
 los propios datos y no de etiquetas humanas. Es el régimen con que se preentrenó el
 codificador de Sonata.
 
-\paragraph*{Codificador Congelado}\phantomsection
+\paragraph*{Codificador Usado Solo en Inferencia}\phantomsection
 \label{sec:congelado}
 
-Red cuyos pesos no se actualizan y que se usa solo en inferencia. Su costo se paga
+Red cuyos pesos no se actualizan al extraer y que se usa solo en inferencia, tanto en su variante original como en la adaptada. Su costo se paga
 una sola vez y no en cada época, lo que permite calcular su salida por adelantado
 y guardarla en disco.
 
@@ -420,7 +420,7 @@ al.~\cite{wu2025sonata}, Fig.~5.}
 \end{figure}
 
 Sonata~\cite{wu2025sonata} preentrena un codificador sin etiquetas, este trabajo lo usa
-congelado. La Figura~\ref{fig:arq-sonata-paper} resume dos propiedades que explican $f_{\mathrm{ssl}}$.
+en inferencia, original y adaptado a la Catedral. La Figura~\ref{fig:arq-sonata-paper} resume dos propiedades que explican $f_{\mathrm{ssl}}$.
 
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item \textbf{Auto-destilación.} Dos copias de la misma red, estudiante y
@@ -579,7 +579,7 @@ excluye color y normal. En cada lote de dos vistas aumentadas ejecuta estos paso
 \item Agrega cada región con sus $M$ vecinas según $S_b$ (Ec.~\ref{eq:hiper-agr}).
 \item Optimiza las pérdidas por punto y región con AdamW.
 \end{enumerate}
-En la Catedral, M2 se usa congelado para extraer $f_{\mathrm{sem}}$, sin
+En la Catedral, M2 se usa en inferencia para extraer $f_{\mathrm{sem}}$, sin
 reentrenamiento. Se comparan checkpoints de SemanticPOSS y ArCH, este último se
 incluye por su dominio de patrimonio arquitectónico~\cite{matrone2020benchmark}.
 
@@ -591,7 +591,7 @@ Convierte las nueve columnas de $S$ en $f_{\mathrm{ssl}}$, 1088 valores por punt
 \item Muestrea una rejilla propia con nueve valores (Sección~\ref{sec:gridsample}).
 \item Aplica el PTv3 preentrenado y serializado (Sección~\ref{sec:serializacion}).
 \item Recupera la resolución de entrada con \emph{up-cast} (Sección~\ref{sec:upcast}).
-\item Se ejecuta congelado y guarda descriptores e índices (Sección~\ref{sec:congelado}).
+\item Se ejecuta en inferencia, sin actualizar pesos, y guarda descriptores e índices (Sección~\ref{sec:congelado}).
 \item Evalúa el descriptor con \emph{linear probing} (Sección~\ref{sec:probing}).
 \end{enumerate}
 

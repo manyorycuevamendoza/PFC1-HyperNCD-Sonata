@@ -40,6 +40,8 @@ def parse_args():
                     help="tamano de voxel en metros (default: 0.05)")
     ap.add_argument("--q", type=int, default=20,
                     help="vecinos para SOR y normales (default: 20)")
+    ap.add_argument("--q-normales", type=int, default=None, dest="q_normales",
+                    help="vecinos para las normales (default: el valor de --q)")
     ap.add_argument("--lam", type=float, default=2.0,
                     help="umbral lambda del SOR (default: 2.0)")
     ap.add_argument("--chunk", type=int, default=5_000_000,
@@ -110,7 +112,9 @@ def main():
 
     # Normales: autovector de menor autovalor de la covarianza de q vecinos,
     # orientadas hacia arriba para que sean consistentes.
-    nube.estimate_normals(o3d.geometry.KDTreeSearchParamKNN(knn=args.q))
+    q_normales = args.q_normales if args.q_normales is not None else args.q
+    meta["q_normales"] = q_normales
+    nube.estimate_normals(o3d.geometry.KDTreeSearchParamKNN(knn=q_normales))
     nube.orient_normals_to_align_with_direction([0.0, 0.0, 1.0])
     print(f"[normales] listo  ({time.time() - t0:.0f}s)", flush=True)
 

@@ -15,7 +15,7 @@ validación dio 44,5\,\%, 0,437 y 33,6\,\%. Así, M2 pasó a producir
 una representación semántica útil para la escena de control.
 
 \item La integración implementada no es un entrenamiento de extremo a extremo.
-HyperNCD y Sonata se ejecutan como ramas congeladas, M2 extrae un descriptor
+HyperNCD y Sonata se preparan por separado, cada uno en su variante original y adaptada, y se ejecutan sin actualizar pesos. M2 extrae un descriptor
 semántico de 96 dimensiones y M3 extrae el descriptor auto-supervisado. La
 fusión M4 consume ambos resultados desde disco y no retropropaga gradientes
 hacia los codificadores.
@@ -30,7 +30,9 @@ una mejora numérica, no una superioridad concluyente de la fusión.
 con ArCH, M2 sube 12,5 puntos y M4 base 18,9, frente a los 9,1 de M4. El aporte
 de $f_{\mathrm{ssl}}$ es grande cuando M2 está colapsado, 10,9 puntos de M4 sobre
 su base, y de 1,1 punto cuando M2 funciona. El Sonata adaptado a la Catedral
-empeora a M3, de 45,4 a 34,3. Frente a la hipótesis, la mejora medible de
+empeora a M3, de 45,4 a 34,3, aunque con una sonda lineal el descriptor adaptado
+rinde igual que el original (80,5 y 79,7), de modo que el límite del agrupamiento
+está en cómo se agrupa y no en la información del descriptor. Frente a la hipótesis, la mejora medible de
 reemplazar $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ se cumple en las medias, pero
 no es concluyente con M2 entrenado en patrimonio.
 
