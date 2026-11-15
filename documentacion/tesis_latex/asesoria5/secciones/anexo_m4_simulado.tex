@@ -4,8 +4,8 @@
 % =====================================================================
 
 \section*{Anexo D. Prueba simulada del Módulo 4}
-\label{sec:m4-simulado}
-\phantomsection\addcontentsline{toc}{section}{Anexo D. Prueba simulada del Módulo 4}
+\phantomsection\label{sec:m4-simulado}
+\addcontentsline{toc}{section}{Anexo D. Prueba simulada del Módulo 4}
 
 % Numeracion propia del anexo: figuras y tablas como D.n
 \setcounter{figure}{0}\renewcommand{\thefigure}{D.\arabic{figure}}
@@ -63,7 +63,7 @@ de 0{,}35 en la línea base y de 0{,}75 en la propuesta.
 Se repitió la prueba variando un parámetro cada vez, con cinco repeticiones por
 valor. La métrica es el mIoU de las tres clases nuevas, con un emparejamiento
 húngaro porque las clases descubiertas no tienen nombre. La
-Tabla~\ref{tab:m4-escenarios} resume los cinco barridos.
+Tabla~\ref{tab:m4-escenarios} resume los barridos.
 
 \begin{table}[!htbp]
 \centering
@@ -78,7 +78,6 @@ Calidad de Sonata, de 0 a 3 & La línea base queda en 0{,}35 siempre. La propues
 Peso de la geometría $\alpha$, de 0 a 1 & Con $\alpha=1$, solo geometría, las dos versiones dan 0{,}51, como debe ser. La propuesta mejora al bajar $\alpha$, porque lo que aporta está en $S_s$ \\
 Vecinos por hiperarista $M$, de 1 a 16 & La propuesta mejora con $M$, de 0{,}51 a 0{,}83. Con 12 regiones, $M=16$ equivale a usarlas todas \\
 Desbalance, pilar con el 100\,\% al 10\,\% de los puntos de la columna & La propuesta cae de 0{,}75 a 0{,}52. Sinkhorn reparte por igual y parte la clase grande cuando una clase es pequeña \\
-Ruido en las coordenadas, de 0{,}5 a 10\,cm & Sin efecto, porque el radio de DBSCAN es mucho mayor \\
 \bottomrule
 \end{tabularx}
 \end{table}

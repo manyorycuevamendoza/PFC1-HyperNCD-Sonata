@@ -3,8 +3,8 @@
 % =====================================================================
 
 \section*{Anexo C. Arquitectura del \emph{encoder} de Sonata}
-\label{sec:analisis-componentes}\label{sec:arq-sonata}
-\phantomsection\addcontentsline{toc}{section}{Anexo C. Arquitectura del \emph{encoder} de Sonata}
+\phantomsection\label{sec:analisis-componentes}\label{sec:arq-sonata}
+\addcontentsline{toc}{section}{Anexo C. Arquitectura del \emph{encoder} de Sonata}
 
 % Numeracion propia del anexo: figuras, tablas y ecuaciones como D.n
 \setcounter{figure}{0}\renewcommand{\thefigure}{C.\arabic{figure}}
@@ -13,7 +13,7 @@
 
 Sonata es un Point Transformer~V3 (PTv3) usado solo como codificador, cinco
 etapas jerárquicas, sin decodificador, con $108{,}46$~M de parámetros. La
-configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-sonata}.
+configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-sonata}, y
 el recuento de parámetros de la Tabla~\ref{tab:params-sonata}, hecho capa por capa,
 da exactamente el total que el modelo declara al cargarse.
 
@@ -120,4 +120,4 @@ máximo se toma canal a canal.
 El $94{,}3$\,\% de los parámetros está en las etapas 4 y 5. Los pesos ocupan
 $0{,}43$~GB en precisión simple. La memoria de vídeo medida en la inferencia,
 34{,}60\,GB para PL13, se debe a las activaciones y no a los pesos
-(Sección~\ref{sec:rama-ssl}).
+(Sección~\ref{sec:res-rama-ssl}).
