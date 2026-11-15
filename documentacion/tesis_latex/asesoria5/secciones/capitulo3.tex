@@ -69,15 +69,7 @@ El Módulo~2 es HyperNCD, que aprende con etiquetas de otro conjunto y entrega u
 descriptor semántico por punto. El Módulo~3 es Sonata, que aprende sin etiquetas y
 entrega un descriptor auto-supervisado. El Módulo~4 une los dos descriptores y
 agrupa los puntos. Los Módulos~2 y~3 trabajan en paralelo, porque ninguno usa la
-salida del otro, pero los dos esperan a que el Módulo~1 termine, como muestra la
-Figura~\ref{fig:dependencias}.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth]{imagenes/flujo_dependencias.png}
-\caption[Dependencia entre los módulos]{Dependencia entre los módulos. M2 y M3 corren en paralelo y los dos necesitan la salida de M1. Elaboración propia.}
-\label{fig:dependencias}
-\end{figure}
+salida del otro, pero los dos esperan a que el Módulo~1 termine.
 
 \subsection{Estructura y Contrato de los Módulos}
 \label{sec:contrato}
