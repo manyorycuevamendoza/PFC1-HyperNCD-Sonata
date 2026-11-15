@@ -13,60 +13,7 @@
 Este anexo reúne los resultados que sustentan lo dicho en la
 Sección~\ref{sec:res-unidad3} pero que no hacen falta para seguir su argumento.
 
-\subsection*{F.1. Adaptación de Sonata a la Catedral}
-
-Se continuó el preentrenamiento auto-supervisado de Sonata con 21 escaneos de la
-Catedral, sin etiquetas y sin PL7 ni PL13, que se dejaron fuera para evaluar. El
-entrenamiento, de 30 épocas y 3\,150 iteraciones con lote 1, tardó 103\,min en una
-GPU L4. Se usó el \emph{teacher} de la época 30. La Tabla~\ref{tab:g-sonata}
-compara el descriptor original con el adaptado sobre PL13 y la
-Figura~\ref{fig:g-sonata-m3} lo muestra. El descriptor adaptado se parece al
-original solo en parte, con un coseno medio de 0{,}54, es menos estable al
-agrupar con $K=8$ y tiene menos dimensiones efectivas. Con etiquetas, sin
-embargo, empeora a M3 (Tabla~\ref{tab:m2-m4-semillas}), de modo que no se
-adoptó.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Sonata original y adaptado sobre PL13]{Descriptor $f_{\mathrm{ssl}}$ original y adaptado sobre PL13, sin etiquetas. Elaboración propia a partir de los registros del experimento de adaptación.}
-\label{tab:g-sonata}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-\textbf{Medida} & \textbf{Original} & \textbf{Adaptado} \\
-\midrule
-Coseno medio entre ambos descriptores & \multicolumn{2}{c}{0,543} \\
-ARI entre ambos agrupamientos, $K=8$ & \multicolumn{2}{c}{0,211} \\
-Rango efectivo & 110,5 & 81,3 \\
-Estabilidad del $k$-means, $K=8$ (ARI) & 0,610 & 0,492 \\
-Varianza de las 3 primeras componentes & 0,253 & 0,225 \\
-Extracción en PL13 & 13,9\,s, 34,60\,GB (A6000) & 20,3\,s, 7,40\,GB (L4) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-La memoria de la última fila no es comparable entre columnas, el equipo es
-distinto y el adaptado se extrajo con la atención \texttt{SDPA} de PyTorch, que
-usa mucha menos memoria que la atención densa del original.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth]{imagenes/sonata_adaptado_m3.png}
-\caption[Sonata original y adaptado sobre PL13]{Comparación del descriptor de
-Sonata original y adaptado sobre PL13, similitud por coseno, componentes
-principales y $k$-means. Elaboración propia.}
-\label{fig:g-sonata-m3}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.85\linewidth]{imagenes/sonata_costo.png}
-\caption[Costo computacional de adaptar Sonata]{Costo computacional de adaptar
-Sonata a la Catedral y de extraer sus descriptores. Elaboración propia.}
-\label{fig:g-sonata-costo}
-\end{figure}
-
-\subsection*{F.2. Recursos durante el entrenamiento de M2}
+\subsection*{F.1. Recursos durante el entrenamiento de M2}
 
 \begin{figure}[!htbp]
 \centering
@@ -77,7 +24,7 @@ en una GPU T4. Elaboración propia.}
 \label{fig:g-recursos}
 \end{figure}
 
-\subsection*{F.3. Una sola semilla frente a diez}
+\subsection*{F.2. Una sola semilla frente a diez}
 
 Con una sola semilla el orden de los métodos cambia. La Tabla~\ref{tab:g-una}
 muestra que M4 queda por debajo de M4 base con M2 de ArCH y Sonata original
@@ -102,7 +49,7 @@ M4 & 52,5 & 50,6 & 36,1 & 47,4 \\
 \end{tabularx}
 \end{table}
 
-\subsection*{F.4. Variantes de fusión}
+\subsection*{F.3. Variantes de fusión}
 
 Se probaron fusiones deterministas distintas de la concatenación, con media de
 cinco semillas, para ver si alguna gana de forma consistente
@@ -123,7 +70,7 @@ M2 y Sonata. Elaboración propia.}
 \label{fig:g-variantes}
 \end{figure}
 
-\subsection*{F.5. Sensibilidad al número de grupos}
+\subsection*{F.4. Sensibilidad al número de grupos}
 
 La Figura~\ref{fig:g-miou-k} muestra el mIoU de cada módulo para $K=6$, 8 y 12,
 con y sin \emph{other}, para el M2 de ArCH con Sonata original y adaptado, con
