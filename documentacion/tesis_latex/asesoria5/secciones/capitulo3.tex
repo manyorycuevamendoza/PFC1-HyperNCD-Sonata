@@ -63,14 +63,14 @@ Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 \label{sec:diseno}
 
 El sistema tiene cuatro módulos de procesamiento y un quinto de salida y
-evaluación, descritos en la Sección~\ref{sec:diseno-teorico}. Los Módulos~2 y~3
-trabajan en paralelo, porque ninguno usa la salida del otro, y esperan al Módulo~1.
+evaluación, descritos en la Sección~\ref{sec:diseno-teorico}.
 
 \subsection{Estructura y Contrato de los Módulos}
 \label{sec:contrato}
 
-El Módulo~1 produce la matriz $S$, los Módulos~2 y~3 un descriptor por punto, de 96 y
-1088 valores sobre rejillas distintas de 5 y 2\,cm, y el Módulo~4 un grupo por punto.
+El Módulo~1 produce la matriz $S$. Los Módulos~2 y~3 parten de ella en paralelo,
+porque ninguno usa la salida del otro, y entregan un descriptor por punto, de 96 y 1088
+valores sobre rejillas de 5 y 2\,cm. El Módulo~4 los une y entrega un grupo por punto.
 Un índice inverso devuelve cada descriptor a los puntos de $S$
 (Sección~\ref{sec:gridsample}).
 
