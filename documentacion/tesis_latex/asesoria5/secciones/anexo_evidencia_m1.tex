@@ -20,15 +20,7 @@ Lima. Los conteos y tiempos están en la Tabla~\ref{tab:m1-metadatos}.
 
 Cada escaneo se lee en dos bloques, en cerca de un segundo (\texttt{n\_crudo}
 en la Tabla~\ref{tab:m1-metadatos}). Es la data de entrada tal como la entrega el
-escáner, con su color real y sin ninguna corrección
-(Figura~\ref{fig:m1-paso1}).
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.75\linewidth]{imagenes/m1_paso1_carga.png}
-\caption[PL13 y PL7 tras la carga]{PL13 y PL7 tras la carga. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:m1-paso1}
-\end{figure}
+escáner, con su color real y sin ninguna corrección.
 
 \FloatBarrier
 \subsubsection*{Paso 2. Centrado}
@@ -82,39 +74,13 @@ zonas ralas.
 
 En PL13 quedan como representantes el 10{,}01\,\% de los puntos que salieron
 del filtrado, y en PL7 el 7{,}46\,\% (\texttt{n\_voxel} en la
-Tabla~\ref{tab:m1-metadatos})
-(Figuras~\ref{fig:m1-paso4-pl13} y~\ref{fig:m1-paso4}). De cerca
-(Figuras~\ref{fig:cubo-pl13} y~\ref{fig:cubo-pl7}), en el cubo de PL13 los
-37\,777 puntos de la entrada quedan en 1\,159 representantes, y en el de PL7 los
-48\,098 quedan en 921. En el cubo de PL7 la entrada contiene varias superficies
-paralelas separadas por pocos centímetros, que en la salida ya no se distinguen,
-como anticipa el \enlace{sec:u1-p4}{Paso~4}. En los cubos se dibujan todos los puntos, con el color aclarado por un
-factor de 2{,}2. Los dos cubos se eligieron con el mismo criterio, tener muchos
-puntos y superficies en varias orientaciones. El de PL13 va de $x=-3$ a $-2$\,m,
-de $y=7$ a $8$\,m y de $z=-8$ a $-7$\,m, y el de PL7 de $x=-19$ a $-18$\,m, de
-$y=-3$ a $-2$\,m y de $z=-12$ a $-11$\,m, en las coordenadas centradas de cada
-escaneo.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo_pl13.png}
-\caption[PL13 antes y después de la voxelización]{PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:m1-paso4-pl13}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.75\linewidth]{imagenes/m1_paso4_voxel_completo.png}
-\caption[PL7 antes y después de la voxelización]{PL7 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:m1-paso4}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_cubo_pl13.png}
-\caption[Cubo de 1\,m de PL13 antes y después de la voxelización]{Cubo de 1\,m de PL13 antes y después de la voxelización. Elaboración propia con el visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
-\label{fig:cubo-pl13}
-\end{figure}
+Tabla~\ref{tab:m1-metadatos}). De cerca (Figura~\ref{fig:cubo-pl7}), los
+48\,098 puntos de la entrada del cubo de PL7 quedan en 921. Ahí la entrada contiene
+varias superficies paralelas separadas por pocos centímetros, que en la salida ya
+no se distinguen, como anticipa el \enlace{sec:u1-p4}{Paso~4}. Se dibujan todos los
+puntos, con el color aclarado por un factor de 2{,}2. El cubo va de $x=-19$ a
+$-18$\,m, de $y=-3$ a $-2$\,m y de $z=-12$ a $-11$\,m, en las coordenadas
+centradas del escaneo.
 
 \begin{figure}[!htbp]
 \centering
