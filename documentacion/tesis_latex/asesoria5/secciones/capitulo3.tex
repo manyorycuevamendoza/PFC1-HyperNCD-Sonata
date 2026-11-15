@@ -217,10 +217,9 @@ con \texttt{extraer\_features.py}, en cinco pasos. Se lee $S$, se separa en posi
 color y normal, y se carga el modelo (\hyperref[sec:anexo-software]{Anexo~A}), con \texttt{--pesos} para la adaptada.\etiquetahija{sec:u2-p1}\etiquetahija{sec:u2-p2}\etiquetahija{sec:u2-p3}\etiquetahija{sec:u2-p4}\etiquetahija{sec:u2-p5}
 Como FlashAttention no se pudo instalar en el clúster, la atención completa, que gasta
 más memoria, se contuvo con parches de 1024 puntos, y en Colab con la atención de
-PyTorch. La nube se muestrea con la rejilla de 2\,cm, guardando un índice inverso
-(Sección~\ref{sec:gridsample}), se calcula $f_{\mathrm{ssl}}$ sin gradiente
-(Figura~\ref{fig:flujo-m3} y \hyperref[sec:analisis-componentes]{Anexo~C}) y se guarda
-en un \texttt{.npz} (Tabla~\ref{tab:archivos}).
+PyTorch. La nube se muestrea con la rejilla de 2\,cm, se calcula $f_{\mathrm{ssl}}$ sin
+gradiente (Figura~\ref{fig:flujo-m3} y \hyperref[sec:analisis-componentes]{Anexo~C}) y
+se guarda en un \texttt{.npz} (Tabla~\ref{tab:archivos}).
 
 \begin{figure}[!htbp]
 \centering
