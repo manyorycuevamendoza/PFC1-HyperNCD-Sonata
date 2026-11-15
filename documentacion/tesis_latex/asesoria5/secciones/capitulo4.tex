@@ -1196,17 +1196,21 @@ tablas de este capítulo.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Correspondencia entre objetivos y resultados]{Correspondencia entre los objetivos y los resultados, con la métrica de salida de cada uno. Elaboración propia a partir de los resultados de este capítulo.}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\caption[Correspondencia entre objetivos y resultados]{Correspondencia entre los objetivos y los resultados. Elaboración propia.}
 \label{tab:objetivos}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.45\hsize}X>{\raggedright\arraybackslash\hsize=1.0\hsize}X>{\raggedright\arraybackslash\hsize=1.7\hsize}X>{\raggedright\arraybackslash\hsize=0.85\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=1.7\hsize}X>{\raggedright\arraybackslash\hsize=0.5\hsize}X@{}}
 \toprule
-\textbf{Objetivo} & \textbf{Qué pedía} & \textbf{Resultado y métrica de salida} & \textbf{Cumplimiento} \\
+\textbf{Objetivo} & \textbf{Resultado} & \textbf{Estado} \\
 \midrule
-General & Construir y medir un sistema híbrido y cuantificar la mejora del mIoU sobre la Catedral & Sistema construido y medido en la capilla. M4 llega a $52{,}5\pm2{,}5$, frente a $51{,}4\pm1{,}7$ de M4 base, $48{,}4\pm1{,}1$ de M2 y $45{,}4\pm8{,}5$ de M3, con diez semillas & Cumplido en lo que mide, la mejora sobre M4 base no es concluyente \\
-OE1 & Integrar Sonata en el módulo de prototipos con un bloque de fusión que sustituya $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ & M4 produce $F_i$ con $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ sobre la capilla en 68 a 80\,s, con el índice inverso y la caché por sección. La sonda lineal confirma que $f_{\mathrm{ssl}}$ contiene las clases, con 79{,}7 y 80{,}5 de mIoU & Cumplido \\
-OE2 & Comparar M2, M3, M4 base y M4 con un protocolo común y cuantificar la variabilidad por semillas & Cuatro combinaciones de modelos por cuatro agrupamientos, con diez semillas, media y desviación (Tabla~\ref{tab:m2-m4-semillas}), el criterio de diferencia real y un barrido de 39 fusiones & Cumplido \\
-OE3 & Cuantificar la mejora, analizar el IoU por clase y delimitar el rango de operación & Mejoras evaluadas con el criterio de diferencia real (M2 con ArCH $+12{,}5$, M3 adaptado $-11{,}1$, M4 contra M4 base $+1{,}1$, que no es real), IoU por clase y umbral de 70\,\%. No se calcularon $\Delta\mathrm{mIoU}^{\mathrm{novel}}$, la brecha $G$ ni la curva de degradación & Cumplido en parte \\
+\textbf{General.} Sistema híbrido medido sobre la Catedral & mIoU de M4 de $52{,}5\pm2{,}5$ frente a $51{,}4\pm1{,}7$ de M4 base, mejora que no es concluyente & Cumplido en lo que mide \\
+\addlinespace[3pt]
+\textbf{OE1.} Integrar Sonata en el módulo de fusión & M4 produce $F_i$ con $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ en 68 a 80\,s. La sonda lineal da 79{,}7 y 80{,}5 de mIoU & Cumplido \\
+\addlinespace[3pt]
+\textbf{OE2.} Comparar los cuatro agrupamientos y su variabilidad & Cuatro combinaciones de modelos, diez semillas, media y desviación (Tabla~\ref{tab:m2-m4-semillas}), criterio de diferencia real y 39 fusiones & Cumplido \\
+\addlinespace[3pt]
+\textbf{OE3.} Cuantificar la mejora y delimitar el rango de operación & M2 con ArCH $+12{,}5$, M3 adaptado $-11{,}1$ y M4 contra M4 base $+1{,}1$, que no es real. IoU por clase y umbral de 70\,\%. Faltan $\Delta\mathrm{mIoU}^{\mathrm{novel}}$, la brecha $G$ y la curva de degradación & En parte \\
 \bottomrule
 \end{tabularx}
 \end{table}
