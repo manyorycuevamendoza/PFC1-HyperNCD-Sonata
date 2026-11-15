@@ -315,8 +315,8 @@ exportar $\theta_{\mathrm{teacher}}$\;
 \label{sec:fusion}
 
 El Módulo~4 (Sección~\ref{sec:modulo4}) recibe los dos descriptores ya guardados y
-agrupa los puntos de la escena, sin entrenar nada y en CPU, como indica el
-Algoritmo~\ref{alg:fusion}. Se divide la escena en regiones de 0{,}75\,m con al
+agrupa los puntos de la escena, sin entrenar nada y en CPU, como indican el
+Algoritmo~\ref{alg:fusion} y la Figura~\ref{fig:flujo-m4}. Se divide la escena en regiones de 0{,}75\,m con al
 menos 30 puntos, cuyos descriptores se promedian, se normalizan y se unen. La
 afinidad entre regiones mezcla su parecido geométrico y semántico con peso
 $\alpha=0{,}5$, y las regiones se asignan a $K=8$ prototipos con el equilibrio de
