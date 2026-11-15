@@ -1,77 +1,30 @@
 \customchapter{CONCLUSIONES}
 
-\noindent\textbf{Cumplimiento de los objetivos.} Cada objetivo se verificó con una
-métrica de salida medida con el protocolo del Capítulo~\ref{cap:metodo}, y la
-correspondencia completa está en la Tabla~\ref{tab:objetivos}.
+\noindent\textbf{Objetivos.} El objetivo general y los objetivos específicos OE1 y OE2
+se cumplieron, y el OE3 se cumplió en parte. Las métricas de cada uno están en la
+Tabla~\ref{tab:objetivos}.
 
 \begin{enumerate}
-\item \textbf{OE1, integrar Sonata en el módulo de prototipos, se cumplió.} Se
-implementó el bloque que sustituye $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$, con
-el índice inverso y la caché por sección, y el módulo produce el descriptor
-compuesto sobre la capilla en 68 a 80\,s. Se verificó porque M4 corre de principio
-a fin sobre la escena etiquetada y porque la sonda lineal confirma que
-$f_{\mathrm{ssl}}$ contiene la información de las clases, con 79,7 de mIoU con
-Sonata original y 80,5 con el adaptado.
-
-\item \textbf{OE2, evaluar la configuración del híbrido, se cumplió.} M2, M3, M4 base
-y M4 se compararon con un protocolo común, en cuatro combinaciones de modelos y con
-diez semillas, con media y desviación. Se verificó con el criterio escrito de
-diferencia real, que separa las diferencias sostenidas, como los 12,5 puntos que
-gana M2 con ArCH, de las que quedan dentro del ruido, como los 1,1 puntos de M4
-sobre M4 base.
-
-\item \textbf{OE3, cuantificar la mejora y delimitar el rango de operación, se
-cumplió en parte.} La mejora se cuantificó con el IoU por clase y el umbral de
-70\,\%, que solo supera la pared con 71,9 en el mejor modelo, y con el análisis de
-la geometría de cada clase. No se calcularon la ganancia en clases novedosas, la
-brecha cerrada ni la curva de degradación, y con una sola escena el rango de
-operación no se puede fijar.
-
-\item \textbf{El objetivo general se cumplió en lo que mide.} El sistema híbrido se
-construyó y se midió sobre la Catedral. M4 llega a $52,5\pm2,5$\,\% de mIoU frente
-a $51,4\pm1,7$\,\% de M4 base, una mejora numérica que no es concluyente.
+\item \textbf{OE1.} Sonata se integró al módulo de fusión sin entrenamiento conjunto,
+y su descriptor conserva la información de las clases (Sección~\ref{sec:res-fusion}).
+\item \textbf{OE2.} Los cuatro agrupamientos se compararon con diez semillas y un
+criterio escrito de diferencia real (Sección~\ref{sec:res-u3-rep}).
+\item \textbf{OE3.} Se midió el IoU por clase y el umbral de 70\,\%
+(Sección~\ref{sec:res-u3-traza}), pero con una sola escena no se puede fijar el
+rango de operación. Faltan la ganancia en clases novedosas, la brecha cerrada y la
+curva de degradación.
 \end{enumerate}
 
-\noindent\textbf{Resultados principales.}
+\noindent\textbf{Hipótesis.} Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ es
+viable y da la media más alta, pero con un M2 que funciona la mejora queda dentro del
+ruido. La mayor ganancia viene de entrenar HyperNCD con patrimonio, no de la fusión.
+Adaptar Sonata a la Catedral no mejoró el agrupamiento y tampoco dañó el descriptor
+(Anexo~\hyperref[sec:anexo-complementarios]{F}).
 
-\begin{enumerate}
-\item El checkpoint de HyperNCD entrenado con SemanticPOSS no se transfiere de
-forma adecuada a la Catedral de Lima. La asignación de 98,4\,\% de los puntos a
-una sola cabeza, el NMI de 0,027 y el mIoU uno a uno de 7,7\,\% al excluir
-\emph{other} evidencian un colapso de dominio.
+\noindent\textbf{Dominio.} El HyperNCD entrenado con SemanticPOSS no se transfiere a
+la Catedral, por lo que M2 se entrenó con ArCH~\cite{matrone2020benchmark}
+(Sección~\ref{sec:res-u3-proc}).
 
-\item El cambio a ArCH está justificado porque este conjunto contiene escenas y
-categorías de patrimonio arquitectónico, entre ellas arcos, columnas y bóvedas.
-El modelo entrenado con ArCH~\cite{matrone2020benchmark}, en su último
-checkpoint (época 30), redujo la cabeza dominante a 44,6\,\%, elevó el NMI sin
-\emph{other} a 0,439 y el mIoU uno a uno de sus cabezas, usadas como clasificador, a 35,5\,\%, el mejor checkpoint por
-validación dio 44,5\,\%, 0,437 y 33,6\,\%. Así, M2 pasó a producir
-una representación semántica útil para la capilla etiquetada.
-
-\item La integración implementada no es un entrenamiento de extremo a extremo.
-HyperNCD y Sonata se preparan por separado, cada uno en su variante original y adaptada, y se ejecutan sin actualizar pesos. M2 extrae un descriptor
-semántico de 96 dimensiones y M3 extrae el descriptor auto-supervisado. La
-fusión M4 consume ambos resultados desde disco y no retropropaga gradientes
-hacia los codificadores.
-
-\item En diez semillas de agrupamiento, M2 alcanzó $48,4\pm1,1$\,\%, M3
-$45,4\pm8,5$\,\%, M4 base $51,4\pm1,7$\,\% y M4 $52,5\pm2,5$\,\% de mIoU sin
-\emph{other}. M4 obtiene la mejor media, pero su ventaja de 1,1 puntos frente a
-M4 base queda dentro de la dispersión observada. La evidencia permite afirmar
-una mejora numérica, no una superioridad concluyente de la fusión.
-
-\item La mayor parte de la ganancia proviene del dominio de M2 y no de la fusión. Con ArCH, M2 sube 12,5 puntos y M4 base 18,9, frente a los 9,1 de M4. El aporte
-de $f_{\mathrm{ssl}}$ es grande cuando M2 está colapsado, 10,9 puntos de M4 sobre
-su base, y de 1,1 punto cuando M2 funciona. El Sonata adaptado a la Catedral
-empeora a M3, de 45,4 a 34,3, aunque con una sonda lineal el descriptor adaptado
-rinde igual que el original (80,5 y 79,7), de modo que el límite del agrupamiento
-está en cómo se agrupa y no en la información del descriptor. Frente a la hipótesis, la mejora medible de
-reemplazar $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ se cumple en las medias, pero
-no es concluyente con M2 entrenado en patrimonio.
-
-\item Los resultados están limitados a una escena de la Catedral de Lima, una
-corrida de entrenamiento con ArCH y diez repeticiones únicamente del
-agrupamiento. Estas semillas miden estabilidad de la etapa final y no reemplazan
-la repetición completa del entrenamiento. El uso de dos escenas publicadas como
-prueba de ArCH para validación también debe considerarse al comparar resultados.
-\end{enumerate}
+\noindent\textbf{Límites.} Los resultados vienen de una escena, un entrenamiento por
+modelo y diez semillas que solo miden la estabilidad del agrupamiento. Lo que falta
+está en los trabajos futuros.
