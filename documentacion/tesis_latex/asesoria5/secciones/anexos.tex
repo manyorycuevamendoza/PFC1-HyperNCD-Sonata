@@ -180,10 +180,6 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:wk}{$w_k$} & Vector de pesos del prototipo $k$ del clasificador por coseno & Ec.~\eqref{eq:cabeza} \\
 \leavevmode\hypertarget{nom:Nr}{$\mathcal{N}_M(r)$} & Las $M$ regiones de mayor afinidad $S_b$ con la región $r$ & Ec.~\eqref{eq:hiper-agr} \\
 \leavevmode\hypertarget{nom:St}{$\tilde{S}$} & Afinidad $S_b$ normalizada por fila sobre $\mathcal{N}_M(r)$ & Ec.~\eqref{eq:hiper-agr} \\
-\leavevmode\hypertarget{nom:Lt}{$\mathcal{L}$} & Pérdida total del entrenamiento de M2 & Ec.~\eqref{eq:perdida} \\
-\leavevmode\hypertarget{nom:Lp}{$\mathcal{L}_{\mathrm{pt}}$} & Pérdida por punto, con las dos vistas aumentadas & Ec.~\eqref{eq:perdida} \\
-\leavevmode\hypertarget{nom:Lr}{$\mathcal{L}_{\mathrm{reg}}$} & Pérdida por región & Ec.~\eqref{eq:perdida} \\
-\leavevmode\hypertarget{nom:beta}{$\beta$} & Peso de la pérdida regional (\texttt{--alpha} del programa) & 1 en las corridas registradas \\
 \leavevmode\hypertarget{nom:Fi}{$F_i$} & Descriptor compuesto del punto $i$ & $96+1088$ dimensiones \\
 \leavevmode\hypertarget{nom:K}{$K$} & Número de prototipos & Igual al de clases \\
 \leavevmode\hypertarget{nom:z}{$z_{i,k}$} & Puntuación del punto $i$ para el prototipo $k$ & Cualquier número real \\
@@ -199,9 +195,6 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:alpha}{$\alpha$} & Balance geométrico-semántico en $S_b$ & $[0,1]$; 0{,}5 en la implementación \\
 \leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano; un valor pequeño solo considera afines a las regiones muy próximas & 0{,}1 \\
 \leavevmode\hypertarget{nom:M}{$M$} & Vecinos por hiperarista & 8 \\
-\leavevmode\hypertarget{nom:eps}{$\epsilon$} & Suavizado descrito en el artículo; no activo en la ruta ejecutada & 0{,}15 (artículo) \\
-\leavevmode\hypertarget{nom:ytil}{$\tilde{y}_i,\;e_{y_i}$} & Objetivo suavizado del punto $i$ y vector que vale 1 en su clase real & Ec.~\eqref{eq:suavizado} \\
-\leavevmode\hypertarget{nom:o}{$o_i$} & Salida del clasificador de clases novedosas para el punto $i$ & Un valor por clase novedosa \\
 \leavevmode\hypertarget{nom:B}{$B$} & Puntos sin etiqueta del lote & Variable \\
 \leavevmode\hypertarget{nom:Q}{$Q$} & Matriz de partida de Sinkhorn-Knopp & Sección~\ref{sec:sinkhorn} \\
 \leavevmode\hypertarget{nom:epssk}{$\epsilon_{\mathrm{sk}}$} & Temperatura de Sinkhorn-Knopp & 0{,}1 \\
@@ -215,7 +208,6 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:tp}{$TP_c,\,FP_c,\,FN_c$} & Verdaderos positivos, falsos positivos y falsos negativos de la clase $c$ & Número de puntos \\
 \leavevmode\hypertarget{nom:iou}{$\mathrm{IoU}_c$} & Intersección sobre unión de la clase $c$ & Ec.~\eqref{eq:iou} \\
 \leavevmode\hypertarget{nom:miou}{$\mathrm{mIoU}(\mathcal{S})$} & Promedio del IoU sobre el conjunto de clases $\mathcal{S}$ & Ec.~\eqref{eq:miou} \\
-\leavevmode\hypertarget{nom:cstar}{$c^{*}$} & Clase dominante del mIoU & Ec.~\eqref{eq:dominante} \\
 \leavevmode\hypertarget{nom:sigstar}{$\sigma^{*}$} & Emparejamiento óptimo entre grupos descubiertos y clases reales & Ec.~\eqref{eq:hungaro} \\
 \leavevmode\hypertarget{nom:perm}{$\sigma,\;\mathfrak{S}_{|\mathcal{C}_n|}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una correspondencia entre grupos descubiertos y clases novedosas, y el conjunto de todas ellas} \\
 \leavevmode\hypertarget{nom:ytrue}{$y$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Etiqueta real de un punto} \\
