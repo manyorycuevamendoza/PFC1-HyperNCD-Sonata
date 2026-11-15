@@ -725,9 +725,10 @@ pesan el contenido, la escala y el sensor.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
 \caption[Control positivo del M2 entrenado con SemanticPOSS]{M2 entrenado con SemanticPOSS (época 8) en su dominio y fuera de él. Elaboración propia a partir de los registros del experimento de dominio.}
 \label{tab:m2-control}
-\begin{tabular}{@{}lrrrr@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrr@{}}
 \toprule
 \textbf{Escena} & \textbf{Cabeza dominante} & \textbf{Cabezas $>1$\,\%} & \textbf{NMI} & \textbf{mIoU uno a uno} \\
 \midrule
@@ -737,7 +738,7 @@ Capilla & 98{,}4\,\% & 1 & 0{,}018 & 0{,}114 \\
 Capilla a 80\,000 puntos & 91{,}8\,\% & 4 & 0{,}033 & 0{,}099 \\
 PL13 y PL7, sin etiquetas & 82{,}5 y 81{,}4\,\% & 4 & --- & --- \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsubsection*{X2. Entrenamiento con ArCH}

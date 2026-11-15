@@ -88,9 +88,10 @@ con diez semillas y se reporta su dispersión.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
+\setlength{\tabcolsep}{4pt}
 \caption[mIoU con una sola semilla]{mIoU uno a uno (\%) sin \emph{other}, con $K=8$ y una sola semilla, en la capilla. Elaboración propia.}
 \label{tab:g-una}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrr@{}}
+\begin{tabularx}{\linewidth}{@{}l*{4}{>{\raggedleft\arraybackslash}X}@{}}
 \toprule
 \textbf{Método} & \textbf{SemanticPOSS + orig.} & \textbf{ArCH + orig.} & \textbf{SemanticPOSS + adap.} & \textbf{ArCH + adap.} \\
 \midrule
