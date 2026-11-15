@@ -48,15 +48,15 @@ evalúan.
 \section{Hardware y Repositorio}
 \label{sec:hardware-repo}
 
-El preprocesamiento del levantamiento se ejecutó en el clúster Khipu de UTEC, con
-una GPU RTX A6000 de 48\,GB. El entrenamiento de HyperNCD, la adaptación de Sonata
-y las extracciones sobre la capilla se ejecutaron en Google Colab, con GPU T4 de
-16\,GB y L4 de 22{,}5\,GB, y la fusión y la evaluación en una laptop sin GPU. Las
-versiones del entorno están en el \hyperref[sec:anexo-software]{Anexo~A}. El código
-está en el repositorio del
-proyecto,\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}}
-que no guarda los archivos LAS, los pesos ni las salidas. Los pesos de Sonata se
-descargan de Hugging Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
+El preprocesamiento de los 23 escaneos se ejecutó en el clúster Khipu de UTEC, en
+CPU, y la extracción de Sonata sobre PL13 en su GPU RTX A6000 de 48\,GB. El
+entrenamiento de HyperNCD, la adaptación de Sonata y el procesamiento de la capilla
+se hicieron en Colab, con GPU T4 de 16\,GB y L4 de 22{,}5\,GB, y la fusión y la
+evaluación en una laptop sin GPU (versiones en el
+\hyperref[sec:anexo-software]{Anexo~A}). El código está en el
+repositorio,\footnote{\url{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}}
+y los pesos de Sonata se descargan de Hugging
+Face.\footnote{\url{https://huggingface.co/facebook/sonata}}
 
 % =====================================================================
 \section{Diseño General del Sistema}
