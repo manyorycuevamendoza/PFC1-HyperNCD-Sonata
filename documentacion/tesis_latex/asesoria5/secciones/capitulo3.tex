@@ -93,10 +93,8 @@ en bruto en la matriz $S$ que usan los dos modelos, con el programa
 
 La Catedral de Lima se recibe como 23 archivos LAS, que suman 20{,}05\,GB y
 589\,708\,290 puntos, sin etiquetas. De cada punto se usan la posición y el color
-(Sección~\ref{sec:las}). A la salida cada punto es una fila de $S$, con $x,y,z$
-centradas en el origen, $R,G,B$ de 0 a 255 y una normal calculada. La unidad de
-trabajo es la sección (Sección~\ref{sec:seccion}), que en este levantamiento es un
-archivo. En Khipu el guion \texttt{preprocesar.sbatch} recorre los archivos de uno
+(Sección~\ref{sec:las}), y cada archivo es una sección, cuya salida es la
+matriz $S$ (Sección~\ref{sec:seccion}). En Khipu el guion \texttt{preprocesar.sbatch} recorre los archivos de uno
 en uno, y salta los que ya tienen salida, de modo que un trabajo interrumpido se
 retoma sin repetir lo hecho.
 
