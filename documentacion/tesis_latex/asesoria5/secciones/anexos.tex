@@ -115,6 +115,14 @@ squeue -u $USER
 tail -f logs/preproc_<id>.out
 \end{lstlisting}
 
+\paragraph*{Carga de Sonata.}
+\texttt{extraer\_features.py} carga el modelo con FlashAttention desactivado y, con
+\texttt{--pesos}, el archivo de la variante adaptada.
+\begin{lstlisting}[style=comando]
+config = dict(enc_patch_size=[1024 for _ in range(5)], enable_flash=False)
+modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config=config).cuda()
+\end{lstlisting}
+
 
 \section*{Anexo B. Nomenclatura}
 \phantomsection\addcontentsline{toc}{section}{Anexo B. Nomenclatura}
