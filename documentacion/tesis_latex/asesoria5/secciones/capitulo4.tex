@@ -342,13 +342,15 @@ semillas, así que la figura muestra qué clase se gana o se pierde y no un rank
 
 El barrido probó 39 configuraciones por combinación, con cinco semillas, para ver si
 alguna fusión determinista supera al pegado normalizado (M4 base). La
-Tabla~\ref{tab:barrido} muestra las dos que mejoran en las cuatro combinaciones y la
-estimación con la configuración elegida en una mitad de la escena y medida en la otra.
+Tabla~\ref{tab:barrido} muestra las dos que mejoran en las cuatro combinaciones, una que
+pondera por la confianza del M2 (Conf.\ M2) y otra que usa el producto con peso
+$0{,}1$ para $f_{\mathrm{sem}}$ (Prod.\ $0{,}1$), y la estimación con la configuración
+elegida en una mitad de la escena y medida en la otra (Honesta).
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Barrido de fusiones]{Cambio del mIoU uno a uno (puntos) respecto del M4 con pegado normalizado (primera columna, mIoU \%), $K=8$, cinco semillas. «Conf. M2» pondera por la confianza del M2, «Prod.\ $0{,}1$» es el producto con peso 0,1 para $f_{\mathrm{sem}}$, «Honesta» es la mejora con la configuración elegida en una mitad de la escena y medida en la otra. Elaboración propia a partir de \texttt{experimentacion/modulo4\_fusion/resultados/}.}
+\caption[Barrido de fusiones]{Cambio del mIoU uno a uno (puntos) respecto del M4 con pegado normalizado (primera columna, mIoU \%), $K=8$, cinco semillas. Elaboración propia a partir de \texttt{experimentacion/modulo4\_fusion/resultados/}.}
 \label{tab:barrido}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrr@{}}
 \toprule
