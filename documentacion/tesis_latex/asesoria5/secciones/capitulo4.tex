@@ -663,13 +663,13 @@ sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~F}.
 La Tabla~\ref{tab:modulos-solos} junta, sobre la capilla, lo que cuesta y lo que acierta
 cada módulo por sí solo, con sus dos variantes. El mIoU de M2 y de M3 es el del
 agrupamiento con solo ese descriptor, la misma columna de la
-Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos y el cambio.
+Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos, que en M2 y en M3 son los de la inferencia sola, y el cambio.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
 \setlength{\tabcolsep}{4pt}
-\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla (mIoU uno a uno, sin \emph{other}, $K=8$, diez semillas). «Ajuste» es el entrenamiento o la adaptación, «Cambio» la diferencia con la variante original o con M4 base, y la ejecución de M2 y de M3 es la inferencia sola. Elaboración propia a partir de los registros de medición.}
+\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla (mIoU uno a uno, sin \emph{other}, $K=8$, diez semillas). «Ajuste» es el entrenamiento o la adaptación y «Cambio» la diferencia con la variante original o con M4 base. Elaboración propia.}
 \label{tab:modulos-solos}
 \begin{tabular}{@{}llrrrr@{}}
 \toprule
@@ -758,7 +758,7 @@ caída de IoU.
 \centering
 \setstretch{1}\small
 \setlength{\tabcolsep}{4pt}
-\caption[Falsos positivos y negativos por clase]{Aciertos (TP), falsos positivos (FP), falsos negativos (FN), precisión, recall y F1 por clase (\%) con $K=8$, asignación uno a uno, sin \emph{other}, M2 de ArCH y Sonata original, una semilla. Elaboración propia a partir de \texttt{por\_clase.csv}.}
+\caption[Falsos positivos y negativos por clase]{Aciertos (TP), falsos positivos (FP) y negativos (FN), precisión, recall y F1 por clase (\%), con $K=8$, uno a uno, sin \emph{other}, M2 de ArCH y una semilla. Elaboración propia a partir de \texttt{por\_clase.csv}.}
 \label{tab:fpfn-clase}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrrrr@{}}
 \toprule
