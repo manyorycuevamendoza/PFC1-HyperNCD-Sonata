@@ -24,7 +24,7 @@ concentra en las etapas 4 y 5. Los pesos ocupan $0{,}43$~GB, mientras los
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}[
-  font=\footnotesize,
+  font=\scriptsize,
   lbl/.style={draw=black!65, line width=0.4pt, text width=5.1cm, align=center,
               inner sep=3pt, minimum height=1.05cm},
   txt/.style={draw=black!65, line width=0.4pt, text width=8.3cm, align=left,
@@ -35,37 +35,37 @@ concentra en las etapas 4 y 5. Los pesos ocupan $0{,}43$~GB, mientras los
 ]
 \def\paso{1.4}
 \node[lbl, fill=black!5] (l0) at (0,0)
-  {\textbf{Entrada}\\[-1pt]{\scriptsize $N$ puntos $\times$ 9 canales}};
+  {\textbf{Entrada}\\[-1pt]{$N$ puntos $\times$ 9 canales}};
 \node[txt, fill=black!5] (t0) at (2.65,0)
   {Una curva Z o Hilbert los ordena para que los vecinos queden juntos, y pasan de 9 a 48 canales.};
 
 \node[lbl, fill=blue!5] (l1) at (0,-1*\paso)
-  {\textbf{Etapa 1}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 48 canales $\cdot$ 3 cabezas}};
+  {\textbf{Etapa 1}\\[-1pt]{3 bloques $\cdot$ 48 canales $\cdot$ 3 cabezas}};
 \node[txt, fill=blue!5] (t1) at (2.65,-1*\paso)
   {Detalle fino. Cada punto se relaciona con sus vecinos más próximos, en celdas de 2\,cm.};
 
 \node[lbl, fill=blue!9] (l2) at (0,-2*\paso)
-  {\textbf{Etapa 2}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 96 canales $\cdot$ 6 cabezas}};
+  {\textbf{Etapa 2}\\[-1pt]{3 bloques $\cdot$ 96 canales $\cdot$ 6 cabezas}};
 \node[txt, fill=blue!9] (t2) at (2.65,-2*\paso)
   {Con \emph{pooling} junta los puntos en celdas de 4\,cm y sube a 96 canales.};
 
 \node[lbl, fill=blue!13] (l3) at (0,-3*\paso)
-  {\textbf{Etapa 3}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 192 canales $\cdot$ 12 cabezas}};
+  {\textbf{Etapa 3}\\[-1pt]{3 bloques $\cdot$ 192 canales $\cdot$ 12 cabezas}};
 \node[txt, fill=blue!13] (t3) at (2.65,-3*\paso)
   {Celdas de 8\,cm y 192 canales. Desde aquí las etapas aportan al descriptor final.};
 
 \node[lbl, fill=blue!17] (l4) at (0,-4*\paso)
-  {\textbf{Etapa 4}\\[-1pt]{\scriptsize 12 bloques $\cdot$ 384 canales $\cdot$ 24 cabezas}};
+  {\textbf{Etapa 4}\\[-1pt]{12 bloques $\cdot$ 384 canales $\cdot$ 24 cabezas}};
 \node[txt, fill=blue!17] (t4) at (2.65,-4*\paso)
   {Celdas de 16\,cm y 384 canales. Es la etapa más profunda, con 12 bloques.};
 
 \node[lbl, fill=blue!21] (l5) at (0,-5*\paso)
-  {\textbf{Etapa 5}\\[-1pt]{\scriptsize 3 bloques $\cdot$ 512 canales $\cdot$ 32 cabezas}};
+  {\textbf{Etapa 5}\\[-1pt]{3 bloques $\cdot$ 512 canales $\cdot$ 32 cabezas}};
 \node[txt, fill=blue!21] (t5) at (2.65,-5*\paso)
   {Celdas de 32\,cm y 512 canales. Es la de contexto más amplio.};
 
 \node[lbl, fill=orange!15] (lf) at (0,-6.35*\paso)
-  {$\boldsymbol{f_{\mathrm{ssl}}}$\\[-1pt]{\scriptsize $192+384+512=1088$}};
+  {$\boldsymbol{f_{\mathrm{ssl}}}$\\[-1pt]{$192+384+512=1088$}};
 \node[txt, fill=orange!15] (tf) at (2.65,-6.35*\paso)
   {Cada punto recibe lo de las etapas 3, 4 y 5 (\emph{up-cast}), con detalle y contexto a la vez.};
 
@@ -84,7 +84,7 @@ concentra en las etapas 4 y 5. Los pesos ocupan $0{,}43$~GB, mientras los
 
 \begin{table}[!htbp]
 \centering
-\setstretch{1}\small
+\setstretch{0.95}
 \caption[Parámetros del \emph{encoder} de Sonata por etapa]{Distribución de parámetros del \emph{encoder} de Sonata por etapa.}
 \label{tab:params-sonata}
 \begin{tabular}{@{}lrrrr@{}}

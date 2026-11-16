@@ -381,24 +381,20 @@ salidas del Módulo~1 y del Módulo~3, como el descarte del filtrado en las zona
 \FloatBarrier
 \subsection[Pruebas de los Parámetros]{Pruebas de los Parámetros\espejo{sec:param-criterio}}
 
-Las pruebas P0 a P3, que solo usan el Módulo~1, se ejecutaron en la laptop sobre la
-capilla etiquetada con \texttt{correr\_pruebas.py}. Cada una cambia un solo parámetro y
-mide la salida contra la configuración de referencia, en una muestra fija de
-200\,000 puntos.
+Las pruebas P0 a P3 del Módulo~1 se ejecutaron en la laptop sobre 200\,000 puntos
+fijos de la capilla, con \texttt{correr\_pruebas.py}, variando un parámetro por vez.
 
-\paragraph*{P0. Tamaño de bloque.} Con bloques de 1, 5 y 20 millones de puntos, los
-conteos y la matriz $S$ resultaron idénticos punto a punto. El logro es que el
-tamaño de bloque solo limita la memoria y no altera la salida.
+\paragraph*{P0. Tamaño de bloque.} Con 1, 5 y 20 millones de puntos, los conteos y
+$S$ fueron idénticos: el bloque solo controla la memoria.
 
 \paragraph*{P1 a P3.} En la Tabla~\ref{tab:resultados-pruebas}, el filtrado
-descarta el 3{,}05\,\% de los puntos y deja la rugosidad casi igual (11{,}2\,mm sin filtrar,
-11{,}9 con filtro), así que quita puntos aislados sin suavizar. El vóxel sí la cambia,
-a 9{,}3 con 2\,cm y a 20{,}0\,mm con 10\,cm, y con 5\,cm la rejilla de Sonata conserva el
-99{,}8\,\% con 2\,cm y el 91{,}5\,\% con 4\,cm.
+descarta 3{,}05\,\% sin cambiar la rugosidad (11{,}2 a 11{,}9\,mm), por
+lo que elimina puntos aislados sin suavizar. El vóxel la lleva de 9{,}3\,mm (2\,cm)
+a 20{,}0\,mm (10\,cm); con 5\,cm, Sonata conserva 99{,}8\,\% en rejilla de 2\,cm y
+91{,}5\,\% en la de 4\,cm.
 
-La dispersión angular baja al subir los vecinos de las normales, de 25{,}3° con 10 a
-11{,}3° con 40, y en las aristas de 52{,}3° a 29{,}5°. La bajada es suavizado, que con 40
-vecinos borra las aristas, y no una mejora, así que se conserva 20 (Open3D).
+Al subir los vecinos de 10 a 40, la dispersión baja de 25{,}3° a 11{,}3° y, en
+aristas, de 52{,}3° a 29{,}5°; como este suavizado borra aristas, se mantienen 20.
 
 \begin{table}[!htbp]
 \centering

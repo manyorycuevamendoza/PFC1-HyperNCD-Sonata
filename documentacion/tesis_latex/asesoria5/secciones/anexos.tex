@@ -3,16 +3,24 @@
 
 % Formato compacto de los anexos: conserva legibilidad y evita páginas con
 % grandes áreas vacías alrededor de títulos, tablas y figuras.
-\footnotesize
+\small
 \setlength{\parskip}{0pt}
 \setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
 \setlength{\floatsep}{6pt plus 2pt minus 2pt}
 \setlength{\intextsep}{6pt plus 2pt minus 2pt}
 \setlength{\LTpre}{2pt}\setlength{\LTpost}{2pt}
-\captionsetup{font=scriptsize,skip=1pt}
-\captionsetup[table]{font=normalsize,skip=1pt}
-\captionsetup[figure]{font=normalsize,skip=1pt}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.9}
+% Sistema tipográfico único de los anexos: cuerpo y leyendas a 10 pt;
+% tablas, código y texto interno de diagramas a 8 pt.
+\captionsetup{font=footnotesize,skip=1pt}
 \lstset{basicstyle=\ttfamily\scriptsize,aboveskip=2pt,belowskip=2pt}
+\AtBeginEnvironment{tabular}{\scriptsize\setstretch{0.95}}
+\AtBeginEnvironment{tabularx}{\scriptsize\setstretch{0.95}}
+\AtBeginEnvironment{longtable}{\scriptsize\setstretch{0.95}}
+\titleformat{\section}{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\footnotesize\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}{\normalfont\footnotesize\bfseries}{}{0pt}{}
 \titlespacing*{\section}{0pt}{0.8ex}{0.3ex}
 \titlespacing*{\subsection}{0pt}{0.7ex}{0.25ex}
 \titlespacing*{\subsubsection}{0pt}{0.6ex}{0.2ex}
@@ -30,7 +38,7 @@ Weights~\&~Biases registró los experimentos.
 
 \begin{table}[!htbp]
 \centering
-\setstretch{1}\small
+\setstretch{0.95}
 \caption[Herramientas por módulo]{Herramientas empleadas y módulo en que interviene cada una.
 Elaboración propia.}
 \label{tab:herramientas}
@@ -54,7 +62,7 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 
 \begin{table}[!htbp]
 \centering
-\setstretch{1}\small
+\setstretch{0.95}
 \caption[Archivos del sistema]{Archivos del sistema para los escaneos de prueba. Elaboración propia.}
 \label{tab:archivos}
 \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
@@ -72,13 +80,10 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 
 \begin{table}[!htbp]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{2pt}
-\renewcommand{\arraystretch}{0.86}
 \caption[Requisitos del método y recursos del clúster Khipu]{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
 verificados por los autores sobre los nodos asignados.}
 \label{tab:hardware}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.65cm}>{\raggedright\arraybackslash\hsize=1.18\hsize}X>{\raggedright\arraybackslash\hsize=0.82\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.05cm}>{\raggedright\arraybackslash\hsize=1.2\hsize}X>{\raggedright\arraybackslash\hsize=0.8\hsize}X@{}}
 \toprule
 \textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
 \midrule
@@ -95,7 +100,7 @@ Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 
 \begin{table}[!htbp]
 \centering
-\setstretch{1}\small
+\setstretch{0.95}
 \caption[Origen de las tablas de resultados]{Carpeta del repositorio de la que sale cada tabla del Capítulo~\ref{cap:resultados}. Elaboración propia.}
 \label{tab:origen-resultados}
 \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
@@ -154,7 +159,7 @@ modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config
 Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tabla.
 
 \begin{center}
-\setstretch{0.94}\scriptsize\renewcommand{\arraystretch}{0.80}
+\setstretch{0.95}\scriptsize
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{8.1cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
 \toprule
 \textbf{Símbolo} & \textbf{Significado} & \textbf{Valor} \\
