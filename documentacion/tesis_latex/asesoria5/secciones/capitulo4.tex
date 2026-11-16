@@ -210,7 +210,12 @@ verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 \subsubsection*{Mediciones de control de cada extracción\espejo{sec:observables}}
 \label{sec:res-observables}
 
-Los valores esperados y medidos están en la Tabla~\ref{tab:salidas-p2}.
+Las mediciones de control (Sección~\ref{sec:observables}) están en la
+Tabla~\ref{tab:salidas-p2}. La memoria es la que más se aparta de la cota de 4{,}2\,GB,
+calculada para una sección de $3\times10^{5}$ puntos, pues la capilla entró con
+1\,133\,238. Con la atención de PyTorch una sección de más de un millón de puntos
+ocupa 10{,}49\,GB y cabe en una GPU de 16\,GB, frente a los 34{,}60\,GB de unos
+$8\times10^{5}$ puntos con atención densa en Khipu.
 
 \begin{table}[!htbp]
 \centering
@@ -230,15 +235,6 @@ Tamaño del archivo de descriptores & --- & 992\,MB \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-La memoria es la medición que más se aparta de lo esperado. La cota de 4{,}2\,GB
-se calculó para una sección de $3\times10^{5}$ puntos, y la capilla entró a Sonata
-con 1\,133\,238, unas 3{,}8 veces más, por lo que las dos cifras no se comparan
-directamente. Lo que sí indica la medición es cuánto margen queda. Con la
-atención de PyTorch, una sección de más de un millón de puntos ocupa 10{,}49\,GB y
-cabe en una GPU de 16\,GB, mientras que con atención densa en Khipu una sección de
-unos $8\times10^{5}$ puntos ocupó 34{,}60\,GB. Ese es el dato con que se
-planificarán las secciones mayores, en lugar de la cota.
 
 \FloatBarrier
 \subsubsection*{Revisión de los descriptores\espejo{sec:revision-descriptores}}
