@@ -303,17 +303,11 @@ ARI del \emph{k}-means entre original y adaptado & \multicolumn{2}{c}{0{,}29} \\
 \end{tabularx}
 \end{table}
 
-El descriptor adaptado es bastante distinto del original y menos rico, pues su
-rango efectivo baja de 97,7 a 64,3, y el $k$-means es menos estable. En PL13 salió
-parecido, aunque su original se extrajo en el clúster y no se usa para comparar. Con
-etiquetas, el M3 adaptado rinde menos que el original en la capilla
-($34{,}3\pm1{,}7$ frente a $45{,}4\pm8{,}5$, Tabla~\ref{tab:m2-m4-semillas}). En la
-capilla los dos descriptores se extrajeron en el mismo entorno de Colab, con la misma
-semilla y atención, así que la diferencia del coseno de 0,54 viene de los pesos y no
-del equipo. Lo que sigue sin conocerse es la variabilidad de la adaptación, porque se
-hizo una sola corrida con lote de una escena. El tiempo y la memoria de la extracción
-son casi iguales, 26{,}6\,s y 27{,}0\,s con 10{,}49\,GB, así que adaptar no cambia el
-costo de usar el modelo.
+El resultado es que adaptar Sonata cambia el descriptor y lo deja menos rico, con un
+rango efectivo que baja de 97,7 a 64,3 y un $k$-means menos estable. Con etiquetas, el
+M3 adaptado rinde menos que el original en la capilla ($34{,}3\pm1{,}7$ frente a
+$45{,}4\pm8{,}5$, Tabla~\ref{tab:m2-m4-semillas}), sin cambiar el costo de la
+extracción (26{,}6\,s y 27{,}0\,s con 10{,}49\,GB).
 
 La Figura~\ref{fig:captura-m3} muestra el agrupamiento de M3 en la capilla para una
 semilla. Con Sonata original la cúpula queda bien definida y los errores se concentran
