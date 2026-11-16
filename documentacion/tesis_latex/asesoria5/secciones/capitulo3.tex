@@ -403,11 +403,10 @@ $(\mathrm{NMI}, \mathrm{ARI}) \leftarrow \textsc{Métricas}(\hat y, y)$\;
 \end{algorithm}
 
 \paragraph*{Umbral y dificultad por clase.}\etiquetahija{sec:umbral-dificultad} El IoU de cada clase se compara con un
-umbral de 70\,\%, el mismo para todas, que es una meta propia porque ningún
-artículo consultado fija un IoU mínimo. Las clases se ordenan por el IoU del mejor
-modelo, y a ese orden se le llama dificultad experimental. Como depende del modelo,
-también se mide la geometría de cada clase sin usar ningún modelo, con su tamaño, qué
-tan alargada es, cuánto cambian sus normales y cuántos de sus puntos tocan a otra
+umbral de 70\,\%, una meta propia porque ningún artículo fija un IoU mínimo. Las
+clases se ordenan por el IoU del mejor modelo, su dificultad experimental. Como esta
+depende del modelo, también se mide la geometría de cada clase sin modelo, con su
+tamaño, lo alargada que es, el cambio de sus normales y los puntos que tocan a otra
 clase.
 
 \paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla dos preguntas, si el descriptor
