@@ -124,27 +124,25 @@ $S \leftarrow [P \mid C \mid N]$ y guardar con los metadatos \tcp*{Paso 6}
 \label{fig:flujo-m1}
 \end{figure}
 
-\paragraph*{Pasos 1 y 2.}\etiquetahija{sec:u1-p1}\etiquetahija{sec:u1-p2} El archivo se lee por bloques de cinco
-millones de puntos y el color se lleva a 0 a 255 (Sección~\ref{sec:las}). Como las
-coordenadas UTM son números muy grandes, se resta el centro de la caja
-(Sección~\ref{sec:centrado}), que se guarda para revertirlo.
+\etiquetahija{sec:u1-p1}En los pasos 1 y 2 el archivo se lee por bloques de cinco millones de
+puntos y el color se lleva a 0 a 255 (Sección~\ref{sec:las}).
+\etiquetahija{sec:u1-p2}Como las coordenadas UTM son números muy grandes, se resta el
+centro de la caja (Sección~\ref{sec:centrado}), que se guarda para revertirlo.
 
-\paragraph*{Paso 3.}\etiquetahija{sec:u1-p3} El escaneo trae puntos sueltos que no pertenecen a ninguna
-superficie. Se descarta el punto cuya distancia media $\bar d_i$ a sus $q$ vecinos
-supera la media de toda la nube en más de $\lambda$ desviaciones
+\etiquetahija{sec:u1-p3}El escaneo trae puntos sueltos que no pertenecen a ninguna
+superficie, y el paso 3 descarta el punto cuya distancia media $\bar d_i$ a sus $q$
+vecinos supera la media de toda la nube en más de $\lambda$ desviaciones
 (Ecuación~\ref{eq:sor}). Se filtra antes de voxelizar para que esos puntos no se
-promedien con los válidos, y es el único paso que descarta puntos por ser ruido.
+promedien con los válidos. \etiquetahija{sec:u1-p4}Como el escáner mide más puntos cerca que
+lejos, el paso 4 sustituye los puntos de cada cubo de lado $\ell$ por uno solo, con su
+posición y color promedio (Ecuación~\ref{eq:voxel}), lo que iguala la densidad y fija el
+límite de resolución, porque dos superficies a menos de $\ell$ dejan de distinguirse.
 
-\paragraph*{Paso 4.}\etiquetahija{sec:u1-p4} El escáner mide más puntos cerca que lejos. Para igualar la densidad se
-sustituyen los puntos de cada cubo de lado $\ell$ por uno solo, con su posición y
-color promedio (Ecuación~\ref{eq:voxel}). El vóxel fija también el límite de
-resolución, porque dos superficies a menos de $\ell$ dejan de distinguirse.
-
-\paragraph*{Pasos 5 y 6.}\etiquetahija{sec:u1-p5}\etiquetahija{sec:u1-p6} El escáner no mide la normal, y se estima con los $q$ vecinos
-de cada punto (Ecuación~\ref{eq:normal}), orientada hacia arriba para que sea
-consistente. Se guarda la matriz $S$ (Ecuación~\ref{eq:sj}) en precisión simple, con
-un archivo de metadatos que registra los parámetros, el centro restado, los
-conteos de cada paso y el tiempo.
+\etiquetahija{sec:u1-p5}En los pasos 5 y 6, como el escáner no mide la normal, se estima con
+los $q$ vecinos de cada punto (Ecuación~\ref{eq:normal}), orientada hacia arriba para que
+sea consistente. \etiquetahija{sec:u1-p6}Se guarda la matriz $S$ (Ecuación~\ref{eq:sj}) en
+precisión simple, con un archivo de metadatos que registra los parámetros, el centro
+restado, los conteos de cada paso y el tiempo.
 
 \subsection{Verificación y Reproducibilidad}
 \label{sec:u1-reproducibilidad}
