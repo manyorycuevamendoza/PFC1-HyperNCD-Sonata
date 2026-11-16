@@ -78,7 +78,7 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.65\linewidth]{imagenes/captura_m1.png}
-\caption[La capilla tras el Módulo 1]{La capilla tras el Módulo~1, con el color real y con la clase de cada punto, sin la clase \emph{otro}. Visor (\hyperref[sec:anexo-software]{Anexo~A}). Elaboración propia.}
+\caption[La capilla tras el Módulo 1]{La capilla tras el Módulo~1, con el color real y con la clase de cada punto, sin la clase \emph{otro}. Visor (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:captura-m1}
 \end{figure}
 
@@ -190,7 +190,7 @@ verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{imagenes/escena_etapas.png}
-\caption[La capilla en tres etapas]{La capilla etiquetada cruda, tras la Unidad~1 y con los descriptores de Sonata original, en planta y de costado. Solo se dibujan las piezas etiquetadas, sin la clase \emph{otro}. Elaboración propia.}
+\caption[La capilla en tres etapas]{La capilla etiquetada cruda, tras la Unidad~1 y con los descriptores de Sonata original, en planta y de costado, sin la clase \emph{otro}.}
 \label{fig:escena-etapas}
 \end{figure}
 
@@ -262,7 +262,7 @@ Figura~\ref{fig:escena-descriptores}, sobre los puntos etiquetados de la capilla
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.6\linewidth]{imagenes/escena_descriptores.png}
-\caption[Similitud y $k$-means de los descriptores de la capilla]{Similitud coseno con un punto de la cúpula y $k$-means de ocho grupos sobre los descriptores de Sonata original en la capilla, sin la clase \emph{otro}. Elaboración propia.}
+\caption[Similitud y $k$-means de los descriptores de la capilla]{Similitud coseno con un punto de la cúpula y $k$-means de ocho grupos sobre los descriptores de Sonata original, sin la clase \emph{otro}.}
 \label{fig:escena-descriptores}
 \end{figure}
 
@@ -331,7 +331,7 @@ Tabla~\ref{tab:m2-m4-semillas} da la diferencia con diez semillas.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/captura_m3.png}
-\caption[Agrupamiento de M3 sobre la capilla]{Agrupamiento de M3 sobre la capilla con $K=8$, con Sonata original y adaptado. Arriba, la clase que toma cada grupo. Abajo, aciertos y errores. Sin la clase \emph{otro}. Capturas del visor del proyecto. Elaboración propia.}
+\caption[Agrupamiento de M3 sobre la capilla]{Agrupamiento de M3 en la capilla ($K=8$), con Sonata original y adaptado. Arriba, la clase de cada grupo, abajo, aciertos y errores, sin \emph{otro}.}
 \label{fig:captura-m3}
 \end{figure}
 
@@ -375,7 +375,7 @@ figura sirve para ver qué clase se gana o se pierde y no como un ranking.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/escena_m1_m4.png}
-\caption[Escena etiquetada y agrupamiento de cada método]{Escena etiquetada y agrupamiento de M2, M3, M4 base y M4 con $K=8$, en planta y de costado, con M2 de ArCH y Sonata original, una semilla. Cada grupo toma la clase que le da el emparejamiento uno a uno, sin \emph{otro}. Elaboración propia.}
+\caption[Escena etiquetada y agrupamiento de cada método]{Escena etiquetada y agrupamiento de M2, M3, M4 base y M4 ($K=8$, una semilla), con M2 de ArCH y Sonata original, en planta y de costado.}
 \label{fig:escena-m1-m4}
 \end{figure}
 
@@ -407,9 +407,7 @@ ArCH + Sonata adaptado & 46,9 & $+1,4$ & $+1,3$ & $+1,1$ \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/fusion_barrido_combos.png}
-\caption[Fusiones frente al M4 de pegado normalizado]{Cambio del mIoU de las fusiones
-con mejor peor caso frente al M4 de pegado normalizado, en las cuatro combinaciones
-($K=8$, cinco semillas). Elaboración propia.}
+\caption[Fusiones frente al M4 de pegado normalizado]{Cambio del mIoU de las fusiones con mejor peor caso frente al M4 de pegado normalizado, en las cuatro combinaciones ($K=8$, cinco semillas).}
 \label{fig:barrido-combos}
 \end{figure}
 
@@ -622,10 +620,7 @@ IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_arch_curvas.png}
-\caption[Curvas de entrenamiento de M2 con ArCH]{Entrenamiento de M2 con ArCH
-durante 30 épocas, con pérdida de entrenamiento, mIoU de validación con su mejor
-época en la 20 (0,489) y IoU por clase, las clases novedosas van en línea
-discontinua. Elaboración propia.}
+\caption[Curvas de entrenamiento de M2 con ArCH]{Entrenamiento de M2 con ArCH (30 épocas), con la pérdida, el mIoU de validación (mejor en la época 20, 0,489) y el IoU por clase.}
 \label{fig:m2-arch-curvas}
 \end{figure}
 
@@ -663,20 +658,14 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 33,6\,\% & 35,5\,\% \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_dominio_capilla.png}
-\caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de dominio
-de M2 sobre la capilla etiquetada, con el checkpoint de SemanticPOSS (época~8) frente a
-los checkpoints de ArCH (épocas 20 y 30). Se reportan cabeza dominante, rango
-efectivo de $f_{\mathrm{sem}}$, entropía normalizada y NMI. Elaboración propia.}
+\caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de M2 en la capilla, con SemanticPOSS (época~8) y ArCH (épocas 20 y 30), según cabeza dominante, rango efectivo, entropía y NMI.}
 \label{fig:m2-dominio}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/m2_cabeza_x_clase.png}
-\caption[Cabeza predicha por clase real en la capilla]{Cabeza predicha por M2 para
-cada clase real de la capilla, en SemanticPOSS (época 8) y en ArCH (épocas 20 y
-30). Cada columna indica a qué cabezas va una clase. El panel de SemanticPOSS
-tiene 13 cabezas y rotula solo las primeras nueve. Elaboración propia.}
+\caption[Cabeza predicha por clase real en la capilla]{Cabeza de M2 para cada clase de la capilla, con SemanticPOSS (época 8) y ArCH (épocas 20 y 30). SemanticPOSS rotula 9 de sus 13 cabezas.}
 \label{fig:m2-cabeza-clase}
 \end{figure}
 
@@ -712,10 +701,7 @@ ArCH + Sonata adaptado & $48,4\pm1,1$ & $34,3\pm1,7$ & $51,4\pm1,7$ & $47,0\pm0,
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/m4_semillas.png}
-\caption[Comparación M2--M4 con diez semillas y cuatro combinaciones]{mIoU uno a
-uno sin \emph{other}, media y desviación de diez semillas de agrupamiento
-($K=8$), para M2, M3, M4 base y M4 en las cuatro combinaciones, los puntos
-negros marcan mínimo y máximo. Elaboración propia.}
+\caption[Comparación M2--M4 con diez semillas y cuatro combinaciones]{mIoU uno a uno sin \emph{other}, media y desviación de diez semillas ($K=8$) en las cuatro combinaciones, con mínimo y máximo en negro.}
 \label{fig:m4-semillas}
 \end{figure}
 
@@ -846,9 +832,7 @@ M4, Sonata adaptado & 27,2 & 24,3 & 43,9 & 72,0 & 69,8 \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/m4_iou_por_clase.png}
-\caption[IoU por clase de cada método]{IoU por clase de M2, M3, M4 base y M4 con
-Sonata original (orig) y adaptado (adap), con $K=8$ y asignación uno a uno, con y
-sin \emph{other}. Elaboración propia.}
+\caption[IoU por clase de cada método]{IoU por clase de M2, M3, M4 base y M4 con Sonata original (orig) y adaptado (adap), con $K=8$, uno a uno, con y sin \emph{other}.}
 \label{fig:m4-iou-clase}
 \end{figure}
 
@@ -979,7 +963,7 @@ M2 de SemanticPOSS y Sonata adaptado & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/caso_grafico_iou_10semillas.png}
-\caption[IoU por clase frente al umbral de referencia de 70\,\%]{IoU por clase de M4 con M2 de ArCH y Sonata original y con M2 de SemanticPOSS y Sonata adaptado (media $\pm$ desviación de diez semillas), frente al umbral de referencia de 70\,\%. Elaboración propia.}
+\caption[IoU por clase frente al umbral de referencia de 70\,\%]{IoU por clase de M4 con ArCH y Sonata original y con SemanticPOSS y Sonata adaptado (diez semillas), frente al umbral de 70\,\%.}
 \label{fig:caso-iou}
 \end{figure}
 
@@ -1030,8 +1014,7 @@ Columna & 2,9 & 0,351 & 2,9 & 2 \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/caso_grafico_geometria.png}
-\caption[Geometría de las clases frente al IoU]{Cuatro medidas geométricas frente al
-IoU del mejor modelo (media de diez semillas). Cada punto es una clase. Elaboración propia.}
+\caption[Geometría de las clases frente al IoU]{Cuatro medidas geométricas frente al IoU del mejor modelo (media de diez semillas). Cada punto es una clase.}
 \label{fig:caso-geometria}
 \end{figure}
 
