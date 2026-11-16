@@ -616,12 +616,11 @@ varias.
 \label{sec:res-u3-rep}
 
 La comparación final se repitió con diez semillas de inicialización del
-agrupamiento, con $K=8$, asignación uno a uno y sin \emph{other}. Estas
-repeticiones no reentrenan ninguna red. Miden la estabilidad de la etapa final,
-no la de HyperNCD ni la de Sonata. La Tabla~\ref{tab:m2-m4-semillas} reúne las
-cuatro combinaciones de M2 (SemanticPOSS o ArCH) y de Sonata (original o adaptado
-a la Catedral) y la Figura~\ref{fig:m4-semillas} las dibuja con su mínimo y
-máximo.
+agrupamiento, con $K=8$, asignación uno a uno y sin \emph{other}, sin reentrenar
+ninguna red. El logro es una comparación con su dispersión medida en las cuatro
+combinaciones de M2 (SemanticPOSS o ArCH) y de Sonata (original o adaptado), que reúne
+la Tabla~\ref{tab:m2-m4-semillas} y dibuja la Figura~\ref{fig:m4-semillas} con su
+mínimo y máximo.
 
 \begin{table}[!htbp]
 \centering
@@ -647,22 +646,22 @@ ArCH + Sonata adaptado & $48,4\pm1,1$ & $34,3\pm1,7$ & $51,4\pm1,7$ & $47,0\pm0,
 \label{fig:m4-semillas}
 \end{figure}
 
-La tabla permite sustentar tres lecturas. Primera, la ganancia mayor proviene de
-adaptar el dominio de M2. Con ArCH, M2 sube 12{,}5 puntos (de 35,9 a 48,4), M4 base
-sube 18{,}9 y M4 sube 9{,}1. Segunda, el aporte de Sonata depende del estado de
-M2. Cuando M2 está colapsado, la fusión M4 supera a su base en 10{,}9 puntos
-(43,4 frente a 32,5), pero con M2 de ArCH la diferencia es de 1{,}1 punto (52,5
-frente a 51,4), menor que las desviaciones de 1,7 y 2,5 y con rangos que se
-solapan, de modo que se observa una mejora numérica, no una superioridad
-demostrada. Tercera, el Sonata adaptado a la Catedral empeora. M3 baja de 45,4 a
-34,3 y, con ArCH, M4 queda en 47,0, por debajo de su base. La dispersión alta de
-M3 con Sonata original, de $\pm8{,}5$, indica que ese agrupamiento es inestable. Los resultados con una sola semilla, las variantes de fusión y la sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~F}.
+La ganancia mayor proviene de adaptar el dominio de M2. Con ArCH, M2 sube 12{,}5
+puntos (de 35,9 a 48,4), M4 base sube 18{,}9 y M4 sube 9{,}1. El aporte de Sonata
+depende del estado de M2. Con M2 colapsado, la fusión M4 supera a su base en 10{,}9
+puntos (43,4 frente a 32,5), pero con M2 de ArCH la diferencia es de 1{,}1 punto (52,5
+frente a 51,4), menor que las desviaciones de 1,7 y 2,5.
 
-\paragraph*{Cada módulo por separado.} La Tabla~\ref{tab:modulos-solos} junta, sobre
-la capilla, lo que cuesta y lo que acierta cada módulo por sí solo, con sus dos
-variantes. El mIoU de M2 y de M3 es el del agrupamiento que usa solo ese
-descriptor, y es la misma columna de la Tabla~\ref{tab:m2-m4-semillas}. Esa tabla
-no incluye los tiempos ni qué aporta cada experimento, y esta sí.
+El Sonata adaptado a la Catedral empeora. M3 baja de 45,4 a 34,3 y, con ArCH, M4
+queda en 47,0, por debajo de su base. La dispersión de M3 con Sonata original,
+$\pm8{,}5$, indica un agrupamiento inestable. Los resultados con una sola semilla,
+como el 53,4 de M3 frente a la media de 45,4, las variantes de fusión y la
+sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~F}.
+
+La Tabla~\ref{tab:modulos-solos} junta, sobre la capilla, lo que cuesta y lo que acierta
+cada módulo por sí solo, con sus dos variantes. El mIoU de M2 y de M3 es el del
+agrupamiento con solo ese descriptor, la misma columna de la
+Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos y el cambio.
 
 \begin{table}[!htbp]
 \centering
@@ -688,25 +687,22 @@ M4, con M2 de ArCH y Sonata original & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ &
 \end{tabularx}
 \end{table}
 
-Las cifras de mIoU de M2 de este capítulo difieren entre tablas porque miden cosas
-distintas. Unas usan las cabezas directamente como clasificador y otras el
-agrupamiento con $K=8$, unas incluyen la clase \emph{other} y otras no, y unas son
-de una semilla y otras la media de diez. La de esta tabla es la media de diez
-semillas del agrupamiento y es la que se usa para comparar métodos.
+Las cifras de mIoU de M2 difieren entre tablas porque miden cosas distintas. Unas
+usan las cabezas como clasificador y otras el agrupamiento con $K=8$, unas incluyen
+la clase \emph{other} y otras no, y unas son de una semilla y otras la media de diez.
+La de esta tabla es la media de diez semillas del agrupamiento y es la que se usa
+para comparar métodos.
 
 Con el criterio de la Sección~\ref{sec:repeticiones}, son diferencias reales el
 cambio de M2 con ArCH ($+12{,}5$ frente a una desviación de 1{,}1) y el de M3
 adaptado ($-11{,}1$ frente a 8{,}5), y no lo es la de M4 contra M4 base ($+1{,}1$
-frente a 2{,}5). Leída por filas, la tabla dice qué aporta cada experimento. Entrenar HyperNCD con
-ArCH sube 12{,}5 puntos a M2 y cuesta 75 minutos de GPU, que es el mayor beneficio
-por costo del trabajo. Adaptar Sonata cuesta 103 minutos y baja 11{,}1 puntos a M3,
-sin cambiar el tiempo de extracción. Fusionar con el mejor M2 sube 4{,}1 puntos
-sobre M2 solo y 7{,}1 sobre M3 solo, y apenas 1{,}1 sobre M4 base. Los acuerdos con
-las cifras de una sola semilla de las primeras corridas se pierden. Aquella cifra
-de 53{,}4 para M3 era una semilla afortunada, y la media de diez es 45{,}4, por eso
-estas cifras reemplazan a las anteriores. El detalle de la comparación está en la
-Tabla~\ref{tab:m2-m4-semillas}, el desglose por clase en la
-Tabla~\ref{tab:iou-clase} y los tiempos en la Tabla~\ref{tab:res-hardware}.
+frente a 2{,}5).
+
+Leída por filas, la tabla dice qué aporta cada experimento. Entrenar HyperNCD con
+ArCH sube 12{,}5 puntos a M2 y cuesta 75 minutos de GPU, el mayor beneficio por costo
+del trabajo. Adaptar Sonata cuesta 103 minutos y baja 11{,}1 puntos a M3, sin cambiar
+el tiempo de extracción. Fusionar con el mejor M2 sube 4{,}1 puntos sobre M2 solo y
+7{,}1 sobre M3 solo, y apenas 1{,}1 sobre M4 base.
 
 \paragraph*{Lo esperado frente a lo obtenido.} La Tabla~\ref{tab:esperado-obtenido}
 compara lo que se esperaba de cada experimento con lo que salió y dice cuáles se
