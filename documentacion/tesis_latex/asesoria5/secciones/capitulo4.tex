@@ -317,26 +317,19 @@ de las clases sigue en el descriptor y lo que cambia es cómo se agrupa.
 \subsection[Punto de Fusión]{Punto de Fusión\espejo{sec:fusion}}
 \label{sec:res-fusion}
 
-La fusión se ejecutó después de extraer y almacenar los descriptores de M2 y M3,
-en CPU y con NumPy y SciPy, sin retropropagación hacia ninguno de los dos
-codificadores. Sobre la capilla agrupó los puntos en unas 3\,800 regiones de
-0{,}75\,m y tardó entre 68 y 80\,s. Su resultado, repetido con diez semillas,
-está en la Tabla~\ref{tab:m2-m4-semillas} y en la
-Figura~\ref{fig:m4-semillas}, el desglose por clase, en la
+La fusión se ejecutó en CPU sobre los descriptores guardados de M2 y M3
+(Sección~\ref{sec:fusion}) y agrupó la capilla en unas 3\,800 regiones de 0{,}75\,m en 68
+a 80\,s. Su resultado con diez semillas está en la Tabla~\ref{tab:m2-m4-semillas} y en
+la Figura~\ref{fig:m4-semillas}, y el desglose por clase en la
 Tabla~\ref{tab:iou-clase}.
 
-La Figura~\ref{fig:escena-m1-m4} muestra la escena con la etiqueta real y con el
-agrupamiento de cada método, en planta y de costado. Cada grupo se pinta con la
-clase que le toca en el emparejamiento uno a uno, y los grupos sin pareja quedan
-en gris oscuro. La cúpula se recupera en los cuatro métodos, y M3 la delimita
-mejor, hasta el farol de la parte alta. M2 y M4 dejan sin clase una franja en la
-base de la cúpula. El arco aparece en rojo sobre el arco real en los cuatro
-métodos, pero en M3 el rojo se extiende también a muros y bordes que no son arco,
-lo que explica su IoU de 18{,}7 en la Tabla~\ref{tab:iou-clase}. La parte baja de
-la nave, que en la etiqueta es \emph{otro} y no se evalúa, se reparte entre
-columna, techo y grupos sin clase. Es una sola semilla, y las diferencias de 49{,}0
-a 52{,}9 entre métodos son menores que la dispersión entre semillas, así que la
-figura sirve para ver qué clase se gana o se pierde y no como un ranking.
+La Figura~\ref{fig:escena-m1-m4} muestra la etiqueta real y el agrupamiento de cada
+método. La cúpula se recupera en los cuatro, y M3 la delimita mejor, hasta el farol,
+mientras que M2 y M4 dejan sin clase una franja en su base. El arco aparece sobre el
+arco real en los cuatro, pero en M3 se extiende también a muros y bordes, lo que
+explica su IoU de 18{,}7 (Tabla~\ref{tab:iou-clase}). Es una sola semilla y las
+diferencias entre métodos, de 49{,}0 a 52{,}9, son menores que la dispersión entre
+semillas, así que la figura muestra qué clase se gana o se pierde y no un ranking.
 
 \begin{figure}[!htbp]
 \centering
