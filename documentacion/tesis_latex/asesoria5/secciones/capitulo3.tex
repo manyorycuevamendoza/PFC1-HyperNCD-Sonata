@@ -358,35 +358,12 @@ HyperNCD y Sonata nunca se entrenan juntos. Cada uno guarda sus descriptores y l
 fusión usa esos archivos. Las dos variantes de HyperNCD se cruzan con las dos de
 Sonata, y en cada una de las cuatro combinaciones se miden los cuatro agrupamientos.
 Cada experimento responde a un objetivo específico, parte de una pregunta con una
-expectativa escrita (Tabla~\ref{tab:preguntas}) y entrega una medida. Las expectativas de X2 y X3 se plantearon
+expectativa escrita y entrega una medida. Las expectativas de X2 y X3 se plantearon
 tras ver X1, y las demás antes de ejecutar. X1 incluye un diagnóstico de dominio que
 compara tres puntos de control de HyperNCD sobre SemanticPOSS, la capilla, la capilla
 submuestreada a 80\,000 puntos, PL7 y PL13, con el porcentaje de la cabeza dominante,
 el rango efectivo y el NMI, para separar el dominio de la densidad y de un error del
 modelo.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Objetivo, pregunta y expectativa de cada experimento]{Objetivo, pregunta y expectativa de cada experimento. Elaboración propia.}
-\label{tab:preguntas}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.5\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X@{}}
-\toprule
-\textbf{Id} & \textbf{Objetivo} & \textbf{Pregunta} & \textbf{Qué se esperaba} \\
-\midrule
-X0 & OE1, OE2 & ¿El Módulo~1 deja una nube reproducible que conserve la proporción de cada clase? & Mismos conteos en dos máquinas y una fracción parecida de cada clase tras el vóxel \\
-X1 & OE2 & ¿El HyperNCD entrenado con SemanticPOSS sirve en la capilla? & Que separe las clases como lo hace en su propio dominio \\
-X2 & OE2 & ¿El mal resultado de X1 se debe al dominio de entrenamiento? & Que al entrenar con patrimonio el modelo deje de colapsar \\
-X3 & OE2 & ¿HyperNCD adaptado reparte mejor los puntos entre cabezas? & Menos puntos en la cabeza dominante y un NMI mayor que en X1 \\
-X4 & OE1 & ¿Seguir entrenando Sonata con la Catedral mejora su descriptor? & Un mIoU de M3 mayor que con el Sonata original \\
-X5 & OE1, OE2 & ¿Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ mejora a M4 base? & M4 por encima de M4 base, que es la hipótesis central del trabajo \\
-X6 & OE2 & ¿Alguna fusión determinista supera al pegado normalizado? & Que al menos la que pondera por la confianza de HyperNCD lo supere \\
-X7 & OE2 & ¿Las diferencias entre métodos superan la variabilidad del agrupamiento? & Que las diferencias menores que la dispersión no se puedan sostener \\
-X8 & OE3 & ¿Qué clases superan el umbral de 70\,\% y por qué unas son más difíciles? & Que las clases grandes y planas sean más fáciles que las pequeñas y alargadas \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \subsection{Protocolo de Repetición}
 \label{sec:repeticiones}
