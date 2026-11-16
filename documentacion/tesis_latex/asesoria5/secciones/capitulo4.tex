@@ -173,10 +173,10 @@ entrenamiento con ArCH se hizo una sola vez.
 \label{sec:res-rama-ssl}
 
 Sonata se aplicó a la capilla en Colab con los pesos originales y con los adaptados
-(Sección~\ref{sec:rama-ssl}). La rejilla retiene casi todos los puntos
-(Tabla~\ref{tab:salidas-p2}), porque el vóxel de 5\,cm de la Unidad~1 ya dejó la nube
-más gruesa que la rejilla, y en esa tabla están también el tiempo, la memoria y el
-tamaño del archivo de descriptores, cuyos campos muestra la Tabla~\ref{tab:npz}. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
+(Sección~\ref{sec:rama-ssl}). La rejilla retiene casi todos los puntos, porque el
+vóxel de 5\,cm de la Unidad~1 ya dejó la nube más gruesa que la rejilla. El tiempo y la
+memoria están en la Tabla~\ref{tab:res-hardware} y los campos del archivo de
+descriptores en la Tabla~\ref{tab:npz}. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
 la capilla: en el tercer panel de la Figura~\ref{fig:escena-etapas} la cúpula se ve
 verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 
@@ -210,31 +210,14 @@ verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 \subsubsection*{Mediciones de control de cada extracción\espejo{sec:observables}}
 \label{sec:res-observables}
 
-Las mediciones de control (Sección~\ref{sec:observables}) están en la
-Tabla~\ref{tab:salidas-p2}. La memoria es la que más se aparta de la cota de 4{,}2\,GB,
-calculada para una sección de $3\times10^{5}$ puntos, pues la capilla entró con
-1\,133\,238. Con la atención de PyTorch una sección de más de un millón de puntos
-ocupa 10{,}49\,GB y cabe en una GPU de 16\,GB, frente a los 34{,}60\,GB de unos
-$8\times10^{5}$ puntos con atención densa en Khipu.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Mediciones de control de Sonata en la capilla, esperado y medido]{Mediciones de control de Sonata original en la capilla, esperado y medido. Para qué sirve cada una se explica en la Sección~\ref{sec:observables}. Elaboración propia.}
-\label{tab:salidas-p2}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xll@{}}
-\toprule
-\textbf{Observable} & \textbf{Esperado} & \textbf{Medido} \\
-\midrule
-Dimensión de $f_{\mathrm{ssl}}$ & 1088 & 1088 \\
-Puntos retenidos tras el muestreo por rejilla & --- & 1\,133\,238 de 1\,135\,946, el 99{,}8\,\% \\
-VRAM pico & Cota de 4{,}2\,GB & 10{,}49\,GB \\
-Tiempo de inferencia por sección & --- & 26{,}6\,s \\
-Rendimiento en puntos por segundo & --- & 42\,644 \\
-Tamaño del archivo de descriptores & --- & 992\,MB \\
-\bottomrule
-\end{tabularx}
-\end{table}
+En la capilla, $f_{\mathrm{ssl}}$ salió de 1088 valores por punto, con 1\,133\,238 de los
+1\,135\,946 puntos retenidos por la rejilla (99{,}8\,\%). La inferencia tardó 26{,}6\,s, a
+42\,644 puntos por segundo, y el archivo de descriptores pesa 992\,MB. La memoria es la
+que más se aparta de la cota de 4{,}2\,GB, calculada para una sección de
+$3\times10^{5}$ puntos, pues la capilla entró con 1\,133\,238. Con la atención de
+PyTorch una sección de más de un millón de puntos ocupa 10{,}49\,GB y cabe en una GPU
+de 16\,GB, frente a los 34{,}60\,GB de unos $8\times10^{5}$ puntos con atención densa
+en Khipu.
 
 \FloatBarrier
 \subsubsection*{Revisión de los descriptores\espejo{sec:revision-descriptores}}
@@ -425,7 +408,7 @@ salidas del Módulo~1 y del Módulo~3, como el descarte del filtrado en las zona
 (Figura~\ref{fig:m1-paso3}), la pérdida de superficies próximas por el vóxel
 (Figura~\ref{fig:cubo-pl7}), las normales ruidosas de las zonas ralas
 (Figura~\ref{fig:m1-paso5}) y la retención casi total de la rejilla de Sonata
-(Tabla~\ref{tab:salidas-p2}).
+(Sección~\ref{sec:res-observables}).
 
 \FloatBarrier
 \subsection[Pruebas de los Parámetros]{Pruebas de los Parámetros\espejo{sec:param-criterio}}
