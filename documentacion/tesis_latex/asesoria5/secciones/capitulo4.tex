@@ -420,17 +420,20 @@ los dos descriptores sobre la capilla, sin etiquetas.
 \setstretch{1}\small
 \caption[Sonata original y adaptado sobre la capilla]{Sonata original y adaptado sobre los puntos etiquetados de la capilla, sin usar etiquetas para medir. Muestra de 100\,000 puntos. Elaboración propia a partir de \texttt{experimentacion/escena\_capilla\_etiquetada/}.}
 \label{tab:sonata-adaptado}
-\begin{tabular}{@{}lrr@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{2.8cm}>{\centering\arraybackslash}p{2.8cm}@{}}
 \toprule
 \textbf{Medida} & \textbf{Original} & \textbf{Adaptado} \\
 \midrule
-Coseno punto a punto, centrado (media y percentil 5) & \multicolumn{2}{c}{0,54 y 0,27} \\
-Rango efectivo de $f_{\mathrm{ssl}}$ & 97,7 & 64,3 \\
-Varianza de la PCA, 3 y 10 componentes & 0,254 y 0,443 & 0,281 y 0,538 \\
-Estabilidad del \emph{k}-means ($K=8$) entre semillas & 0,73 & 0,67 \\
-ARI del \emph{k}-means, original contra adaptado & \multicolumn{2}{c}{0,29} \\
+Rango efectivo de $f_{\mathrm{ssl}}$ & 97{,}7 & 64{,}3 \\
+Varianza explicada por la PCA (3 componentes) & 0{,}254 & 0{,}281 \\
+Varianza explicada por la PCA (10 componentes) & 0{,}443 & 0{,}538 \\
+Estabilidad del \emph{k}-means ($K=8$) entre semillas & 0{,}73 & 0{,}67 \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Comparación entre ambos descriptores (original contra adaptado)}} \\
+Coseno punto a punto centrado (media / percentil 5) & \multicolumn{2}{c}{0{,}54 / 0{,}27} \\
+ARI del \emph{k}-means entre original y adaptado & \multicolumn{2}{c}{0{,}29} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 El descriptor adaptado es bastante distinto del original y menos rico, pues su
