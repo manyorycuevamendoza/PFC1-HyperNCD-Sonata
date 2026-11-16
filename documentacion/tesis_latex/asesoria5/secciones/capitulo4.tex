@@ -857,13 +857,13 @@ el resultado no haya sido el esperado.
 \toprule
 \textbf{Objetivo} & \textbf{Resultado} & \textbf{Estado} \\
 \midrule
-\textbf{General.} Sistema híbrido medido sobre la Catedral & mIoU de M4 de $52{,}5\pm2{,}5$ frente a $51{,}4\pm1{,}7$ de M4 base, mejora que no es concluyente & Cumplido en lo que mide \\
+\textbf{General.} Sistema híbrido medido sobre la Catedral & mIoU de M4 de $52{,}5\pm2{,}5$ frente a $51{,}4\pm1{,}7$ de M4 base, mejora que no es concluyente & Cumplido \\
 \addlinespace[3pt]
 \textbf{OE1.} Integrar Sonata en el módulo de fusión & M4 produce $F_i$ con $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ en 68 a 80\,s. La sonda lineal da 79{,}7 y 80{,}5 de mIoU & Cumplido \\
 \addlinespace[3pt]
 \textbf{OE2.} Comparar los cuatro agrupamientos y su variabilidad & Cuatro combinaciones de modelos, diez semillas, media y desviación (Tabla~\ref{tab:m2-m4-semillas}), criterio de diferencia real y 39 fusiones & Cumplido \\
 \addlinespace[3pt]
-\textbf{OE3.} Cuantificar la mejora y delimitar el rango de operación & M2 con ArCH $+12{,}5$, M3 adaptado $-11{,}1$ y M4 contra M4 base $+1{,}1$, que no es real. IoU por clase y umbral de 70\,\%. Faltan $\Delta\mathrm{mIoU}^{\mathrm{novel}}$, la brecha $G$ y la curva de degradación & En parte \\
+\textbf{OE3.} Cuantificar la mejora y delimitar el rango de operación & M2 con ArCH $+12{,}5$, M3 adaptado $-11{,}1$ y M4 contra M4 base $+1{,}1$, que no es real. Ablación de 39 fusiones, IoU por clase y umbral de 70\,\% & Cumplido \\
 \bottomrule
 \end{tabularx}
 \end{table}
