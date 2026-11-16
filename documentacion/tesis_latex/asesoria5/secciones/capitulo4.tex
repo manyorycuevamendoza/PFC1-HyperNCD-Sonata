@@ -125,12 +125,11 @@ descriptores va con su matriz $S$.
 \subsection[Rama Semántica]{Rama Semántica\espejo{sec:rama-sem}}
 \label{sec:res-rama-sem}
 
-La rama se ejecutó dos veces sobre la capilla, con el checkpoint de SemanticPOSS y con
-el de ArCH, sin reentrenar. La Tabla~\ref{tab:m2-novedoso} muestra cómo se comporta
-cada uno como clasificador punto a punto, antes de la fusión. Con SemanticPOSS casi
-toda la escena cae en una sola cabeza y se marca como novedosa (99{,}1\,\%), con ArCH
-solo el 12{,}6\,\%, según la clase (arco 58\,\%, pared 1\,\%), y el mIoU uno a uno
-sube de 0{,}093 a 0{,}426.
+La rama se ejecutó sobre la capilla con el checkpoint de SemanticPOSS y con el de ArCH,
+sin reentrenar. El primero colapsa y el segundo distingue las clases
+(Tabla~\ref{tab:m2-novedoso}): con SemanticPOSS casi toda la escena cae en una sola
+cabeza y se marca como novedosa (99{,}1\,\%), con ArCH solo el 12{,}6\,\%, según la
+clase (arco 58\,\%, pared 1\,\%), y el mIoU uno a uno sube de 0{,}093 a 0{,}426.
 
 \begin{table}[!htbp]
 \centering
