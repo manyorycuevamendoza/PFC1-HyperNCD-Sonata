@@ -81,6 +81,28 @@ Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \end{tabularx}
 \end{table}
 
+Las rutas de los archivos de los que salen las tablas del Capítulo~\ref{cap:resultados}
+están en la Tabla~\ref{tab:origen-resultados}.
+
+\begin{table}[!htbp]
+\centering
+\setstretch{1}\small
+\caption[Origen de las tablas de resultados]{Carpeta del repositorio de la que sale cada tabla del Capítulo~\ref{cap:resultados}. Elaboración propia.}
+\label{tab:origen-resultados}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Tabla} & \textbf{Ruta en el repositorio} \\
+\midrule
+\ref{tab:sonata-adaptado} & \path{experimentacion/escena_capilla_etiquetada/} \\
+\ref{tab:barrido} & \path{experimentacion/modulo4_fusion/resultados/} \\
+\ref{tab:resultados-pruebas} & \path{experimentacion/pruebas_parametros/resultados/} \\
+\ref{tab:fpfn-clase} & \path{experimentacion/arch_entrenamiento/resultados/m4_capilla/evaluacion_sin_otro/por_clase.csv} \\
+\ref{tab:sonda} & \path{experimentacion/escena_capilla_etiquetada/resultados/sonda_lineal/} \\
+\ref{tab:umbral} & \path{experimentacion/modulo4_fusion/resultados/referencias_semillas.json} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \paragraph*{Visor 3D del proyecto.}
 El programa \texttt{visor\_3d.py} (Sección~\ref{sec:visor}) genera una página web
 con Plotly que muestra un escaneo en sus etapas, la entrada cruda, los puntos que
