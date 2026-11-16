@@ -502,7 +502,7 @@ IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m2_arch_curvas.png}
+\makebox[\linewidth][c]{\includegraphics[width=1.15\linewidth]{imagenes/m2_arch_curvas.png}}
 \caption[Curvas de entrenamiento de M2 con ArCH]{Entrenamiento de M2 con ArCH (30 épocas), con la pérdida, el mIoU de validación (mejor en la época 20, 0,489) y el IoU por clase.}
 \label{fig:m2-arch-curvas}
 \end{figure}
@@ -542,7 +542,7 @@ el mIoU de la Tabla~\ref{tab:m2-dominio}.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m2_cabeza_x_clase.png}
+\makebox[\linewidth][c]{\includegraphics[width=1.15\linewidth]{imagenes/m2_cabeza_x_clase.png}}
 \caption[Cabeza predicha por clase real en la capilla]{Cabeza de M2 para cada clase de la capilla, con SemanticPOSS (época 8) y ArCH (épocas 20 y 30). SemanticPOSS rotula 9 de sus 13 cabezas.}
 \label{fig:m2-cabeza-clase}
 \end{figure}
@@ -576,7 +576,7 @@ ArCH + Sonata adaptado & $48,4\pm1,1$ & $34,3\pm1,7$ & $51,4\pm1,7$ & $47,0\pm0,
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m4_semillas.png}
+\makebox[\linewidth][c]{\includegraphics[width=1.15\linewidth]{imagenes/m4_semillas.png}}
 \caption[Comparación M2--M4 con diez semillas y cuatro combinaciones]{mIoU uno a uno sin \emph{other}, media y desviación de diez semillas ($K=8$) en las cuatro combinaciones, con mínimo y máximo en negro.}
 \label{fig:m4-semillas}
 \end{figure}
@@ -657,7 +657,7 @@ M4, Sonata adaptado & 27,2 & 24,3 & 43,9 & 72,0 & 69,8 \\
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m4_iou_por_clase.png}
+\makebox[\linewidth][c]{\includegraphics[width=1.15\linewidth]{imagenes/m4_iou_por_clase.png}}
 \caption[IoU por clase de cada método]{IoU por clase de M2, M3, M4 base y M4 con Sonata original (orig) y adaptado (adap), con $K=8$, uno a uno, con y sin \emph{other}.}
 \label{fig:m4-iou-clase}
 \end{figure}
@@ -763,7 +763,7 @@ M2 de SemanticPOSS y Sonata adaptado & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/caso_grafico_iou_10semillas.png}
+\makebox[\linewidth][c]{\includegraphics[width=1.12\linewidth]{imagenes/caso_grafico_iou_10semillas.png}}
 \caption[IoU por clase frente al umbral de referencia de 70\,\%]{IoU por clase de M4 con ArCH y Sonata original y con SemanticPOSS y Sonata adaptado (diez semillas), frente al umbral de 70\,\%.}
 \label{fig:caso-iou}
 \end{figure}
