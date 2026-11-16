@@ -408,9 +408,8 @@ ordenan por el IoU del mejor modelo, su dificultad experimental. Como depende de
 modelo, también se mide la geometría de cada clase, con su tamaño, forma, normales y
 contacto con otras clases.
 
-\paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla dos preguntas, si el descriptor
-contiene la información de las clases y si el Módulo~4 la aprovecha. La sonda lineal
-las separa porque mide el descriptor sin fusión, con el protocolo del artículo de
-Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un $k$-NN, sobre
-$f_{\mathrm{ssl}}$ fijo en una mitad espacial de la escena y se prueba en la otra, y
-se repite al revés. Se corrió sobre Sonata original y adaptado, con una semilla.
+\paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla lo que contiene el descriptor
+con lo que el Módulo~4 aprovecha, y la sonda lineal mide solo el descriptor, con el
+protocolo de Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un
+$k$-NN, sobre $f_{\mathrm{ssl}}$ fijo en una mitad de la escena y se prueba en la
+otra, y al revés. Se corrió sobre Sonata original y adaptado.
