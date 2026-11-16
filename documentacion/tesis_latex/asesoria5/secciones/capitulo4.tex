@@ -390,17 +390,15 @@ mide la salida contra la configuración de referencia, en una muestra fija de
 conteos y la matriz $S$ resultaron idénticos punto a punto. El logro es que el
 tamaño de bloque solo limita la memoria y no altera la salida.
 
-\paragraph*{P1 a P3.} La Tabla~\ref{tab:resultados-pruebas} reúne los resultados. El
-filtrado descarta el 3{,}05\,\% de los puntos y deja la rugosidad casi igual, 11{,}2\,mm
-sin filtrar y 11{,}9\,mm con el de referencia, de modo que quita puntos aislados y no
-suaviza. El vóxel sí la cambia, a 9{,}3\,mm con 2\,cm, con una nube 2{,}8 veces mayor, y a
-20{,}0\,mm con 10\,cm. Sobre el vóxel de 5\,cm, la rejilla de 2\,cm de Sonata conserva el
-99{,}8\,\% de los puntos y una de 4\,cm el 91{,}5\,\%, así que el vóxel fija la resolución.
+\paragraph*{P1 a P3.} En la Tabla~\ref{tab:resultados-pruebas}, el filtrado
+descarta el 3{,}05\,\% de los puntos y deja la rugosidad casi igual (11{,}2\,mm sin filtrar,
+11{,}9 con filtro), así que quita puntos aislados sin suavizar. El vóxel sí la cambia,
+a 9{,}3 con 2\,cm y a 20{,}0\,mm con 10\,cm, y con 5\,cm la rejilla de Sonata conserva el
+99{,}8\,\% con 2\,cm y el 91{,}5\,\% con 4\,cm.
 
 La dispersión angular baja al subir los vecinos de las normales, de 25{,}3° con 10 a
-11{,}3° con 40, y en las aristas de 52{,}3° a 29{,}5°. La bajada refleja el suavizado,
-que con 40 vecinos borra las aristas, y no una mejora, por lo que se conserva 20, el
-valor intermedio que trae Open3D.
+11{,}3° con 40, y en las aristas de 52{,}3° a 29{,}5°. La bajada es suavizado, que con 40
+vecinos borra las aristas, y no una mejora, así que se conserva 20 (Open3D).
 
 \begin{table}[!htbp]
 \centering
