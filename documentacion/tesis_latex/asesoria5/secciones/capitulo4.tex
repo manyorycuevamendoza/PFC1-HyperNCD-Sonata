@@ -666,12 +666,12 @@ Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos y el cambio.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\setlength{\tabcolsep}{5pt}
-\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{other}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original o, en M4, con M4 base. La ejecución de M2 y de M3 es la inferencia sola. Elaboración propia a partir de los registros de medición.}
+\setlength{\tabcolsep}{4pt}
+\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla (mIoU uno a uno, sin \emph{other}, $K=8$, diez semillas). «Ajuste» es el entrenamiento o la adaptación, «Cambio» la diferencia con la variante original o con M4 base, y la ejecución de M2 y de M3 es la inferencia sola. Elaboración propia a partir de los registros de medición.}
 \label{tab:modulos-solos}
 \begin{tabular}{@{}llrrrr@{}}
 \toprule
-\textbf{Módulo} & \textbf{Salida} & \textbf{Ajuste previo} & \textbf{Ejecución} & \textbf{mIoU} & \textbf{Cambio} \\
+\textbf{Módulo} & \textbf{Salida} & \textbf{Ajuste} & \textbf{Ejecución} & \textbf{mIoU} & \textbf{Cambio} \\
 \midrule
 M1 & 1\,135\,946 puntos & --- & 9{,}3\,s & --- & --- \\
 \midrule
