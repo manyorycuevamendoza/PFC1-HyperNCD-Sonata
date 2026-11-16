@@ -384,14 +384,12 @@ reales. Esta sección describe esa escena, cómo se calcula la métrica y contra
 umbral se compara.
 
 \paragraph*{Escena etiquetada y métricas.}\etiquetahija{sec:escena-etiquetada} La escena de prueba es una capilla de
-la Catedral que entregó el asesor etiquetada a mano (Tabla~\ref{tab:capilla-clases}).
-Tiene cinco clases, arco, columna, cúpula, pared y techo, y una clase \emph{otro}
-con lo que no se etiquetó, que no se cuenta. Cada punto de $S$ toma la clase de la
-pieza más cercana, porque el Módulo~1 filtra y promedia. No se usó para entrenar ningún
-modelo ni para adaptar Sonata. Los grupos no tienen nombre, así
-que se emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro} y
+la Catedral etiquetada a mano por el asesor, con cinco clases y una clase \emph{otro}
+para lo no etiquetado (Tabla~\ref{tab:capilla-clases}). Cada punto de $S$ toma la clase
+de la pieza más cercana, porque el Módulo~1 filtra y promedia. Los grupos se emparejan
+uno a uno con las clases reales (Sección~\ref{sec:hungaro} y
 Algoritmo~\ref{alg:evaluacion}). La asignación por mayoría castiga a las clases
-pequeñas, por lo que el resultado principal es el uno a uno.
+pequeñas, por eso el resultado principal es el uno a uno.
 
 \begin{algorithm}[!htbp]
 \small
