@@ -640,22 +640,19 @@ M4 & $f_{\mathrm{sem}}$ de ArCH y $f_{\mathrm{ssl}}$ & --- & 68 a 80\,s & $52{,}
 \end{tabular}
 \end{table}
 
-Las cifras de mIoU de M2 difieren entre tablas porque miden cosas distintas. Unas
-usan las cabezas como clasificador y otras el agrupamiento con $K=8$, unas incluyen
-la clase \emph{other} y otras no, y unas son de una semilla y otras la media de diez.
-La de esta tabla es la media de diez semillas del agrupamiento y es la que se usa
-para comparar métodos.
+Las cifras de mIoU de M2 difieren entre tablas porque miden cosas distintas, las
+cabezas o el agrupamiento con $K=8$, con o sin \emph{other}, una semilla o la media de
+diez. Esta tabla usa la media de diez, la que compara métodos.
 
 Con el criterio de la Sección~\ref{sec:repeticiones}, son diferencias reales el
 cambio de M2 con ArCH ($+12{,}5$ frente a una desviación de 1{,}1) y el de M3
 adaptado ($-11{,}1$ frente a 8{,}5), y no lo es la de M4 contra M4 base ($+1{,}1$
 frente a 2{,}5).
 
-Leída por filas, la tabla dice qué aporta cada experimento. Entrenar HyperNCD con
-ArCH sube 12{,}5 puntos a M2 y cuesta 75 minutos de GPU, el mayor beneficio por costo
-del trabajo. Adaptar Sonata cuesta 103 minutos y baja 11{,}1 puntos a M3, sin cambiar
-el tiempo de extracción. Fusionar con el mejor M2 sube 4{,}1 puntos sobre M2 solo y
-7{,}1 sobre M3 solo, y apenas 1{,}1 sobre M4 base.
+Entrenar HyperNCD con ArCH sube 12{,}5 puntos a M2 por 75 minutos de GPU, el mayor
+beneficio por costo. Adaptar Sonata cuesta 103 minutos y baja 11{,}1 puntos a M3, sin
+cambiar la extracción. Fusionar con el mejor M2 sube 4{,}1 puntos sobre M2 solo y 7{,}1
+sobre M3 solo, y apenas 1{,}1 sobre M4 base.
 
 \FloatBarrier
 \subsection[Trazabilidad de la Métrica]{Trazabilidad de la Métrica\espejo{sec:trazabilidad}}
