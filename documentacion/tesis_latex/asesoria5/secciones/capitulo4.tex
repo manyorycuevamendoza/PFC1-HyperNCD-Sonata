@@ -329,13 +329,11 @@ hizo una sola corrida con lote de una escena. El tiempo y la memoria de la extra
 son casi iguales, 26{,}6\,s y 27{,}0\,s con 10{,}49\,GB, así que adaptar no cambia el
 costo de usar el modelo.
 
-La Figura~\ref{fig:captura-m3} muestra el agrupamiento de M3 sobre la capilla,
-con la clase que se le asigna a cada grupo y con los aciertos y los errores, para
-una semilla. Con Sonata original la cúpula queda bien definida, con su farol, y
-los errores se concentran en la parte baja de la nave y en los bordes de los
-arcos. Con Sonata adaptado los errores se extienden a la cúpula, parte de la cual
-se confunde con techo y con columna, y por eso baja el mIoU. Es una sola semilla,
-y la Tabla~\ref{tab:m2-m4-semillas} da la diferencia con diez.
+La Figura~\ref{fig:captura-m3} muestra el agrupamiento de M3 en la capilla para una
+semilla. Con Sonata original la cúpula queda bien definida y los errores se concentran
+en la parte baja de la nave y en los bordes de los arcos. Con el adaptado se extienden
+a la cúpula, en parte confundida con techo y columna, y por eso baja el mIoU, y la
+Tabla~\ref{tab:m2-m4-semillas} da la diferencia con diez semillas.
 
 \begin{figure}[!htbp]
 \centering
