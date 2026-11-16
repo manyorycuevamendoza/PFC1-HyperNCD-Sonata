@@ -666,25 +666,25 @@ Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos y el cambio.
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\setlength{\tabcolsep}{3pt}
-\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{otro}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original. El tiempo de M2 y el de M3 son los de la inferencia sola. Elaboración propia a partir de los registros de medición.}
+\setlength{\tabcolsep}{5pt}
+\caption[Cada módulo por separado en la capilla]{Costo y acierto de cada módulo por separado en la capilla. El mIoU es uno a uno, sin \emph{other}, $K=8$, media $\pm$ desviación de diez semillas. «Cambio» es la diferencia con la variante original o, en M4, con M4 base. La ejecución de M2 y de M3 es la inferencia sola. Elaboración propia a partir de los registros de medición.}
 \label{tab:modulos-solos}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.4cm}r>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\begin{tabular}{@{}llrrrr@{}}
 \toprule
-\textbf{Módulo} & \textbf{Qué entra y sale} & \textbf{Tiempo} & \textbf{mIoU} & \textbf{Cambio} \\
+\textbf{Módulo} & \textbf{Salida} & \textbf{Ajuste previo} & \textbf{Ejecución} & \textbf{mIoU} & \textbf{Cambio} \\
 \midrule
-M1 & 3\,380\,661 a 1\,135\,946 puntos & 9{,}3\,s & --- & --- \\
+M1 & 1\,135\,946 puntos & --- & 9{,}3\,s & --- & --- \\
 \midrule
-M2 original (SemanticPOSS) & A 927\,988 vóxeles, $f_{\mathrm{sem}}$ de 96 valores & Inferencia 1{,}8\,s & $35{,}9\pm0{,}6$ & --- \\
-M2 adaptado (ArCH) & Igual & Entrenamiento 75\,min, inferencia 1{,}7\,s & $48{,}4\pm1{,}1$ & $+12{,}5$ \\
+M2 SemanticPOSS & $f_{\mathrm{sem}}$, 96 valores & --- & 1{,}8\,s & $35{,}9\pm0{,}6$ & --- \\
+M2 ArCH & $f_{\mathrm{sem}}$, 96 valores & 75\,min & 1{,}7\,s & $48{,}4\pm1{,}1$ & $+12{,}5$ \\
 \midrule
-M3 original & A 1\,133\,238 puntos, $f_{\mathrm{ssl}}$ de 1088 valores & Inferencia 26{,}6\,s & $45{,}4\pm8{,}5$ & --- \\
-M3 adaptado & Igual & Adaptación 103\,min, extracción 27{,}0\,s & $34{,}3\pm1{,}7$ & $-11{,}1$ \\
+M3 original & $f_{\mathrm{ssl}}$, 1088 valores & --- & 26{,}6\,s & $45{,}4\pm8{,}5$ & --- \\
+M3 adaptado & $f_{\mathrm{ssl}}$, 1088 valores & 103\,min & 27{,}0\,s & $34{,}3\pm1{,}7$ & $-11{,}1$ \\
 \midrule
-M4 base, con M2 de ArCH & $f_{\mathrm{sem}}$ y $f_{\mathrm{geo}}$ & 68 a 80\,s & $51{,}4\pm1{,}7$ & --- \\
-M4, con M2 de ArCH y Sonata original & $f_{\mathrm{sem}}$ y $f_{\mathrm{ssl}}$ & 68 a 80\,s & $52{,}5\pm2{,}5$ & $+1{,}1$ \\
+M4 base & $f_{\mathrm{sem}}$ de ArCH y $f_{\mathrm{geo}}$ & --- & 68 a 80\,s & $51{,}4\pm1{,}7$ & --- \\
+M4 & $f_{\mathrm{sem}}$ de ArCH y $f_{\mathrm{ssl}}$ & --- & 68 a 80\,s & $52{,}5\pm2{,}5$ & $+1{,}1$ \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 Las cifras de mIoU de M2 difieren entre tablas porque miden cosas distintas. Unas
