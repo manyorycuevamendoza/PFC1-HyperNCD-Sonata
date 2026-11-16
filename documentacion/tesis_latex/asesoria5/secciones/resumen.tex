@@ -1,36 +1,31 @@
 \customchapter{RESUMEN}
 
-Esta investigación se enfoca en el reconocimiento de elementos arquitectónicos sin
+Esta investigación aborda el reconocimiento de elementos arquitectónicos sin
 etiqueta en nubes de puntos del patrimonio construido, tomando como caso la
-Catedral de Lima. Los levantamientos con escáner láser terrestre registran con
-detalle dónde hay materia, pero no qué elemento representa cada punto, y esa
-interpretación sigue siendo manual. Los métodos de segmentación semántica
-tridimensional solo reconocen las categorías con las que fueron entrenados.
+Catedral de Lima. El escáner láser terrestre registra dónde hay materia, pero no
+qué elemento representa cada punto, cuya interpretación sigue siendo manual,
+mientras los métodos supervisados solo reconocen las clases con las que se
+entrenaron.
 
-Proponemos un modelo híbrido que parte de HyperNCD, un método de descubrimiento
-de clases novedosas, y sustituye su descriptor geométrico, calculado con una
-fórmula fija, por la representación auto-supervisada de Sonata. Cada rama se
-prepara en dos variantes, una original y otra adaptada a la Catedral, y se
-combinan sin entrenamiento conjunto. La nube se prepara con filtrado de puntos
-atípicos (SOR), voxelización y estimación de normales. Cada punto se describe con un
-vector semántico, que aprende HyperNCD, y con uno auto-supervisado, y ambos se
-combinan para agrupar los puntos. Se evalúa con mIoU y NMI sobre una capilla
-anotada, con diez semillas de agrupamiento.
+Proponemos un modelo híbrido basado en HyperNCD que sustituye su descriptor
+geométrico fijo por la representación auto-supervisada de Sonata. Cada rama se
+evalúa en su variante original y en otra adaptada a la Catedral, sin
+entrenamiento conjunto. La nube pasa por filtrado SOR, voxelización y normales,
+y cada punto recibe el vector semántico de HyperNCD y el auto-supervisado de
+Sonata para agrupar la escena, evaluando mIoU y NMI en una capilla anotada con
+diez semillas.
 
-Los resultados muestran que HyperNCD entrenado con escenas urbanas no se
-transfiere a la catedral, casi todos los puntos (98,4\,\%) caen en una sola
-salida del modelo. Entrenarlo con ArCH, un conjunto de patrimonio
-arquitectónico~\cite{matrone2020benchmark}, reduce esa concentración a 44,6\,\%
-y sube el mIoU de M2 de 35,9\,\% a 48,4\,\%. Con Sonata original, al combinar los
-dos descriptores el mIoU medio es 52,5\,\% frente a 51,4\,\% sin Sonata, una
-diferencia que no es concluyente. Adaptar Sonata a la catedral baja el mIoU de
-Sonata de 45,4\,\% a 34,3\,\%. En cambio, una sonda lineal con etiquetas sobre sus
-descriptores alcanza 79,7\,\% con el original y 80,5\,\% con el adaptado, lo que
-indica que el límite está en el agrupamiento y no en el descriptor. Las evidencias provienen de una sola escena y de un
-solo entrenamiento de cada modelo adaptado, por lo que se requieren más escenas y
-repeticiones para confirmar la mejora.
+Los resultados muestran que HyperNCD entrenado en escenas urbanas colapsa en la
+Catedral (98,4\,\% de los puntos en una sola cabeza). Entrenarlo con
+ArCH~\cite{matrone2020benchmark} baja esa concentración a 44,6\,\% y sube el
+mIoU de M2 de 35,9\,\% a 48,4\,\%. Al unirlo con Sonata original, el mIoU medio
+llega a 52,5\,\% frente a 51,4\,\% sin Sonata, diferencia no concluyente, y
+adaptar Sonata baja el mIoU de M3 de 45,4\,\% a 34,3\,\%. En cambio, la sonda
+lineal sobre los descriptores alcanza 79,7\,\% y 80,5\,\%, indicando que el
+límite está en el agrupamiento y no en el descriptor. Con una sola escena y un
+entrenamiento por rama, se requieren más escenas y repeticiones.
 
-\vspace{0.5em}
+\vspace{0.2em}
 
 \noindent\begin{minipage}{\linewidth}
 \noindent\textbf{Palabras clave}\par
