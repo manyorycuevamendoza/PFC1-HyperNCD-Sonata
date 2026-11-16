@@ -37,49 +37,6 @@ M4, capilla & CPU local & 68 a 80\,s & 4\,GB (RAM) \\
 
 % =====================================================================
 \FloatBarrier
-\section[Diseño General del Sistema]{Diseño General del Sistema\espejo{sec:diseno}}
-\label{sec:res-diseno}
-
-\FloatBarrier
-\subsection[Estructura y Contrato de los Módulos]{Estructura y Contrato de los Módulos\espejo{sec:contrato}}
-\label{sec:res-contrato}
-
-La Tabla~\ref{tab:res-contrato} resume la salida que exige el contrato de la
-Sección~\ref{sec:contrato} y lo que se ejecutó en cada módulo. A diferencia del
-artículo original de HyperNCD, donde los prototipos se actualizan durante el
-entrenamiento, aquí los módulos se ejecutaron desacoplados a través de archivos:
-M2 y M3 extrajeron sus descriptores una sola vez por escena y M4 operó después
-en CPU sobre esos descriptores guardados.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Contrato de diseño frente a ejecución]{Contrato de cada módulo frente a lo ejecutado. Elaboración propia.}
-\label{tab:res-contrato}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Módulo} & \textbf{Salida del contrato} & \textbf{Ejecutado} \\
-\midrule
-M1 & Matriz $S$ de 9 columnas (Tabla~\ref{tab:m1-metadatos}) & 23 archivos, PL13, PL7 y la capilla verificados \\
-M2 & $f_{\mathrm{sem}}$ de 96 dimensiones, logits e índice inverso & Entrenado con SemanticPOSS y con ArCH, extraído una vez por escena con el checkpoint ya entrenado \\
-M3 & $f_{\mathrm{ssl}}$ de 1088 valores con índice inverso (Tabla~\ref{tab:npz}) & Sonata, original y adaptado, una vez por escena \\
-M4 & Etiqueta $\hat{y}_i$ por punto & Fusión posterior en CPU, con regiones de 0{,}75\,m, afinidad, hiperaristas y prototipos con Sinkhorn--Knopp, sin gradientes \\
-M5 & Métricas y visor & mIoU uno a uno, NMI, ARI, IoU por clase y visor 3D \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\FloatBarrier
-\subsection[Visor 3D del Proyecto]{Visor 3D del Proyecto\espejo{sec:visor}}
-\label{sec:res-visor}
-
-Al dibujar los descriptores de la capilla (Figura~\ref{fig:escena-etapas}), el
-visor verificó que el archivo \texttt{.npz} corresponde a la matriz $S$ de la que
-salió. Con la capilla etiquetada, el mismo visor produjo los mapas de clases y de
-cabezas de M2 usados en este capítulo.
-
-% =====================================================================
-\FloatBarrier
 \section[Unidad 1. Preprocesamiento]{Unidad 1. Preprocesamiento\espejo{sec:unidad1}}
 \label{sec:res-unidad1}
 
