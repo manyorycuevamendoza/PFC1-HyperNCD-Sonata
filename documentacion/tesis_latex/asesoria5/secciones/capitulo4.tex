@@ -340,11 +340,10 @@ semillas, así que la figura muestra qué clase se gana o se pierde y no un rank
 
 \subsubsection*{Barrido de fusiones\espejo{sec:barrido-fusion}}
 
-El barrido probó 39 configuraciones por combinación, con cinco semillas, para ver
-si alguna fusión determinista supera al pegado normalizado (M4 base de la
-Sección~\ref{sec:fusion}). La Tabla~\ref{tab:barrido} muestra las dos
-configuraciones que mejoran en las cuatro combinaciones y la estimación honesta,
-con la configuración elegida en una mitad de la escena y medida en la otra.
+El barrido probó 39 configuraciones por combinación, con cinco semillas, para ver si
+alguna fusión determinista supera al pegado normalizado (M4 base). La
+Tabla~\ref{tab:barrido} muestra las dos que mejoran en las cuatro combinaciones y la
+estimación con la configuración elegida en una mitad de la escena y medida en la otra.
 
 \begin{table}[!htbp]
 \centering
@@ -371,17 +370,12 @@ ArCH + Sonata adaptado & 46,9 & $+1,4$ & $+1,3$ & $+1,1$ \\
 \end{figure}
 
 Con el M2 de ArCH ninguna fusión mejora de forma significativa, pues las ganancias de
-$+1{,}3$ a $+1{,}8$ puntos son menores que la desviación entre semillas, de 0,8 a
-2,2, y la estimación honesta es de $-0{,}2$ y $+1{,}1$. Con el M2 colapsado las
-fusiones sí «rescatan» a M4. El producto, el mínimo, la confianza y el blanqueo
-llevan de $\sim$42 a $\sim$50 puntos. El blanqueo quita la dirección dominante de
-un $f_{\mathrm{sem}}$ colapsado, con uno sano no aporta y a veces perjudica, hasta
-$-16$ puntos en el peor caso de una familia. Elegir la mejor configuración con las
-mismas etiquetas infla el resultado. La de 57,3 de la primera corrida no se repitió
-con cinco semillas ni en otras combinaciones. La base de la tabla es la media de
-cinco semillas (51,7), no la de diez de la Tabla~\ref{tab:m2-m4-semillas} (52,5).
-La fusión basada en los descriptores, por tanto, no mejora lo que ya da el pegado
-normalizado cuando el M2 funciona.
+$+1{,}3$ a $+1{,}8$ puntos son menores que la desviación entre semillas, de 0,8 a 2,2, y
+la estimación es de $-0{,}2$ y $+1{,}1$. Con el M2 colapsado las fusiones sí rescatan a
+M4, de unos 42 a unos 50 puntos con el producto, el mínimo, la confianza o el blanqueo,
+que quita la dirección dominante de un $f_{\mathrm{sem}}$ colapsado y con uno sano no
+aporta. La fusión basada en los descriptores no mejora, por tanto, lo que ya da el
+pegado normalizado cuando el M2 funciona.
 
 En el Módulo~4 hay tres hallazgos. El primero es que la ventaja
 de $f_{\mathrm{ssl}}$ sobre los rasgos geométricos hechos a mano, que con el M2
