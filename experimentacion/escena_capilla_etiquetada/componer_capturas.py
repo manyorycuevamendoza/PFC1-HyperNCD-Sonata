@@ -39,21 +39,22 @@ def recorte_comun(nombres, margen=12):
     return max(y0 - margen, 0), y1 + margen, max(x0 - margen, 0), x1 + margen
 
 
-def figura(paneles, filas, columnas, salida, leyenda, ancho=11.0, alto_panel=4.3):
+def figura(paneles, filas, columnas, salida, leyenda, ancho=11.0, alto_panel=4.3, fuente=10, fuente_leyenda=9,
+           dpi=130, ncol_leyenda=None, alto_leyenda=0.6, top=0.94, bottom=0.07, hspace=0.12):
     nombres = [p[0] for p in paneles]
     y0, y1, x0, x1 = recorte_comun(nombres)
-    fig, ejes = plt.subplots(filas, columnas, figsize=(ancho, alto_panel * filas + 0.6), squeeze=False)
+    fig, ejes = plt.subplots(filas, columnas, figsize=(ancho, alto_panel * filas + alto_leyenda), squeeze=False)
     for ax in ejes.ravel():
         ax.axis("off")
     for k, (nombre, titulo) in enumerate(paneles):
         ax = ejes[k // columnas, k % columnas]
         ax.imshow(cargar(nombre)[y0:y1, x0:x1])
-        ax.set_title(titulo, fontsize=10)
+        ax.set_title(titulo, fontsize=fuente)
     h = [plt.Line2D([0], [0], marker="o", ls="", color=c, label=n) for n, c in leyenda]
     if h:
-        fig.legend(handles=h, loc="lower center", ncol=len(h), frameon=False, fontsize=9)
-    fig.subplots_adjust(left=0.01, right=0.99, top=0.94, bottom=0.07 if h else 0.01, wspace=0.02, hspace=0.12)
-    fig.savefig(os.path.join(a.salida, salida), dpi=130)
+        fig.legend(handles=h, loc="lower center", ncol=ncol_leyenda or len(h), frameon=False, fontsize=fuente_leyenda)
+    fig.subplots_adjust(left=0.01, right=0.99, top=top, bottom=bottom if h else 0.01, wspace=0.02, hspace=hspace)
+    fig.savefig(os.path.join(a.salida, salida), dpi=dpi)
     plt.close(fig)
 
 
@@ -67,9 +68,12 @@ figura([("m2_cabeza_SemanticPOSS.png", "(a) Cabeza predicha, HyperNCD original (
        2, 2, "captura_m2.png",
        [("novedoso", "#e07b39"), ("conocido", "#2b7bba")])
 
-figura([("m3_pred_original.png", "(a) Clase predicha, Sonata original"),
-        ("m3_pred_adaptado.png", "(b) Clase predicha, Sonata adaptado"),
-        ("m3_acierto_original.png", "(c) Aciertos, Sonata original"),
-        ("m3_acierto_adaptado.png", "(d) Aciertos, Sonata adaptado")],
+# M3: imagen mas chica en la pagina y letras mas grandes (se imprime a ~0.85 del ancho del texto, sin reducir la letra)
+figura([("m3_pred_original.png", "(a) Clase predicha,\nSonata original"),
+        ("m3_pred_adaptado.png", "(b) Clase predicha,\nSonata adaptado"),
+        ("m3_acierto_original.png", "(c) Aciertos,\nSonata original"),
+        ("m3_acierto_adaptado.png", "(d) Aciertos,\nSonata adaptado")],
        2, 2, "captura_m3.png",
-       CLASES + [("sin clase", "#e6e6e6"), ("acierto", "#2ca02c"), ("error", "#d62728")])
+       CLASES + [("sin clase", "#e6e6e6"), ("acierto", "#2ca02c"), ("error", "#d62728")],
+       ancho=5.2, alto_panel=2.6, fuente=9, fuente_leyenda=8.5, dpi=220, ncol_leyenda=4, alto_leyenda=0.55,
+       top=0.92, bottom=0.10, hspace=0.28)
