@@ -402,14 +402,18 @@ $\mathrm{IoU}_c \leftarrow TP/(TP+FP+FN)$ con el grupo $\sigma^{*}(c)$ \quad $\m
 $(\mathrm{NMI}, \mathrm{ARI}) \leftarrow \textsc{Métricas}(\hat y, y)$\;
 \end{algorithm}
 
-\paragraph*{Umbral y dificultad por clase.}\etiquetahija{sec:umbral-dificultad} El IoU de cada clase se compara con un
-umbral de 70\,\%, una meta propia. Las clases se
-ordenan por el IoU del mejor modelo, su dificultad experimental. Como depende del
-modelo, también se mide la geometría de cada clase, con su tamaño, forma, normales y
-contacto con otras clases.
-
 \paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla lo que contiene el descriptor
 con lo que el Módulo~4 aprovecha, y la sonda lineal mide solo el descriptor, con el
 protocolo de Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un
 $k$-NN, sobre $f_{\mathrm{ssl}}$ fijo en una mitad de la escena y se prueba en la
 otra, y al revés. Se corrió sobre Sonata original y adaptado.
+
+\subsection{Umbral y Dificultad por Clase}
+\label{sec:umbral-dificultad}
+
+El IoU de cada clase se compara con un umbral de referencia de 70\,\%, cuya
+justificación y puntos de mejora se explican en la
+Sección~\ref{sec:res-umbral}. Las clases se ordenan de mayor a menor según el
+IoU de la mejor configuración, que define su dificultad experimental, y se
+contrastan además con su geometría, tamaño, linealidad y contacto con otras
+clases.

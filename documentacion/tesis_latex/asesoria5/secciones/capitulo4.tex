@@ -66,7 +66,7 @@ M4, capilla & CPU local & 68 a 80\,s & 4\,GB (RAM) \\
 La Tabla~\ref{tab:res-contrato} resume la salida que exige el contrato de la
 Sección~\ref{sec:contrato} y lo que se ejecutó en cada módulo. A diferencia del
 artículo original de HyperNCD, donde los prototipos se actualizan durante el
-entrenamiento, aquí los módulos se ejecutaron desacoplados a través de archivos:
+entrenamiento, aquí los módulos se ejecutaron desacoplados a través de archivos,
 M2 y M3 extrajeron sus descriptores una sola vez por escena y M4 operó después
 en CPU sobre esos descriptores guardados.
 
@@ -1065,20 +1065,34 @@ Adaptado & 80{,}8 & 80{,}5 & 82{,}0 & 70{,}8 & 63{,}2 & 88{,}6 & 90{,}9 & 89{,}0
 \end{tabularx}
 \end{table}
 
-\subsubsection*{Escena etiquetada y métricas\espejo{sec:escena-etiquetada}}
+\FloatBarrier
+\subsection[Umbral y Dificultad por Clase]{Umbral y Dificultad por Clase\espejo{sec:umbral-dificultad}}
+\label{sec:res-umbral}
 
-La capilla etiquetada quedó con 1\,135\,946 puntos tras el Módulo~1. En la evaluación sin
-\emph{other} las clases tienen 173\,886 puntos de pared, 110\,152 de cúpula, 75\,056 de techo,
-47\,789 de arco y 33\,278 de columna, arco y columna son las más pequeñas. Las métricas de
-esta escena son las de las Tablas~\ref{tab:m2-m4-semillas} y~\ref{tab:iou-clase}.
+Se eligió un umbral de 70\,\% de IoU por clase por dos razones. Primero, en las
+clases base de nuestro propio experimento ya hay un par de clases que superan o
+rozan ese límite, en la validación sobre ArCH tres clases pasan del 70\,\%
+(techo con 88{,}7\,\%, muro con 79{,}8\,\% y bóveda con 72{,}1\,\%,
+Tabla~\ref{tab:m2-arch-clases}), y en la capilla clasificada
+(Tabla~\ref{tab:capilla-clases}) la pared ya llega a
+$71{,}9\pm3{,}6$\,\% (74{,}2\,\% en una semilla) y el techo a
+$68{,}0\pm3{,}5$\,\%. Segundo, el artículo base de Sonata \cite{wu2025sonata} y
+Point Transformer~V3 \cite{wu2024ptv3} también superan este umbral, con 72{,}6\,\%
+a 77{,}6\,\% de mIoU, solo que trabajan sobre otro campo conceptual y otro
+espacio vectorial de conjuntos de datos distintos, como interiores domésticos o
+escenas urbanas entrenados con múltiples GPU y lotes grandes, mientras que aquí
+se trabaja sobre patrimonio virreinal sin etiquetas y con las limitaciones de
+cómputo de Khipu y Colab, con una sola GPU, lote reducido y sin FlashAttention.
 
-\subsubsection*{Umbral y dificultad por clase\espejo{sec:umbral-dificultad}}
-
-El umbral de 70\,\% se aplica al IoU de cada clase. La Tabla~\ref{tab:umbral}
-muestra el IoU por clase del mejor modelo (M2 de ArCH con Sonata original) y del
-peor (M2 de SemanticPOSS con Sonata adaptado), medio de diez semillas. Las clases
-van ordenadas por el IoU del mejor modelo, que es su dificultad experimental, el
-peor modelo conserva el mismo orden.
+Como desde ya se tiene una base propia con qué comparar y la sonda lineal
+confirma que el espacio vectorial de Sonata sí separa las cinco piezas (63{,}2\,\%
+a 91{,}2\,\%, Tabla~\ref{tab:sonda}), se cree que se puede igualar ese 70\,\% de
+manera razonable calibrando y mejorando las zonas más débiles. Actualmente hay
+clases con puntajes muy bajos y el reto es poder subirlas hasta ese umbral. La
+Tabla~\ref{tab:umbral} y la Figura~\ref{fig:caso-iou} comparan frente al 70\,\% a
+\textbf{M4 con M2 de ArCH y Sonata original} y a \textbf{M4 con M2 de
+SemanticPOSS y Sonata adaptado} en diez semillas, ordenando las clases por la
+primera configuración.
 
 \begin{table}[!htbp]
 \centering
@@ -1087,10 +1101,10 @@ peor modelo conserva el mismo orden.
 \label{tab:umbral}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrrrrr@{}}
 \toprule
-\textbf{Modelo} & \textbf{Pared} & \textbf{Techo} & \textbf{Cúpula} & \textbf{Arco} & \textbf{Columna} \\
+\textbf{Configuración de M4} & \textbf{Pared} & \textbf{Techo} & \textbf{Cúpula} & \textbf{Arco} & \textbf{Columna} \\
 \midrule
-Mejor & $71,9\pm3,6$ & $68,0\pm3,5$ & $51,7\pm8,2$ & $42,5\pm0,9$ & $28,4\pm1,3$ \\
-Peor & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2$ & $19,0\pm1,6$ & $13,3\pm1,2$ \\
+M2 de ArCH y Sonata original & $71,9\pm3,6$ & $68,0\pm3,5$ & $51,7\pm8,2$ & $42,5\pm0,9$ & $28,4\pm1,3$ \\
+M2 de SemanticPOSS y Sonata adaptado & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2$ & $19,0\pm1,6$ & $13,3\pm1,2$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1098,15 +1112,24 @@ Peor & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2$ & $19,0\pm1,6$ & $13,3\pm1,2$ 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/caso_grafico_iou_10semillas.png}
-\caption[IoU por clase frente al umbral de 70\,\%]{IoU por clase del mejor y el peor modelo,
-media de diez semillas con su desviación, frente al umbral de 70\,\%. Elaboración propia.}
+\caption[IoU por clase frente al umbral de referencia de 70\,\%]{IoU por clase de M4 con M2 de ArCH y Sonata original y con M2 de SemanticPOSS y Sonata adaptado (media $\pm$ desviación de diez semillas), frente al umbral de referencia de 70\,\%. Elaboración propia.}
 \label{fig:caso-iou}
 \end{figure}
 
-Solo la pared del mejor modelo cumple el umbral (71,9), el techo queda en 68,0 y el
-peor modelo no cumple en ninguna clase. La brecha media al umbral es de 17,9 puntos
-en el mejor y de 36,3 en el peor. Las desviaciones muestran que la cúpula es la clase
-más inestable ($\pm8{,}2$).
+Con M2 de ArCH y Sonata original solo la pared supera hoy el 70\,\% con
+$71{,}9\pm3{,}6$\,\% y el techo queda muy cerca con $68{,}0\pm3{,}5$\,\%,
+mientras que con M2 de SemanticPOSS y Sonata adaptado ninguna clase lo alcanza
+(con $61{,}0\pm2{,}0$\,\% en pared y $44{,}5\pm7{,}7$\,\% en techo), dejando una
+brecha media al umbral de 17{,}9 puntos en el primero y de 36{,}3 puntos en el
+segundo. El reto principal está en subir las tres clases que hoy tienen puntajes
+muy bajos, que son la cúpula con $51{,}7\pm8{,}2$\,\% (frente a
+$30{,}6\pm4{,}2$\,\% en la segunda configuración y con la mayor variación entre
+semillas), el arco con $42{,}5\pm0{,}9$\,\% (frente a $19{,}0\pm1{,}6$\,\%) y la
+columna, que es la más baja de todas, con $28{,}4\pm1{,}3$\,\% (frente a
+$13{,}3\pm1{,}2$\,\%). Los puntos de mejora para subir esas tres clases son
+calibrar el tamaño y la forma de las regiones, que hoy son cubos fijos de
+0{,}75\,m que mezclan bordes curvos y piezas esbeltas, y entrenar la adaptación
+de Sonata con un lote mayor cuando se cuente con más memoria de GPU.
 
 Para saber si el orden de las clases refleja su forma y no solo el modelo, se midió
 la geometría de cada una sin usar ningún modelo, sobre la capilla etiquetada y sobre
@@ -1146,9 +1169,7 @@ IoU del mejor modelo (media de diez semillas). Cada punto es una clase. Elaborac
 \end{figure}
 
 Con cinco clases las correlaciones son solo orientativas, y los archivos por pieza
-son puntos crudos, sin el voxel de 5\,cm del Módulo~1. El umbral de 70\,\% es una
-meta propia del proyecto, pues ninguno de los siete artículos consultados fija un IoU
-mínimo aceptable.
+son puntos crudos, sin el vóxel de 5\,cm del Módulo~1.
 
 \FloatBarrier
 \subsection[Verificación Empírica del Entorno de Cómputo]{Verificación Empírica del Entorno de Cómputo}
