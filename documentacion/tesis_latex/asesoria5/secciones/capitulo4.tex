@@ -561,12 +561,11 @@ el mIoU de la Tabla~\ref{tab:m2-dominio}.
 \subsection[Protocolo de Repetición]{Protocolo de Repetición\espejo{sec:repeticiones}}
 \label{sec:res-u3-rep}
 
-La comparación final se repitió con diez semillas de inicialización del
-agrupamiento, con $K=8$, asignación uno a uno y sin \emph{other}, sin reentrenar
-ninguna red. El logro es una comparación con su dispersión medida en las cuatro
-combinaciones de M2 (SemanticPOSS o ArCH) y de Sonata (original o adaptado), que reúne
-la Tabla~\ref{tab:m2-m4-semillas} y dibuja la Figura~\ref{fig:m4-semillas} con su
-mínimo y máximo.
+La comparación final se repitió con diez semillas del agrupamiento, con $K=8$,
+asignación uno a uno y sin \emph{other}, sin reentrenar ninguna red. El logro es una
+comparación con su dispersión medida en las cuatro combinaciones de M2 (SemanticPOSS o
+ArCH) y de Sonata (original o adaptado), que reúne la Tabla~\ref{tab:m2-m4-semillas} y
+dibuja la Figura~\ref{fig:m4-semillas}.
 
 \begin{table}[!htbp]
 \centering
@@ -592,11 +591,10 @@ ArCH + Sonata adaptado & $48,4\pm1,1$ & $34,3\pm1,7$ & $51,4\pm1,7$ & $47,0\pm0,
 \label{fig:m4-semillas}
 \end{figure}
 
-La ganancia mayor proviene de adaptar el dominio de M2. Con ArCH, M2 sube 12{,}5
-puntos (de 35,9 a 48,4), M4 base sube 18{,}9 y M4 sube 9{,}1. El aporte de Sonata
-depende del estado de M2. Con M2 colapsado, la fusión M4 supera a su base en 10{,}9
-puntos (43,4 frente a 32,5), pero con M2 de ArCH la diferencia es de 1{,}1 punto (52,5
-frente a 51,4), menor que las desviaciones de 1,7 y 2,5.
+La ganancia mayor viene de adaptar el dominio de M2. Con ArCH, M2 sube 12{,}5 puntos, M4
+base 18{,}9 y M4 9{,}1. El aporte de Sonata depende del estado de M2. Con M2 colapsado,
+M4 supera a su base en 10{,}9 puntos (43,4 frente a 32,5), y con M2 de ArCH en 1{,}1
+(52,5 frente a 51,4), menos que las desviaciones de 1,7 y 2,5.
 
 El Sonata adaptado a la Catedral empeora. M3 baja de 45,4 a 34,3 y, con ArCH, M4
 queda en 47,0, por debajo de su base. M3 con Sonata original es inestable ($\pm8{,}5$).
