@@ -182,8 +182,8 @@ con ArCH se hizo una sola vez.
 Sonata se aplicó a la capilla en Colab con los pesos originales y con los adaptados
 (Sección~\ref{sec:rama-ssl}). La rejilla retiene casi todos los puntos
 (Tabla~\ref{tab:salidas-p2}), porque el vóxel de 5\,cm de la Unidad~1 ya dejó la nube
-más gruesa que la rejilla, y el tiempo, el rendimiento y la memoria están en la misma
-tabla. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
+más gruesa que la rejilla, y en esa tabla están también el tiempo, la memoria y el
+tamaño del archivo de descriptores, cuyos campos muestra la Tabla~\ref{tab:npz}. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
 la capilla: en el tercer panel de la Figura~\ref{fig:escena-etapas} la cúpula se ve
 verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 
@@ -194,13 +194,10 @@ verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 \label{fig:escena-etapas}
 \end{figure}
 
-El archivo \texttt{.npz} tiene seis campos, incluida la semilla del muestreo, que valió
-0 (Tabla~\ref{tab:npz}), y su tamaño está en la Tabla~\ref{tab:salidas-p2}.
-
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
-\caption[Archivo de descriptores de la capilla]{Archivo de descriptores de la capilla. Los campos se describen en el Paso~5 de la Sección~\ref{sec:rama-ssl}. Elaboración propia.}
+\caption[Archivo de descriptores de la capilla]{Campos del archivo de descriptores de la capilla (Paso~5, Sección~\ref{sec:rama-ssl}). Elaboración propia.}
 \label{tab:npz}
 \begin{tabular}{@{}ll@{}}
 \toprule
