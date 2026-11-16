@@ -92,7 +92,7 @@
 % Tamanos de letra del diagrama iguales a los del PDF suelto (base 10 pt)
 \newcommand{\fuentediagrama}{\setstretch{1}\def\scriptsize{\fontsize{7.8}{9.4}\selectfont}\def\tiny{\fontsize{6}{7.2}\selectfont}}
 % Enlace de cada titulo del capitulo 4 a su seccion homologa del capitulo 3.
-\newcommand{\espejo}[1]{\texorpdfstring{\hspace{0.7em}{\normalfont\small\mdseries\hyperref[#1]{[Método~\S\ref*{#1}]}}}{}}
+\newcommand{\espejo}[1]{\texorpdfstring{\hfill\hspace{1em}{\normalfont\footnotesize\mdseries\itshape\color{black!55}\begingroup\hypersetup{linkcolor=black!55}\hyperref[#1]{Método~\ref*{#1}}\endgroup}}{}}
 % Etiqueta de un titulo sin numero (subsubsection* o paragraph*): su referencia muestra el numero de la subseccion que lo contiene.
 \makeatletter
 \newcommand{\etiquetahija}[1]{\phantomsection\protected@edef\@currentlabel{\thesubsection}\label{#1}}

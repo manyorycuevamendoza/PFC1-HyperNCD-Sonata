@@ -443,7 +443,8 @@ Para una clase $c$, la intersección sobre unión se define como
 \label{eq:iou}
 \end{equation}
 Mide cuánto coinciden los puntos predichos de una clase con los reales, vale 1
-si coinciden todos y 0 si no coincide ninguno.
+si coinciden todos y 0 si no coincide ninguno o si la clase no tiene puntos reales
+ni asignados.
 
 
 \paragraph*{IoU Media (mIoU)}\phantomsection
@@ -482,7 +483,8 @@ coinciden y cerca de 0 si la coincidencia es aleatoria.
 \label{sec:nmi}
 
 Complementa al ARI midiendo la información que una agrupación aporta sobre la
-otra. Vale 1 cuando conocer una determina la otra y 0 cuando son independientes.
+otra. Vale 1 cuando conocer una determina la otra y 0 cuando son independientes, con
+normalización aritmética.
 
 
 \subsection{Linear Probing}
