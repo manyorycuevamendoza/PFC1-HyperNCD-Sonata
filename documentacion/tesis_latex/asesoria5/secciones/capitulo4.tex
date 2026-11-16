@@ -179,20 +179,13 @@ con ArCH se hizo una sola vez.
 \subsection[Rama Auto-supervisada, Sonata Original y Adaptado]{Rama Auto-supervisada, Sonata Original y Adaptado\espejo{sec:rama-ssl}}
 \label{sec:res-rama-ssl}
 
-Se ejecutó sobre la capilla en Colab, una vez con los pesos originales y otra con los
-adaptados, con el mismo programa y los mismos parámetros, a partir de la matriz $S$
-de la capilla (Sección~\ref{sec:res-u1-datos}). Se leyeron 1\,135\,946 filas en
-0{,}1\,s y el modelo cargado tiene 108{,}46 millones de parámetros. La rejilla de
-Sonata retiene casi todos los puntos (Tabla~\ref{tab:salidas-p2}), porque el vóxel de
-5\,cm de la Unidad~1 ya dejó la nube más gruesa que la rejilla y casi toda celda
-contiene un solo punto. El tiempo, el rendimiento y la memoria de la inferencia están
-en la misma tabla.
-
-La Figura~\ref{fig:escena-etapas} muestra la capilla cruda, tras la Unidad~1 y con los
-descriptores (primera vista de la Sección~\ref{sec:revision-descriptores}). En el
-tercer panel la cúpula se ve verde, el arco y las paredes morado y azul, y el techo
-amarillo y rosa, de modo que Sonata separa las piezas de la capilla sin haber visto
-una sola etiqueta.
+Sonata se aplicó a la capilla en Colab con los pesos originales y con los adaptados
+(Sección~\ref{sec:rama-ssl}). La rejilla retiene casi todos los puntos
+(Tabla~\ref{tab:salidas-p2}), porque el vóxel de 5\,cm de la Unidad~1 ya dejó la nube
+más gruesa que la rejilla, y el tiempo, el rendimiento y la memoria están en la misma
+tabla. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
+la capilla: en el tercer panel de la Figura~\ref{fig:escena-etapas} la cúpula se ve
+verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 
 \begin{figure}[!htbp]
 \centering
