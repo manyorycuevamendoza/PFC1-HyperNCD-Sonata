@@ -154,7 +154,10 @@ La Figura~\ref{fig:captura-m2} lo muestra sobre la escena. Con SemanticPOSS la c
 las paredes y los arcos caen en la misma cabeza y casi todo se marca como novedoso.
 Con ArCH las cabezas se reparten por piezas (cúpula, paredes laterales y techo), el
 87\,\% de los puntos se marca como conocido y solo los arcos quedan como novedosos,
-lo esperado porque el arco fue una clase novedosa del entrenamiento con ArCH.
+lo esperado porque el arco fue una clase novedosa del entrenamiento. El rango efectivo
+bajo de la Tabla~\ref{tab:m2-novedoso} no indica colapso, pues en SemanticPOSS también
+es bajo (4 a 5) donde funciona, y el colapso se ve en el reparto de cabezas y en el
+NMI (Sección~\ref{sec:res-u3-proc}).
 
 \begin{figure}[!htbp]
 \centering
@@ -162,10 +165,6 @@ lo esperado porque el arco fue una clase novedosa del entrenamiento con ArCH.
 \caption[Predicción de M2 sobre la capilla]{Predicción de M2 en la capilla con SemanticPOSS y ArCH. Arriba, la cabeza de cada punto, abajo, si es novedoso o conocido, sin la clase \emph{otro}.}
 \label{fig:captura-m2}
 \end{figure}
-
-El rango efectivo bajo de la Tabla~\ref{tab:m2-novedoso} no indica colapso, porque en
-SemanticPOSS también es bajo (entre 4 y 5) donde el modelo funciona. Lo que delata el
-colapso es el reparto de cabezas y el NMI (Sección~\ref{sec:res-u3-proc}).
 
 \paragraph*{Qué dice el Módulo~2.} HyperNCD no está roto. En su propio dominio, la
 validación de SemanticPOSS da un mIoU de 0{,}375, casi el 0{,}384 que guarda el
@@ -180,45 +179,20 @@ patrón del LiDAR, y el entrenamiento con ArCH se hizo una sola vez.
 \subsection[Rama Auto-supervisada, Sonata Original y Adaptado]{Rama Auto-supervisada, Sonata Original y Adaptado\espejo{sec:rama-ssl}}
 \label{sec:res-rama-ssl}
 
-Se ejecutó sobre la capilla etiquetada en Colab, una vez con los pesos originales
-y otra con los adaptados, con el mismo programa y los mismos parámetros. La
-entrada fue la matriz $S$ de la capilla (Sección~\ref{sec:res-u1-datos}). Antes se
-había probado el programa sobre PL13 en Khipu, donde el archivo se llama
-\texttt{PL13'\_SCN0001.las}, con apóstrofo, y el guion de lanzamiento lo quita al
-nombrar la salida.
+Se ejecutó sobre la capilla en Colab, una vez con los pesos originales y otra con los
+adaptados, con el mismo programa y los mismos parámetros, a partir de la matriz $S$
+de la capilla (Sección~\ref{sec:res-u1-datos}). Se leyeron 1\,135\,946 filas en
+0{,}1\,s y el modelo cargado tiene 108{,}46 millones de parámetros. La rejilla de
+Sonata retiene casi todos los puntos (Tabla~\ref{tab:salidas-p2}), porque el vóxel de
+5\,cm de la Unidad~1 ya dejó la nube más gruesa que la rejilla y casi toda celda
+contiene un solo punto. El tiempo, el rendimiento y la memoria de la inferencia están
+en la misma tabla.
 
-\FloatBarrier
-\subsubsection*{Paso 1. Carga de la matriz}
-
-Se leen 1\,135\,946 filas en 0{,}1 segundos, es la salida del Paso~6 de la
-Unidad~1 (Figura~\ref{fig:escena-etapas}).
-
-\FloatBarrier
-\subsubsection*{Paso 2. Carga del modelo}
-
-El modelo cargado tiene 108{,}46 millones de parámetros, cifra que imprime la
-función de carga de Sonata.
-
-\FloatBarrier
-\subsubsection*{Paso 3. Preparación}
-
-La rejilla retiene casi todos los puntos (Tabla~\ref{tab:salidas-p2}). La
-diferencia no se distingue a simple vista, por eso este paso no lleva imagen. La
-causa es que el vóxel de 5\,cm de la
-Unidad~1 ya dejó la nube más gruesa que la rejilla de Sonata, de modo que casi
-toda celda contiene un solo punto.
-
-\FloatBarrier
-\subsubsection*{Paso 4. Inferencia}
-
-El tiempo, el rendimiento y la memoria de la inferencia están en la
-Tabla~\ref{tab:salidas-p2}. La Figura~\ref{fig:escena-etapas} muestra la capilla
-cruda, tras la Unidad~1 y con los descriptores, usando la primera vista de la
-Sección~\ref{sec:revision-descriptores}. Cada panel dibuja 250\,000 puntos al
-azar, por eso la reducción de 1\,338\,355 a 440\,161 puntos etiquetados no se
-aprecia entre los dos primeros paneles. En el tercero, la cúpula se ve verde, el
-arco y las paredes morado y azul, y el techo amarillo y rosa, de modo que
-Sonata separa las piezas de la capilla sin haber visto una sola etiqueta.
+La Figura~\ref{fig:escena-etapas} muestra la capilla cruda, tras la Unidad~1 y con los
+descriptores (primera vista de la Sección~\ref{sec:revision-descriptores}). En el
+tercer panel la cúpula se ve verde, el arco y las paredes morado y azul, y el techo
+amarillo y rosa, de modo que Sonata separa las piezas de la capilla sin haber visto
+una sola etiqueta.
 
 \begin{figure}[!htbp]
 \centering
@@ -227,12 +201,8 @@ Sonata separa las piezas de la capilla sin haber visto una sola etiqueta.
 \label{fig:escena-etapas}
 \end{figure}
 
-\FloatBarrier
-\subsubsection*{Paso 5. Escritura}
-
-El contenido del archivo \texttt{.npz} está en la Tabla~\ref{tab:npz} y su
-tamaño en la Tabla~\ref{tab:salidas-p2}. Tiene seis
-campos, incluida la semilla del muestreo, que valió 0.
+El archivo \texttt{.npz} tiene seis campos, incluida la semilla del muestreo, que valió
+0 (Tabla~\ref{tab:npz}), y su tamaño está en la Tabla~\ref{tab:salidas-p2}.
 
 \begin{table}[!htbp]
 \centering
