@@ -393,7 +393,7 @@ en lugar de los rasgos geométricos resulta viable sin que se demuestre como mej
 \section[Justificación de los Parámetros del Procedimiento]{Justificación de los Parámetros del Procedimiento\espejo{sec:parametros}}
 \label{sec:res-parametros}
 
-Los parámetros de la Sección~\ref{sec:parametros} quedan fijados con los valores del
+Los parámetros del procedimiento quedan fijados con los valores del
 programa en los Módulos~1 y~3 (vóxel de 5\,cm, $q=20$, $\lambda=2$, rejilla de 2\,cm y
 parche de 1024). Los de las etapas entrenadas y de la fusión se recuperaron del código
 y de los registros y se reúnen en la Tabla~\ref{tab:res-parametros}, de modo que cada
@@ -428,10 +428,10 @@ salidas del Módulo~1 y del Módulo~3, como el descarte del filtrado en las zona
 \FloatBarrier
 \subsection[Pruebas de los Parámetros]{Pruebas de los Parámetros\espejo{sec:param-criterio}}
 
-Las pruebas P0 a P3 (Sección~\ref{sec:param-criterio}), que solo usan el Módulo~1, se
-ejecutaron en la laptop sobre la capilla etiquetada con \texttt{correr\_pruebas.py}. Cada una
-cambia un solo parámetro y mide la salida contra la configuración de referencia, en
-una muestra fija de 200\,000 puntos.
+Las pruebas P0 a P3, que solo usan el Módulo~1, se ejecutaron en la laptop sobre la
+capilla etiquetada con \texttt{correr\_pruebas.py}. Cada una cambia un solo parámetro y
+mide la salida contra la configuración de referencia, en una muestra fija de
+200\,000 puntos.
 
 \paragraph*{P0. Tamaño de bloque.} Con bloques de 1, 5 y 20 millones de puntos, los
 conteos y la matriz $S$ resultaron idénticos punto a punto. El logro es que el
@@ -490,7 +490,7 @@ $\lambda=3$ & 1\,169\,062 & 1{,}49 & 11{,}6 & 17{,}3 & 10{,}8 & 7{,}5 & 43{,}5 \
 La configuración de referencia se replicó en la laptop y en Khipu con los mismos conteos
 del Módulo~1 (Sección~\ref{sec:res-u1-procedimiento}). La extracción de Sonata fija una
 semilla y la guarda en el archivo de descriptores, de modo que el azar de la rejilla se
-puede repetir al replicar la configuración (Sección~\ref{sec:param-replicacion}).
+puede repetir al replicar la configuración.
 
 % =====================================================================
 \FloatBarrier
