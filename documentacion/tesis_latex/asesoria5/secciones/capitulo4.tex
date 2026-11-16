@@ -504,11 +504,11 @@ puede repetir al replicar la configuración.
 \subsubsection*{X1. Diagnóstico de dominio}
 
 El checkpoint de SemanticPOSS se aplicó primero a escenas de su propio dominio
-como control positivo (Tabla~\ref{tab:m2-control}). Allí funciona, y en la
-capilla colapsa en una sola cabeza. Submuestrear la capilla a 80\,000 puntos, la
-densidad de un LiDAR, no lo corrige. No es, entonces, un error de la extracción ni
-un mal checkpoint, sino una brecha de dominio, el experimento no separa cuánto
-pesan el contenido, la escala y el sensor.
+como control positivo (Tabla~\ref{tab:m2-control}). Allí funciona y en la capilla
+colapsa en una sola cabeza, con el 98{,}4\,\% de los puntos, y submuestrear la
+capilla a 80\,000 puntos, la densidad de un LiDAR, no lo corrige. El logro es el
+diagnóstico, el fallo no viene de la extracción ni del checkpoint, sino de la brecha
+de dominio.
 
 \begin{table}[!htbp]
 \centering
@@ -531,22 +531,17 @@ PL13 y PL7, sin etiquetas & 82{,}5 y 81{,}4\,\% & 4 & --- & --- \\
 
 \subsubsection*{X2. Entrenamiento con ArCH}
 
-ArCH \cite{matrone2020benchmark} se eligió porque contiene la geometría y las
-clases propias del patrimonio arquitectónico, como arcos, columnas y bóvedas,
-ausentes del dominio urbano de SemanticPOSS. Se usaron 15 escenas para
-entrenamiento y dos de prueba como validación, seis clases fueron conocidas
-(molduras, piso, puerta/ventana, muro, escaleras y techo), tres novedosas (arco,
-columna y bóveda) y \emph{other} se ignoró en la métrica principal. La
-configuración está en la Tabla~\ref{tab:res-parametros}.
+El Módulo~2 se entrenó con ArCH \cite{matrone2020benchmark}, como indica la
+Sección~\ref{sec:rama-sem}, y con la configuración de la
+Tabla~\ref{tab:res-parametros}. El logro es un checkpoint que reconoce las clases
+arquitectónicas, con 48{,}93\,\% de mIoU de validación en la época~20 y 48{,}47\,\% en
+la 30. El mejor se guardó como \texttt{epoch=20-step=860}, cuyo metadato interno dice
+época 21, y aquí se nombra por el archivo.
 
-El mejor checkpoint alcanzó 48{,}93\,\% de mIoU de validación en la época~20 y el
-de la época 30, 48{,}47\,\%. El archivo del mejor se llama
-\texttt{epoch=20-step=860} y su metadato interno dice época 21, aquí se nombra por
-el archivo. Es una única corrida. La Figura~\ref{fig:m2-arch-curvas} muestra que
-la pérdida baja de 4{,}90 a 2{,}64 y que la validación se aplana hacia la época
-20, y la Tabla~\ref{tab:m2-arch-clases}, que las clases extensas obtienen los
-valores más altos y que puerta/ventana, arco y escaleras siguen siendo las más
-difíciles.
+La pérdida baja de 4{,}90 a 2{,}64 y la validación se aplana hacia la época 20
+(Figura~\ref{fig:m2-arch-curvas}), y las clases extensas obtienen los IoU más altos,
+mientras que puerta/ventana, arco y escaleras obtienen los más bajos
+(Tabla~\ref{tab:m2-arch-clases}).
 
 \begin{table}[!htbp]
 \centering
@@ -571,15 +566,12 @@ IoU & .887 & .798 & .721 & .675 & .557 & .342 & .210 & .161 & .053 \\
 
 \subsubsection*{X3. Transferencia a la capilla}
 
-La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla. Con ArCH
-la cabeza dominante baja a menos de la mitad y el NMI y el mIoU uno a uno se
-multiplican por más de cuatro. Los dos checkpoints de ArCH son casi idénticos. La
-selección por validación elige el de la época 20, el de la época 30 rinde 1{,}9
-puntos más en la capilla, pero esa escena no se usó para elegir, y la fusión de
-las secciones siguientes se hizo con el de la época 30. La
-Figura~\ref{fig:m2-dominio} añade la entropía de las cabezas y el rango efectivo,
-que la tabla no trae, y la Figura~\ref{fig:m2-cabeza-clase} muestra a qué cabezas
-va cada clase real.
+La Tabla~\ref{tab:m2-dominio} compara los tres checkpoints en la capilla. El logro es la
+transferencia, con ArCH la cabeza dominante baja a menos de la mitad y el NMI y el
+mIoU uno a uno se multiplican por más de cuatro. Los dos checkpoints de ArCH son casi
+idénticos, y el de la época 30, con el que se hizo la fusión de las secciones
+siguientes, rinde 1{,}9 puntos más en la capilla que el de la época 20, el que elige la
+validación.
 
 \begin{table}[!htbp]
 \centering
@@ -599,6 +591,11 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 33,6\,\% & 35,5\,\% \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+La Figura~\ref{fig:m2-dominio} añade la entropía de las cabezas y el rango efectivo, que
+la tabla no trae, y la Figura~\ref{fig:m2-cabeza-clase} muestra que con SemanticPOSS
+casi todas las clases reales caen en una sola cabeza y con ArCH se reparten entre
+varias.
 
 \begin{figure}[!htbp]
 \centering
