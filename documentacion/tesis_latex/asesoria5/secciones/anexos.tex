@@ -1,18 +1,30 @@
 \appendix
 \customchapter{ANEXOS}
 
+% Formato compacto de los anexos: conserva legibilidad y evita páginas con
+% grandes áreas vacías alrededor de títulos, tablas y figuras.
+\footnotesize
+\setlength{\parskip}{0pt}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\LTpre}{2pt}\setlength{\LTpost}{2pt}
+\captionsetup{font=scriptsize,skip=1pt}
+\lstset{basicstyle=\ttfamily\scriptsize,aboveskip=2pt,belowskip=2pt}
+\titlespacing*{\section}{0pt}{0.8ex}{0.3ex}
+\titlespacing*{\subsection}{0pt}{0.7ex}{0.25ex}
+\titlespacing*{\subsubsection}{0pt}{0.6ex}{0.2ex}
+
 \section*{Anexo A. Configuración de \emph{software}}
 \phantomsection\label{sec:anexo-software}
 \addcontentsline{toc}{section}{Anexo A. Configuración de \emph{software}}
 \setcounter{table}{0}\renewcommand{\thetable}{A.\arabic{table}}
 
-El proyecto usa tres entornos. En Khipu, \texttt{sonata-env} (Python~3.10,
-PyTorch~2.5.0, CUDA~12.4, \texttt{spconv} y Pointcept) ejecutó la extracción de
-Sonata sobre PL13, y \texttt{hyperncd-env} (Python~3.8, PyTorch~1.10.1,
-MinkowskiEngine, que declara CUDA~11.3 y se compiló con 11.8) se probó con una
-corrida corta de HyperNCD. En el equipo local, Python~3.12.7
-con \texttt{laspy}~2.7.0, NumPy~2.3.5 y Open3D~0.20.0 ejecutó la prueba de la
-Unidad~1. El seguimiento de experimentos usa Weights~\&~Biases.
+El proyecto usa \texttt{sonata-env} (Python~3.10, PyTorch~2.5.0, CUDA~12.4,
+\texttt{spconv} y Pointcept) y \texttt{hyperncd-env} (Python~3.8,
+PyTorch~1.10.1, MinkowskiEngine/CUDA~11.8) en Khipu. La Unidad~1 se probó
+localmente con Python~3.12.7, \texttt{laspy}~2.7.0, NumPy~2.3.5 y Open3D~0.20.0;
+Weights~\&~Biases registró los experimentos.
 
 \begin{table}[!htbp]
 \centering
@@ -37,8 +49,6 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \bottomrule
 \end{tabularx}
 \end{table}
-
-Los archivos y los recursos del clúster se detallan en las Tablas~\ref{tab:archivos} y~\ref{tab:hardware}.
 
 \begin{table}[!htbp]
 \centering
@@ -81,9 +91,6 @@ Gestor de colas & Envío no interactivo de corridas largas & Slurm 25.11.5.1 \\
 \end{tabularx}
 \end{table}
 
-Las rutas de los archivos de los que salen las tablas del Capítulo~\ref{cap:resultados}
-están en la Tabla~\ref{tab:origen-resultados}.
-
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
@@ -104,37 +111,29 @@ están en la Tabla~\ref{tab:origen-resultados}.
 \end{table}
 
 \paragraph*{Visor 3D del proyecto.}
-El programa \texttt{visor\_3d.py} (Sección~\ref{sec:visor}) genera una página web
-con Plotly que muestra un escaneo en sus etapas, la entrada cruda, los puntos que
-descarta el SOR en rojo, la matriz $S$ con su color y sus normales, y los
-descriptores de Sonata. Todas las etapas comparten la cámara y cada una se exporta
-a PNG con el mismo encuadre. Así se obtuvieron las figuras de la entrada y del
-preprocesamiento.
+\texttt{visor\_3d.py} (Sección~\ref{sec:visor}) muestra con Plotly la entrada,
+los descartes SOR, $S$, normales y descriptores con una cámara común; de allí se
+exportaron las figuras del preprocesamiento.
 
 \paragraph*{Comandos en el clúster Khipu.}
-Los guiones se lanzan desde la carpeta del repositorio, con los archivos LAS en
-\texttt{datos\_crudos/}. La variable \texttt{REPO} al inicio de cada guion
-apunta a la copia del repositorio en el clúster y debe ajustarse al usuario.
+Los guiones se lanzan desde el repositorio, con los LAS en
+\texttt{datos\_crudos/}; \texttt{REPO} se ajusta a la copia del usuario.
 \begin{lstlisting}[style=comando]
-# Unidad 1: todos los LAS, o solo los que calcen con el patron
+# Unidad 1: todos los LAS o un patron
 sbatch preprocesar.sbatch
 sbatch preprocesar.sbatch "PL13*"
-# Cambiar parametros (voxel en metros, vecinos, umbral)
+# Parametros y repeticion
 VOXEL=0.03 LAM=2.5 sbatch preprocesar.sbatch
-# Rehacer los que ya existen
 REHACER=1 sbatch preprocesar.sbatch
-# Unidad 2, rama auto-supervisada: una seccion por trabajo
+# Unidad 2: una seccion por trabajo
 sbatch extraer_features.sbatch data/PL13_SCN0001.npy cache/PL13_feats.npz
-# Medidas de los descriptores de Sonata (rango efectivo, PCA, k-means)
+# Diagnostico de descriptores
 sbatch experimentacion/modulo3_sonata/visualizar_features.sbatch \
        PL13_SCN0001 PL13
-# Visor 3D (en el equipo local, con los archivos copiados de Khipu)
+# Visor local
 python experimentacion/visor_3d.py --las PL13_SCN0001.las \
        --npy PL13_SCN0001.npy --json PL13_SCN0001.json \
        --feats PL13_feats.npz --marcar-sor --output visor_PL13.html
-# Seguimiento
-squeue -u $USER
-tail -f logs/preproc_<id>.out
 \end{lstlisting}
 
 \paragraph*{Carga de Sonata.}
@@ -153,7 +152,7 @@ modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config
 Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tabla.
 
 \begin{center}
-\setstretch{1}\small\renewcommand{\arraystretch}{1.3}
+\setstretch{0.94}\tiny\renewcommand{\arraystretch}{0.82}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{8.1cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
 \toprule
 \textbf{Símbolo} & \textbf{Significado} & \textbf{Valor} \\

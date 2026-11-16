@@ -13,14 +13,12 @@
 \subsection*{G.1. Función de cada paso y efecto de omitirlo}
 
 
-Antes de discutir valores hay que justificar que cada paso exista. La
-Tabla~\ref{tab:funcion} lo resume, el título de cada paso enlaza con su
-descripción.
+La Tabla~\ref{tab:funcion} resume el aporte de cada paso y el efecto de omitirlo.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
+\setstretch{0.9}\tiny
+\setlength{\tabcolsep}{2pt}
 \caption[Qué aporta cada paso y qué pasaría sin él]{Qué aporta cada paso y qué pasaría sin él. Elaboración propia.}
 \label{tab:funcion}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.6\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
@@ -48,26 +46,13 @@ descripción.
 \subsection*{G.2. Pruebas de los parámetros}
 
 
-Cada prueba cambia un solo parámetro sobre la misma sección, deja fijos los
-demás y mide la salida con cuatro indicadores.
-\begin{enumerate}
-\item \textbf{Rugosidad $r$}, distancia media de cada punto al plano de sus
-vecinos. Baja si se limpia ruido, pero también si se borra detalle, por eso no
-se lee sola.
-\item \textbf{Dispersión angular}, cuánto difiere cada normal de las de sus
-vecinos.
-\item \textbf{ARI y NMI} (Secciones~\ref{sec:ari} y~\ref{sec:nmi}), cuánto se
-parecen los grupos de $k$-means de los descriptores a los de la configuración
-de referencia. Cerca de 1, el parámetro no cambia lo que recibe el Módulo~4.
-\item \textbf{Costo}, puntos que quedan, tiempo y memoria.
-\end{enumerate}
-Si quitar un paso no cambia nada, se retira del procedimiento. La
-Tabla~\ref{tab:pruebas} resume las seis pruebas.
+Cada prueba varía un parámetro y mide rugosidad, dispersión angular, ARI/NMI y
+costo; la Tabla~\ref{tab:pruebas} resume el criterio.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
+\setstretch{0.9}\tiny
+\setlength{\tabcolsep}{2pt}
 \caption[Pruebas de los parámetros]{Pruebas de los parámetros. Elaboración propia.}
 \label{tab:pruebas}
 \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
@@ -87,17 +72,13 @@ P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria si
 
 \subsection*{G.3. Replicación del procedimiento}
 
-Las pruebas solo valen si cada configuración se puede repetir y da el mismo resultado
-(Sección~\ref{sec:param-replicacion}). Replicar una configuración es fijar sus valores
-según la Tabla~\ref{tab:replica}, ejecutar \texttt{preprocesar.py} y comprobar los
-conteos del archivo de metadatos, ejecutar \texttt{extraer\_features.py} sobre la
-misma matriz $S$ y comparar los descriptores con los de la referencia, con el ARI y el
-NMI del \enlace{sec:param-criterio}{criterio común}. Si los conteos no coinciden, la
-configuración no se reprodujo y no tiene sentido seguir.
+Replicar exige fijar la Tabla~\ref{tab:replica}, verificar los conteos de
+\texttt{preprocesar.py} y comparar con ARI/NMI los descriptores extraídos.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
-\setstretch{1}\small
+\setstretch{0.9}\tiny
+\setlength{\tabcolsep}{2pt}
 \caption[Cómo cambiar cada parte de la configuración]{Cómo cambiar cada parte de la configuración y qué comprobar después. Elaboración propia.}
 \label{tab:replica}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X@{}}
@@ -116,10 +97,5 @@ Otra máquina u otra versión de Open3D & Ninguna opción, mismos valores & Mism
 \end{tabularx}
 \end{table}
 
-Los límites son tres. El primero es el orden de las filas
-(\enlace{sec:u1-reproducibilidad}{verificación de la Unidad~1}). El segundo es la
-memoria, un vóxel menor puede no caber en los 48\,GB de la GPU, y entonces la
-falta de memoria se reporta como resultado y no se reduce la nube. El tercero es
-el tamaño de la sección, las más grandes no caben en una sola pasada y su
-replicación depende de la división en bloques
-(\enlace{sec:param-p0}{prueba~P0}) o de la \enlace{sec:param-p5}{prueba~P5}.
+Los límites son 48\,GB de GPU y el tamaño de la sección; si no cabe, se aplican
+los bloques de P0 o los parches de P5.

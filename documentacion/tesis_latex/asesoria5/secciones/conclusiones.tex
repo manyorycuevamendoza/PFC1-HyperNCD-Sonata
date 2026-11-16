@@ -1,30 +1,18 @@
-\customchapter{CONCLUSIONES}
+\customchapter{CONCLUSIONES Y TRABAJOS FUTUROS}
+\begingroup
+\small
+\setlength{\parskip}{2pt}
 
-\noindent\textbf{Objetivos.} El objetivo general y los objetivos específicos OE1 y OE2
-se cumplieron, y el OE3 se cumplió en parte. Las métricas de cada uno están en la
-Tabla~\ref{tab:objetivos}.
+\noindent\textbf{Conclusiones.} El objetivo general y los OE1 y OE2 se cumplieron; el
+OE3, parcialmente (Tabla~\ref{tab:objetivos}). Sonata se integró sin entrenamiento
+conjunto y su descriptor conserva información de clase; además, las cuatro variantes
+se evaluaron con diez semillas. Se midieron el IoU por clase y el umbral de 70\,\%,
+pero una sola escena no permite fijar el rango de operación ni calcular todas las
+métricas pendientes.
 
-\begin{enumerate}
-\item \textbf{OE1.} Sonata se integró al módulo de fusión sin entrenamiento conjunto,
-y su descriptor conserva la información de las clases (Sección~\ref{sec:res-fusion}).
-\item \textbf{OE2.} Los cuatro agrupamientos se compararon con diez semillas y un
-criterio escrito de diferencia real (Sección~\ref{sec:res-u3-rep}).
-\item \textbf{OE3.} Se midió el IoU por clase y el umbral de 70\,\%
-(Sección~\ref{sec:res-u3-traza}), pero con una sola escena no se puede fijar el
-rango de operación. Faltan la ganancia en clases novedosas, la brecha cerrada y la
-curva de degradación.
-\end{enumerate}
-
-\noindent\textbf{Hipótesis.} Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ es
-viable y da la media más alta, pero con un M2 que funciona la mejora queda dentro del
-ruido. La mayor ganancia viene de entrenar HyperNCD con patrimonio, no de la fusión.
-Adaptar Sonata a la Catedral no mejoró el agrupamiento, y la sonda lineal muestra que
-tampoco dañó el descriptor (Sección~\ref{sec:res-u3-traza}).
-
-\noindent\textbf{Dominio.} El HyperNCD entrenado con SemanticPOSS no se transfiere a
-la Catedral, por lo que M2 se entrenó con ArCH~\cite{matrone2020benchmark}
-(Sección~\ref{sec:res-u3-proc}).
-
-\noindent\textbf{Límites.} Los resultados vienen de una escena, un entrenamiento por
-modelo y diez semillas que solo miden la estabilidad del agrupamiento. Lo que falta
-está en los trabajos futuros.
+Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ es viable, aunque con un M2
+funcional la mejora queda dentro de la dispersión. El mayor avance provino de entrenar
+HyperNCD con ArCH~\cite{matrone2020benchmark}; adaptar Sonata a la Catedral no mejoró
+el agrupamiento, aunque la sonda lineal confirmó que el descriptor retuvo información.
+Los resultados se limitan a una escena, un entrenamiento por modelo y diez semillas
+del agrupamiento.

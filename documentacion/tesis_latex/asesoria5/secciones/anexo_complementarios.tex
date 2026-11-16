@@ -10,25 +10,21 @@
 \setcounter{figure}{0}\renewcommand{\thefigure}{F.\arabic{figure}}
 \setcounter{table}{0}\renewcommand{\thetable}{F.\arabic{table}}
 
-Este anexo reúne los resultados que sustentan lo dicho en la
-Sección~\ref{sec:res-unidad3} pero que no hacen falta para seguir su argumento.
+Se reúnen verificaciones complementarias de la Sección~\ref{sec:res-unidad3}.
 
 \subsection*{F.1. Recursos durante el entrenamiento de M2}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.9\linewidth]{imagenes/m2_arch_recursos.png}
+\includegraphics[width=0.68\linewidth]{imagenes/m2_arch_recursos.png}
 \caption[Recursos durante el entrenamiento de M2 con ArCH]{Uso de memoria RAM, memoria de GPU, GPU y CPU en las 30 épocas del entrenamiento de M2 con ArCH, en una GPU T4.}
 \label{fig:g-recursos}
 \end{figure}
 
 \subsection*{F.2. Una sola semilla frente a diez}
 
-Con una sola semilla el orden de los métodos cambia. La Tabla~\ref{tab:g-una}
-muestra que M4 queda por debajo de M4 base con M2 de ArCH y Sonata original
-(50,6 frente a 52,9), mientras que con diez semillas queda por encima (52,5
-frente a 51,4, Tabla~\ref{tab:m2-m4-semillas}). Por eso la comparación se repite
-con diez semillas y se reporta su dispersión.
+Una semilla sitúa M4 bajo M4 base (50,6 frente a 52,9), pero diez lo sitúan por
+encima (52,5 frente a 51,4); por ello se reportan diez semillas y su dispersión.
 
 \begin{table}[!htbp]
 \centering
@@ -50,29 +46,25 @@ M4 & 52,5 & 50,6 & 36,1 & 47,4 \\
 
 \subsection*{F.3. Variantes de fusión}
 
-Se probaron fusiones deterministas distintas de la concatenación, con media de cinco
-semillas (Sección~\ref{sec:res-fusion}), y la Figura~\ref{fig:g-variantes} muestra el
-cambio de cada una. La mayor mejora con el M2 de ArCH, 3,0 puntos, es de una
-configuración que baja 1,3 puntos en otra combinación. Con el M2 de SemanticPOSS,
-colapsado, las variantes suben entre 10 y 14 puntos, porque hay más margen que ganar.
-Ninguna variante se adoptó.
+En cinco semillas, la mejor fusión gana 3,0 puntos con M2 de ArCH pero pierde
+1,3 en otra combinación. Con SemanticPOSS gana 10--14 puntos por su bajo punto
+de partida; ninguna variante es consistente y no se adopta.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m4_variantes_fusion.png}
+\includegraphics[width=0.78\linewidth]{imagenes/m4_variantes_fusion.png}
 \caption[Variantes de fusión de los descriptores]{Cambio de mIoU, en puntos, de cada variante de fusión respecto del M4 actual en las cuatro combinaciones de M2 y Sonata.}
 \label{fig:g-variantes}
 \end{figure}
 
 \subsection*{F.4. Sensibilidad al número de grupos}
 
-La Figura~\ref{fig:g-miou-k} muestra el mIoU de cada módulo para $K=6$, 8 y 12,
-con y sin \emph{other}, para el M2 de ArCH con Sonata original y adaptado, con
-una sola semilla.
+Se compara el mIoU para $K=6$, 8 y 12, con y sin \emph{other}, y Sonata original
+o adaptado (Figura~\ref{fig:g-miou-k}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/m4_miou_por_modulo.png}
+\includegraphics[width=0.78\linewidth]{imagenes/m4_miou_por_modulo.png}
 \caption[mIoU por módulo y por número de grupos]{mIoU por mayoría de M2, M3, M4 base y M4 con $K=6$, 8 y 12, con y sin \emph{other}, con Sonata original y adaptado.}
 \label{fig:g-miou-k}
 \end{figure}

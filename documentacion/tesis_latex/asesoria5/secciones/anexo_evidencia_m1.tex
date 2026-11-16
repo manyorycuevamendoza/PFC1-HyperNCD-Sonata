@@ -11,24 +11,18 @@
 \setcounter{figure}{0}\renewcommand{\thefigure}{E.\arabic{figure}}
 \setcounter{table}{0}\renewcommand{\thetable}{E.\arabic{table}}
 
-Este anexo recoge la evidencia visual de los pasos 1 a 5 de la Unidad~1
-(Sección~\ref{sec:res-unidad1}) sobre los escaneos PL13 y PL7 de la Catedral de
-Lima. Los conteos y tiempos están en la Tabla~\ref{tab:m1-metadatos}.
+Se muestra la evidencia de los pasos 1 a 5 de la Unidad~1 sobre PL13 y PL7; los
+conteos y tiempos están en la Tabla~\ref{tab:m1-metadatos}.
 
-\FloatBarrier
 \subsubsection*{Paso 1. Carga}
 
-Cada escaneo se lee en dos bloques, en cerca de un segundo (\texttt{n\_crudo}
-en la Tabla~\ref{tab:m1-metadatos}). Es la data de entrada tal como la entrega el
-escáner, con su color real y sin ninguna corrección.
+Cada escaneo se lee en dos bloques en cerca de un segundo; es la entrada cruda,
+con su color original.
 
-\FloatBarrier
 \subsubsection*{Paso 2. Centrado}
 
-Los dos escaneos son vecinos, sus centros están a unos 17\,m uno de otro, pero
-cada uno se centra en su propio origen (Tabla~\ref{tab:m1-centrado}). Este paso no lleva imagen
-porque la nube se ve igual antes y después, solo cambian los números de los
-ejes.
+Aunque sus centros distan unos 17\,m, cada escaneo se centra en su origen
+(Tabla~\ref{tab:m1-centrado}); la nube no cambia visualmente, solo sus ejes.
 
 \begin{table}[!htbp]
 \centering
@@ -50,57 +44,41 @@ PL7  & $x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}
 \end{tabularx}
 \end{table}
 
-\FloatBarrier
 \subsubsection*{Paso 3. Filtrado SOR}
 
-En PL13 se descartan 219\,108 puntos, el 2{,}66\,\%, y en PL7 406\,485, el
-4{,}73\,\% (\texttt{n\_sor} en la Tabla~\ref{tab:m1-metadatos}). El filtrado tardó
-cerca de nueve segundos en PL13 y doce en PL7.
-
-En ambos escaneos los descartes se concentran en las zonas ralas, lejos del
-escáner (Figura~\ref{fig:m1-paso3}). PL7
-descarta casi el doble que PL13, y en la figura se ve que también tiene más
-zonas ralas.
+SOR descarta 219\,108 puntos (2{,}66\,\%) en PL13 y 406\,485 (4{,}73\,\%) en
+PL7, en 9 y 12\,s. Los descartes se concentran en zonas ralas; PL7 presenta más
+de ellas (Figura~\ref{fig:m1-paso3}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{imagenes/m1_paso3_sor.png}
+\includegraphics[width=0.68\linewidth]{imagenes/m1_paso3_sor.png}
 \caption[PL13 y PL7 con los puntos descartados por el SOR en rojo]{PL13 y PL7 con los puntos descartados por el SOR en rojo. Visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso3}
 \end{figure}
 
-\FloatBarrier
 \subsubsection*{Paso 4. Voxelización}
 
-En PL13 quedan como representantes el 10{,}01\,\% de los puntos que salieron
-del filtrado, y en PL7 el 7{,}46\,\% (\texttt{n\_voxel} en la
-Tabla~\ref{tab:m1-metadatos}). De cerca (Figura~\ref{fig:cubo-pl7}), los
-48\,098 puntos de la entrada del cubo de PL7 quedan en 921. Ahí la entrada contiene
-varias superficies paralelas separadas por pocos centímetros, que en la salida ya
-no se distinguen, como anticipa el \enlace{sec:u1-p4}{Paso~4}. Se dibujan todos los
-puntos, con el color aclarado por un factor de 2{,}2. El cubo va de $x=-19$ a
-$-18$\,m, de $y=-3$ a $-2$\,m y de $z=-12$ a $-11$\,m, en las coordenadas
-centradas del escaneo.
+Tras voxelizar quedan 10{,}01\,\% de los puntos filtrados de PL13 y 7{,}46\,\%
+de PL7. En el cubo de 1\,m de PL7, 48\,098 puntos se reducen a 921 y las
+superficies paralelas separadas por centímetros se fusionan
+(Figura~\ref{fig:cubo-pl7}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.6\linewidth]{imagenes/m1_paso4_voxel_cubo.png}
+\includegraphics[width=0.48\linewidth]{imagenes/m1_paso4_voxel_cubo.png}
 \caption[Cubo de 1\,m de PL7 antes y después de la voxelización]{Cubo de 1\,m de PL7 antes y después de la voxelización. Visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:cubo-pl7}
 \end{figure}
 
-\FloatBarrier
 \subsubsection*{Paso 5. Normales}
 
-Las superficies con la misma orientación toman el mismo tono
-(Figura~\ref{fig:m1-paso5}). En las bóvedas el
-color cambia de forma gradual, siguiendo su curvatura. En las zonas ralas, lejos
-del escáner, aparecen manchas de colores mezclados. Es la misma zona en la que el
-filtrado del Paso~3 concentró sus descartes.
+El color sigue la orientación: varía gradualmente en bóvedas y se mezcla en
+zonas ralas, donde SOR concentró sus descartes (Figura~\ref{fig:m1-paso5}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.75\linewidth]{imagenes/m1_paso5_normales.png}
+\includegraphics[width=0.62\linewidth]{imagenes/m1_paso5_normales.png}
 \caption[Normales de PL13 y PL7 como color]{Normales de PL13 y PL7 como color. Visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso5}
 \end{figure}
