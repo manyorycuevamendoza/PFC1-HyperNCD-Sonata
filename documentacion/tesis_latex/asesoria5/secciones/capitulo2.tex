@@ -355,16 +355,10 @@ propuesta incorpora $f_{\mathrm{ssl}}$ en $S_s$ y mantiene $g$ en $S_g$, sin dup
 \label{sec:pseudoetq}
 
 Una pseudo-etiqueta es un objetivo que el modelo asigna sin supervisión humana
-para continuar el entrenamiento. En las clases novedosas, estas pseudo-etiquetas
-se obtienen mediante Sinkhorn-Knopp.
-
-\paragraph*{Normalización de Sinkhorn-Knopp}\phantomsection
-\label{sec:sinkhorn}
-
-Normalización iterativa que equilibra las clases y evita concentrar las
-pseudo-etiquetas en la más frecuente.
-
-La variante semi-relajada forma \nom{Q}{$Q$} con un \emph{softmax} de temperatura 0{,}1
+para continuar el entrenamiento. En las clases novedosas se obtienen con la
+normalización iterativa de Sinkhorn-Knopp, que equilibra las clases y evita
+concentrar las pseudo-etiquetas en la más frecuente.\phantomsection\label{sec:sinkhorn}
+Su variante semi-relajada forma \nom{Q}{$Q$} con un \emph{softmax} de temperatura 0{,}1
 sobre $\nom{B}{B}$ salidas y alterna dos escalas hasta estabilizarse
 \begin{equation}
 \nom{uv}{u}\leftarrow\frac{1/\nom{B}{B}}{\nom{Q}{Q}\,\nom{uv}{v}},\qquad

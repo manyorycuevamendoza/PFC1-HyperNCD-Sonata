@@ -228,12 +228,11 @@ tamaño del archivo. Dicen si la corrida salió como se esperaba y cuánto cuest
 repetirla en otra sección.
 
 \paragraph*{Revisión de los descriptores.}\etiquetahija{sec:revision-descriptores} Los descriptores se revisan sin
-etiquetas con \texttt{visualizar\_features.py} y con el visor. Sobre una muestra de
-100\,000 puntos centrada y normalizada, se colorea con las tres primeras
-componentes principales, se pinta la similitud coseno con un punto de consulta y se
-agrupa con $k$-means en ocho grupos. Se calcula además el rango efectivo, de 1 si
-todos apuntan en una sola dirección a 1088 si se reparten por igual.
-En la capilla no se dibuja la clase \emph{otro}.
+etiquetas con \texttt{visualizar\_features.py} y el visor. En una muestra de
+100\,000 puntos se colorea con las tres primeras componentes principales, se pinta la
+similitud coseno con un punto de consulta y se agrupa con $k$-means en ocho grupos.
+Se calcula el rango efectivo, de 1 si todos apuntan en una dirección a 1088 si se
+reparten por igual.
 
 \paragraph*{Adaptación de Sonata a la Catedral.}\etiquetahija{sec:variante-sonata} Sonata adaptado sigue el
 entrenamiento de Sonata original, con su mismo objetivo y sin etiquetas
@@ -299,16 +298,15 @@ $\hat y_i \leftarrow \arg\max_k Q_{r(i),k}$ para cada punto $i$\;
 \label{fig:flujo-m4}
 \end{figure}
 
-Para saber si otra forma de fusionar funciona mejor, se probó un barrido de 39
-configuraciones por combinación de modelos, cada una con cinco semillas, que cambian
-solo la afinidad entre regiones. Varían el preprocesado de los descriptores (igual,
-restar la media, o restarla y aplicar componentes principales con blanqueo), el modo
-de combinar las similitudes (promedio ponderado, producto, mínimo, confianza de
-HyperNCD en cada región o fusión de redes de similitud \cite{wang2014snf}) y el peso
-de $f_{\mathrm{sem}}$, de 0{,}1 a 0{,}9. El promedio ponderado y la fusión de redes
-vienen del agrupamiento multivista \cite{kumar2011coregularized,chao2017survey}, y
-las demás son variantes propias. Como hay una sola escena, esta se divide en dos
-mitades, y la mejor configuración se elige en una y se reporta en la otra, en los dos
+Para ver si otra fusión mejora, se probaron 39 configuraciones por combinación
+de modelos, con cinco semillas, que cambian solo la afinidad entre regiones.
+Varían el preprocesado de los descriptores (igual, restar la media, o restarla y
+blanquear), el modo de combinar similitudes (promedio ponderado, producto, mínimo,
+confianza de HyperNCD o fusión de redes de similitud \cite{wang2014snf}) y el peso de
+$f_{\mathrm{sem}}$, de 0{,}1 a 0{,}9. El promedio ponderado y la fusión de redes vienen
+del agrupamiento multivista \cite{kumar2011coregularized,chao2017survey} y las demás son
+propias. Con una sola escena, se divide en dos mitades, y la mejor configuración
+se elige en una y se reporta en la otra, en los dos
 sentidos.\etiquetahija{sec:barrido-fusion}
 
 % =====================================================================
@@ -330,25 +328,21 @@ aporta cada paso y qué pasaría sin él.
 \label{sec:param-criterio}
 
 Para comprobar los valores de los Módulos~1 y~3 se definieron seis pruebas, P0 a
-P5, que cambian un solo parámetro sobre la misma sección y miden la rugosidad, la
-dispersión de las normales, el ARI y el NMI de los descriptores, el tiempo y la
-memoria. La lista está en la Tabla~\ref{tab:pruebas} del
-\hyperref[sec:anexo-parametros]{Anexo~G}. P0 a P3 solo usan el Módulo~1 y se
+P5, que cambian un solo parámetro sobre la misma sección. La Tabla~\ref{tab:pruebas} del
+\hyperref[sec:anexo-parametros]{Anexo~G} las lista y ese anexo detalla sus indicadores
+y las opciones agregadas al programa para P3 y P5. P0 a P3 solo usan el Módulo~1 y se
 ejecutaron en la laptop sobre la capilla etiquetada. P4 y P5, y el ARI y el NMI de
-P2, necesitan la GPU de Sonata y quedaron pendientes. Para P3 y P5 se agregaron al
-programa las opciones \texttt{--q-normales} y
-\texttt{--parche}.\etiquetahija{sec:param-p0}\etiquetahija{sec:param-p1}\etiquetahija{sec:param-p2}\etiquetahija{sec:param-p3}\etiquetahija{sec:param-p4}\etiquetahija{sec:param-p5}
+P2, necesitan la GPU de Sonata y quedaron pendientes.\etiquetahija{sec:param-p0}\etiquetahija{sec:param-p1}\etiquetahija{sec:param-p2}\etiquetahija{sec:param-p3}\etiquetahija{sec:param-p4}\etiquetahija{sec:param-p5}
 
 \subsection{Replicación del Procedimiento}
 \label{sec:param-replicacion}
 
-Cada parámetro es una opción de la línea de órdenes y cada corrida guarda lo que
-hizo. El Módulo~1 no tiene azar y se repite exacto. En el Módulo~2 el azar está en
-el entrenamiento, con semilla~0, y la extracción es determinista. En el Módulo~3 el
-único azar es la elección de un punto por celda, con semilla guardada, pero la
-adaptación depende del equipo y del orden de los datos y no se repite exacta. En
-el Módulo~4 el azar está en los prototipos iniciales, y por eso cada agrupamiento
-se repite con las semillas 0 a~9 (Sección~\ref{sec:repeticiones}).
+Cada parámetro es una opción de la línea de órdenes. El Módulo~1 no tiene azar y se
+repite exacto. El azar del~2 está en el entrenamiento, con semilla~0, y su extracción
+es determinista, el del~3 es la elección de un punto por celda, con semilla guardada,
+aunque su adaptación depende del equipo y del orden de los datos, y el del~4 está en
+los prototipos iniciales, por eso cada agrupamiento se repite con las semillas 0 a~9
+(Sección~\ref{sec:repeticiones}).
 
 % =====================================================================
 \section{Unidad 3. Entrenamiento, Calibración y Evaluación}
@@ -357,39 +351,14 @@ se repite con las semillas 0 a~9 (Sección~\ref{sec:repeticiones}).
 \subsection{Procedimiento Experimental}
 \label{sec:procedimiento}
 
-HyperNCD y Sonata nunca se entrenan juntos. Cada uno guarda sus descriptores y la
-fusión usa esos archivos. Las dos variantes de HyperNCD se cruzan con las dos de
-Sonata, y en cada una de las cuatro combinaciones se miden los cuatro agrupamientos.
-Cada experimento responde a un objetivo específico, parte de una pregunta con una
-expectativa escrita (Tabla~\ref{tab:preguntas}) y entrega una medida. Las expectativas de X2 y X3 se plantearon
-tras ver X1, y las demás antes de ejecutar. X1 incluye un diagnóstico de dominio que
-compara tres puntos de control de HyperNCD sobre SemanticPOSS, la capilla, la capilla
-submuestreada a 80\,000 puntos, PL7 y PL13, con el porcentaje de la cabeza dominante,
-el rango efectivo y el NMI, para separar el dominio de la densidad y de un error del
+HyperNCD y Sonata nunca se entrenan juntos, la fusión usa los descriptores que cada
+uno guarda. Las dos variantes de HyperNCD se cruzan con las dos de Sonata, y en cada
+una de las cuatro combinaciones se miden los cuatro agrupamientos. Cada experimento
+parte de una expectativa escrita, antes de ejecutar salvo las de X2 y X3, que se
+plantearon tras ver X1. X1 incluye un diagnóstico de dominio que compara tres puntos
+de control de HyperNCD sobre SemanticPOSS, la capilla, la capilla submuestreada a
+80\,000 puntos, PL7 y PL13, para separar el dominio de la densidad y de un error del
 modelo.
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\setlength{\tabcolsep}{4pt}
-\caption[Objetivo, pregunta y expectativa de cada experimento]{Objetivo, pregunta y expectativa de cada experimento. Elaboración propia.}
-\label{tab:preguntas}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=0.5\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X>{\raggedright\arraybackslash\hsize=1.25\hsize}X@{}}
-\toprule
-\textbf{Id} & \textbf{Objetivo} & \textbf{Pregunta} & \textbf{Qué se esperaba} \\
-\midrule
-X0 & OE1, OE2 & ¿El Módulo~1 deja una nube reproducible que conserve la proporción de cada clase? & Mismos conteos en dos máquinas y una fracción parecida de cada clase tras el vóxel \\
-X1 & OE2 & ¿El HyperNCD entrenado con SemanticPOSS sirve en la capilla? & Que separe las clases como lo hace en su propio dominio \\
-X2 & OE2 & ¿El mal resultado de X1 se debe al dominio de entrenamiento? & Que al entrenar con patrimonio el modelo deje de colapsar \\
-X3 & OE2 & ¿HyperNCD adaptado reparte mejor los puntos entre cabezas? & Menos puntos en la cabeza dominante y un NMI mayor que en X1 \\
-X4 & OE1 & ¿Seguir entrenando Sonata con la Catedral mejora su descriptor? & Un mIoU de M3 mayor que con el Sonata original \\
-X5 & OE1, OE2 & ¿Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ mejora a M4 base? & M4 por encima de M4 base, que es la hipótesis central del trabajo \\
-X6 & OE2 & ¿Alguna fusión determinista supera al pegado normalizado? & Que al menos la que pondera por la confianza de HyperNCD lo supere \\
-X7 & OE2 & ¿Las diferencias entre métodos superan la variabilidad del agrupamiento? & Que las diferencias menores que la dispersión no se puedan sostener \\
-X8 & OE3 & ¿Qué clases superan el umbral de 70\,\% y por qué unas son más difíciles? & Que las clases grandes y planas sean más fáciles que las pequeñas y alargadas \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \subsection{Protocolo de Repetición}
 \label{sec:repeticiones}
@@ -415,14 +384,11 @@ reales. Esta sección describe esa escena, cómo se calcula la métrica y contra
 umbral se compara.
 
 \paragraph*{Escena etiquetada y métricas.}\etiquetahija{sec:escena-etiquetada} La escena de prueba es una capilla de
-la Catedral que entregó el asesor etiquetada a mano (Tabla~\ref{tab:capilla-clases}).
-Tiene cinco clases, arco, columna, cúpula, pared y techo, y una clase \emph{otro}
-con lo que no se etiquetó, que no se cuenta. Cada punto de $S$ toma la clase de la
-pieza más cercana, porque el Módulo~1 filtra y promedia. No se usó para entrenar ningún
-modelo ni para adaptar Sonata. Los grupos no tienen nombre, así
-que se emparejan uno a uno con las clases reales (Sección~\ref{sec:hungaro} y
-Algoritmo~\ref{alg:evaluacion}). La asignación por mayoría castiga a las clases
-pequeñas, por lo que el resultado principal es el uno a uno.
+la Catedral etiquetada, con cinco clases y una clase \emph{otro}, lo
+no etiquetado (Tabla~\ref{tab:capilla-clases}). Cada punto toma la clase de la pieza
+más cercana, porque el Módulo~1 promedia. Los grupos se emparejan uno a uno
+con las clases reales (Algoritmo~\ref{alg:evaluacion}). La asignación por mayoría
+castiga a las clases pequeñas, por eso se usa el uno a uno.
 
 \begin{algorithm}[!htbp]
 \small
@@ -437,23 +403,13 @@ $(\mathrm{NMI}, \mathrm{ARI}) \leftarrow \textsc{Métricas}(\hat y, y)$\;
 \end{algorithm}
 
 \paragraph*{Umbral y dificultad por clase.}\etiquetahija{sec:umbral-dificultad} El IoU de cada clase se compara con un
-umbral de 70\,\%, el mismo para todas, que es una meta propia porque ningún
-artículo consultado fija un IoU mínimo. Las clases se ordenan por el IoU del mejor
-modelo, y a ese orden se le llama dificultad experimental. Como depende del modelo,
-también se mide la geometría de cada clase sin usar ningún modelo, con su tamaño, qué
-tan alargada es, cuánto cambian sus normales y cuántos de sus puntos tocan a otra
-clase.
+umbral de 70\,\%, una meta propia. Las clases se
+ordenan por el IoU del mejor modelo, su dificultad experimental. Como depende del
+modelo, también se mide la geometría de cada clase, con su tamaño, forma, normales y
+contacto con otras clases.
 
-\paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla dos preguntas, si el descriptor
-contiene la información de las clases y si el Módulo~4 la aprovecha. La sonda lineal
-las separa porque mide el descriptor sin fusión, con el protocolo del artículo de
-Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un $k$-NN, sobre
-$f_{\mathrm{ssl}}$ fijo en una mitad espacial de la escena y se prueba en la otra, y
-se repite al revés. Se corrió sobre Sonata original y adaptado, con una semilla.
-
-\subsection{Verificación Empírica del Entorno de Cómputo}
-\label{sec:entorno-computo}
-
-Cada entorno se probó antes de usarlo. En Khipu se compiló MinkowskiEngine con
-CUDA~11.8 para HyperNCD y se comprobó con una corrida corta de entrenamiento. Cada
-experimento deja un registro con sus parámetros, costo y métricas.
+\paragraph*{Sonda lineal.}\etiquetahija{sec:sonda-lineal} El agrupamiento mezcla lo que contiene el descriptor
+con lo que el Módulo~4 aprovecha, y la sonda lineal mide solo el descriptor, con el
+protocolo de Sonata \cite{wu2025sonata}. Se entrena un clasificador lineal, y un
+$k$-NN, sobre $f_{\mathrm{ssl}}$ fijo en una mitad de la escena y se prueba en la
+otra, y al revés. Se corrió sobre Sonata original y adaptado.
