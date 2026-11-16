@@ -88,10 +88,9 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 \subsection[Procedimiento]{Procedimiento\espejo{sec:u1-procedimiento}}
 \label{sec:res-u1-procedimiento}
 
-La Tabla~\ref{tab:m1-metadatos} resume los conteos y tiempos de cada paso, cuya
-evidencia visual está en el \hyperref[sec:anexo-evidencia-m1]{Anexo~E}. La
-matriz $S$ ocupó 39\,MB en la capilla clasificada, 28{,}9\,MB en PL13 y
-22{,}0\,MB en PL7.
+La Tabla~\ref{tab:m1-metadatos} resume conteos y tiempos de cada paso (evidencia en el
+\hyperref[sec:anexo-evidencia-m1]{Anexo~E}). La matriz $S$ ocupó 39\,MB en la capilla,
+28{,}9 en PL13 y 22{,}0 en PL7.
 
 \begin{table}[!htbp]
 \centering
@@ -105,7 +104,7 @@ matriz $S$ ocupó 39\,MB en la capilla clasificada, 28{,}9\,MB en PL13 y
 \texttt{voxel} & 0{,}05 & 0{,}05 & 0{,}05 \\
 \texttt{q} & 20 & 20 & 20 \\
 \texttt{lambda} & 2 & 2 & 2 \\
-\texttt{offset\_utm} & Registrado en el archivo de metadatos & \multicolumn{2}{l}{Columna \emph{Centro} de la Tabla~\ref{tab:m1-centrado}} \\
+\texttt{offset\_utm} & En metadatos & \multicolumn{2}{r}{Columna \emph{Centro} de la Tabla~\ref{tab:m1-centrado}} \\
 \texttt{n\_crudo} & 3\,380\,661 & 8\,239\,904 & 8\,590\,904 \\
 \texttt{n\_sor} & 3\,277\,440 & 8\,020\,796 & 8\,184\,419 \\
 \texttt{n\_voxel} & 1\,135\,946 & 803\,099 & 610\,637 \\
@@ -114,18 +113,10 @@ matriz $S$ ocupó 39\,MB en la capilla clasificada, 28{,}9\,MB en PL13 y
 \end{tabularx}
 \end{table}
 
-\FloatBarrier
-\subsection[Qué Significan los Resultados]{Qué Significan los Resultados\espejo{sec:u1-reproducibilidad}}
-\label{sec:res-u1-repro}
-
-En el levantamiento completo procesado en Khipu (23 archivos LAS, 1\,079\,s en
-total), el Módulo~1 redujo 589\,708\,290 puntos a 17\,807\,859 representantes
-(cerca del 3\,\%), lo que permite que cada sección quepa en la GPU. Los conteos
-de PL13 y PL7 en Khipu coincidieron exactamente con los obtenidos en la laptop
-(Tabla~\ref{tab:m1-metadatos}), confirmando que la salida es reproducible en
-conteos entre máquinas distintas, aunque el orden de las filas puede variar
-entre versiones de Open3D y por ello cada archivo de descriptores debe usarse
-con la matriz $S$ con que se calculó.
+En el levantamiento (23 archivos en Khipu) se redujeron 589\,708\,290 puntos a
+17\,807\,859, y los conteos de PL13 y PL7 coincidieron con la laptop
+(Tabla~\ref{tab:m1-metadatos}). El orden de las filas varía, por eso cada archivo de
+descriptores va con su matriz $S$.
 
 % =====================================================================
 \FloatBarrier
