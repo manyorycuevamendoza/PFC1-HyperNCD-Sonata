@@ -318,18 +318,15 @@ ARI del \emph{k}-means entre original y adaptado & \multicolumn{2}{c}{0{,}29} \\
 \end{table}
 
 El descriptor adaptado es bastante distinto del original y menos rico, pues su
-rango efectivo baja de 97,7 a 64,3, y el $k$-means es menos estable. En PL13 se
-midió lo mismo antes de tener etiquetas y salió parecido, con un rango de 110,5 a
-81,3 y un coseno medio de 0,54. Con etiquetas, el M3 adaptado rinde menos que el
-original en la capilla ($34{,}3\pm1{,}7$ frente a $45{,}4\pm8{,}5$,
-Tabla~\ref{tab:m2-m4-semillas}). En la capilla los dos descriptores se extrajeron
-en el mismo entorno de Colab, con la misma semilla y la misma atención de PyTorch,
-y por eso la diferencia del coseno de 0,54 viene de los pesos y no del equipo. En
-cambio, en PL13 el original se había extraído en el clúster con atención densa, y
-ese descriptor no se usa para comparar. Lo que sigue sin conocerse es la
-variabilidad de la adaptación, porque se hizo una sola corrida con un lote de una
-escena. El tiempo y la memoria de la extracción en la capilla son casi iguales,
-26{,}6\,s y 27{,}0\,s con 10{,}49\,GB, de modo que la adaptación no cambia el
+rango efectivo baja de 97,7 a 64,3, y el $k$-means es menos estable. En PL13 salió
+parecido, aunque su original se extrajo en el clúster y no se usa para comparar. Con
+etiquetas, el M3 adaptado rinde menos que el original en la capilla
+($34{,}3\pm1{,}7$ frente a $45{,}4\pm8{,}5$, Tabla~\ref{tab:m2-m4-semillas}). En la
+capilla los dos descriptores se extrajeron en el mismo entorno de Colab, con la misma
+semilla y atención, así que la diferencia del coseno de 0,54 viene de los pesos y no
+del equipo. Lo que sigue sin conocerse es la variabilidad de la adaptación, porque se
+hizo una sola corrida con lote de una escena. El tiempo y la memoria de la extracción
+son casi iguales, 26{,}6\,s y 27{,}0\,s con 10{,}49\,GB, así que adaptar no cambia el
 costo de usar el modelo.
 
 La Figura~\ref{fig:captura-m3} muestra el agrupamiento de M3 sobre la capilla,
