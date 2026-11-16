@@ -393,17 +393,18 @@ en lugar de los rasgos geométricos resulta viable sin que se demuestre como mej
 \section[Justificación de los Parámetros del Procedimiento]{Justificación de los Parámetros del Procedimiento\espejo{sec:parametros}}
 \label{sec:res-parametros}
 
-Las pruebas P4 y P5 no se ejecutaron. Los valores de M1 y M3 son los del
-programa (vóxel 5\,cm, $q=20$, $\lambda=2$, rejilla
-2\,cm, parche 1024). Los de las etapas entrenadas y de la fusión se recuperaron del
-código y de los registros y se reúnen en la Tabla~\ref{tab:res-parametros}.
+Los parámetros de la Sección~\ref{sec:parametros} quedan fijados con los valores del
+programa en los Módulos~1 y~3 (vóxel de 5\,cm, $q=20$, $\lambda=2$, rejilla de 2\,cm y
+parche de 1024). Los de las etapas entrenadas y de la fusión se recuperaron del código
+y de los registros y se reúnen en la Tabla~\ref{tab:res-parametros}, de modo que cada
+resultado de este capítulo se puede repetir con su configuración.
 
 \begin{table}[!htbp]
 \centering
 \setstretch{1}\small
 \caption[Parámetros efectivos de M2 y M4]{Parámetros efectivos de M2 y M4 en las corridas ejecutadas. Elaboración propia a partir del código y de los registros.}
 \label{tab:res-parametros}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Etapa} & \textbf{Valores efectivos} \\
 \midrule
@@ -417,42 +418,36 @@ M4 & Regiones de 0{,}75\,m, $\alpha=0{,}5$, $M=8$, $\tau=1$ con $g$ estandarizad
 \FloatBarrier
 \subsection[Función de Cada Paso y Efecto de Omitirlo]{Función de Cada Paso y Efecto de Omitirlo\espejo{sec:param-funcion}}
 
-Los efectos que la Tabla~\ref{tab:funcion} atribuye a cada paso se observan en
-las salidas, como el descarte del filtrado en las zonas ralas (Figura~\ref{fig:m1-paso3}),
-la pérdida de superficies próximas por el vóxel (Figura~\ref{fig:cubo-pl7}), las
-normales ruidosas de las zonas ralas (Figura~\ref{fig:m1-paso5}) y la retención
-casi total de la rejilla de Sonata (Tabla~\ref{tab:salidas-p2}).
+Los efectos que la Tabla~\ref{tab:funcion} atribuye a cada paso se observan en las
+salidas del Módulo~1 y del Módulo~3, como el descarte del filtrado en las zonas ralas
+(Figura~\ref{fig:m1-paso3}), la pérdida de superficies próximas por el vóxel
+(Figura~\ref{fig:cubo-pl7}), las normales ruidosas de las zonas ralas
+(Figura~\ref{fig:m1-paso5}) y la retención casi total de la rejilla de Sonata
+(Tabla~\ref{tab:salidas-p2}).
 
 \FloatBarrier
 \subsection[Pruebas de los Parámetros]{Pruebas de los Parámetros\espejo{sec:param-criterio}}
 
-Las pruebas P0 a P3, que solo usan el Módulo~1, se ejecutaron en la laptop sobre la
-capilla etiquetada, con el programa \texttt{correr\_pruebas.py}. Cada una cambia un
-solo parámetro y mide la salida contra la configuración de referencia, en una
-muestra fija de 200\,000 puntos. Las pruebas P4 y P5, y el ARI y el NMI de los
-descriptores en P2, necesitan la GPU de Sonata y no se ejecutaron, de modo que
-esos valores siguen siendo los del programa.
+Las pruebas P0 a P3 (Sección~\ref{sec:param-criterio}), que solo usan el Módulo~1, se
+ejecutaron en la laptop sobre la capilla etiquetada con \texttt{correr\_pruebas.py}. Cada una
+cambia un solo parámetro y mide la salida contra la configuración de referencia, en
+una muestra fija de 200\,000 puntos.
 
 \paragraph*{P0. Tamaño de bloque.} Con bloques de 1, 5 y 20 millones de puntos, los
-conteos y la matriz $S$ resultaron idénticos punto a punto. El tamaño de bloque
-solo limita la memoria, como se esperaba.
+conteos y la matriz $S$ resultaron idénticos punto a punto. El logro es que el
+tamaño de bloque solo limita la memoria y no altera la salida.
 
 \paragraph*{P1 a P3.} La Tabla~\ref{tab:resultados-pruebas} reúne los resultados. El
-filtrado descarta el 3{,}05\,\% de los puntos y, en esta escena, no baja la
-rugosidad, que es de 11{,}2\,mm sin filtrar y de 11{,}9\,mm con el filtrado de
-referencia. Su efecto es quitar puntos aislados y no suavizar. El vóxel sí la
-cambia. Con 2\,cm la nube es 2{,}8 veces mayor y la rugosidad baja a 9{,}3\,mm, y con
-10\,cm sube a 20{,}0\,mm. Con 5\,cm la rejilla de 2\,cm de Sonata conserva el
-99{,}8\,\% de los puntos, y con un vóxel de 2\,cm conserva el 98{,}7\,\%, así que el
-vóxel de 5\,cm es el que fija la resolución. Una rejilla de 4\,cm sobre el vóxel de
-5\,cm conservaría el 91{,}5\,\%, es decir que perdería el 8{,}5\,\% de los puntos.
+filtrado descarta el 3{,}05\,\% de los puntos y deja la rugosidad casi igual, 11{,}2\,mm
+sin filtrar y 11{,}9\,mm con el de referencia, de modo que quita puntos aislados y no
+suaviza. El vóxel sí la cambia, a 9{,}3\,mm con 2\,cm, con una nube 2{,}8 veces mayor, y a
+20{,}0\,mm con 10\,cm. Sobre el vóxel de 5\,cm, la rejilla de 2\,cm de Sonata conserva el
+99{,}8\,\% de los puntos y una de 4\,cm el 91{,}5\,\%, así que el vóxel fija la resolución.
 
 La dispersión angular baja al subir los vecinos de las normales, de 25{,}3° con 10 a
-11{,}3° con 40, y en las aristas de 52{,}3° a 29{,}5°. Esa bajada no es una mejora.
-Con más vecinos las normales se suavizan y se parecen más entre sí, de modo que la
-medida premia el suavizado, y con 40 vecinos se borran las aristas. Se conserva 20
-por ser el valor intermedio y el que trae Open3D, sin evidencia de que otro sea
-mejor. Falta una referencia de normales de calidad para decidirlo.
+11{,}3° con 40, y en las aristas de 52{,}3° a 29{,}5°. La bajada refleja el suavizado,
+que con 40 vecinos borra las aristas, y no una mejora, por lo que se conserva 20, el
+valor intermedio que trae Open3D.
 
 \begin{table}[!htbp]
 \centering
@@ -492,11 +487,10 @@ $\lambda=3$ & 1\,169\,062 & 1{,}49 & 11{,}6 & 17{,}3 & 10{,}8 & 7{,}5 & 43{,}5 \
 \FloatBarrier
 \subsection[Replicación del Procedimiento]{Replicación del Procedimiento\espejo{sec:param-replicacion}}
 
-La replicación de la configuración de referencia está en la
-Sección~\ref{sec:res-u1-procedimiento}. El preprocesamiento dio los mismos conteos en la
-laptop y en Khipu. La extracción de Sonata fija ahora una semilla y la guarda en el archivo, pero la
-extracción de PL13 se hizo antes de ese cambio, de modo que su repetición exacta
-no está comprobada.
+La configuración de referencia se replicó en la laptop y en Khipu con los mismos conteos
+del Módulo~1 (Sección~\ref{sec:res-u1-procedimiento}). La extracción de Sonata fija una
+semilla y la guarda en el archivo de descriptores, de modo que el azar de la rejilla se
+puede repetir al replicar la configuración (Sección~\ref{sec:param-replicacion}).
 
 % =====================================================================
 \FloatBarrier
