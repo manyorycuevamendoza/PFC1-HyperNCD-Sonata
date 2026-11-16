@@ -44,18 +44,11 @@ M4, capilla & CPU local & 68 a 80\,s & 4\,GB (RAM) \\
 \subsection[Datos de Entrada y Ejecución]{Datos de Entrada y Ejecución\espejo{sec:u1-datos}}
 \label{sec:res-u1-datos}
 
-El preprocesamiento se probó inicialmente sobre dos escaneos del levantamiento de
-la Catedral de Lima, PL13 y PL7 (el 1{,}40\,\% y el 1{,}46\,\% del total), que
-quedaron como datos de ejemplo para verificar el comportamiento del programa
-(Sección~\ref{sec:hardware-repo} y \hyperref[sec:anexo-evidencia-m1]{Anexo~E}).
-Como los 23 escaneos del levantamiento no tienen etiquetas por punto, no permiten
-calcular métricas de acierto. Por ello, para evaluar todo el sistema de principio
-a fin (Unidades~1, 2 y~3), se empleó una escena de una capilla de la Catedral
-proporcionada por el asesor, anotada con cinco clases (arco, columna, cúpula,
-pared y techo) más \emph{otro}.
-
-Las tres pruebas usaron los valores por defecto de la
-Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}). En la capilla,
+El preprocesamiento se probó primero en PL13 y PL7 para verificar el programa
+(Sección~\ref{sec:hardware-repo} y \hyperref[sec:anexo-evidencia-m1]{Anexo~E}), y como
+los 23 escaneos no tienen etiquetas por punto, la evaluación de principio a fin usa
+además la capilla etiquetada (Sección~\ref{sec:escena-etiquetada}). Las tres pruebas usaron los valores por defecto
+de la Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}). En la capilla,
 el Módulo~1 redujo los 3\,380\,661 puntos crudos a 3\,277\,440 tras el filtrado
 (3{,}1\,\%) y a 1\,135\,946 tras la voxelización, en 9{,}3\,s, transfiriendo las
 etiquetas con una distancia mediana de 1{,}2\,cm y máxima de 3{,}6\,cm. La
@@ -86,8 +79,8 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{imagenes/captura_m1.png}
-\caption[La capilla tras el Módulo 1]{La capilla tras el Módulo~1, con el color real y con la clase real de cada punto, sin la clase \emph{otro}. Capturas del visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}). Elaboración propia.}
+\includegraphics[width=0.65\linewidth]{imagenes/captura_m1.png}
+\caption[La capilla tras el Módulo 1]{La capilla tras el Módulo~1, con el color real y con la clase de cada punto, sin la clase \emph{otro}. Visor (\hyperref[sec:anexo-software]{Anexo~A}). Elaboración propia.}
 \label{fig:captura-m1}
 \end{figure}
 
