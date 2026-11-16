@@ -43,13 +43,13 @@ extracción es menor, 3{,}2\,GB, porque no cuenta el contexto de CUDA.
 \toprule
 \textbf{Etapa} & \textbf{Equipo} & \textbf{Tiempo} & \textbf{Memoria pico} \\
 \midrule
-M1, capilla & Colab & 9{,}3\,s & --- \\
-M1, 23 archivos & Khipu, CPU & 1\,079\,s en total & --- \\
-Sonata, PL13 & Khipu, RTX A6000 & 13{,}9\,s & 34{,}60\,GB \\
+M1, capilla & Colab y CPU local & 9{,}3\,s & 4\,GB (RAM) \\
+M1, 23 archivos & Khipu, CPU & 1\,079\,s en total & 4\,GB (RAM) \\
+Sonata, PL13 & Khipu, RTX A6000 & 13{,}9\,s & 34{,}60\,GB (GPU) \\
 Entrenamiento de M2, ArCH & Colab, T4 & 75{,}0\,min & 9{,}5\,GB (GPU), 4{,}91\,GB (RAM) \\
 M2 sobre la capilla & Colab, T4 & 1{,}7\,s de inferencia, 42{,}7\,s en total & 5{,}28\,GB (GPU), 4{,}49\,GB (RAM) \\
-Sonata, capilla & Colab, L4 & 26{,}6\,s & 10{,}49\,GB \\
-M4, capilla & CPU local & 68 a 80\,s & --- \\
+Sonata, capilla & Colab, L4 & 26{,}6\,s & 10{,}49\,GB (GPU) \\
+M4, capilla & CPU local & 68 a 80\,s & 4\,GB (RAM) \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -63,11 +63,12 @@ M4, capilla & CPU local & 68 a 80\,s & --- \\
 \subsection[Estructura y Contrato de los Módulos]{Estructura y Contrato de los Módulos\espejo{sec:contrato}}
 \label{sec:res-contrato}
 
-El contrato de cada módulo, descrito en la Sección~\ref{sec:contrato}, es el diseño, la
-Tabla~\ref{tab:res-contrato} indica qué se ejecutó de cada módulo. La diferencia
-principal es que M2 y M4 no se ejecutaron como módulos entrenados dentro del
-mismo ciclo. M2 se entrenó antes y se aplicó sin reentrenar, y M4 operó después, sobre
-los descriptores guardados.
+La Tabla~\ref{tab:res-contrato} resume la salida que exige el contrato de la
+Sección~\ref{sec:contrato} y lo que se ejecutó en cada módulo. A diferencia del
+artículo original de HyperNCD, donde los prototipos se actualizan durante el
+entrenamiento, aquí los módulos se ejecutaron desacoplados a través de archivos:
+M2 y M3 extrajeron sus descriptores una sola vez por escena y M4 operó después
+en CPU sobre esos descriptores guardados.
 
 \begin{table}[!htbp]
 \centering
@@ -105,27 +106,26 @@ cabezas de M2 usados en este capítulo.
 \subsection[Datos de Entrada y Ejecución]{Datos de Entrada y Ejecución\espejo{sec:u1-datos}}
 \label{sec:res-u1-datos}
 
-El procedimiento se ejecutó sobre la capilla etiquetada, que es la escena que se
-evalúa en todo el trabajo, y sobre dos escaneos sin etiquetas de la Catedral de
-Lima, PL13 y PL7, que se usaron al inicio para probar el programa
-(Sección~\ref{sec:hardware-repo}). Las Unidades~2 y~3 siguen a la capilla de
-principio a fin, de modo que cada módulo se mide sobre la misma escena. PL13 y PL7
-quedan como ejemplos de que el procedimiento se comporta igual en otros escaneos,
-y son el 1{,}40\,\% y el 1{,}46\,\% del levantamiento.
+El preprocesamiento se probó inicialmente sobre dos escaneos del levantamiento de
+la Catedral de Lima, PL13 y PL7 (el 1{,}40\,\% y el 1{,}46\,\% del total), que
+quedaron como datos de ejemplo para verificar el comportamiento del programa
+(Sección~\ref{sec:hardware-repo} y \hyperref[sec:anexo-evidencia-m1]{Anexo~E}).
+Como los 23 escaneos del levantamiento no tienen etiquetas por punto, no permiten
+calcular métricas de acierto. Por ello, para evaluar todo el sistema de principio
+a fin (Unidades~1, 2 y~3), se empleó una escena de una capilla de la Catedral
+proporcionada por el asesor, anotada con cinco clases (arco, columna, cúpula,
+pared y techo) más \emph{otro}.
 
 Las tres pruebas usaron los valores por defecto de la
-Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}). Las figuras de
-la capilla dibujan 250\,000 puntos tomados al azar y no muestran la clase
-\emph{otro}, que reúne lo que no se etiquetó y confunde la lectura, aunque sí
-cuenta en los conteos.
-
-\paragraph*{Capilla etiquetada.} Para medir con etiquetas se usó una capilla de la
-Catedral anotada con cinco clases (arco, columna, cúpula, pared y techo) más
-\emph{otro}. El Módulo~1 la redujo de 3\,380\,661 puntos a 3\,277\,440 tras el
-filtrado (3{,}1\,\%) y a 1\,135\,946 tras la voxelización, en 9{,}3\,s, las
-etiquetas se transfirieron con una distancia mediana de 1{,}2\,cm y máxima de
-3{,}6\,cm. La Tabla~\ref{tab:capilla-clases} muestra que el vóxel conserva entre
-31 y 36\,\% de cada clase, de modo que no sesga su proporción.
+Sección~\ref{sec:u1-procedimiento} (Tabla~\ref{tab:m1-metadatos}). En la capilla,
+el Módulo~1 redujo los 3\,380\,661 puntos crudos a 3\,277\,440 tras el filtrado
+(3{,}1\,\%) y a 1\,135\,946 tras la voxelización, en 9{,}3\,s, transfiriendo las
+etiquetas con una distancia mediana de 1{,}2\,cm y máxima de 3{,}6\,cm. La
+Tabla~\ref{tab:capilla-clases} muestra que el vóxel conserva entre 31 y 36\,\% de
+cada clase, sin sesgar su proporción, y la Figura~\ref{fig:captura-m1} comprueba
+que cada pieza mantiene su forma a 5\,cm. Las figuras de la capilla dibujan
+250\,000 puntos tomados al azar y omiten la clase \emph{otro}, que reúne lo no
+etiquetado y confunde la lectura, aunque sí entra en los conteos.
 
 \begin{table}[!htbp]
 \centering
@@ -146,13 +146,6 @@ Otro & 2\,066\,230 & 695\,785 & 33{,}7\,\% & 61{,}3\,\% \\
 \end{tabular}
 \end{table}
 
-La Figura~\ref{fig:captura-m1} muestra la capilla tras el Módulo~1, con el color
-real y con la clase de cada punto, tal como los dibuja el visor del proyecto
-(Sección~\ref{sec:res-visor}). El vóxel de 5\,cm deja la nube más rala, pero se
-siguen reconociendo la cúpula con su farol, los arcos de la nave y las paredes
-laterales, y cada pieza conserva su forma. Eso es lo que necesitan los módulos
-siguientes, que reciben solo esta nube.
-
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{imagenes/captura_m1.png}
@@ -164,13 +157,10 @@ siguientes, que reciben solo esta nube.
 \subsection[Procedimiento]{Procedimiento\espejo{sec:u1-procedimiento}}
 \label{sec:res-u1-procedimiento}
 
-Los seis pasos se ejecutaron como los define la
-Sección~\ref{sec:u1-procedimiento}, su evidencia visual está en el
-\hyperref[sec:anexo-evidencia-m1]{Anexo~E}.
-
-La escritura final dejó la matriz $S$ de la capilla en 39\,MB, la de PL13 en
-28{,}9\,MB y la de PL7 en 22{,}0\,MB, cada una junto a su archivo de metadatos
-(Tabla~\ref{tab:m1-metadatos}).
+La Tabla~\ref{tab:m1-metadatos} resume los conteos y tiempos de cada paso, cuya
+evidencia visual está en el \hyperref[sec:anexo-evidencia-m1]{Anexo~E}. La
+matriz $S$ ocupó 39\,MB en la capilla clasificada, 28{,}9\,MB en PL13 y
+22{,}0\,MB en PL7.
 
 \begin{table}[!htbp]
 \centering
@@ -179,7 +169,7 @@ La escritura final dejó la matriz $S$ de la capilla en 39\,MB, la de PL13 en
 \label{tab:m1-metadatos}
 \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Campo} & \textbf{Capilla} & \textbf{PL13} & \textbf{PL7} \\
+\textbf{Campo} & \textbf{Capilla clasificada} & \textbf{PL13} & \textbf{PL7} \\
 \midrule
 \texttt{voxel} & 0{,}05 & 0{,}05 & 0{,}05 \\
 \texttt{q} & 20 & 20 & 20 \\
@@ -197,29 +187,14 @@ La escritura final dejó la matriz $S$ de la capilla en 39\,MB, la de PL13 en
 \subsection[Verificación y Reproducibilidad]{Verificación y Reproducibilidad\espejo{sec:u1-reproducibilidad}}
 \label{sec:res-u1-repro}
 
-PL13 se ejecutó con la orden de la Sección~\ref{sec:u1-reproducibilidad} y PL7
-con la siguiente.
-\begin{lstlisting}[style=comando]
-python preprocesar.py --input PL7_SCN0001.las \
-       --output PL7_SCN0001_preprocesado \
-       --voxel 0.05 --q 20 --lam 2
-\end{lstlisting}
-
-El mismo programa preprocesó después el levantamiento completo en el clúster
-Khipu, con los mismos parámetros. Los 23 archivos LAS
-(Sección~\ref{sec:u1-datos}) quedaron en 17\,807\,859 representantes. La suma de los tiempos por
-archivo fue de 1\,079 segundos, unos 18 minutos. Los conteos de PL13 y de PL7
-en esa corrida coinciden exactamente con los de las pruebas locales de la
-Tabla~\ref{tab:m1-metadatos}, que es la comprobación de repetición descrita en
-la Sección~\ref{sec:u1-reproducibilidad}. La unidad da el mismo resultado en dos
-máquinas distintas.
-
-\paragraph*{Qué dice el Módulo~1.} El preprocesamiento redujo 589\,708\,290 puntos
-a 17\,807\,859, cerca del 3\,\%, y esa reducción hace posible que la sección
-completa quepa en la GPU. El hallazgo es que la salida es reproducible en los
-conteos, pero el orden de las filas puede cambiar entre versiones de Open3D, por lo
-que cada archivo de descriptores debe usarse con la matriz $S$ con que se
-calculó.
+En el levantamiento completo procesado en Khipu (23 archivos LAS, 1\,079\,s en
+total), el Módulo~1 redujo 589\,708\,290 puntos a 17\,807\,859 representantes
+(cerca del 3\,\%), lo que permite que cada sección quepa en la GPU. Los conteos
+de PL13 y PL7 en Khipu coincidieron exactamente con los obtenidos en la laptop
+(Tabla~\ref{tab:m1-metadatos}), confirmando que la salida es reproducible en
+conteos entre máquinas distintas, aunque el orden de las filas puede variar
+entre versiones de Open3D y por ello cada archivo de descriptores debe usarse
+con la matriz $S$ con que se calculó.
 
 % =====================================================================
 \FloatBarrier
@@ -734,8 +709,8 @@ pesan el contenido, la escala y el sensor.
 \midrule
 SemanticPOSS, validación (03) & 30{,}4\,\% & 7 & 0{,}478 & 0{,}375 \\
 SemanticPOSS, entrenamiento (00) & 28{,}2\,\% & 6 & 0{,}493 & 0{,}472 \\
-Capilla & 98{,}4\,\% & 1 & 0{,}018 & 0{,}114 \\
-Capilla a 80\,000 puntos & 91{,}8\,\% & 4 & 0{,}033 & 0{,}099 \\
+Capilla clasificada & 98{,}4\,\% & 1 & 0{,}018 & 0{,}114 \\
+Capilla clasificada a 80\,000 puntos & 91{,}8\,\% & 4 & 0{,}033 & 0{,}099 \\
 PL13 y PL7, sin etiquetas & 82{,}5 y 81{,}4\,\% & 4 & --- & --- \\
 \bottomrule
 \end{tabularx}
