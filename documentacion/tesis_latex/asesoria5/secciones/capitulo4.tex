@@ -869,16 +869,18 @@ Los puntos de mejora son calibrar el tamaño y la forma de las regiones, que hoy
 cubos fijos de 0{,}75\,m que mezclan bordes curvos y piezas esbeltas, y entrenar la
 adaptación de Sonata con un lote mayor cuando se cuente con más memoria de GPU.
 
-Para saber si el orden de las clases refleja su forma y no solo el modelo, se midió
-la geometría de cada una sin usar ningún modelo, sobre la capilla etiquetada y sobre
-los archivos LAS por pieza (Tabla~\ref{tab:geometria} y
+El orden de las clases refleja su forma y no solo el modelo. La geometría de cada una
+se midió sin ningún modelo, sobre la capilla etiquetada y sobre los archivos LAS por
+pieza, que son puntos crudos (Tabla~\ref{tab:geometria} y
 Figura~\ref{fig:caso-geometria}). El tamaño de la clase correlaciona con el IoU
-($+0{,}90$ de Spearman) y la linealidad lo hace de forma inversa ($-0{,}90$). Arco y
+($+0{,}90$ de Spearman) y la linealidad lo hace de forma inversa ($-0{,}90$), y arco y
 columna son las más pequeñas, las más alargadas y las que más mezclan sus bordes con
-otras clases. Un índice simple, el promedio de los rangos de cuatro medidas, ordena
-las clases como pared, techo, cúpula y arco y columna empatadas, el mismo orden del
-IoU. El número de piezas que hizo el etiquetador (arco, 8, pared, 6) no guarda
-relación con el IoU ($-0{,}15$). Refleja cómo se etiquetó, no la dificultad.
+otras clases.
+
+Un índice simple, el promedio de los rangos de cuatro medidas, ordena las clases como
+pared, techo, cúpula y arco y columna empatadas, el mismo orden del IoU. El número de
+piezas que hizo el etiquetador (arco, 8, pared, 6) no guarda relación con el IoU
+($-0{,}15$), pues refleja cómo se etiquetó y no la dificultad.
 
 \begin{table}[!htbp]
 \centering
@@ -905,9 +907,6 @@ Columna & 2,9 & 0,351 & 2,9 & 2 \\
 \label{fig:caso-geometria}
 \end{figure}
 
-Con cinco clases las correlaciones son solo orientativas, y los archivos por pieza
-son puntos crudos, sin el vóxel de 5\,cm del Módulo~1.
-
 \FloatBarrier
 \subsection[Verificación Empírica del Entorno de Cómputo]{Verificación Empírica del Entorno de Cómputo}
 \label{sec:res-entorno}
@@ -923,12 +922,10 @@ Figura~\ref{fig:g-recursos} del \hyperref[sec:anexo-complementarios]{Anexo~F}.
 \section{Correspondencia con los Objetivos}
 \label{sec:res-objetivos}
 
-Esta sección vuelve a los objetivos de la introducción y dice, con la métrica de
-salida de cada uno, si se cumplió. Un objetivo se da por cumplido cuando existe el
-producto que pedía y su métrica se midió con el protocolo del
-Capítulo~\ref{cap:metodo}, aunque el resultado no haya sido el esperado. La
-Tabla~\ref{tab:objetivos} resume la correspondencia, y las cifras salen de las
-tablas de este capítulo.
+La Tabla~\ref{tab:objetivos} resume, con la métrica de salida de cada objetivo de la
+introducción, si se cumplió. Un objetivo se da por cumplido cuando existe el producto
+que pedía y su métrica se midió con el protocolo del Capítulo~\ref{cap:metodo}, aunque
+el resultado no haya sido el esperado.
 
 \begin{table}[!htbp]
 \centering
