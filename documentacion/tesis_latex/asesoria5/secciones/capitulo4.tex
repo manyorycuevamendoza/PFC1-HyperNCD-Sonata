@@ -685,11 +685,9 @@ M4, Sonata adaptado & 27,2 & 24,3 & 43,9 & 72,0 & 69,8 \\
 
 La Tabla~\ref{tab:fpfn-clase} agrega los falsos positivos, los falsos negativos, la
 precisión y el recall de cada clase, que el IoU solo resume. En M3 el arco y la columna
-tienen una precisión baja, de 27{,}4 y 35{,}2\,\%, porque absorben muchos puntos de
-otras piezas y no porque se pierdan, ya que su recall es mayor, y la columna sigue
-igual en M4. La cúpula y la pared hacen lo contrario, con una precisión de 97\,\% y un
-recall menor. Con M4 la cúpula pierde recall, de 82{,}3 a 46{,}7\,\%, y eso explica su
-caída de IoU.
+tienen una precisión baja (27{,}4 y 35{,}2\,\%) porque absorben puntos de otras piezas, no
+porque se pierdan, y la columna sigue igual en M4. Con M4 la cúpula pierde recall, de
+82{,}3 a 46{,}7\,\%, y eso explica su caída de IoU.
 
 \begin{table}[!htbp]
 \centering
@@ -725,17 +723,12 @@ Techo & 53\,506 & 7\,240 & 21\,441 & 88{,}1 & 71{,}4 & 78{,}9 \\
 \end{tabularx}
 \end{table}
 
-\paragraph*{Sonda lineal.} La sonda lineal de la Sección~\ref{sec:sonda-lineal} se corrió
-sobre los descriptores de Sonata original y adaptado, con división espacial en dos
-mitades y una semilla (Tabla~\ref{tab:sonda}). Un clasificador lineal balanceado sobre
-$f_{\mathrm{ssl}}$ fijo llega a 79{,}7 de mIoU con el original y a 80{,}5 con el adaptado,
-y el $k$-NN a 81{,}2 y 82{,}0, frente a 45{,}4 y 34{,}3 del agrupamiento.
-
-El logro es que el descriptor sí contiene la información de las clases, incluso la del
-arco (62{,}6 y 70{,}8) y la de la columna (66{,}4 y 63{,}2), que el agrupamiento no
-separa (18{,}7 y 28{,}9), de modo que el límite de M3 y de M4 está en cómo se agrupa y no
-en el descriptor. La adaptación tampoco lo empeoró, con etiquetas rinde igual o algo
-mejor, y lo que empeora es el agrupamiento sin etiquetas.
+La sonda lineal de la Sección~\ref{sec:sonda-lineal} sobre los descriptores de Sonata
+original y adaptado (Tabla~\ref{tab:sonda}, dos mitades espaciales y una semilla) llega a 79{,}7 y 80{,}5 de mIoU, y el $k$-NN a 81{,}2 y 82{,}0, frente a 45{,}4 y
+34{,}3 del agrupamiento. El descriptor sí contiene la información de las clases, incluso
+la del arco (62{,}6 y 70{,}8) y la de la columna (66{,}4 y 63{,}2), que el agrupamiento no
+separa (18{,}7 y 28{,}9), de modo que el límite de M3 y de M4 está en cómo se agrupa. La
+adaptación tampoco lo empeoró.
 
 \begin{table}[!htbp]
 \centering
