@@ -277,12 +277,10 @@ cúpula se reparta en varios grupos.
 
 \subsubsection*{Adaptación de Sonata a la Catedral\espejo{sec:variante-sonata}}
 
-La adaptación entrenó 30 épocas de 105 iteraciones, 3\,150 en total, y tardó unos
-103 minutos en una GPU L4 de Colab, con 13,3\,GB de puntos de control. Hubo además
-una corrida inválida de unos 42 minutos por un error de configuración, que cuenta
-como costo de depuración. Los pesos del \emph{teacher} cambiaron 8,35\,\% en
-norma, y los 453 tensores cambiaron. La Tabla~\ref{tab:sonata-adaptado} compara
-los dos descriptores sobre la capilla, sin etiquetas.
+La adaptación (Sección~\ref{sec:variante-sonata}) entrenó 30 épocas en unos 103 minutos en
+una GPU L4 de Colab, y los pesos del \emph{teacher} cambiaron 8,35\,\% en norma. La
+Tabla~\ref{tab:sonata-adaptado} compara los dos descriptores sobre la capilla,
+extraídos en el mismo entorno y sin etiquetas.
 
 \begin{table}[!htbp]
 \centering
