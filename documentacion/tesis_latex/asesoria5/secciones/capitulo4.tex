@@ -150,14 +150,11 @@ Pared marcada como novedosa & 98{,}9\,\% & 1{,}0\,\% \\
 \end{tabular}
 \end{table}
 
-La Figura~\ref{fig:captura-m2} muestra lo que predice cada cabeza sobre la
-capilla. Con SemanticPOSS casi todos los puntos caen en una sola cabeza, la misma
-para la cúpula, las paredes y los arcos, y casi toda la escena se marca como
-novedosa. Con ArCH las cabezas se reparten por piezas, la cúpula queda en una
-cabeza, las paredes laterales en otra y el techo en una tercera, y el 87\,\% de
-los puntos se marca como conocido. Los arcos de la nave son lo que queda marcado
-como novedoso, que es lo esperado porque el arco fue una de las clases
-novedosas del entrenamiento con ArCH.
+La Figura~\ref{fig:captura-m2} lo muestra sobre la escena. Con SemanticPOSS la cúpula,
+las paredes y los arcos caen en la misma cabeza y casi todo se marca como novedoso.
+Con ArCH las cabezas se reparten por piezas (cúpula, paredes laterales y techo), el
+87\,\% de los puntos se marca como conocido y solo los arcos quedan como novedosos,
+lo esperado porque el arco fue una clase novedosa del entrenamiento con ArCH.
 
 \begin{figure}[!htbp]
 \centering
@@ -166,9 +163,9 @@ novedosas del entrenamiento con ArCH.
 \label{fig:captura-m2}
 \end{figure}
 
-El rango efectivo bajo no es señal de colapso, porque en SemanticPOSS también es bajo
-(entre 4 y 5) donde el modelo funciona. Lo que delata el colapso es el reparto de
-cabezas y el NMI (Sección~\ref{sec:res-u3-proc}).
+El rango efectivo bajo de la Tabla~\ref{tab:m2-novedoso} no indica colapso, porque en
+SemanticPOSS también es bajo (entre 4 y 5) donde el modelo funciona. Lo que delata el
+colapso es el reparto de cabezas y el NMI (Sección~\ref{sec:res-u3-proc}).
 
 \paragraph*{Qué dice el Módulo~2.} HyperNCD no está roto. En su propio dominio, la
 validación de SemanticPOSS da un mIoU de 0{,}375, casi el 0{,}384 que guarda el
