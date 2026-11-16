@@ -240,10 +240,11 @@ Tamaño del archivo de descriptores & --- & 992\,MB \\
 \subsubsection*{Revisión de los descriptores\espejo{sec:revision-descriptores}}
 \label{sec:res-descriptores}
 
-La primera vista, las
-componentes principales, es el tercer panel de la
-Figura~\ref{fig:escena-etapas}, las otras dos están en la
-Figura~\ref{fig:escena-descriptores}, sobre los puntos etiquetados de la capilla.
+En una muestra de 100\,000 puntos de la capilla (Figura~\ref{fig:escena-descriptores}), las
+tres primeras componentes principales explican el 25{,}4\,\% de la varianza y las diez
+primeras el 44{,}3\,\%, y el rango efectivo es de 97{,}7 sobre 1088 dimensiones, unas 98
+direcciones independientes, así que los descriptores no han colapsado
+(Sección~\ref{sec:revision-descriptores}).
 
 \begin{figure}[!htbp]
 \centering
@@ -252,19 +253,10 @@ Figura~\ref{fig:escena-descriptores}, sobre los puntos etiquetados de la capilla
 \label{fig:escena-descriptores}
 \end{figure}
 
-Sobre una muestra de 100\,000 puntos, las tres primeras componentes principales
-explican el 25{,}4\,\% de la varianza, las diez primeras el 44{,}3\,\% y el rango
-efectivo es de 97{,}7 sobre 1088 dimensiones. Esto significa dos cosas. La primera
-es que el color de la vista de componentes principales, que usa solo tres, muestra
-una cuarta parte de la información de los descriptores, dos puntos del mismo color
-pueden diferir en el resto. La segunda es que los descriptores no han colapsado, porque
-el rango efectivo valdría 1 si todos apuntaran en la misma dirección
-(Sección~\ref{sec:revision-descriptores}), y equivale aquí a unas 98
-direcciones independientes. En la Figura~\ref{fig:escena-descriptores} se ve además
-que el $k$-means parte la cúpula en anillos horizontales y que la similitud con un
-punto de la cúpula es alta en su mismo anillo y baja en los demás. El descriptor
-distingue alturas dentro de una misma pieza, lo que explica que una clase como la
-cúpula se reparta en varios grupos.
+El $k$-means parte la cúpula en anillos horizontales y la similitud con un punto de la
+cúpula es alta en su mismo anillo y baja en los demás, de modo que el descriptor
+distingue alturas dentro de una misma pieza y una clase como la cúpula se reparte en
+varios grupos.
 
 \subsubsection*{Adaptación de Sonata a la Catedral\espejo{sec:variante-sonata}}
 
