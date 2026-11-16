@@ -10,11 +10,9 @@ con una sola corrida de entrenamiento de HyperNCD y diez semillas en el agrupami
 \section[Hardware y Repositorio]{Hardware y Repositorio\espejo{sec:hardware-repo}}
 \label{sec:res-hardware}
 
-Cada etapa corrió en el equipo que indica la Tabla~\ref{tab:res-hardware}, con
-los programas y guiones del repositorio y las órdenes del
-\hyperref[sec:anexo-software]{Anexo~A}. La memoria de GPU de la fila de M2 es la
-que informa \texttt{nvidia-smi}, el pico que registra PyTorch para esa misma
-extracción es menor, 3{,}2\,GB, porque no cuenta el contexto de CUDA.
+Cada etapa corrió en el equipo de la Tabla~\ref{tab:res-hardware} (órdenes en el
+\hyperref[sec:anexo-software]{Anexo~A}). La memoria de M2 es la de \texttt{nvidia-smi},
+y PyTorch, 3{,}2\,GB sin el contexto de CUDA.
 
 \begin{table}[!htbp]
 \centering
