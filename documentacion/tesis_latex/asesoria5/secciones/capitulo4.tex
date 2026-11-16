@@ -173,10 +173,9 @@ entrenamiento con ArCH se hizo una sola vez.
 \label{sec:res-rama-ssl}
 
 Sonata se aplicó a la capilla en Colab con los pesos originales y con los adaptados
-(Sección~\ref{sec:rama-ssl}). La rejilla retiene casi todos los puntos, porque el
-vóxel de 5\,cm de la Unidad~1 ya dejó la nube más gruesa que la rejilla. El tiempo y la
-memoria están en la Tabla~\ref{tab:res-hardware} y los campos del archivo de
-descriptores en la Tabla~\ref{tab:npz}. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
+(Sección~\ref{sec:rama-ssl}). La rejilla de 0{,}02\,m, con semilla 0, retiene casi todos
+los puntos, porque el vóxel de 5\,cm de la Unidad~1 ya dejó la nube más gruesa que la
+rejilla. El tiempo y la memoria están en la Tabla~\ref{tab:res-hardware}. El logro es que, sin haber visto una sola etiqueta, Sonata separa las piezas de
 la capilla: en el tercer panel de la Figura~\ref{fig:escena-etapas} la cúpula se ve
 verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 
@@ -186,25 +185,6 @@ verde, el arco y las paredes morado y azul, y el techo amarillo y rosa.
 \caption[La capilla en tres etapas]{La capilla etiquetada cruda, tras la Unidad~1 y con los descriptores de Sonata original, en planta y de costado, sin la clase \emph{otro}.}
 \label{fig:escena-etapas}
 \end{figure}
-
-\begin{table}[!htbp]
-\centering
-\setstretch{1}\small
-\caption[Archivo de descriptores de la capilla]{Campos del archivo de descriptores de la capilla.}
-\label{tab:npz}
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Campo} & \textbf{Valor en la capilla} \\
-\midrule
-\texttt{feat} & $1\,133\,238\times 1088$, precisión media \\
-\texttt{coord} & $1\,133\,238\times 3$ \\
-\texttt{inverse} & $1\,135\,946$ entradas \\
-\texttt{grid\_size} & 0{,}02\,m \\
-\texttt{n\_original} & $1\,135\,946$ \\
-\texttt{semilla} & 0 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \FloatBarrier
 \subsubsection*{Mediciones de control de cada extracción\espejo{sec:observables}}
