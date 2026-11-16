@@ -599,15 +599,15 @@ puntos (43,4 frente a 32,5), pero con M2 de ArCH la diferencia es de 1{,}1 punto
 frente a 51,4), menor que las desviaciones de 1,7 y 2,5.
 
 El Sonata adaptado a la Catedral empeora. M3 baja de 45,4 a 34,3 y, con ArCH, M4
-queda en 47,0, por debajo de su base. La dispersión de M3 con Sonata original,
-$\pm8{,}5$, indica un agrupamiento inestable. Los resultados con una sola semilla,
-como el 53,4 de M3 frente a la media de 45,4, las variantes de fusión y la
+queda en 47,0, por debajo de su base. M3 con Sonata original es inestable ($\pm8{,}5$).
+Los resultados con una sola semilla (M3 llega a 53,4), las variantes de fusión y la
 sensibilidad a $K$ están en el \hyperref[sec:anexo-complementarios]{Anexo~F}.
 
-La Tabla~\ref{tab:modulos-solos} junta, sobre la capilla, lo que cuesta y lo que acierta
-cada módulo por sí solo, con sus dos variantes. El mIoU de M2 y de M3 es el del
-agrupamiento con solo ese descriptor, la misma columna de la
-Tabla~\ref{tab:m2-m4-semillas}, y esta tabla añade los tiempos, que en M2 y en M3 son los de la inferencia sola, y el cambio.
+La Tabla~\ref{tab:modulos-solos} junta, sobre la capilla, el costo y el acierto de cada
+módulo con sus dos variantes. Su mIoU es la media de diez semillas del agrupamiento con
+$K=8$, la misma de la Tabla~\ref{tab:m2-m4-semillas} y la que compara métodos, y difiere
+de otras cifras de M2 que usan las cabezas, una semilla o la clase \emph{other}. Los
+tiempos de M2 y de M3 son los de la inferencia sola.
 
 \begin{table}[!htbp]
 \centering
@@ -632,10 +632,6 @@ M4 & $f_{\mathrm{sem}}$ de ArCH y $f_{\mathrm{ssl}}$ & --- & 68 a 80\,s & $52{,}
 \bottomrule
 \end{tabular}
 \end{table}
-
-Las cifras de mIoU de M2 difieren entre tablas porque miden cosas distintas, las
-cabezas o el agrupamiento con $K=8$, con o sin \emph{other}, una semilla o la media de
-diez. Esta tabla usa la media de diez, la que compara métodos.
 
 Con el criterio de la Sección~\ref{sec:repeticiones}, son diferencias reales el
 cambio de M2 con ArCH ($+12{,}5$ frente a una desviación de 1{,}1) y el de M3
