@@ -367,12 +367,9 @@ se reportan la media y la desviación, que miden la estabilidad del agrupamiento
 equivalen a entrenar diez veces los modelos.
 
 \paragraph*{Criterio para decidir si una diferencia es real.} Con una sola escena y
-un solo entrenamiento de cada modelo, hace falta una regla escrita antes de mirar
-los resultados. Una diferencia entre dos métodos se toma como real solo si supera la
-mayor de las dos desviaciones de sus diez semillas. Si no lo cumple, se
-reporta como una diferencia dentro del ruido, y aun cumpliéndola vale solo para esta
-escena. La regla es conservadora a propósito, porque las semillas no miden la
-variación entre escenas ni entre entrenamientos.
+un solo entrenamiento por modelo, la regla se fija antes de mirar los resultados: una
+diferencia entre dos métodos es real solo si supera la mayor de las dos desviaciones
+de sus diez semillas, y aun así vale solo para esta escena.
 
 \subsection{Trazabilidad de la Métrica}
 \label{sec:trazabilidad}
