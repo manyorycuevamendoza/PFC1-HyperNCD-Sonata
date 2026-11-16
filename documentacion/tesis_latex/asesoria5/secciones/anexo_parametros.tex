@@ -17,7 +17,7 @@ La Tabla~\ref{tab:funcion} resume el aporte de cada paso y el efecto de omitirlo
 
 \begin{table}[H]
 \centering
-\setstretch{0.9}\tiny
+\setstretch{0.9}\scriptsize
 \setlength{\tabcolsep}{2pt}
 \caption[Qué aporta cada paso y qué pasaría sin él]{Qué aporta cada paso y qué pasaría sin él. Elaboración propia.}
 \label{tab:funcion}
@@ -26,18 +26,18 @@ La Tabla~\ref{tab:funcion} resume el aporte de cada paso y el efecto de omitirlo
 \textbf{Paso} & \textbf{Qué aporta} & \textbf{Sin este paso} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Unidad 1}}\\
-\hyperref[sec:u1-p1]{1. Carga} & Limita la memoria y deja el color en la escala de Sonata & Sonata recibiría color hasta 65\,535 en vez de 255 \\
-\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión, en UTM, la precisión simple redondea $y$ a pasos de 1\,m, centrada, a micrómetros & Molduras y aristas se perderían por redondeo \\
-\hyperref[sec:u1-p3]{3. Filtrado SOR} & Retira puntos sueltos antes de que se promedien en el vóxel o tuerzan una normal & Sonata recibiría posiciones y normales de superficies que no existen \\
-\hyperref[sec:u1-p4]{4. Voxelización} & Iguala la densidad y reduce la nube para que quepa en la GPU & Las zonas cercanas al escáner dominarían y la nube no cabría \\
-\hyperref[sec:u1-p5]{5. Normales} & Da a Sonata su tercera entrada, que el escáner no mide & Sonata no tendría su entrada completa \\
-\hyperref[sec:u1-p6]{6. Escritura} & Separa las dos unidades y permite verificar repeticiones & Habría que preprocesar cada vez que corre Sonata \\
+\hyperref[sec:u1-p1]{1. Carga} & Limita memoria y normaliza el color & Color fuera de escala \\
+\hyperref[sec:u1-p2]{2. Centrado} & Conserva la precisión UTM & Se pierden molduras y aristas \\
+\hyperref[sec:u1-p3]{3. Filtrado SOR} & Elimina puntos aislados & Superficies y normales falsas \\
+\hyperref[sec:u1-p4]{4. Voxelización} & Uniformiza densidad y reduce memoria & Sesgo por densidad y exceso de VRAM \\
+\hyperref[sec:u1-p5]{5. Normales} & Completa la entrada de Sonata & Entrada incompleta \\
+\hyperref[sec:u1-p6]{6. Escritura} & Reutiliza y audita resultados & Se repite el preprocesamiento \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Unidad 2}}\\
-\hyperref[sec:u2-p2]{2. Modelo} & Aporta lo que Sonata aprendió sin etiquetas & Con pesos al azar, los descriptores no dirían nada de la escena \\
-\hyperref[sec:u2-p3]{3. Preparación} & Pone la nube en la escala de Sonata y guarda el índice inverso & No se podrían devolver los descriptores a cada punto \\
-\hyperref[sec:u2-p4]{4. Inferencia} & Produce $f_{\mathrm{ssl}}$, el descriptor que reemplaza a $f_{\mathrm{geo}}$ & No existe el aporte de la tesis \\
-\hyperref[sec:u2-p5]{5. Escritura} & Ambas ramas se extraen una vez por sección y M4 lee sus archivos & Habría que repetir dos inferencias costosas y mezclar entornos incompatibles \\
+\hyperref[sec:u2-p2]{2. Modelo} & Aporta conocimiento auto-supervisado & Descriptores sin información \\
+\hyperref[sec:u2-p3]{3. Preparación} & Ajusta escala y guarda el índice inverso & No hay retorno a cada punto \\
+\hyperref[sec:u2-p4]{4. Inferencia} & Produce $f_{\mathrm{ssl}}$ & Se pierde el aporte de Sonata \\
+\hyperref[sec:u2-p5]{5. Escritura} & Guarda ambas ramas para M4 & Se repiten inferencias costosas \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -46,12 +46,12 @@ La Tabla~\ref{tab:funcion} resume el aporte de cada paso y el efecto de omitirlo
 \subsection*{G.2. Pruebas de los parámetros}
 
 
-Cada prueba varía un parámetro y mide rugosidad, dispersión angular, ARI/NMI y
-costo; la Tabla~\ref{tab:pruebas} resume el criterio.
+Cada prueba cambia un parámetro y mide calidad, ARI/NMI y costo
+(Tabla~\ref{tab:pruebas}).
 
 \begin{table}[H]
 \centering
-\setstretch{0.9}\tiny
+\setstretch{0.9}\scriptsize
 \setlength{\tabcolsep}{2pt}
 \caption[Pruebas de los parámetros]{Pruebas de los parámetros. Elaboración propia.}
 \label{tab:pruebas}
@@ -60,42 +60,20 @@ costo; la Tabla~\ref{tab:pruebas} resume el criterio.
 \textbf{Prueba} & \textbf{Qué cambia} & \textbf{Valores} & \textbf{Qué se espera ver} \\
 \midrule
 P0 & Tamaño de bloque & 1, 5 y 20 millones & Ninguna diferencia en $S$ \\
-P1 & Filtrado, con o sin, $q$ y $\lambda$ & Sin filtrado, $q$ de 10 a 40, $\lambda$ de 1,5 a 3 & Si el filtrado mejora $r$ y la dispersión en las zonas ralas \\
-P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$ de 2, 3, 5 y 10\,cm, $g$ de 2 y 4\,cm & Si bajar de 5\,cm cambia los descriptores (ARI) y si la sección cabe en la GPU \\
-P3 & Vecinos de las normales & 10, 20, 30 y 40 & Dispersión en zonas planas y en aristas, con la opción \texttt{--q-normales} que separa este valor del $q$ del filtrado \\
-P4 & Precisión del \texttt{.npz} & Media y simple & Si la precisión media cambia los descriptores (ARI) \\
-P5 & Tamaño de parche & 512, 1024 y 2048 & Si un parche menor ahorra memoria sin cambiar los descriptores \\
+P1 & Filtrado $q,\lambda$ & Sin filtro; $q$: 10--40; $\lambda$: 1,5--3 & Rugosidad y dispersión \\
+P2 & Vóxel $\ell$ y rejilla $g$ & $\ell$: 2--10\,cm; $g$: 2 o 4\,cm & ARI y memoria GPU \\
+P3 & Vecinos de normales & 10, 20, 30 y 40 & Dispersión en planos y aristas \\
+P4 & Precisión del \texttt{.npz} & Media y simple & Cambio de ARI \\
+P5 & Tamaño de parche & 512, 1024 y 2048 & Memoria sin alterar descriptores \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 
 \subsection*{G.3. Replicación del procedimiento}
-
-Replicar exige fijar la Tabla~\ref{tab:replica}, verificar los conteos de
-\texttt{preprocesar.py} y comparar con ARI/NMI los descriptores extraídos.
-
-\begin{table}[H]
-\centering
-\setstretch{0.9}\tiny
-\setlength{\tabcolsep}{2pt}
-\caption[Cómo cambiar cada parte de la configuración]{Cómo cambiar cada parte de la configuración y qué comprobar después. Elaboración propia.}
-\label{tab:replica}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\hsize=0.8\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X@{}}
-\toprule
-\textbf{Qué cambia} & \textbf{Cómo se cambia} & \textbf{Qué se comprueba} \\
-\midrule
-Otro escaneo & \texttt{--input} con su archivo LAS & Conteos de su archivo de metadatos \\
-Tamaño de vóxel & \texttt{--voxel}, o \texttt{VOXEL} en el guion & \texttt{n\_voxel} y memoria en la GPU \\
-Vecinos del filtrado & \texttt{--q}, o \texttt{Q} en el guion & \texttt{n\_sor} \\
-Umbral del filtrado & \texttt{--lam}, o \texttt{LAM} en el guion & \texttt{n\_sor} \\
-Rejilla de Sonata & \texttt{--grid} & Puntos retenidos por la rejilla \\
-Precisión de los descriptores & \texttt{--fp32} & Tamaño del archivo, ARI y NMI \\
-Azar de la rejilla & \texttt{--semilla} & Descriptores idénticos con la misma semilla \\
-Otra máquina u otra versión de Open3D & Ninguna opción, mismos valores & Mismos conteos, aunque las filas salgan en otro orden \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Los límites son 48\,GB de GPU y el tamaño de la sección; si no cabe, se aplican
-los bloques de P0 o los parches de P5.
+Para replicar, \texttt{--input} cambia el LAS; \texttt{--voxel}/\texttt{VOXEL}
+y \texttt{--grid}, la discretización; \texttt{--q}/\texttt{Q} y
+\texttt{--lam}/\texttt{LAM}, el SOR; y \texttt{--fp32} y \texttt{--semilla},
+la precisión y el azar. Se verifican los metadatos, \texttt{n\_voxel},
+\texttt{n\_sor}, memoria, ARI/NMI y repetibilidad; en otra máquina deben
+conservarse los conteos, aunque cambie el orden de las filas.

@@ -11,25 +11,14 @@
 \setcounter{figure}{0}\renewcommand{\thefigure}{D.\arabic{figure}}
 \setcounter{table}{0}\renewcommand{\thetable}{D.\arabic{table}}
 
-La prueba sintética aísla el efecto de la fusión con descriptores de calidad
-controlada. \texttt{simular\_modulo4.py} corre sin GPU en tres minutos; no entrena
-redes ni predice el mIoU de la Catedral.
-
-\paragraph*{Escena.}
-La nave de 20 por 10\,m contiene 23\,600 puntos: 12\,000 de suelo y muros
-conocidos, y 11\,600 de columna, pilar y bóveda. Columna y pilar son cilindros
-idénticos e intercalados; DBSCAN produce 12 regiones, cuatro por clase.
-
-\paragraph*{Descriptores.}
-Cada descriptor suma centro de clase, desvío por objeto y ruido. $f_{\mathrm{sem}}$
-separa las clases conocidas; $f_{\mathrm{ssl}}$, las nuevas con intensidad
-controlada; y $f_{\mathrm{geo}}$ sigue la Sección~\ref{sec:fgeo}. La configuración
-base usa calidad Sonata 1{,}5, $\alpha=0{,}5$ y $M=8$.
-
-\paragraph*{Resultado.}
-La línea base confunde bóveda y pilar y no separa columnas; la propuesta acierta
-las tres clases (Figura~\ref{fig:m4-escena}). En cinco repeticiones, el mIoU sube
-de 0{,}35 a 0{,}75.
+La prueba sintética aísla la fusión sin entrenar redes ni predecir el resultado de
+la Catedral. La nave de $20\times10$\,m contiene 23\,600 puntos de cinco clases;
+DBSCAN forma 12 regiones. Los descriptores combinan centro de clase, variación por
+objeto y ruido: $f_{\mathrm{sem}}$ separa las clases conocidas,
+$f_{\mathrm{ssl}}$ las nuevas y $f_{\mathrm{geo}}$ aporta geometría, con calidad
+Sonata 1{,}5, $\alpha=0{,}5$ y $M=8$. En cinco repeticiones, la propuesta separa
+las tres clases novedosas y eleva el mIoU de 0{,}35 a 0{,}75
+(Figura~\ref{fig:m4-escena}); el script tarda tres minutos sin GPU.
 
 \begin{figure}[!htbp]
 \centering

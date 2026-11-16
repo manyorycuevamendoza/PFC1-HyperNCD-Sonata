@@ -10,6 +10,8 @@
 \setlength{\intextsep}{6pt plus 2pt minus 2pt}
 \setlength{\LTpre}{2pt}\setlength{\LTpost}{2pt}
 \captionsetup{font=scriptsize,skip=1pt}
+\captionsetup[table]{font=normalsize,skip=1pt}
+\captionsetup[figure]{font=normalsize,skip=1pt}
 \lstset{basicstyle=\ttfamily\scriptsize,aboveskip=2pt,belowskip=2pt}
 \titlespacing*{\section}{0pt}{0.8ex}{0.3ex}
 \titlespacing*{\subsection}{0pt}{0.7ex}{0.25ex}
@@ -59,10 +61,10 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \toprule
 \textbf{Archivo} & \textbf{Función} \\
 \midrule
-\texttt{PL7\_SCN0001.las} & Entrada del Módulo~1, escaneo en bruto \\
-\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida del Módulo~1, matriz $S$, entrada del Módulo~3 \\
-\texttt{PL7\_SCN0001\_preprocesado.json} & Metadatos del Módulo~1, parámetros, centro restado y conteos \\
-\texttt{PL13\_feats.npz} & Salida del Módulo~3 para PL13, $f_{\mathrm{ssl}}$, coordenadas e índice inverso \\
+\texttt{PL7\_SCN0001.las} & Entrada LAS de M1 \\
+\texttt{PL7\_SCN0001\_preprocesado.npy} & Salida M1; entrada M3 \\
+\texttt{PL7\_SCN0001\_preprocesado.json} & Parámetros, centro y conteos de M1 \\
+\texttt{PL13\_feats.npz} & $f_{\mathrm{ssl}}$, coordenadas e índice inverso de M3 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -71,12 +73,12 @@ Plotly & Visor 3D del proyecto para revisar cada etapa y exportar las figuras & 
 \begin{table}[!htbp]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{0.9}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.86}
 \caption[Requisitos del método y recursos del clúster Khipu]{Requisitos del método y recursos disponibles en el clúster Khipu (UTEC),
 verificados por los autores sobre los nodos asignados.}
 \label{tab:hardware}
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash\hsize=1.07\hsize}X>{\raggedright\arraybackslash\hsize=0.93\hsize}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.65cm}>{\raggedright\arraybackslash\hsize=1.18\hsize}X>{\raggedright\arraybackslash\hsize=0.82\hsize}X@{}}
 \toprule
 \textbf{Recurso} & \textbf{Requisito del método} & \textbf{Disponible y verificado} \\
 \midrule
@@ -152,7 +154,7 @@ modelo = sonata.load(pesos or "sonata", repo_id="facebook/sonata", custom_config
 Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tabla.
 
 \begin{center}
-\setstretch{0.94}\tiny\renewcommand{\arraystretch}{0.82}
+\setstretch{0.94}\scriptsize\renewcommand{\arraystretch}{0.80}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{8.1cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
 \toprule
 \textbf{Símbolo} & \textbf{Significado} & \textbf{Valor} \\
@@ -190,7 +192,7 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:fssl}{$f_{\mathrm{ssl}}$} & Descriptor auto-supervisado (Sonata) & 1088 dimensiones \\
 \leavevmode\hypertarget{nom:xin}{$\mathbf{x}_i$} & Los nueve valores del punto $i$ que entran al codificador & Posición, color y normal \\
 \leavevmode\hypertarget{nom:h}{$\mathbf{h}_i^{(s)}$} & Características del punto $i$ en la etapa $s$ del codificador & 48 a 512 canales \\
-\leavevmode\hypertarget{nom:Wp}{$W_p$} & Pesos del \emph{pooling} entre etapas & Ec.~\eqref{eq:pooling} \\
+\leavevmode\hypertarget{nom:Wp}{$W_p$} & Pesos del \emph{pooling} entre etapas & Anexo~C \\
 \leavevmode\hypertarget{nom:pis}{$\pi_s(j)$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Celda de la etapa $s$ que contiene al punto $j$} \\
 \leavevmode\hypertarget{nom:inv}{$\mathrm{inv}(i)$} & Índice inverso, celda en la que cayó el punto $i$ de $S$ & Ec.~\eqref{eq:upcast} \\
 \leavevmode\hypertarget{nom:concat}{$[\,a;\,b\,]$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Concatenación, el vector $b$ colocado a continuación del vector $a$} \\
@@ -212,8 +214,8 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:Sg}{$S_g$} & Afinidad geométrica entre regiones & Núcleo gaussiano \\
 \leavevmode\hypertarget{nom:Ss}{$S_s$} & Afinidad semántica entre regiones & Coseno \\
 \leavevmode\hypertarget{nom:Sb}{$S_b$} & Afinidad combinada & Ec.~\eqref{eq:afinidad} \\
-\leavevmode\hypertarget{nom:alpha}{$\alpha$} & Balance geométrico-semántico en $S_b$ & $[0,1]$, 0{,}5 en la implementación \\
-\leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano, un valor pequeño solo considera afines a las regiones muy próximas & 0{,}1 \\
+\leavevmode\hypertarget{nom:alpha}{$\alpha$} & Peso geométrico en $S_b$ & 0{,}5 usado \\
+\leavevmode\hypertarget{nom:tau}{$\tau$} & Temperatura del núcleo gaussiano & 0{,}1 \\
 \leavevmode\hypertarget{nom:M}{$M$} & Vecinos por hiperarista & 8 \\
 \leavevmode\hypertarget{nom:B}{$B$} & Puntos sin etiqueta del lote & Variable \\
 \leavevmode\hypertarget{nom:Q}{$Q$} & Matriz de partida de Sinkhorn-Knopp & Sección~\ref{sec:sinkhorn} \\
@@ -225,17 +227,17 @@ Cada símbolo de las fórmulas del marco teórico enlaza con su fila en esta tab
 \leavevmode\hypertarget{nom:clase}{$c$ (subíndice)} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una clase del conjunto $\mathcal{S}$} \\
 \leavevmode\hypertarget{nom:conj}{$\mathcal{S}$} & Conjunto de clases sobre el que se calcula una métrica & $\mathcal{C}_k$, $\mathcal{C}_n$ o $\mathcal{C}$ \\
 \leavevmode\hypertarget{nom:Ctodo}{$\mathcal{C}$} & Todas las clases & $\mathcal{C}_k\cup\mathcal{C}_n$ \\
-\leavevmode\hypertarget{nom:tp}{$TP_c,\,FP_c,\,FN_c$} & Verdaderos positivos, falsos positivos y falsos negativos de la clase $c$ & Número de puntos \\
+\leavevmode\hypertarget{nom:tp}{$TP_c,\,FP_c,\,FN_c$} & Aciertos y errores de la clase $c$ & Número de puntos \\
 \leavevmode\hypertarget{nom:iou}{$\mathrm{IoU}_c$} & Intersección sobre unión de la clase $c$ & Ec.~\eqref{eq:iou} \\
 \leavevmode\hypertarget{nom:miou}{$\mathrm{mIoU}(\mathcal{S})$} & Promedio del IoU sobre el conjunto de clases $\mathcal{S}$ & Ec.~\eqref{eq:miou} \\
-\leavevmode\hypertarget{nom:sigstar}{$\sigma^{*}$} & Emparejamiento óptimo entre grupos descubiertos y clases reales & Ec.~\eqref{eq:hungaro} \\
-\leavevmode\hypertarget{nom:perm}{$\sigma,\;\mathfrak{S}_{|\mathcal{C}_n|}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Una correspondencia entre grupos descubiertos y clases novedosas, y el conjunto de todas ellas} \\
+\leavevmode\hypertarget{nom:sigstar}{$\sigma^{*}$} & Emparejamiento óptimo grupo--clase & Ec.~\eqref{eq:hungaro} \\
+\leavevmode\hypertarget{nom:perm}{$\sigma,\;\mathfrak{S}_{|\mathcal{C}_n|}$} & Correspondencia y conjunto de permutaciones & --- \\
 \leavevmode\hypertarget{nom:ytrue}{$y$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{Etiqueta real de un punto} \\
 \leavevmode\hypertarget{nom:ariv}{$\mathrm{ARI}$} & Índice de Rand ajustado & Sección~\ref{sec:ari} \\
 \leavevmode\hypertarget{nom:nmiv}{$\mathrm{NMI}$} & Información mutua normalizada & Sección~\ref{sec:nmi} \\
 \leavevmode\hypertarget{nom:probe}{$W,\;b$} & Pesos y sesgo del clasificador lineal del \emph{linear probing} & Ec.~\eqref{eq:probe} \\
 \leavevmode\hypertarget{nom:delta}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}$} & Ganancia absoluta en clases novedosas & Ec.~\eqref{eq:delta} \\
-\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & \multicolumn{2}{>{\raggedright\arraybackslash}p{12.1cm}@{}}{mIoU del modelo $b$ (\emph{hib}, híbrido, \emph{base}, línea base) sobre las clases $a$ (\emph{novel}, novedosas, \emph{known}, conocidas)} \\
+\leavevmode\hypertarget{nom:supsub}{$\mathrm{mIoU}^{a}_{b}$} & mIoU del modelo $b$ sobre clases $a$ & $a$: clase; $b$: modelo \\
 \leavevmode\hypertarget{nom:G}{$G$} & Brecha cerrada & Ec.~\eqref{eq:G} \\
 \midrule
 \multicolumn{3}{@{}l}{\textbf{Índices y operadores}}\\

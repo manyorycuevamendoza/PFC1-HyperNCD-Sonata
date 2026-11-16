@@ -11,29 +11,15 @@
 \setcounter{table}{0}\renewcommand{\thetable}{C.\arabic{table}}
 \setcounter{equation}{0}\renewcommand{\theequation}{C.\arabic{equation}}
 
-Sonata es un Point Transformer~V3 (PTv3) usado solo como codificador, cinco
-etapas jerárquicas, sin decodificador, con $108{,}46$~M de parámetros. La
-configuración que carga el programa coincide con la de la Figura~\ref{fig:arq-sonata}, y
-el recuento de parámetros de la Tabla~\ref{tab:params-sonata}, hecho capa por capa,
-da exactamente el total que el modelo declara al cargarse.
-
-Cada bloque actualiza las características de los puntos con tres sumas
-residuales,
-\begin{equation}
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{CPE}(\mathbf{h}),\qquad
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{Atn}\!\left(\mathrm{LN}(\mathbf{h})\right),\qquad
-\mathbf{h}\leftarrow\mathbf{h}+\mathrm{MLP}\!\left(\mathrm{LN}(\mathbf{h})\right),
-\label{eq:bloque}
-\end{equation}
-donde CPE es una convolución dispersa que codifica la posición y MLP dos capas
-lineales. Entre una etapa y la siguiente, el \emph{pooling} duplica el lado de la
-celda y reúne los puntos que caen en la misma,
-\begin{equation}
-\nom{h}{\mathbf{h}_c^{(s+1)}}=\mathrm{GELU}\!\left(\mathrm{LN}\!\left(\max_{i\in c}\,\nom{Wp}{W_p}\,\nom{h}{\mathbf{h}_i^{(s)}}\right)\right),
-\label{eq:pooling}
-\end{equation}
-donde $c$ es una celda de la etapa $s+1$, $W_p$ sube el número de canales y el
-máximo se toma canal a canal.
+Sonata usa un Point Transformer~V3 como codificador de cinco etapas, sin
+decodificador y con $108{,}46$~M de parámetros. Cada bloque combina posición,
+atención y capas lineales mediante conexiones residuales; entre etapas, el
+\emph{pooling} agrupa puntos de una misma celda, duplica su tamaño y aumenta los
+canales para incorporar más contexto. La Figura~\ref{fig:arq-sonata} resume esta
+jerarquía y la Tabla~\ref{tab:params-sonata} verifica el total: el 94{,}3\,\% se
+concentra en las etapas 4 y 5. Los pesos ocupan $0{,}43$~GB, mientras los
+34{,}60\,GB medidos en PL13 provienen principalmente de las activaciones
+(Sección~\ref{sec:res-rama-ssl}).
 
 \begin{figure}[!htbp]
 \centering
@@ -116,8 +102,4 @@ máximo se toma canal a canal.
 \bottomrule
 \end{tabular}
 \end{table}
-
-El $94{,}3$\,\% de los parámetros está en las etapas 4 y 5. Los pesos ocupan
-$0{,}43$~GB en precisión simple. La memoria de vídeo medida en la inferencia,
-34{,}60\,GB para PL13, se debe a las activaciones y no a los pesos
-(Sección~\ref{sec:res-rama-ssl}).
+\FloatBarrier

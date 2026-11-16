@@ -11,18 +11,13 @@
 \setcounter{figure}{0}\renewcommand{\thefigure}{E.\arabic{figure}}
 \setcounter{table}{0}\renewcommand{\thetable}{E.\arabic{table}}
 
-Se muestra la evidencia de los pasos 1 a 5 de la Unidad~1 sobre PL13 y PL7; los
-conteos y tiempos están en la Tabla~\ref{tab:m1-metadatos}.
-
-\subsubsection*{Paso 1. Carga}
-
-Cada escaneo se lee en dos bloques en cerca de un segundo; es la entrada cruda,
-con su color original.
-
-\subsubsection*{Paso 2. Centrado}
-
-Aunque sus centros distan unos 17\,m, cada escaneo se centra en su origen
-(Tabla~\ref{tab:m1-centrado}); la nube no cambia visualmente, solo sus ejes.
+La evidencia de la Unidad~1 muestra que PL13 y PL7 se cargan en dos bloques en
+cerca de un segundo, conservan su color y, aunque sus centros distan unos 17\,m,
+se trasladan al origen sin alterar su forma (Tabla~\ref{tab:m1-centrado}). Luego,
+el filtro SOR descarta 219\,108 puntos (2{,}66\,\%) en PL13 y 406\,485
+(4{,}73\,\%) en PL7, en 9 y 12\,s, principalmente en zonas ralas
+(Figura~\ref{fig:m1-paso3}); los conteos y tiempos completos están en la
+Tabla~\ref{tab:m1-metadatos}.
 
 \begin{table}[!htbp]
 \centering
@@ -43,12 +38,6 @@ PL7  & $x$ & 278\,775{,}30 a 278\,826{,}64 & 278\,800{,}97 & $-25{,}67$ a $25{,}
 \bottomrule
 \end{tabularx}
 \end{table}
-
-\subsubsection*{Paso 3. Filtrado SOR}
-
-SOR descarta 219\,108 puntos (2{,}66\,\%) en PL13 y 406\,485 (4{,}73\,\%) en
-PL7, en 9 y 12\,s. Los descartes se concentran en zonas ralas; PL7 presenta más
-de ellas (Figura~\ref{fig:m1-paso3}).
 
 \begin{figure}[!htbp]
 \centering
@@ -78,7 +67,7 @@ zonas ralas, donde SOR concentró sus descartes (Figura~\ref{fig:m1-paso5}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.62\linewidth]{imagenes/m1_paso5_normales.png}
+\includegraphics[width=0.72\linewidth]{imagenes/m1_paso5_normales.png}
 \caption[Normales de PL13 y PL7 como color]{Normales de PL13 y PL7 como color. Visor del proyecto (\hyperref[sec:anexo-software]{Anexo~A}).}
 \label{fig:m1-paso5}
 \end{figure}

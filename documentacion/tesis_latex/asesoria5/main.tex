@@ -51,6 +51,10 @@
 \usepackage{pdflscape}
 \usepackage{placeins}
 \usepackage{tabularx}
+% Todas las leyendas de tablas conservan el tamaño normal del documento,
+% aunque el contenido tabular use una fuente menor para ahorrar espacio.
+\captionsetup[table]{font=normalsize}
+\captionsetup[figure]{font=normalsize}
 % Encabezados sin numero (referencias, indices): sin el espacio superior de 50 pt
 % que trae report, y con el mismo tamano que los capitulos.
 \makeatletter
