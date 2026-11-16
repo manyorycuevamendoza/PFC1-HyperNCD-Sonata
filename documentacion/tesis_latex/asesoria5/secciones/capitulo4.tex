@@ -482,16 +482,12 @@ PL13 y PL7, sin etiquetas & 82{,}5 y 81{,}4\,\% & 4 & --- & --- \\
 
 \subsubsection*{X2. Entrenamiento con ArCH}
 
-El Módulo~2 se entrenó con ArCH \cite{matrone2020benchmark}, como indica la
-Sección~\ref{sec:rama-sem}, y con la configuración de la
-Tabla~\ref{tab:res-parametros}. El logro es un checkpoint que reconoce las clases
-arquitectónicas, con 48{,}93\,\% de mIoU de validación en la época~20 y 48{,}47\,\% en
-la 30. El mejor se guardó como \texttt{epoch=20-step=860}, cuyo metadato interno dice
-época 21, y aquí se nombra por el archivo.
-
-La pérdida baja de 4{,}90 a 2{,}64 y la validación se aplana hacia la época 20
-(Figura~\ref{fig:m2-arch-curvas}), y las clases extensas obtienen los IoU más altos,
-mientras que puerta/ventana, arco y escaleras obtienen los más bajos
+El Módulo~2 se entrenó con ArCH \cite{matrone2020benchmark} (Sección~\ref{sec:rama-sem}) y con
+la configuración de la Tabla~\ref{tab:res-parametros}. El logro es un checkpoint que
+reconoce las clases arquitectónicas, con 48{,}93\,\% de mIoU de validación en la época~20
+(\texttt{epoch=20-step=860}) y 48{,}47\,\% en la 30. La pérdida baja de 4{,}90 a 2{,}64 y la
+validación se aplana hacia la época 20 (Figura~\ref{fig:m2-arch-curvas}). Las clases
+extensas obtienen los IoU más altos, y puerta/ventana, arco y escaleras los más bajos
 (Tabla~\ref{tab:m2-arch-clases}).
 
 \begin{table}[!htbp]
