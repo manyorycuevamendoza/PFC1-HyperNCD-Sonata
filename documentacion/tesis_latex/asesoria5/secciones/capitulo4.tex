@@ -127,17 +127,12 @@ descriptores va con su matriz $S$.
 \subsection[Rama Semántica]{Rama Semántica\espejo{sec:rama-sem}}
 \label{sec:res-rama-sem}
 
-La rama se ejecutó dos veces sobre la capilla con el mismo programa, una con el
-checkpoint de SemanticPOSS y otra con el de ArCH, siempre sin reentrenar. Cada
-ejecución produjo $f_{\mathrm{sem}}$ de 96 dimensiones, las puntuaciones de las
-cabezas y el índice inverso, con 1{,}7\,s de inferencia sobre una GPU T4 con ArCH, y 42{,}7\,s en total con la carga del modelo y la escritura
-(Sección~\ref{sec:res-entorno}). La Tabla~\ref{tab:m2-novedoso} resume cómo se
-comporta cada checkpoint como clasificador punto a punto, antes de cualquier
-fusión. Con SemanticPOSS, M2 marca como novedoso el 99{,}1\,\% de la escena y casi
-todas las clases reales, incluida la pared, caen en una sola cabeza, con ArCH solo
-se marca el 12{,}6\,\% y la proporción depende de la clase. El arco, la clase más
-ajena a lo conocido, se marca en 58{,}0\,\% y la pared en 1{,}0\,\%. El mIoU uno a
-uno de las cabezas sin \emph{otro} pasa de 0{,}093 a 0{,}426.
+La rama se ejecutó dos veces sobre la capilla, con el checkpoint de SemanticPOSS y con
+el de ArCH, sin reentrenar. La Tabla~\ref{tab:m2-novedoso} muestra cómo se comporta
+cada uno como clasificador punto a punto, antes de la fusión. Con SemanticPOSS casi
+toda la escena cae en una sola cabeza y se marca como novedosa (99{,}1\,\%), con ArCH
+solo el 12{,}6\,\%, según la clase (arco 58\,\%, pared 1\,\%), y el mIoU uno a uno
+sube de 0{,}093 a 0{,}426.
 
 \begin{table}[!htbp]
 \centering
