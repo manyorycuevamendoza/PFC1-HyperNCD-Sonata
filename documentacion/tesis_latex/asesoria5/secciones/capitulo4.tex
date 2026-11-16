@@ -125,11 +125,12 @@ descriptores va con su matriz $S$.
 \subsection[Rama Semántica]{Rama Semántica\espejo{sec:rama-sem}}
 \label{sec:res-rama-sem}
 
-La rama se ejecutó sobre la capilla con el checkpoint de SemanticPOSS y con el de ArCH,
-sin reentrenar. El primero colapsa y el segundo distingue las clases
-(Tabla~\ref{tab:m2-novedoso}): con SemanticPOSS casi toda la escena cae en una sola
-cabeza y se marca como novedosa (99{,}1\,\%), con ArCH solo el 12{,}6\,\%, según la
-clase (arco 58\,\%, pared 1\,\%), y el mIoU uno a uno sube de 0{,}093 a 0{,}426.
+La rama semántica se ejecutó sobre la capilla con el checkpoint de SemanticPOSS y con el
+de ArCH, sin reentrenar. El logro es que entrenar con ArCH elimina el colapso: con
+SemanticPOSS casi toda la escena cae en una sola cabeza (98{,}4\,\%) y se marca como
+novedosa (99{,}1\,\%), mientras que con ArCH esa cabeza baja a 44{,}6\,\%, solo el
+12{,}6\,\% se marca como novedoso y el mIoU uno a uno sube de 0{,}093 a 0{,}426
+(Tabla~\ref{tab:m2-novedoso}).
 
 \begin{table}[!htbp]
 \centering
@@ -151,13 +152,12 @@ Pared marcada como novedosa & 98{,}9\,\% & 1{,}0\,\% \\
 \end{table}
 
 La Figura~\ref{fig:captura-m2} lo muestra sobre la escena. Con SemanticPOSS la cúpula,
-las paredes y los arcos caen en la misma cabeza y casi todo se marca como novedoso.
-Con ArCH las cabezas se reparten por piezas (cúpula, paredes laterales y techo), el
-87\,\% de los puntos se marca como conocido y solo los arcos quedan como novedosos,
-lo esperado porque el arco fue una clase novedosa del entrenamiento. El rango efectivo
-bajo de la Tabla~\ref{tab:m2-novedoso} no indica colapso, pues en SemanticPOSS también
-es bajo (4 a 5) donde funciona, y el colapso se ve en el reparto de cabezas y en el
-NMI (Sección~\ref{sec:res-u3-proc}).
+las paredes y los arcos caen en la misma cabeza. Con ArCH las cabezas se reparten por
+piezas (cúpula, paredes laterales y techo), el 87\,\% de los puntos se marca como
+conocido y solo los arcos quedan como novedosos, lo esperado porque el arco fue una
+clase novedosa del entrenamiento. El rango efectivo bajo de ArCH en la
+Tabla~\ref{tab:m2-novedoso} no indica colapso, porque en SemanticPOSS también es bajo
+(4 a 5) donde funciona.
 
 \begin{figure}[!htbp]
 \centering
@@ -166,14 +166,12 @@ NMI (Sección~\ref{sec:res-u3-proc}).
 \label{fig:captura-m2}
 \end{figure}
 
-\paragraph*{Qué dice el Módulo~2.} En su propio dominio HyperNCD funciona, con un mIoU
-de validación de 0{,}375 en SemanticPOSS, casi el 0{,}384 que guarda el punto de
-control. El colapso aparece al salir de ese dominio, con el 98{,}4\,\% de la capilla
-en una sola cabeza. Al entrenar con ArCH esa cabeza baja a 44{,}6\,\% y el NMI sin
-\emph{other} sube de 0{,}027 a 0{,}439, de modo que para esta escena importa más con
-qué se entrena HyperNCD que cómo se fusiona después. Queda sin separar qué parte del
-dominio pesa, si el contenido, la escala o el patrón del LiDAR, y el entrenamiento
-con ArCH se hizo una sola vez.
+En su propio dominio HyperNCD funciona, con un mIoU de validación de 0{,}375 frente al
+0{,}384 del punto de control, y el colapso aparece al salir de él. Al entrenar con ArCH
+el NMI sin \emph{other} sube de 0{,}027 a 0{,}439, de modo que para esta escena importa
+más con qué se entrena HyperNCD que cómo se fusiona después. Queda sin separar qué
+parte del dominio pesa, si el contenido, la escala o el patrón del LiDAR, y el
+entrenamiento con ArCH se hizo una sola vez.
 
 \FloatBarrier
 \subsection[Rama Auto-supervisada, Sonata Original y Adaptado]{Rama Auto-supervisada, Sonata Original y Adaptado\espejo{sec:rama-ssl}}
