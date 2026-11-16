@@ -68,12 +68,12 @@ figura([("m2_cabeza_SemanticPOSS.png", "(a) Cabeza predicha, HyperNCD original (
        2, 2, "captura_m2.png",
        [("novedoso", "#e07b39"), ("conocido", "#2b7bba")])
 
-# M3: imagen mas chica en la pagina y letras mas grandes (se imprime a ~0.85 del ancho del texto, sin reducir la letra)
+# M3: una sola fila de cuatro paneles, a todo el ancho del texto y sin reducir la letra al imprimir
 figura([("m3_pred_original.png", "(a) Clase predicha,\nSonata original"),
         ("m3_pred_adaptado.png", "(b) Clase predicha,\nSonata adaptado"),
         ("m3_acierto_original.png", "(c) Aciertos,\nSonata original"),
         ("m3_acierto_adaptado.png", "(d) Aciertos,\nSonata adaptado")],
-       2, 2, "captura_m3.png",
+       1, 4, "captura_m3.png",
        CLASES + [("sin clase", "#e6e6e6"), ("acierto", "#2ca02c"), ("error", "#d62728")],
-       ancho=5.2, alto_panel=2.6, fuente=9, fuente_leyenda=8.5, dpi=220, ncol_leyenda=4, alto_leyenda=0.55,
-       top=0.92, bottom=0.10, hspace=0.28)
+       ancho=6.0, alto_panel=1.75, fuente=8, fuente_leyenda=8, dpi=220, ncol_leyenda=4, alto_leyenda=0.5,
+       top=0.84, bottom=0.22)
