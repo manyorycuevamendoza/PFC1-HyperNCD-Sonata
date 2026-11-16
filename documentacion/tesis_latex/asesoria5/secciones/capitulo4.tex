@@ -166,14 +166,14 @@ NMI (Sección~\ref{sec:res-u3-proc}).
 \label{fig:captura-m2}
 \end{figure}
 
-\paragraph*{Qué dice el Módulo~2.} HyperNCD no está roto. En su propio dominio, la
-validación de SemanticPOSS da un mIoU de 0{,}375, casi el 0{,}384 que guarda el
-punto de control. El colapso aparece al salir de ese dominio, con el 98{,}4\,\% de
-la capilla en una sola cabeza. Al entrenar con ArCH esa cabeza baja a 44{,}6\,\% y
-el NMI sin \emph{other} sube de 0{,}027 a 0{,}439. El hallazgo es que para
-esta escena importa más con qué se entrena HyperNCD que cómo se fusiona después.
-Queda sin separar qué parte del dominio pesa, si el contenido, la escala o el
-patrón del LiDAR, y el entrenamiento con ArCH se hizo una sola vez.
+\paragraph*{Qué dice el Módulo~2.} En su propio dominio HyperNCD funciona, con un mIoU
+de validación de 0{,}375 en SemanticPOSS, casi el 0{,}384 que guarda el punto de
+control. El colapso aparece al salir de ese dominio, con el 98{,}4\,\% de la capilla
+en una sola cabeza. Al entrenar con ArCH esa cabeza baja a 44{,}6\,\% y el NMI sin
+\emph{other} sube de 0{,}027 a 0{,}439, de modo que para esta escena importa más con
+qué se entrena HyperNCD que cómo se fusiona después. Queda sin separar qué parte del
+dominio pesa, si el contenido, la escala o el patrón del LiDAR, y el entrenamiento
+con ArCH se hizo una sola vez.
 
 \FloatBarrier
 \subsection[Rama Auto-supervisada, Sonata Original y Adaptado]{Rama Auto-supervisada, Sonata Original y Adaptado\espejo{sec:rama-ssl}}
