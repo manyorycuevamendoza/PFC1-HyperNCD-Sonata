@@ -557,17 +557,10 @@ mIoU uno a uno, sin \emph{other} & 7,7\,\% & 33,6\,\% & 35,5\,\% \\
 \end{tabular}
 \end{table}
 
-La Figura~\ref{fig:m2-dominio} añade la entropía de las cabezas y el rango efectivo, que
-la tabla no trae, y la Figura~\ref{fig:m2-cabeza-clase} muestra que con SemanticPOSS
-casi todas las clases reales caen en una sola cabeza y con ArCH se reparten entre
-varias.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth]{imagenes/m2_dominio_capilla.png}
-\caption[Diagnóstico de dominio de M2 sobre la capilla]{Diagnóstico de M2 en la capilla, con SemanticPOSS (época~8) y ArCH (épocas 20 y 30), según cabeza dominante, rango efectivo, entropía y NMI.}
-\label{fig:m2-dominio}
-\end{figure}
+La Figura~\ref{fig:m2-cabeza-clase} muestra a qué cabeza de M2 va cada clase real de
+la capilla. Con SemanticPOSS casi todas caen en una sola cabeza, la que concentra el
+98{,}4\,\% de los puntos, y con ArCH se reparten entre varias, como reflejan el NMI y
+el mIoU de la Tabla~\ref{tab:m2-dominio}.
 
 \begin{figure}[!htbp]
 \centering
