@@ -782,24 +782,18 @@ M2 de SemanticPOSS y Sonata adaptado & $61,0\pm2,0$ & $44,5\pm7,7$ & $30,6\pm4,2
 \end{figure}
 
 Con M2 de ArCH y Sonata original solo la pared supera el 70\,\% ($71{,}9\pm3{,}6$\,\%) y
-el techo queda cerca ($68{,}0\pm3{,}5$\,\%). Con M2 de SemanticPOSS y Sonata adaptado
-ninguna clase lo alcanza, y la brecha media al umbral es de 17{,}9 y 36{,}3 puntos.
-
-Las tres clases más bajas son la cúpula ($51{,}7\pm8{,}2$\,\%, la de mayor variación entre
-semillas), el arco ($42{,}5\pm0{,}9$\,\%) y la columna ($28{,}4\pm1{,}3$\,\%). Los puntos de
-mejora son calibrar el tamaño y la forma de las regiones, que hoy son cubos fijos de
-0{,}75\,m, y entrenar la adaptación de Sonata con un lote mayor.
+el techo queda cerca ($68{,}0\pm3{,}5$\,\%); con M2 de SemanticPOSS y Sonata adaptado ninguna
+clase lo alcanza, con brechas medias de 17{,}9 y 36{,}3 puntos. Las tres clases más bajas
+son la cúpula ($51{,}7\pm8{,}2$\,\%), el arco ($42{,}5\pm0{,}9$\,\%) y la columna
+($28{,}4\pm1{,}3$\,\%), y para subirlas hay que calibrar el tamaño y la forma de las regiones,
+hoy cubos fijos de 0{,}75\,m, y entrenar la adaptación de Sonata con un lote mayor.
 
 El orden de las clases refleja su forma y no solo el modelo. La geometría se midió sin
-ningún modelo, sobre la capilla etiquetada y los archivos LAS por pieza, en puntos
-crudos (Tabla~\ref{tab:geometria} y Figura~\ref{fig:caso-geometria}). El tamaño de la clase
-correlaciona con el IoU ($+0{,}90$ de Spearman) y la linealidad lo hace de forma inversa
-($-0{,}90$), y arco y columna son las más pequeñas, las más alargadas y las que más
-mezclan sus bordes.
-
-Un índice simple, el promedio de los rangos de cuatro medidas, ordena las clases como el
-IoU, y el número de piezas del etiquetador no guarda relación con él ($-0{,}15$), pues
-refleja cómo se etiquetó y no la dificultad.
+modelo, sobre la capilla y los archivos LAS por pieza, en puntos crudos
+(Tabla~\ref{tab:geometria} y Figura~\ref{fig:caso-geometria}). El tamaño correlaciona con el
+IoU ($+0{,}90$ de Spearman) y la linealidad lo hace de forma inversa ($-0{,}90$), y arco y
+columna son las más pequeñas y alargadas. Un índice de cuatro medidas ordena las clases
+como el IoU, y el número de piezas del etiquetador no guarda relación con él ($-0{,}15$).
 
 \begin{table}[!htbp]
 \centering
