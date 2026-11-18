@@ -1,8 +1,10 @@
-% Poster de defensa. A1 apaisado (841 x 594 mm); se imprime en A0 al 141,4 % sin perder calidad (vectorial).
-% Compilar (dos pasadas, por el posicionamiento absoluto):  pdflatex -no-shell-escape poster.tex
+% Poster de defensa. Pagina A0 apaisada (1189 x 841 mm). Se disena en un lienzo de 841 x 594 mm (medidas en mm de abajo)
+% y se amplia 1189/841 = 1,4138 de forma vectorial, asi que el texto de 25 pt se imprime a 35 pt.
+% Compilar:  pdflatex -no-shell-escape poster.tex
 % Las figuras de fig/ salen de documentacion/preparar_figuras.py; la paleta esta en el estudio de color del informe.
 \documentclass[10pt]{article}
-\usepackage[paperwidth=841mm,paperheight=594mm,margin=0mm]{geometry}
+\usepackage[paperwidth=1189mm,paperheight=841mm,margin=0mm]{geometry}
+\usepackage{eso-pic}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
@@ -60,12 +62,14 @@
   \node[anchor=south west,inner sep=0,font=\tit\fs{26}{30},text=navy] at (#1+6,#2+58) {#6};
   \node[anchor=north west,inner sep=0,font=\fs{24}{28},text=suave] at (#1+6,#2+61) {#5};}
 
+\newsavebox{\cartel}
 \begin{document}
-\noindent
-\begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm,shift={(current page.north west)}]
+\begin{lrbox}{\cartel}
+\begin{tikzpicture}[x=1mm,y=-1mm]
+\useasboundingbox (0,0) rectangle (841,594);
 
 % ===================================================== fondo y banda de titulo
-\fill[fondo] (0,0) rectangle (841,594);
+\fill[fondo] (0,0) rectangle (841,600);
 \shade[shading=axis,shading angle=0,left color=navy,right color=azul] (0,0) rectangle (841,124);
 \fill[celeste] (0,124) rectangle (841,128);
 \pgfmathsetseed{11}
@@ -199,10 +203,13 @@
   \punto{Adaptar Sonata no mejoró el agrupamiento, aunque la sonda lineal (79,7 y 80,5) muestra que el descriptor conserva información.}}
 
 % ===================================================== pie
-\shade[shading=axis,shading angle=0,left color=navy,right color=azul] (0,560) rectangle (841,594);
+\shade[shading=axis,shading angle=0,left color=navy,right color=azul] (0,560) rectangle (841,600);
 \node[anchor=west,inner sep=0,text=white,font=\fs{24}{28}] at (24,577) {Basado en HyperNCD (CVPR 2026), Sonata (CVPR 2025) y el conjunto ArCH (Matrone et al., 2020)};
 \node[anchor=east,inner sep=0,text=celestec,font=\tit\fs{26}{30}] at (770,577) {Código y tesis};
 \fill[white,rounded corners=2mm] (775,563) rectangle (807,591);
 \node[inner sep=0] at (791,577) {\qrcode[height=26mm]{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}};
 \end{tikzpicture}
+\end{lrbox}
+\AddToShipoutPictureBG*{\AtPageUpperLeft{\vbox to 0pt{\hbox{\scalebox{1.413793}{\usebox{\cartel}}}\vss}}}
+\null
 \end{document}
