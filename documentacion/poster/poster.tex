@@ -1,0 +1,208 @@
+% Poster de defensa. A1 apaisado (841 x 594 mm); se imprime en A0 al 141,4 % sin perder calidad (vectorial).
+% Compilar (dos pasadas, por el posicionamiento absoluto):  pdflatex -no-shell-escape poster.tex
+% Las figuras de fig/ salen de documentacion/preparar_figuras.py; la paleta esta en el estudio de color del informe.
+\documentclass[10pt]{article}
+\usepackage[paperwidth=841mm,paperheight=594mm,margin=0mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{tgheros}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsmath,sansmath}
+\usepackage{graphicx,xcolor,enumitem,qrcode,tikz}
+\usetikzlibrary{calc,arrows.meta}
+\pagestyle{empty}\setlength{\parindent}{0pt}
+\hyphenpenalty=10000 \exhyphenpenalty=10000 \tolerance=9999 \emergencystretch=3em
+
+% ---------- Paleta azul / celeste (60 % neutros claros, 30 % azules, 10 % celeste de acento) ----------
+\definecolor{navy}{HTML}{08265B}     % bandas, resalte oscuro
+\definecolor{azul}{HTML}{1558B0}     % acento principal (cifras)
+\definecolor{azulm}{HTML}{1F6FC4}    % barra intermedia (5,1:1 con texto blanco)
+\definecolor{celeste}{HTML}{4DB3F0}  % acento grafico (no se usa como texto sobre blanco)
+\definecolor{celestec}{HTML}{BFE3FA} % texto sobre azul oscuro
+\definecolor{celestef}{HTML}{E4F1FC} % fondo de teselas
+\definecolor{fondo}{HTML}{EEF6FD}    % fondo del poster
+\definecolor{tinta}{HTML}{0F2540}    % texto
+\definecolor{suave}{HTML}{3C5473}    % texto secundario
+\definecolor{grisazul}{HTML}{9DB4CC} % barra de referencia
+
+\newcommand{\fs}[2]{\fontsize{#1}{#2}\selectfont}
+\newcommand{\tit}{\fontfamily{qag}\fontseries{b}\selectfont}   % TeX Gyre Adventor negrita (titulos)
+\newcommand{\rg}{\rightskip=0pt plus 9em\relax\spaceskip=\dimexpr1.15\fontdimen2\font\relax plus 0pt minus 0pt\relax}
+\newcommand{\corpo}{\fs{25}{32}\color{tinta}\rg}
+\setlist[itemize]{leftmargin=11mm,labelsep=3mm,itemsep=4.5mm,topsep=0pt,parsep=0pt,partopsep=0pt,
+  label={\raisebox{.2ex}{\color{celeste}\rule{4.4mm}{4.4mm}}}}
+
+\newcommand{\punto}[1]{\par\noindent\hangindent=11mm\hangafter=1 \rg\hbox to 11mm{\raisebox{.2ex}{\color{celeste}\rule{4.4mm}{4.4mm}}\hss}#1\par\vspace{4mm}}
+% ---------- Macros de diseno (coordenadas en mm desde la esquina superior izquierda) ----------
+\newcommand{\caja}[5]{% x y w h relleno
+  \fill[navy,opacity=.10,rounded corners=5mm] (#1+1.2,#2+2.2) rectangle (#1+#3+1.2,#2+#4+2.2);
+  \fill[#5,rounded corners=5mm] (#1,#2) rectangle (#1+#3,#2+#4);}
+\newcommand{\seccion}[7]{% x y w numero titulo colorTitulo colorRegla
+  \fill[celeste] (#1+14,#2+17) circle[radius=8.6mm];
+  \node[font=\tit\fs{34}{34},text=navy] at (#1+14,#2+17) {#4};
+  \node[anchor=west,font=\tit\fs{40}{44},text=#6] at (#1+27,#2+17) {#5};
+  \draw[#7,line width=.7mm] (#1+12,#2+32) -- (#1+#3-12,#2+32);
+  \draw[celeste,line width=1.6mm,line cap=round] (#1+12,#2+32) -- (#1+52,#2+32);}
+\newcommand{\cuerpo}[4]{\node[anchor=north west,inner sep=0,text width=#3mm,align=left] at (#1,#2) {\corpo #4};}
+\newcommand{\dato}[9]{% x y w h cifra rotulo relleno colorCifra colorRotulo
+  \fill[#7,rounded corners=3.5mm] (#1,#2) rectangle (#1+#3,#2+#4);
+  \node[anchor=north west,inner sep=0,font=\tit\fs{38}{38},text=#8] at (#1+6,#2+4) {#5};
+  \node[anchor=north west,inner sep=0,text width=#3mm-12mm,align=left,font=\fs{24}{29},text=#9] at (#1+6,#2+18.5) {\rg #6};}
+\newcommand{\flecha}[4]{\draw[-{Triangle[length=4mm,width=5.5mm]},line width=1.6mm,azulm] (#1,#2) -- (#3,#4);}
+
+% Tesela de modulo: numero, miniatura, nombre y detalle (el color nunca es la unica pista: lleva numero y nombre)
+\newcommand{\modulo}[6]{% x y num miniatura detalle nombre
+  \fill[celestef,rounded corners=3.5mm] (#1,#2) rectangle (#1+99,#2+76);
+  \fill[navy] (#1+12,#2+13) circle[radius=7.8mm];
+  \node[font=\tit\fs{32}{32},text=white] at (#1+12,#2+13) {#3};
+  \node[anchor=north east,inner sep=0] at (#1+94,#2+4) {#4};
+  \node[anchor=south west,inner sep=0,font=\tit\fs{26}{30},text=navy] at (#1+6,#2+58) {#6};
+  \node[anchor=north west,inner sep=0,font=\fs{24}{28},text=suave] at (#1+6,#2+61) {#5};}
+
+\begin{document}
+\noindent
+\begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm,shift={(current page.north west)}]
+
+% ===================================================== fondo y banda de titulo
+\fill[fondo] (0,0) rectangle (841,594);
+\shade[shading=axis,shading angle=0,left color=navy,right color=azul] (0,0) rectangle (841,124);
+\fill[celeste] (0,124) rectangle (841,128);
+\pgfmathsetseed{11}
+\foreach \i in {1,...,320}{
+  \pgfmathsetmacro{\px}{rnd*841}\pgfmathsetmacro{\py}{rnd*122}\pgfmathsetmacro{\pr}{.45+rnd*.9}
+  \fill[celeste,opacity=.16] (\px,\py) circle[radius=\pr mm];}
+% cupula hecha de puntos: cupula, tambor, linterna y cruz (silueta de la capilla), apoyada en la franja celeste
+\def\cx{672}\def\cy{124}
+\foreach \i in {1,...,700}{
+  \pgfmathsetmacro{\rr}{46*sqrt(rnd)}\pgfmathsetmacro{\ang}{180*rnd}\pgfmathsetmacro{\op}{.40+.55*rnd}
+  \fill[celestec,opacity=\op] ({\cx+\rr*cos(\ang)},{\cy-\rr*sin(\ang)}) circle[radius=.75mm];}
+\foreach \kk in {0,...,100}{\pgfmathsetmacro{\ang}{1.8*\kk}
+  \fill[white,opacity=.9] ({\cx+46*cos(\ang)},{\cy-46*sin(\ang)}) circle[radius=.8mm];}
+\foreach \i in {1,...,150}{
+  \pgfmathsetmacro{\px}{\cx-14+28*rnd}\pgfmathsetmacro{\py}{\cy-42-16*rnd}\pgfmathsetmacro{\op}{.40+.55*rnd}
+  \fill[celestec,opacity=\op] (\px,\py) circle[radius=.75mm];}
+\foreach \i in {1,...,90}{
+  \pgfmathsetmacro{\px}{\cx-8+16*rnd}\pgfmathsetmacro{\py}{\cy-58-14*rnd}\pgfmathsetmacro{\op}{.40+.55*rnd}
+  \fill[celestec,opacity=\op] (\px,\py) circle[radius=.75mm];}
+\foreach \i in {1,...,70}{
+  \pgfmathsetmacro{\rr}{8*sqrt(rnd)}\pgfmathsetmacro{\ang}{180*rnd}
+  \fill[celestec,opacity=.8] ({\cx+\rr*cos(\ang)},{\cy-72-\rr*sin(\ang)}) circle[radius=.75mm];}
+\foreach \yy in {-84,-88,-92,-96}{\fill[white,opacity=.9] (\cx,\cy+\yy) circle[radius=.8mm];}
+\foreach \dx in {-4,4}{\fill[white,opacity=.9] (\cx+\dx,\cy-92) circle[radius=.8mm];}
+% titulo
+\node[anchor=north west,inner sep=0,text width=600mm,align=left,text=white,font=\tit\fs{52}{60}] at (24,13)
+  {Modelo híbrido HyperNCD-Sonata para el descubrimiento de clases novedosas en la segmentación semántica de nubes de puntos de patrimonio arquitectónico};
+\node[anchor=north west,inner sep=0,text=celestec,font=\tit\fs{34}{40}] at (24,88) {Renzo Felix Aponte\quad\textbar\quad Manyory Cueva Mendoza};
+\node[anchor=north west,inner sep=0,text=white,font=\fs{27}{32}] at (24,104) {Universidad de Ingeniería y Tecnología (UTEC)\quad\textbar\quad Asesor: Jose Antonio Fiestas Iquira};
+% logo UTEC sobre recuadro blanco (el logo es tinta oscura + cian y no se lee sobre fondo azul)
+\fill[white,rounded corners=4mm] (714,18) rectangle (817,66);
+\node[inner sep=0] at (765.5,42) {\includegraphics[width=93mm]{../tesis_latex/asesoria5/imagenes/logo_utec.png}};
+
+% ===================================================== columna 1  (x = 24, ancho 214)
+% --- 01 Problema
+\caja{24}{140}{214}{142}{white}
+\seccion{24}{140}{214}{1}{El problema}{navy}{celestec}
+\cuerpo{36}{178}{190}{\punto{El escáner láser registra dónde hay materia, no qué elemento es cada punto.}
+  \punto{Los métodos supervisados solo reconocen las clases con las que se entrenaron.}}
+\fill[celestef,rounded corners=3.5mm] (36,240) rectangle (226,276);
+\node[anchor=west,inner sep=0,font=\tit\fs{44}{44},text=azul] at (41,258) {11,8--47,5};
+\node[anchor=west,inner sep=0,text width=82mm,align=left,font=\fs{24}{28},text=tinta] at (146,258) {\rg mIoU del mejor método en clases novedosas};
+
+% --- 02 Hipotesis (bloque oscuro)
+\caja{24}{294}{214}{106}{navy}
+\seccion{24}{294}{214}{2}{Hipótesis}{white}{azul}
+\node[anchor=north west,inner sep=0,text width=190mm,align=left,font=\fs{25}{32},text=white] at (36,332)
+  {\rg Reemplazar el descriptor geométrico de HyperNCD por una representación auto-supervisada confiable
+   \textbf{aumenta de forma medible el mIoU} sobre las clases novedosas en un levantamiento patrimonial real.};
+
+% --- 03 Datos
+\caja{24}{412}{214}{136}{white}
+\seccion{24}{412}{214}{3}{Los datos}{navy}{celestec}
+\dato{36}{449}{92}{44}{23}{escaneos LAS de la Catedral}{celestef}{azul}{tinta}
+\dato{134}{449}{92}{44}{589 M}{puntos, sin etiquetas}{celestef}{azul}{tinta}
+\dato{36}{499}{92}{44}{5}{clases etiquetadas en la capilla}{celestef}{azul}{tinta}
+\dato{134}{499}{92}{44}{17}{escenas de ArCH para entrenar M2}{celestef}{azul}{tinta}
+
+% ===================================================== columna 2  (x = 252, ancho 345)
+% --- 04 Metodo: cinco modulos
+\caja{252}{140}{345}{212}{white}
+\seccion{252}{140}{345}{4}{Método: cinco módulos}{navy}{celestec}
+\modulo{264}{178}{1}{\includegraphics[height=42mm]{fig/m1_lateral.png}}{SOR, vóxel de 5 cm}{Preprocesamiento}
+\modulo{375}{178}{2}{\includegraphics[height=42mm]{fig/lateral_m2.png}}{96 dimensiones}{HyperNCD}
+\modulo{486}{178}{3}{\includegraphics[height=42mm]{fig/m3_lateral.png}}{1088 dimensiones}{Sonata}
+\modulo{486}{270}{4}{\includegraphics[height=42mm]{fig/lateral_m4.png}}{regiones de 0,75 m}{Fusión e hipergrafo}
+\modulo{375}{270}{5}{%
+  \begin{tikzpicture}[x=1mm,y=-1mm]
+    \fill[grisazul] (0,42) rectangle (7,42-27.6);\fill[celeste] (8.5,42) rectangle (15.5,42-25.9);
+    \fill[azulm] (17,42) rectangle (24,42-29.2);\fill[navy] (25.5,42) rectangle (32.5,42-30);
+    \draw[tinta,line width=.5mm] (-1,42) -- (34,42);
+  \end{tikzpicture}}{mIoU, diez semillas}{Evaluación}
+\flecha{364}{216}{374}{216}\flecha{475}{216}{485}{216}
+\flecha{535.5}{255}{535.5}{269}
+\flecha{485}{308}{476}{308}
+% formulas (tesela oscura)
+\fill[navy,rounded corners=3.5mm] (264,270) rectangle (363,346);
+\node[text=white,font=\fs{30}{36},align=center] at (313.5,296) {$F_i=[\,f_{\mathrm{sem}}\,;\,f_{\mathrm{ssl}}\,]$};
+\node[text=white,font=\fs{26}{36},align=center] at (313.5,324) {$S_b=\alpha S_g+(1-\alpha)S_s$};
+
+% --- 05 La capilla, metodo por metodo
+\caja{252}{366}{345}{182}{white}
+\seccion{252}{366}{345}{5}{La capilla, por método}{navy}{celestec}
+\node[anchor=east,inner sep=0,font=\fs{24}{28},text=suave] at (585,383) {vista lateral, una semilla, ilustrativa};
+\foreach \i/\f/\n in {0/real/Etiqueta real,1/m2/M2,2/m3/M3,3/m4base/M4 base,4/m4/M4}{
+  \pgfmathsetmacro{\xc}{264+32.1+\i*64.2}
+  \node[font=\tit\fs{26}{30},text=navy] at (\xc,421) {\n};
+  \node[anchor=north,inner sep=0] at (\xc,429) {\includegraphics[height=94mm]{fig/lateral_\f.png}};}
+% leyenda de clases (paleta tab10 de la figura original)
+\foreach \x/\c/\t in {268/d62728/arco,320/1f77b4/columna,392/ff7f0e/cúpula,452/2ca02c/pared,502/9467bd/techo,548/4d4d4d/sin clase}{
+  \definecolor{cl}{HTML}{\c}\fill[cl] (\x,536) circle[radius=3.2mm];
+  \node[anchor=west,inner sep=0,minimum height=8mm,font=\fs{24}{28},text=tinta] at (\x+5,536) {\t};}
+
+% ===================================================== columna 3  (x = 611, ancho 206)
+% --- 06 Resultados
+\caja{611}{140}{206}{276}{white}
+\seccion{611}{140}{206}{6}{Resultados}{navy}{celestec}
+\node[anchor=north west,inner sep=0,text width=182mm,font=\fs{24}{28},text=suave] at (623,178) {mIoU (\%) de la capilla, diez semillas};
+% grafico de barras propio (letra grande, escala de azules)
+\def\Yb{284}\def\s{1.42}
+\foreach \v in {0,20,40,60}{
+  \draw[celestec,line width=.5mm] (650,{\Yb-\v*\s}) -- (806,{\Yb-\v*\s});
+  \node[anchor=east,inner sep=0,font=\fs{24}{28},text=suave] at (646,{\Yb-\v*\s}) {\v};}
+\newcommand{\barra}[6]{% indice valor desviacion color texto colorTexto
+  \pgfmathsetmacro{\bx}{654+#1*39.5}
+  \filldraw[fill=#4,draw=tinta,line width=.5mm] (\bx,\Yb) rectangle (\bx+32,{\Yb-#2*\s});
+  \draw[tinta,line width=.8mm] (\bx+16,{\Yb-(#2-#3)*\s}) -- (\bx+16,{\Yb-(#2+#3)*\s});
+  \draw[tinta,line width=.8mm] (\bx+10,{\Yb-(#2-#3)*\s}) -- (\bx+22,{\Yb-(#2-#3)*\s});
+  \draw[tinta,line width=.8mm] (\bx+10,{\Yb-(#2+#3)*\s}) -- (\bx+22,{\Yb-(#2+#3)*\s});
+  \node[inner sep=0,font=\tit\fs{26}{30},text=#6] at (\bx+16,\Yb-11) {#5};}
+\barra{0}{48.4}{1.1}{grisazul}{48,4}{tinta}
+\barra{1}{45.4}{8.5}{celeste}{45,4}{tinta}
+\barra{2}{51.4}{1.7}{azulm}{51,4}{white}
+\barra{3}{52.5}{2.5}{navy}{52,5}{white}
+\draw[tinta,line width=.8mm] (650,\Yb) -- (806,\Yb);
+\foreach \i/\n in {0/M2,1/M3,2/M4 base,3/M4}{
+  \node[inner sep=0,font=\tit\fs{25}{28},text=navy] at ({654+\i*39.5+16},\Yb+9) {\n};}
+% tesela 1: ganancia por ArCH
+\dato{623}{306}{182}{50}{+12,5}{mIoU de M2 al entrenar HyperNCD con ArCH (35,9 a 48,4)}{celestef}{azul}{tinta}
+% tesela 2: M4 frente a M4 base
+\fill[navy,rounded corners=3.5mm] (623,362) rectangle (805,412);
+\node[anchor=north west,inner sep=0,font=\tit\fs{40}{40},text=white] at (629,366) {52,5 $\pm$ 2,5};
+\node[anchor=north west,inner sep=0,text width=170mm,align=left,font=\fs{24}{28},text=celestec] at (629,384) {\rg M4 frente a 51,4 $\pm$ 1,7 de M4 base: la diferencia queda dentro de la dispersión};
+
+% --- 07 Conclusiones
+\caja{611}{428}{206}{120}{white}
+\seccion{611}{428}{206}{7}{Conclusiones}{navy}{celestec}
+\cuerpo{623}{466}{182}{\fs{24}{30}\rg
+  \punto{Sustituir $f_{\mathrm{geo}}$ por $f_{\mathrm{ssl}}$ es viable.}
+  \punto{El mayor avance vino de entrenar HyperNCD con ArCH.}
+  \punto{Adaptar Sonata no mejoró el agrupamiento, aunque la sonda lineal (79,7 y 80,5) muestra que el descriptor conserva información.}}
+
+% ===================================================== pie
+\shade[shading=axis,shading angle=0,left color=navy,right color=azul] (0,560) rectangle (841,594);
+\node[anchor=west,inner sep=0,text=white,font=\fs{24}{28}] at (24,577) {Basado en HyperNCD (CVPR 2026), Sonata (CVPR 2025) y el conjunto ArCH (Matrone et al., 2020)};
+\node[anchor=east,inner sep=0,text=celestec,font=\tit\fs{26}{30}] at (770,577) {Código y tesis};
+\fill[white,rounded corners=2mm] (775,563) rectangle (807,591);
+\node[inner sep=0] at (791,577) {\qrcode[height=26mm]{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}};
+\end{tikzpicture}
+\end{document}
