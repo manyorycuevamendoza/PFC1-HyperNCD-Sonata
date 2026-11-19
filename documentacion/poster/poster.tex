@@ -1,8 +1,8 @@
-% Poster de defensa, A0 apaisado (1189 x 841 mm).
-% Se compone en un lienzo de 841 x 594 mm (A1) y se amplia 1,4138 en vectorial a A0.
+% Poster de defensa, A0 vertical / portrait (841 x 1189 mm), SIN LOGOS.
+% Se compone en un lienzo de 594 x 841 mm (A1 vertical) y se amplia 1,4138 en vectorial a A0.
 % Compilar: pdflatex -interaction=nonstopmode poster.tex
 \documentclass[10pt]{article}
-\usepackage[paperwidth=1189mm,paperheight=841mm,margin=0mm]{geometry}
+\usepackage[paperwidth=841mm,paperheight=1189mm,margin=0mm]{geometry}
 \usepackage{eso-pic}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -14,7 +14,7 @@
 \usetikzlibrary{calc,arrows.meta,positioning}
 \pagestyle{empty}\setlength{\parindent}{0pt}
 \hyphenpenalty=10000 \exhyphenpenalty=10000 \tolerance=9999 \emergencystretch=3em
-\pdfinfo{/Title (Modelo hibrido HyperNCD-Sonata - Poster) /Author (Renzo Felix Aponte, Manyory Cueva Mendoza)}
+\pdfinfo{/Title (Modelo hibrido HyperNCD-Sonata - Poster A0 Vertical) /Author (Renzo Felix Aponte, Manyory Cueva Mendoza)}
 
 % Paleta sobria en azul y blanco de alto contraste
 \definecolor{navy}{HTML}{0B2A52}
@@ -29,8 +29,8 @@
 \newcommand{\fs}[2]{\fontsize{#1}{#2}\selectfont}
 \newcommand{\tit}{\fontfamily{qag}\fontseries{b}\selectfont}
 \newcommand{\rg}{\rightskip=0pt plus 5em\relax\spaceskip=\dimexpr1.08\fontdimen2\font\relax plus 0pt minus 0pt\relax}
-\newcommand{\corpo}{\fs{14.2}{19.0}\color{tinta}\rg}
-\newcommand{\corposm}{\fs{13.0}{17.2}\color{tinta}\rg}
+\newcommand{\corpo}{\fs{14.8}{19.2}\color{tinta}\rg}
+\newcommand{\corposm}{\fs{13.8}{17.8}\color{tinta}\rg}
 
 % Macros para mIoU e IoU con I mayuscula con serifas (evita que se lea como mloU)
 \newcommand{\miou}{\text{\rmfamily\bfseries mIoU}}
@@ -40,20 +40,20 @@
 
 % Vineta con espacio amplio y claro entre el cuadrado y la primera letra
 \newcommand{\punto}[1]{%
-  \par\noindent\hangindent=8.5mm\hangafter=1 \rg
-  \hbox to 8.5mm{\raisebox{.35ex}{\color{azul}\rule{2.8mm}{2.8mm}}\hss}#1\par\vspace{3.2mm}}
+  \par\noindent\hangindent=7.8mm\hangafter=1 \rg
+  \hbox to 7.8mm{\raisebox{.35ex}{\color{azul}\rule{2.9mm}{2.9mm}}\hss}#1\par\vspace{2.6mm}}
 
 % Macros de cajas y encabezados sobrios
 \newcommand{\caja}[5]{% x y w h relleno
   \filldraw[fill=#5,draw=borde,line width=.4mm,rounded corners=1.8mm] (#1,#2) rectangle (#1+#3,#2+#4);}
 
 \newcommand{\seccion}[5]{% x y w numero titulo
-  \node[anchor=west,inner sep=0,font=\tit\fs{20}{23}] at (#1+10,#2+11.5) {\textcolor{azul}{#4.}\hspace{3mm}\textcolor{navy}{#5}};
-  \draw[borde,line width=.45mm] (#1+10,#2+19.5) -- (#1+#3-10,#2+19.5);}
+  \node[anchor=west,inner sep=0,font=\tit\fs{19.8}{22.8}] at (#1+9,#2+11) {\textcolor{azul}{#4.}\hspace{2.6mm}\textcolor{navy}{#5}};
+  \draw[borde,line width=.45mm] (#1+9,#2+18.5) -- (#1+#3-9,#2+18.5);}
 
 \newcommand{\seccioninv}[5]{% x y w numero titulo (para fondo navy)
-  \node[anchor=west,inner sep=0,font=\tit\fs{20}{23},text=white] at (#1+10,#2+11.5) {#4.\hspace{3mm}#5};
-  \draw[white!35!navy,line width=.45mm] (#1+10,#2+19.5) -- (#1+#3-10,#2+19.5);}
+  \node[anchor=west,inner sep=0,font=\tit\fs{19.8}{22.8},text=white] at (#1+9,#2+11) {#4.\hspace{2.6mm}#5};
+  \draw[white!35!navy,line width=.45mm] (#1+9,#2+18.5) -- (#1+#3-9,#2+18.5);}
 
 \newcommand{\cuerpo}[4]{\node[anchor=north west,inner sep=0,text width=#3mm,align=left] at (#1,#2) {\corpo #4};}
 \newcommand{\cuerposm}[4]{\node[anchor=north west,inner sep=0,text width=#3mm,align=left] at (#1,#2) {\corposm #4};}
@@ -62,131 +62,154 @@
 \begin{document}
 \begin{lrbox}{\cartel}
 \begin{tikzpicture}[x=1mm,y=-1mm]
-\useasboundingbox (0,0) rectangle (841,594);
-\fill[fondo] (0,0) rectangle (841,594);
+\useasboundingbox (0,0) rectangle (594,841);
+\fill[fondo] (0,0) rectangle (594,841);
 
 % ============================================================================
-% BANDA DE TITULO SUPERIOR (0 a 62 mm)
+% BANDA DE TITULO SUPERIOR SIN LOGOS (0 a 63 mm)
 % ============================================================================
-\fill[navy] (0,0) rectangle (841,60);
-\fill[azul] (0,60) rectangle (841,62.5);
+\fill[navy] (0,0) rectangle (594,60.5);
+\fill[azul] (0,60.5) rectangle (594,63);
 
-\node[anchor=north west,inner sep=0,text width=695mm,align=left,text=white,font=\tit\fs{26.5}{32}] at (18,11)
+\node[anchor=north west,inner sep=0,text width=564mm,align=left,text=white,font=\tit\fs{24.2}{29.2}] at (15,9)
   {\rg Modelo híbrido HyperNCD-Sonata para el descubrimiento de clases novedosas en la segmentación semántica de nubes de puntos de patrimonio arquitectónico};
 
-\node[anchor=north west,inner sep=0,text=white,font=\tit\fs{15.5}{18.5}] at (18,41)
+\node[anchor=north west,inner sep=0,text=white,font=\tit\fs{15.5}{18.5}] at (15,42.5)
   {Renzo Felix Aponte \quad\textbar\quad Manyory Cueva Mendoza};
-\node[anchor=north west,inner sep=0,text=white!90!borde,font=\fs{13.5}{16.5}] at (18,49.5)
-  {Universidad de Ingeniería y Tecnología (UTEC) \quad\textbar\quad Asesor, Jose Antonio Fiestas Iquira};
-
-\fill[white,rounded corners=1.8mm] (736,9) rectangle (823,51);
-\node[inner sep=0] at (779.5,30) {\includegraphics[width=74mm]{../tesis_latex/asesoria5/imagenes/logo_utec.png}};
+\node[anchor=north west,inner sep=0,text=white!90!borde,font=\fs{13.8}{16.5}] at (15,50.5)
+  {Ciencia de la Computación \quad\textbar\quad Asesor, Jose Antonio Fiestas Iquira};
 
 % ============================================================================
-% COLUMNA 1 (IZQUIERDA: x = 16, w = 204 mm)
-% 1. El problema | 2. Hipotesis y objetivos | 8. Conclusiones
+% COLUMNA IZQUIERDA (x = 14, w = 279 mm)
+% 1. El problema | 2. Hipotesis y objetivos | 3. Metodologia y diseno | 4. La capilla por metodo
 % ============================================================================
 
-% --- Bloque 1: El problema --------------------------------------------------
-\caja{16}{70}{204}{172}{white}
-\seccion{16}{70}{204}{1}{El problema}
+% --- Bloque 1: El problema (y = 68 a 172 mm, h = 104 mm) --------------------
+\caja{14}{68}{279}{104}{white}
+\seccion{14}{68}{279}{1}{El problema}
 
-\cuerpo{26}{95}{184}{%
-  \punto{El levantamiento láser de la Catedral de Lima consta de 23 archivos LAS (20{,}05\,GB y 589{,}7 millones de puntos) con posición y color, sin etiquetas por punto ni normales.}
-  \punto{Los modelos supervisados solo reconocen las clases con las que se entrenaron. Al aplicar HyperNCD de escenas urbanas (SemanticPOSS) en la capilla, el \textbf{98{,}4\,\%} de los puntos cae en una sola cabeza ($\mathrm{NMI}=0{,}018$).}
-  \punto{En la ablación de HyperNCD (Tabla~3 de Zhang et al., 2026), su descriptor geométrico~\(f_{\mathrm{geo}}\), calculado con una fórmula fija de 15 vecinos, aporta menos de la mitad que el hipergrafo ($+4{,}2$ frente a $+9{,}6$ puntos de~\mioun).}
+\cuerpo{22}{91}{263}{%
+  \punto{Un escáner láser terrestre entrega una nube $P=\{(x_i,f_i)\}_{i=1}^{N}$ que registra dónde hay materia, pero no qué elemento arquitectónico es cada punto, lo que bloquea el paso al modelo BIM y obliga a etiquetar a mano.}
+  \punto{Los métodos supervisados trabajan con una lista cerrada de clases fijada antes de entrenar, asignan cualquier elemento imprevisto a la clase conocida más parecida y pierden desempeño al cambiar de edificio o de sector.}
+  \punto{El descubrimiento de clases novedosas busca asignar cada punto de $P$ a $\mathcal{C}_k\cup\mathcal{C}_n$ ($\mathcal{C}_k\cap\mathcal{C}_n=\emptyset$), pero HyperNCD alcanza solo \textbf{11{,}8 a 47{,}5 de~\mioun} en $\mathcal{C}_n$ porque arma sus prototipos sobre un descriptor geométrico analítico~\(f_{\mathrm{geo}}\) que actúa como un atajo.}
 }
 
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.6mm] (26,204) rectangle (210,234);
-\node[anchor=north west,inner sep=0,font=\tit\fs{13}{15.5},text=navy] at (30,208)
-  {Ablación de HyperNCD en SemanticPOSS (\mioun\ \%)};
-\node[anchor=north west,inner sep=0,text width=176mm,font=\fs{12.5}{15.5},text=tinta] at (30,216)
-  {Base \textbf{23{,}2} \quad$\rightarrow$\quad $+\,f_{\mathrm{geo}}$ \textbf{27{,}4 ($+4{,}2$)} \quad$\rightarrow$\quad $+$ hipergrafo \textbf{32{,}8 ($+9{,}6$)} \quad$\rightarrow$\quad total \textbf{36{,}5}};
+% --- Bloque 2: Hipotesis y objetivos (y = 177 a 303 mm, h = 126 mm) ---------
+\caja{14}{177}{279}{126}{navy}
+\seccioninv{14}{177}{279}{2}{Hipótesis y objetivos}
 
-% --- Bloque 2: Hipotesis y objetivos ----------------------------------------
-\caja{16}{248}{204}{134}{navy}
-\seccioninv{16}{248}{204}{2}{Hipótesis y objetivos}
+\node[anchor=north west,inner sep=0,text width=263mm,align=left,font=\fs{14.6}{18.6},text=white] at (22,200)
+  {\rg\textbf{Hipótesis.} Reemplazar el descriptor geométrico analítico de HyperNCD por una representación auto-supervisada confiable \textbf{aumenta de forma medible el~\miou\ sobre las clases novedosas} en un levantamiento patrimonial real.};
 
-\node[anchor=north west,inner sep=0,text width=184mm,align=left,font=\fs{14.0}{18.5},text=white] at (26,273)
-  {\rg Reemplazar el descriptor geométrico fijo~\(f_{\mathrm{geo}}\) de HyperNCD por la representación auto-supervisada~\(f_{\mathrm{ssl}}\) de Sonata dentro del módulo de prototipos e hipergrafo \textbf{aumenta de forma medible el~\miou} sobre elementos arquitectónicos en un levantamiento patrimonial.};
+\fill[navyMid,rounded corners=1.6mm] (22,222) rectangle (285,297);
+\node[anchor=north west,inner sep=0,text width=255mm,align=left,font=\fs{13.1}{16.4},text=white] at (26,225.5)
+  {\rg\textbf{Objetivo general.} Construir y medir un sistema híbrido que integre Sonata en el módulo de prototipos de HyperNCD y cuantificar la mejora del~\mioun\ sobre la Catedral de Lima, con dos ramas preparadas por separado (original y adaptada) y fusión sin entrenamiento conjunto.\\[2.0mm]
+   \textbf{OE1.} Integrar Sonata en el módulo de prototipos sustituyendo~\(f_{\mathrm{geo}}\) por~\(f_{\mathrm{ssl}}\), con \emph{up-cast} y caché por sección.\\[2.0mm]
+   \textbf{OE2.} Comparar M2, M3, M4 base y M4 bajo un protocolo común y cuantificar su variabilidad con diez semillas.\\[2.0mm]
+   \textbf{OE3.} Cuantificar la mejora, analizar el~\ioun\ por clase y delimitar el rango de operación frente al umbral de 70\,\%.};
 
-\fill[navyMid,rounded corners=1.6mm] (26,317) rectangle (210,375);
-\node[anchor=north west,inner sep=0,text width=176mm,align=left,font=\fs{12.5}{16.2},text=white] at (30,321)
-  {\textbf{OE1.} Integrar Sonata (\(f_{\mathrm{ssl}}\), 1088 valores) con HyperNCD (\(f_{\mathrm{sem}}\), 96 valores) sobre la matriz~\(S\) preprocesada a 5\,cm.\\[2.2mm]
-   \textbf{OE2.} Comparar M2, M3, M4 base y M4 en cuatro combinaciones de entrenamiento con diez semillas.\\[2.2mm]
-   \textbf{OE3.} Medir el~\ioun\ por clase, la sonda lineal y la brecha frente al umbral de 70\,\%.};
+% --- Bloque 3: Metodologia y diseno del sistema (y = 308 a 558 mm, h = 250 mm)
+\caja{14}{308}{279}{250}{white}
+\seccion{14}{308}{279}{3}{Metodología y diseño del sistema}
 
-% --- Bloque 8: Conclusiones y QR --------------------------------------------
-\caja{16}{388}{204}{174}{white}
-\seccion{16}{388}{204}{8}{Conclusiones}
+% Esquema metodologico general (E0 a E5, Cap. 3 de la tesis) en la parte superior
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.4mm] (20,330) rectangle (287,390);
+\node[anchor=north west,inner sep=0,font=\tit\fs{12.2}{14.2},text=navy] at (24,333)
+  {Esquema metodológico general (etapas E0 a E5 y diseño experimental $2\times 2$)};
 
-\cuerposm{26}{412}{184}{%
-  \punto{Entrenar HyperNCD con ArCH evita el colapso de SemanticPOSS (la cabeza dominante baja de 98{,}4\,\% a 44{,}6\,\%) y sube el~\mioun\ de M2 de 35{,}9\,\% a \textbf{48{,}4\,\% ($+12{,}5$ puntos)} en 75 minutos de GPU.}
-  \punto{El híbrido M4 alcanza \textbf{52{,}5 $\pm$ 2{,}5\,\%} de~\mioun\ y reduce a la tercera parte la dispersión de Sonata solo ($45{,}4\pm 8{,}5\,\%$), aunque la diferencia de $+1{,}1$ puntos sobre M4 base ($51{,}4\pm 1{,}7\,\%$) queda dentro de la variación entre semillas.}
-  \punto{La sonda lineal sobre~\(f_{\mathrm{ssl}}\) fijo llega a \textbf{79{,}7\,\%} y \textbf{80{,}5\,\%} de~\mioun, lo que confirma que el descriptor sí separa las cinco clases y que el límite está en el agrupamiento por regiones de 0{,}75\,m.}
-  \punto{Frente al umbral de 70\,\%, pared (71{,}9\,\%) y techo (68{,}0\,\%) ya cumplen o rozan la meta, y el reto queda en subir cúpula (51{,}7\,\%), arco (42{,}5\,\%) y columna (28{,}4\,\%).}
-}
+% Nodos E0, E1, E2/E3 en paralelo, E4, E5
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (24,344) rectangle (66,386);
+\fill[navy,rounded corners=0.8mm] (24,344) rectangle (66,352);
+\node[font=\tit\fs{10.5}{12},text=white] at (45,348) {E0. Datos};
+\node[anchor=north,text width=39mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (45,354.5)
+  {\textbf{23 LAS} Catedral\\(589\,M pts, sin etiq.)\\Capilla etiquetada\\(1,14\,M pts, 5 clases)};
 
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.6mm] (26,529) rectangle (210,556);
-\node[inner sep=0] at (40,542.5) {\qrcode[height=21mm]{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}};
-\node[anchor=north west,inner sep=0,font=\tit\fs{13.2}{15.5},text=navy] at (54,533.5) {Repositorio del proyecto};
-\node[anchor=north west,inner sep=0,font=\fs{11.5}{14},text=azul] at (54,540.5) {github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata};
-\node[anchor=north west,inner sep=0,font=\fs{11}{13.5},text=suave] at (54,547) {Código, pesos, visor 3D y registros de ejecución};
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (72,344) rectangle (116,386);
+\fill[navy,rounded corners=0.8mm] (72,344) rectangle (116,352);
+\node[font=\tit\fs{10.5}{12},text=white] at (94,348) {E1. Prep. (M1)};
+\node[anchor=north,text width=41mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (94,354.5)
+  {Centrado UTM\\Filtro SOR ($q=20$)\\Vóxel $\ell=5$\,cm\\Normales ($S\in\mathbb{R}^{N\times 9}$)};
 
-% ============================================================================
-% COLUMNA 2 (CENTRO: x = 226, w = 290 mm)
-% 3. Diseno del sistema | 4. La capilla por metodo
-% ============================================================================
+% E2 arriba y E3 abajo en paralelo
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (122,341) rectangle (184,363.5);
+\fill[navyMid,rounded corners=0.8mm] (122,341) rectangle (184,348);
+\node[font=\tit\fs{9.8}{11},text=white] at (153,344.5) {E2. Semántica (M2)};
+\node[anchor=north,text width=59mm,align=center,font=\fs{9.2}{10.8},text=tinta] at (153,349.5)
+  {Orig. SemPOSS \textbar\ Adap. \textbf{ArCH} (30 ép.)\\Extrae $f_{\mathrm{sem}}\in\mathbb{R}^{96}$};
 
-% --- Bloque 3: Diseno del sistema -------------------------------------------
-\caja{226}{70}{290}{238}{white}
-\seccion{226}{70}{290}{3}{Diseño del sistema}
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (122,365.5) rectangle (184,388);
+\fill[azul,rounded corners=0.8mm] (122,365.5) rectangle (184,372.5);
+\node[font=\tit\fs{9.8}{11},text=white] at (153,369) {E3. Auto-superv. (M3)};
+\node[anchor=north,text width=59mm,align=center,font=\fs{9.2}{10.8},text=tinta] at (153,374)
+  {Orig. Meta \textbar\ Adap. \textbf{Catedral} (21 LAS)\\Rejilla 2\,cm, \emph{up-cast} $f_{\mathrm{ssl}}\in\mathbb{R}^{1088}$};
 
-\node[anchor=center,inner sep=0] at (371,199)
-  {\includegraphics[width=278mm,height=208mm,keepaspectratio]{fig/diagrama_poster.pdf}};
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (190,344) rectangle (236,386);
+\fill[navy,rounded corners=0.8mm] (190,344) rectangle (236,352);
+\node[font=\tit\fs{10.5}{12},text=white] at (213,348) {E4. Fusión (M4)};
+\node[anchor=north,text width=43mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (213,354.5)
+  {Cruce $2\times 2$ en CPU\\Regiones 0{,}75\,m\\39 variantes de fusión\\Sinkhorn ($K=8$)};
 
-% --- Bloque 4: La capilla por metodo (Etiquetas y leyenda en vectorial) -----
-\caja{226}{314}{290}{248}{white}
-\seccion{226}{314}{290}{4}{La capilla por método}
+\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (242,344) rectangle (284,386);
+\fill[navy,rounded corners=0.8mm] (242,344) rectangle (284,352);
+\node[font=\tit\fs{10.5}{12},text=white] at (263,348) {E5. Eval. (M5)};
+\node[anchor=north,text width=39mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (263,354.5)
+  {Húngaro 1 a 1\\\mioun, NMI, ARI\\10 semillas, sonda\\lineal y umbral 70\,\%};
 
-% Rotulos laterales en vectorial (Planta y Vista lateral)
-\node[rotate=90,font=\tit\fs{13.5}{16},text=navy] at (236,396) {Planta $(x, y)$};
-\node[rotate=90,font=\tit\fs{13.5}{16},text=navy] at (236,488) {Vista lateral $(x, z)$};
+% Flechas entre E0..E5
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (66,365) -- (72,365);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (116,358) -- (122,352.5);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (116,372) -- (122,376.5);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (184,352.5) -- (190,358);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (184,376.5) -- (190,372);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (236,365) -- (242,365);
 
-% Los 5 paneles en planta y vista lateral con encabezados vectoriales nitidos
+% Diagrama completo de los 5 modulos de la tesis debajo del esquema E0-E5
+\node[anchor=center,inner sep=0] at (153.5,475)
+  {\includegraphics[width=271mm,height=158mm,keepaspectratio]{fig/diagrama_poster.pdf}};
+
+% --- Bloque 4: La capilla por metodo (y = 563 a 811 mm, h = 248 mm) ---------
+\caja{14}{563}{279}{248}{white}
+\seccion{14}{563}{279}{4}{La capilla por método}
+
+% Rotulos laterales en vectorial
+\node[rotate=90,font=\tit\fs{13.8}{16},text=navy] at (23.5,645) {Planta $(x, y)$};
+\node[rotate=90,font=\tit\fs{13.8}{16},text=navy] at (23.5,736) {Vista lateral $(x, z)$};
+
+% Los 5 paneles en planta y vista lateral
 \foreach \i/\f/\n/\m in {0/real/Etiqueta real/5 clases,1/m2/M2/{\mioun\ 49,0\,\%},2/m3/M3/{\mioun\ 52,5\,\%},3/m4base/M4 base/{\mioun\ 52,9\,\%},4/m4/M4 híbrido/{\mioun\ 50,6\,\%}}{
-  \pgfmathsetmacro{\xc}{268+\i*53}
-  \node[font=\tit\fs{13.5}{15.5},text=navy] at (\xc,343) {\n};
-  \node[font=\fs{11.5}{13.5},text=suave] at (\xc,350) {(\m)};
-  \draw[borde,line width=.35mm,rounded corners=1mm] (\xc-23,355) rectangle (\xc+23,438);
-  \node[anchor=center,inner sep=0] at (\xc,396.5) {\includegraphics[height=79mm,width=43mm,keepaspectratio]{fig/planta_\f.png}};
-  \draw[borde,line width=.35mm,rounded corners=1mm] (\xc-23,444) rectangle (\xc+23,530);
-  \node[anchor=center,inner sep=0] at (\xc,487) {\includegraphics[height=82mm,width=43mm,keepaspectratio]{fig/lateral_\f.png}};
+  \pgfmathsetmacro{\xc}{54+\i*51.5}
+  \node[font=\tit\fs{14.0}{16},text=navy] at (\xc,590) {\n};
+  \node[font=\fs{11.8}{13.8},text=suave] at (\xc,597) {(\m)};
+  \draw[borde,line width=.35mm,rounded corners=1mm] (\xc-23,602) rectangle (\xc+23,688);
+  \node[anchor=center,inner sep=0] at (\xc,645) {\includegraphics[height=82mm,width=44mm,keepaspectratio]{fig/planta_\f.png}};
+  \draw[borde,line width=.35mm,rounded corners=1mm] (\xc-23,692) rectangle (\xc+23,781);
+  \node[anchor=center,inner sep=0] at (\xc,736.5) {\includegraphics[height=85mm,width=44mm,keepaspectratio]{fig/lateral_\f.png}};
 }
 
 % Leyenda grande y nitida de las clases en la base del Bloque 4
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.5mm] (236,536) rectangle (506,555);
-\foreach \x/\c/\t in {248/D62728/Arco,290/1F77B4/Columna,342/FF7F0E/Cúpula,392/2CA02C/Pared,438/9467BD/Techo,482/4D4D4D/Sin clase}{
-  \definecolor{cl}{HTML}{\c}\fill[cl] (\x,545.5) circle[radius=2.8mm];
-  \node[anchor=west,inner sep=0,font=\tit\fs{13}{15},text=tinta] at (\x+4.5,545.5) {\t};}
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.5mm] (23,786) rectangle (284,805);
+\foreach \x/\c/\t in {34/D62728/Arco,74/1F77B4/Columna,126/FF7F0E/Cúpula,175/2CA02C/Pared,219/9467BD/Techo,259/4D4D4D/Sin clase}{
+  \definecolor{cl}{HTML}{\c}\fill[cl] (\x,795.5) circle[radius=2.9mm];
+  \node[anchor=west,inner sep=0,font=\tit\fs{13.2}{15.2},text=tinta] at (\x+4.8,795.5) {\t};}
 
 % ============================================================================
-% COLUMNA 3 (DERECHA: x = 522, w = 303 mm)
-% 5. Comparacion de los cuatro modelos | 6. Descubrimiento por clase | 7. Umbral de 70%
+% COLUMNA DERECHA (x = 301, w = 279 mm)
+% 5. Resultados preliminares | 6. Descubrimiento por clase
+% 7. Umbral de 70% | 8. Conclusiones | 9. Plan de trabajo PFC II
 % ============================================================================
 
-% --- Bloque 5: Comparacion de los cuatro modelos ----------------------------
-\caja{522}{70}{303}{156}{white}
-\seccion{522}{70}{303}{5}{Comparación de los cuatro modelos}
+% --- Bloque 5: Resultados preliminares, cuatro modelos (y = 68 a 223 mm, h = 155 mm)
+\caja{301}{68}{279}{155}{white}
+\seccion{301}{68}{279}{5}{Resultados preliminares, cuatro modelos}
 
-\node[anchor=north west,inner sep=0] at (528,93)
-  {\includegraphics[width=178mm]{fig/poster_m4_semillas.pdf}};
+\node[anchor=north west,inner sep=0] at (306,89)
+  {\includegraphics[width=158mm]{fig/poster_m4_semillas.pdf}};
 
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.6mm] (710,95) rectangle (816,175);
-\node[anchor=north west,inner sep=0,font=\tit\fs{12.5}{15},text=navy] at (715,99)
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.6mm] (468,90) rectangle (573,172);
+\node[anchor=north west,inner sep=0,font=\tit\fs{12.4}{14.5},text=navy] at (472,94)
   {Capilla, 10 semillas ($K=8$)};
-\node[anchor=north west,inner sep=0,font=\fs{11.5}{14.2},text=tinta] at (714,107) {%
-  \setlength{\tabcolsep}{3.5pt}
+\node[anchor=north west,inner sep=0,font=\fs{11.8}{14.6},text=tinta] at (472,101.5) {%
+  \setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{1.04}
   \begin{tabular}{@{}lrr@{}}
   \toprule
   \textbf{Modelo} & \textbf{\miou\ (\%)} & \textbf{Cambio} \\
@@ -200,26 +223,26 @@
   \bottomrule
   \end{tabular}};
 
-\cuerposm{532}{180}{282}{%
-  \punto{Con M2 de ArCH, la fusión sube de 45{,}4\,\% (M3) y 48{,}4\,\% (M2) a \textbf{52{,}5\,\% (M4)}, bajando la desviación de M3 de $\pm 8{,}5$ a $\pm 2{,}5$. Adaptar Sonata con lote de una escena redujo su rango efectivo de 97{,}7 a 64{,}3.}
+\cuerposm{309}{176}{263}{%
+  \punto{Con M2 de ArCH, la fusión sube de 45{,}4\,\% (M3) y 48{,}4\,\% (M2) a \textbf{52{,}5\,\% (M4)}, bajando la desviación de M3 de $\pm 8{,}5$ a $\pm 2{,}5$. Adaptar Sonata con lote 1 redujo su rango efectivo de 97{,}7 a 64{,}3.}
   \punto{En 39 variantes de fusión, ninguna supera al pegado normalizado con M2 de ArCH ($-0{,}2$ a $+1{,}1$ puntos), aunque con M2 colapsado rescatan hasta $+18{,}2$ puntos.}
 }
 
-% --- Bloque 6: Descubrimiento por clase y cabezas de M2 ---------------------
-\caja{522}{232}{303}{168}{white}
-\seccion{522}{232}{303}{6}{Descubrimiento por clase y cabezas de M2}
+% --- Bloque 6: Descubrimiento por clase y cabezas de M2 (y = 228 a 392 mm, h = 164 mm)
+\caja{301}{228}{279}{164}{white}
+\seccion{301}{228}{279}{6}{Descubrimiento por clase y cabezas de M2}
 
-\node[anchor=north west,inner sep=0] at (528,255)
-  {\includegraphics[width=158mm]{fig/poster_m4_iou_por_clase.pdf}};
+\node[anchor=north west,inner sep=0] at (306,250)
+  {\includegraphics[width=142mm]{fig/poster_m4_iou_por_clase.pdf}};
 
-\node[anchor=north west,inner sep=0] at (690,255)
-  {\includegraphics[width=126mm]{fig/poster_m2_cabeza_x_clase.pdf}};
+\node[anchor=north west,inner sep=0] at (451,250)
+  {\includegraphics[width=122mm]{fig/poster_m2_cabeza_x_clase.pdf}};
 
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.5mm] (690,309) rectangle (816,352);
-\node[anchor=north west,inner sep=0,font=\tit\fs{12}{14},text=navy] at (695,312)
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.5mm] (451,302) rectangle (573,349);
+\node[anchor=north west,inner sep=0,font=\tit\fs{12.2}{14.2},text=navy] at (455,305)
   {\iou\ por clase (\%) y sonda lineal};
-\node[anchor=north west,inner sep=0,font=\fs{11.2}{13.6},text=tinta] at (695,319) {%
-  \setlength{\tabcolsep}{3.8pt}
+\node[anchor=north west,inner sep=0,font=\fs{11.4}{14.0},text=tinta] at (455,312) {%
+  \setlength{\tabcolsep}{3.6pt}\renewcommand{\arraystretch}{1.04}
   \begin{tabular}{@{}lrrrrr@{}}
   \toprule
   \textbf{Método} & \textbf{Arco} & \textbf{Col.} & \textbf{Cúp.} & \textbf{Pared} & \textbf{Techo} \\
@@ -231,23 +254,23 @@
   \bottomrule
   \end{tabular}};
 
-\cuerposm{532}{357}{282}{%
+\cuerposm{309}{353}{263}{%
   \punto{\textbf{M3} destaca en \textbf{cúpula (80{,}5\,\% de~\ioun, precisión 97{,}4\,\%)}, pero falla en \textbf{arco (18{,}7\,\%)}. \textbf{M2 con ArCH} recupera el \textbf{arco (48{,}0\,\%)} y en \textbf{M4} logra el máximo en \textbf{pared (74{,}2\,\%)}, pero baja el recall de la cúpula de 82{,}3\,\% a 46{,}7\,\%. La \textbf{columna (22--29\,\%)} absorbe falsos positivos de piezas vecinas.}
 }
 
-% --- Bloque 7: Umbral de 70% y dificultad por clase -------------------------
-\caja{522}{406}{303}{156}{white}
-\seccion{522}{406}{303}{7}{Umbral de 70\,\% y dificultad por clase}
+% --- Bloque 7: Umbral de 70% y dificultad por clase (y = 397 a 555 mm, h = 158 mm)
+\caja{301}{397}{279}{158}{white}
+\seccion{301}{397}{279}{7}{Umbral de 70\,\% y dificultad por clase}
 
-\node[anchor=north west,inner sep=0] at (528,428)
-  {\includegraphics[width=156mm]{fig/poster_umbral.pdf}};
+\node[anchor=north west,inner sep=0] at (306,419)
+  {\includegraphics[width=142mm]{fig/poster_umbral.pdf}};
 
-\node[anchor=north west,inner sep=0,text width=126mm,align=left,font=\fs{12.4}{16.0},text=tinta] at (688,430)
-  {\rg Se eligió un umbral de 70\,\% de~\ioun\ porque las clases principales en ArCH (72{,}1\,\% a 88{,}7\,\%), la sonda lineal (70{,}8\,\% a 91{,}2\,\%) y Sonata en interiores (72{,}6\,\% a 77{,}6\,\%) superan ese nivel. El orden de dificultad sigue al tamaño de cada clase ($\rho=+0{,}90$) y es inverso a su linealidad ($\rho=-0{,}90$).};
+\node[anchor=north west,inner sep=0,text width=121mm,align=left,font=\fs{12.6}{15.8},text=tinta] at (451,420)
+  {\rg Se eligió un umbral de 70\,\% de~\ioun\ porque las clases principales en ArCH (72{,}1\,\% a 88{,}7\,\%), la sonda lineal (70{,}8\,\% a 91{,}2\,\%) y Sonata en interiores (72{,}6\,\% a 77{,}6\,\%) superan ese nivel.};
 
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.4mm] (688,496) rectangle (816,554);
-\node[anchor=north west,inner sep=0,font=\fs{11.4}{14.2},text=tinta] at (693,500) {%
-  \setlength{\tabcolsep}{4.2pt}
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.4mm] (451,470) rectangle (573,527);
+\node[anchor=north west,inner sep=0,font=\fs{11.5}{14.2},text=tinta] at (455,473.5) {%
+  \setlength{\tabcolsep}{3.8pt}\renewcommand{\arraystretch}{1.04}
   \begin{tabular}{@{}lrrr@{}}
   \toprule
   \textbf{Clase} & \textbf{\iou\ M4 (\%)} & \textbf{Escena (\%)} & \textbf{Linealidad} \\
@@ -260,12 +283,66 @@
   \bottomrule
   \end{tabular}};
 
+\cuerposm{309}{531}{263}{%
+  \punto{\textbf{Pared (71{,}9\,\%)} supera el umbral de 70\,\% y \textbf{techo (68{,}0\,\%)} queda a dos puntos; el orden de dificultad sigue al tamaño de cada clase en la escena ($\rho=+0{,}90$) y es inverso a su linealidad ($\rho=-0{,}90$).}
+}
+
+% --- Bloque 8: Conclusiones (y = 560 a 668 mm, h = 108 mm) -------------------
+\caja{301}{560}{279}{108}{white}
+\seccion{301}{560}{279}{8}{Conclusiones}
+
+\cuerposm{309}{582}{263}{%
+  \punto{\textbf{Cumplimiento.} El objetivo general y los OE1 y OE2 se cumplieron, y el OE3 en parte. Sonata se integró sin entrenamiento conjunto (68 a 80\,s en CPU) y las cuatro combinaciones se midieron con diez semillas.}
+  \punto{\textbf{Sobre la hipótesis.} Sustituir~\(f_{\mathrm{geo}}\) por~\(f_{\mathrm{ssl}}\) es viable, aunque con un M2 funcional la mejora de M4 ($52{,}5\pm 2{,}5$\,\%) frente a M4 base ($51{,}4\pm 1{,}7$\,\%) es de $+1{,}1$ puntos y queda dentro de la dispersión.}
+  \punto{\textbf{Diagnóstico por rama.} Entrenar HyperNCD con ArCH dio el mayor salto ($+12{,}5$ puntos en M2). La sonda lineal sobre~\(f_{\mathrm{ssl}}\) (\textbf{79{,}7\,\% y 80{,}5\,\%}) confirmó que Sonata sí separa las cinco clases, pero el agrupamiento sin entrenar de M4 no aprovecha toda esa señal.}
+}
+
+% --- Bloque 9: Plan de trabajo PFC II y trabajos futuros (y = 673 a 811 mm, h = 138 mm)
+\caja{301}{673}{279}{138}{white}
+\seccion{301}{673}{279}{9}{Plan de trabajo PFC II, mejora de M4}
+
+% 4 tarjetas conectadas (F1 -> F2 -> F3 -> F4)
+\filldraw[fill=tesela,draw=azul,line width=.35mm,rounded corners=1.2mm] (309,695) rectangle (438,737);
+\fill[navy,rounded corners=0.8mm] (309,695) rectangle (438,703);
+\node[anchor=west,font=\tit\fs{10.8}{12.5},text=white] at (312,699) {F1. Fusión aprendida en M4};
+\node[anchor=north west,text width=123mm,align=left,font=\fs{10.6}{13.0},text=tinta] at (312,705.5)
+  {\rg Entrenar un proyector conjunto e HyperNCD ingresando $[f_{\mathrm{sem}};f_{\mathrm{ssl}}]$ sobre ArCH y la Catedral para acercar el agrupamiento (52{,}5\,\%) a la sonda lineal (80{,}5\,\%).};
+
+\filldraw[fill=tesela,draw=azul,line width=.35mm,rounded corners=1.2mm] (443,695) rectangle (572,737);
+\fill[navyMid,rounded corners=0.8mm] (443,695) rectangle (572,703);
+\node[anchor=west,font=\tit\fs{10.8}{12.5},text=white] at (446,699) {F2. Superpuntos y continuidad en M4};
+\node[anchor=north west,text width=123mm,align=left,font=\fs{10.6}{13.0},text=tinta] at (446,705.5)
+  {\rg Sustituir celdas fijas de 0{,}75\,m por regiones adaptativas (LCCP/VCCS) y añadir hiperaristas de adyacencia (Potts/Ward) para evitar partir bóvedas y aislar columna y arco.};
+
+\filldraw[fill=tesela,draw=azul,line width=.35mm,rounded corners=1.2mm] (309,741) rectangle (438,783);
+\fill[azul,rounded corners=0.8mm] (309,741) rectangle (438,749);
+\node[anchor=west,font=\tit\fs{10.8}{12.5},text=white] at (312,745) {F3. Adaptación de Sonata con lote mayor};
+\node[anchor=north west,text width=123mm,align=left,font=\fs{10.6}{13.0},text=tinta] at (312,751.5)
+  {\rg Reentrenar en Khipu (A6000, 48\,GB) con lote $\ge 4$ escenas y 65\,536 pts/vista, control de entorno y sonda lineal por época para evitar la caída de rango efectivo (97{,}7 a 64{,}3).};
+
+\filldraw[fill=tesela,draw=azul,line width=.35mm,rounded corners=1.2mm] (443,741) rectangle (572,783);
+\fill[navy,rounded corners=0.8mm] (443,741) rectangle (572,749);
+\node[anchor=west,font=\tit\fs{10.8}{12.5},text=white] at (446,745) {F4. Escalado multiescena y salida BIM};
+\node[anchor=north west,text width=123mm,align=left,font=\fs{10.6}{13.0},text=tinta] at (446,751.5)
+  {\rg Evaluar en más escenas etiquetadas (PL13, patio y nave), calibrar $(\alpha,M,\epsilon,\gamma)$ para clases minoritarias, medir $\Delta\mathrm{mIoU}^{\mathrm{novel}}$ y brecha $G$, y exportar sólidos 3D a BIM.};
+
+% Flechas entre F1..F4
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (438,716) -- (443,716);
+\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (438,762) -- (443,762);
+
+% Tarjeta QR compacta en la base del Bloque 9
+\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.4mm] (309,787) rectangle (572,806);
+\node[inner sep=0] at (320,796.5) {\qrcode[height=14.5mm]{https://github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata}};
+\node[anchor=west,inner sep=0,font=\tit\fs{12.0}{14},text=navy] at (331,792.5) {Repositorio del proyecto};
+\node[anchor=west,inner sep=0,font=\fs{11.0}{13},text=azul] at (390,792.5) {github.com/manyorycuevamendoza/PFC1-HyperNCD-Sonata};
+\node[anchor=west,inner sep=0,font=\fs{10.8}{12.5},text=suave] at (331,800) {Código, pesos, visor 3D interactivo y registros completos de ejecución};
+
 % ============================================================================
-% BANDA DE PIE DE PAGINA (y = 568 a 594 mm)
+% BANDA DE PIE DE PAGINA (y = 816 a 841 mm)
 % ============================================================================
-\fill[navy] (0,568) rectangle (841,594);
-\fill[azul] (0,568) rectangle (841,570);
-\node[anchor=west,inner sep=0,text=white,font=\fs{13.5}{16.5}] at (18,581.5)
+\fill[navy] (0,816) rectangle (594,841);
+\fill[azul] (0,816) rectangle (594,818);
+\node[anchor=west,inner sep=0,text=white,font=\fs{13.5}{16.5}] at (15,829.5)
   {Basado en HyperNCD (Zhang et al., CVPR 2026), Sonata (Wu et al., CVPR 2025) y el conjunto ArCH (Matrone et al., ISPRS 2020)};
 \end{tikzpicture}
 \end{lrbox}
