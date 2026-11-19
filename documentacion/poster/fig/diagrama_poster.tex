@@ -10,178 +10,165 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
 
-% Paleta sobria institucional en tonos azules (azul oscuro, azul medio, azul acero)
+% Paleta de alto contraste en azul oscuro y blanco puro
 \definecolor{cEnt}{HTML}{0B2A52}
-\definecolor{cSem}{HTML}{1D5FA6}
-\definecolor{cEnc}{HTML}{2B6CB0}
+\definecolor{cSem}{HTML}{143D73}
+\definecolor{cEnc}{HTML}{1D5FA6}
 \definecolor{cFus}{HTML}{0B2A52}
-\definecolor{cSal}{HTML}{1D5FA6}
-\definecolor{cGris}{HTML}{4A5B70}
+\definecolor{cSal}{HTML}{143D73}
+\definecolor{cGris}{HTML}{2D3A4B}
 
 \pgfdeclarelayer{background}
 \pgfsetlayers{background,main}
-\def\scriptsize{\fontsize{8.2}{9.8}\selectfont}
-\def\tiny{\fontsize{6.8}{8.0}\selectfont}
+\def\scriptsize{\fontsize{9.6}{11.5}\selectfont}
+\def\tiny{\fontsize{8.0}{9.5}\selectfont}
 
 \begin{document}
 \begin{tikzpicture}[
   font=\scriptsize,
   execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000},
-  mod/.style={rounded corners=3pt, draw, line width=0.9pt, align=center, inner sep=6pt},
-  tab/.style={rounded corners=2pt, text=white, font=\scriptsize\bfseries, inner sep=3.2pt, anchor=south, align=center},
-  tarj/.style={rounded corners=2.5pt, draw=cEnt!45, fill=white, semithick,
-               align=left, inner sep=4.5pt, text width=4.65cm, anchor=north},
-  chico/.style={font=\tiny\bfseries, text=cEnt!85},
-  fl/.style={-{Latex[length=2.4mm,width=1.8mm]}, line width=1.1pt, cEnt!80}
+  mod/.style={rounded corners=3pt, draw, line width=1.1pt, align=center, inner sep=6.5pt, fill=white},
+  tab/.style={rounded corners=2pt, text=white, font=\scriptsize\bfseries, inner sep=3.8pt, anchor=south, align=center},
+  tarj/.style={rounded corners=2.5pt, draw=cEnt!65, fill=white, line width=0.8pt,
+               align=left, inner sep=5pt, text width=4.85cm, anchor=north},
+  chico/.style={font=\tiny\bfseries, text=cEnt, fill=white, inner sep=1.8pt, rounded corners=1pt},
+  fl/.style={-{Latex[length=2.8mm,width=2.1mm]}, line width=1.3pt, cEnt}
 ]
 
 %% ========== COLUMNA 1 (IZQUIERDA, CENTRADO): MODULO 1 ==========
-\node[mod, draw=cEnt, fill=cEnt!5, text width=4.4cm, anchor=center] (M1) at (0,0)
- {{\rule{0pt}{9pt}\scriptsize\bfseries\itshape \textcolor{cEnt}{levantamiento TLS}}\\[4pt]
+\node[mod, draw=cEnt, text width=4.5cm, anchor=center] (M1) at (0,0)
+ {{\rule{0pt}{10pt}\scriptsize\bfseries\textcolor{cEnt}{Levantamiento TLS}}\\[5pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
-    \draw[cEnt!40] (0.34,0.23) rectangle (1.59,1.28);
-    \draw[cEnt!40] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
-    \foreach \x/\y/\t in {0.097/0.087/95, 0.089/0.121/98, 0.104/0.235/93, 0.139/0.278/89, 0.129/0.372/89, 0.135/0.448/87, 0.117/0.540/93, 0.159/0.598/85, 0.101/0.671/94, 0.118/0.750/91, 0.168/0.875/84, 0.139/0.944/90, 0.087/0.988/98, 0.198/0.218/83, 0.215/0.297/82, 0.179/0.362/87, 0.150/0.427/95, 0.226/0.521/80, 0.187/0.597/87, 0.213/0.657/81, 0.204/0.736/81, 0.141/0.786/95, 0.197/0.904/85, 0.174/0.976/87, 0.242/0.163/83, 0.241/0.260/82, 0.227/0.325/86, 0.231/0.430/85, 0.244/0.522/85, 0.255/0.623/80, 0.236/0.690/86, 0.227/0.767/86, 0.261/0.870/78, 0.239/0.953/87, 0.300/0.122/80, 0.323/0.279/78, 0.298/0.354/81, 0.324/0.447/75, 0.315/0.539/76, 0.279/0.600/87, 0.297/0.694/81, 0.320/0.756/76, 0.317/0.867/80, 0.299/0.960/82, 0.359/0.188/79, 0.374/0.282/74, 0.369/0.370/75, 0.368/0.456/78, 0.385/0.541/72, 0.374/0.634/76, 0.318/0.694/85, 0.377/0.801/73, 0.381/0.904/75, 0.341/1.010/83, 0.418/0.197/75, 0.419/0.271/74, 0.429/0.386/71, 0.402/0.452/79, 0.438/0.555/71, 0.406/0.616/78, 0.455/0.737/68, 0.397/0.800/77, 0.467/0.912/66, 0.438/0.997/73, 0.518/0.231/64, 0.485/0.291/69, 0.485/0.372/72, 0.479/0.455/73, 0.472/0.551/72, 0.447/0.624/77, 0.462/0.722/77, 0.499/0.821/69, 0.499/0.926/69, 0.486/1.006/69, 0.546/0.262/67, 0.537/0.358/66, 0.551/0.443/64, 0.528/0.506/72, 0.499/0.594/75, 0.518/0.683/74, 0.549/0.791/68, 0.511/0.855/74, 0.574/0.987/62, 0.550/1.064/67, 0.590/0.219/68, 0.584/0.290/68, 0.570/0.383/73, 0.548/0.450/74, 0.568/0.553/73, 0.578/0.652/70, 0.580/0.746/68, 0.574/0.818/68, 0.585/0.909/68, 0.585/1.003/70, 0.607/0.721/73, 0.670/0.851/61, 0.629/0.914/69, 0.600/0.970/74, 0.647/1.116/61, 0.697/0.844/64, 0.679/0.905/68, 0.679/1.022/65, 0.674/1.092/70, 0.688/0.860/71, 0.692/0.985/73, 0.708/1.092/68, 0.797/0.884/62, 0.719/0.937/75, 0.747/1.041/72, 0.813/0.847/66, 0.783/0.986/71, 0.825/1.108/64, 0.822/0.794/76, 0.840/0.917/71, 0.851/1.015/66, 0.860/1.109/66, 0.820/0.786/81, 0.900/0.906/68, 0.826/0.974/79, 0.851/1.084/74, 0.865/0.745/83, 0.905/0.869/73, 0.872/0.938/79, 0.927/1.043/72, 0.895/0.167/84, 0.945/0.285/74, 0.893/0.349/85, 0.895/0.428/85, 0.949/0.554/75, 0.931/0.626/76, 0.902/0.703/84, 0.927/0.804/78, 0.922/0.876/79, 0.917/0.963/79, 0.912/1.038/81, 0.974/0.185/80, 0.943/0.239/87, 0.914/0.314/93, 0.928/0.400/90, 0.936/0.509/87, 0.951/0.610/81, 0.967/0.701/80, 0.919/0.767/90, 0.933/0.876/84, 0.941/0.959/85, 0.925/1.017/89, 0.985/0.154/86, 0.955/0.221/90, 0.991/0.353/82, 0.927/0.381/96, 0.962/0.477/92, 0.949/0.583/91, 0.980/0.674/87, 0.952/0.763/90, 0.984/0.849/85, 0.974/0.956/86, 0.961/1.036/89, 0.964/0.115/100, 0.986/0.227/94, 1.003/0.313/89, 1.030/0.418/87, 0.999/0.503/89, 0.990/0.581/92, 0.963/0.650/98, 0.958/0.714/100, 0.987/0.828/92, 0.971/0.900/97, 0.991/1.002/96, 0.993/0.106/100, 0.989/0.198/100, 1.001/0.300/100, 1.001/0.379/99, 1.039/0.482/93, 0.989/0.532/100, 1.039/0.675/92, 1.045/0.760/91, 1.035/0.831/94, 0.989/0.882/100, 1.027/1.003/92, 1.056/0.111/98, 1.036/0.187/100, 1.066/0.293/97, 1.057/0.386/96, 1.039/0.460/99, 1.021/0.530/100, 1.055/0.643/99, 1.058/0.726/96, 1.037/0.809/100, 1.010/0.893/100, 1.011/0.956/100, 1.040/0.083/100, 1.037/0.163/100, 1.037/0.272/100, 1.080/0.364/100, 1.043/0.411/100, 1.062/0.530/100, 1.046/0.618/100, 1.102/0.737/98, 1.065/0.798/100, 1.060/0.880/100, 1.031/0.950/100, 1.079/0.066/100, 1.069/0.160/100, 1.073/0.245/100, 1.130/0.358/100, 1.117/0.465/100, 1.120/0.555/100, 1.087/0.599/100, 1.073/0.706/100, 1.069/0.788/100, 1.088/0.859/100, 1.079/0.954/100, 1.113/0.052/100, 1.137/0.177/100, 1.118/0.234/100, 1.093/0.327/100, 1.110/0.417/100, 1.108/0.494/100, 1.114/0.592/100, 1.123/0.697/100, 1.126/0.776/100, 1.126/0.856/100, 1.102/0.944/100} \fill[cEnt!\t] (\x,\y) circle (0.015);
-    \draw[cEnt!70, semithick] (0,0) rectangle (1.25,1.05);}\\[5pt]
-  \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{$x_i'=x_i-c$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$\bar d_i\le\mu+\lambda\,\sigma$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$\bar x_v=\frac{1}{|v|}\sum_{i\in v}x_i$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$C=\frac{1}{q}\sum_{j}(p_j-\bar p)(p_j-\bar p)^{\top}$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$S=[\,x,y,z,R,G,B,n_x,n_y,n_z\,]$}
+    \draw[cEnt!55] (0.34,0.23) rectangle (1.59,1.28);
+    \draw[cEnt!55] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
+    \foreach \x/\y/\t in {0.097/0.087/95, 0.104/0.235/93, 0.129/0.372/89, 0.117/0.540/93, 0.101/0.671/94, 0.168/0.875/84, 0.087/0.988/98, 0.198/0.218/83, 0.179/0.362/87, 0.226/0.521/80, 0.213/0.657/81, 0.141/0.786/95, 0.174/0.976/87, 0.242/0.163/83, 0.227/0.325/86, 0.244/0.522/85, 0.236/0.690/86, 0.261/0.870/78, 0.300/0.122/80, 0.298/0.354/81, 0.315/0.539/76, 0.297/0.694/81, 0.317/0.867/80, 0.359/0.188/79, 0.369/0.370/75, 0.385/0.541/72, 0.318/0.694/85, 0.381/0.904/75, 0.418/0.197/75, 0.429/0.386/71, 0.438/0.555/71, 0.455/0.737/68, 0.467/0.912/66, 0.518/0.231/64, 0.485/0.372/72, 0.472/0.551/72, 0.462/0.722/77, 0.499/0.926/69, 0.546/0.262/67, 0.551/0.443/64, 0.499/0.594/75, 0.549/0.791/68, 0.574/0.987/62, 0.590/0.219/68, 0.570/0.383/73, 0.568/0.553/73, 0.580/0.746/68, 0.585/0.909/68, 0.670/0.851/61, 0.600/0.970/74, 0.697/0.844/64, 0.679/1.022/65, 0.688/0.860/71, 0.708/1.092/68, 0.719/0.937/75, 0.813/0.847/66, 0.825/1.108/64, 0.840/0.917/71, 0.860/1.109/66, 0.900/0.906/68, 0.851/1.084/74, 0.905/0.869/73, 0.927/1.043/72, 0.945/0.285/74, 0.895/0.428/85, 0.931/0.626/76, 0.927/0.804/78, 0.917/0.963/79, 0.974/0.185/80, 0.914/0.314/93, 0.936/0.509/87, 0.967/0.701/80, 0.933/0.876/84, 0.925/1.017/89, 0.955/0.221/90, 0.927/0.381/96, 0.949/0.583/91, 0.952/0.763/90, 0.974/0.956/86, 0.964/0.115/100, 1.003/0.313/89, 0.999/0.503/89, 0.963/0.650/98, 0.987/0.828/92, 0.991/1.002/96, 0.989/0.198/100, 1.001/0.379/99, 0.989/0.532/100, 1.045/0.760/91, 0.989/0.882/100, 1.056/0.111/98, 1.066/0.293/97, 1.039/0.460/99, 1.055/0.643/99, 1.037/0.809/100, 1.011/0.956/100, 1.037/0.163/100, 1.080/0.364/100, 1.062/0.530/100, 1.102/0.737/98, 1.060/0.880/100, 1.079/0.066/100, 1.073/0.245/100, 1.117/0.465/100, 1.087/0.599/100, 1.069/0.788/100, 1.079/0.954/100, 1.137/0.177/100, 1.093/0.327/100, 1.108/0.494/100, 1.123/0.697/100, 1.126/0.856/100} \fill[cEnt] (\x,\y) circle (0.018);
+    \draw[cEnt, line width=0.7pt] (0,0) rectangle (1.25,1.05);}\\[6pt]
+  \begin{minipage}{\linewidth}\centering\scriptsize\color{black}
+  \adjustbox{max width=\linewidth}{$\mathbf{x_i'=x_i-c}$}\\[4.5pt]
+  \adjustbox{max width=\linewidth}{$\mathbf{\bar d_i\le\mu+\lambda\,\sigma}$}\\[4.5pt]
+  \adjustbox{max width=\linewidth}{$\mathbf{\bar x_v=\frac{1}{|v|}\sum_{i\in v}x_i}$}\\[4.5pt]
+  \adjustbox{max width=\linewidth}{$\mathbf{C=\frac{1}{q}\sum_{j}(p_j-\bar p)(p_j-\bar p)^{\top}}$}\\[4.5pt]
+  \adjustbox{max width=\linewidth}{$\mathbf{S=[\,x,y,z,R,G,B,n_x,n_y,n_z\,]}$}
 \end{minipage}};
 
-%% ========== COLUMNA 2 (MISMA DIRECCION X=6.3): MODULO 2 (ARRIBA) Y MODULO 3 (ABAJO) ==========
-\node[mod, draw=cSem, fill=cSem!5, text width=5.2cm, anchor=center] (M2) at (6.3,2.75)
- {{\rule{0pt}{9pt}\scriptsize\bfseries\itshape \textcolor{cSem}{HyperNCD (MinkowskiUNet-34C)}}\\[4pt]
+%% ========== COLUMNA 2 (X=7.2): MODULO 2 (ARRIBA) Y MODULO 3 (ABAJO) ==========
+\node[mod, draw=cSem, text width=5.3cm, anchor=center] (M2) at (7.2,2.95)
+ {{\rule{0pt}{10pt}\scriptsize\bfseries\textcolor{cSem}{HyperNCD (MinkowskiUNet-34C)}}\\[5pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\h in {0/0.95, 1/0.72, 2/0.50, 3/0.32}
-      \fill[cSem!35, draw=cSem] (\i*0.24,0.5-\h/2) rectangle (\i*0.24+0.16,0.5+\h/2);
+      \fill[cSem!35, draw=cSem, line width=0.6pt] (\i*0.24,0.5-\h/2) rectangle (\i*0.24+0.16,0.5+\h/2);
     \foreach \i/\h in {0/0.32, 1/0.50, 2/0.72, 3/0.95}
-      \fill[cSem!65, draw=cSem] (1.1+\i*0.24,0.5-\h/2) rectangle (1.1+\i*0.24+0.16,0.5+\h/2);
+      \fill[cSem!75, draw=cSem, line width=0.6pt] (1.1+\i*0.24,0.5-\h/2) rectangle (1.1+\i*0.24+0.16,0.5+\h/2);
     \foreach \a/\b/\h in {0/3/0.95, 1/2/0.72, 2/1/0.50}
-      \draw[cSem!80, densely dashed, -{Latex[length=1mm]}] (\a*0.24+0.16,0.5+\h/2+0.05) -- (1.1+\b*0.24,0.5+\h/2+0.05);
-    \draw[-{Latex[length=1.2mm]}, cSem!80, semithick] (0.88,0.5) -- (1.08,0.5);}\\[5pt]
-  \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{$\mathbf{v}_i=\lfloor x_i/\ell\rfloor,\; a_{\mathbf{v}}=1$}\\[3.5pt]
-  \adjustbox{max width=\linewidth}{$f_{\mathrm{sem}}(x^i)=U_\theta(\mathcal{V})_{\mathbf{v}_i}\in\mathbb{R}^{96}$}\\[3.5pt]
-  \adjustbox{max width=\linewidth}{$z_{i,k}=\frac{\langle f_{\mathrm{sem}}(x^i),w_k\rangle}{\lVert f_{\mathrm{sem}}(x^i)\rVert\,\lVert w_k\rVert}$}\\[3.5pt]
-  \adjustbox{max width=\linewidth}{$Y$, pseudo-etiquetas equilibradas}\\[3.5pt]
-  \adjustbox{max width=\linewidth}{$g^{(r)}=\left[\frac{\lambda_1-\lambda_2}{\lambda_1},\frac{\lambda_2-\lambda_3}{\lambda_1},\frac{\lambda_3}{\lambda_1},c^{(r)}\right]$}\\[3.5pt]
+      \draw[cEnt, densely dashed, -{Latex[length=1.2mm]}, line width=0.6pt] (\a*0.24+0.16,0.5+\h/2+0.05) -- (1.1+\b*0.24,0.5+\h/2+0.05);
+    \draw[-{Latex[length=1.4mm]}, cEnt, line width=0.8pt] (0.88,0.5) -- (1.08,0.5);}\\[6pt]
+  \begin{minipage}{\linewidth}\centering\scriptsize\color{black}
+  \adjustbox{max width=\linewidth}{$\mathbf{v}_i=\lfloor x_i/\ell\rfloor,\quad a_{\mathbf{v}}=1$}\\[4pt]
+  \adjustbox{max width=\linewidth}{$f_{\mathrm{sem}}(x^i)=U_\theta(\mathcal{V})_{\mathbf{v}_i}\in\mathbb{R}^{96}$}\\[4pt]
+  \adjustbox{max width=\linewidth}{$z_{i,k}=\frac{\langle f_{\mathrm{sem}}(x^i),w_k\rangle}{\lVert f_{\mathrm{sem}}(x^i)\rVert\,\lVert w_k\rVert}$}\\[4pt]
+  \adjustbox{max width=\linewidth}{$g^{(r)}=\left[\frac{\lambda_1-\lambda_2}{\lambda_1},\frac{\lambda_2-\lambda_3}{\lambda_1},\frac{\lambda_3}{\lambda_1},c^{(r)}\right]$}\\[4pt]
   \adjustbox{max width=\linewidth}{$\hat F^{(r)}=\sum_{j\in\mathcal{N}_M(r)}\tilde S_{rj}F^{(j)}$}
 \end{minipage}};
 
-\node[mod, draw=cEnc, fill=cEnc!5, text width=5.2cm, anchor=center] (M3) at (6.3,-2.95)
- {{\rule{0pt}{9pt}\scriptsize\bfseries\itshape \textcolor{cEnc}{Sonata (Point Transformer V3)}}\\[4pt]
+\node[mod, draw=cEnc, text width=5.3cm, anchor=center] (M3) at (7.2,-3.05)
+ {{\rule{0pt}{10pt}\scriptsize\bfseries\textcolor{cEnc}{Sonata (Point Transformer V3)}}\\[5pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
     \foreach \i/\w in {0/1.15, 1/0.97, 2/0.79, 3/0.61, 4/0.43}
-      \fill[rounded corners=1pt, cEnc!45, draw=cEnc] (0,\i*0.19) rectangle (\w,\i*0.19+0.13);
+      \fill[rounded corners=1pt, cEnc!45, draw=cEnc, line width=0.6pt] (0,\i*0.19) rectangle (\w,\i*0.19+0.13);
     \begin{scope}[shift={(1.55,0.5)}]
       \foreach \a in {0,60,120}{
-        \draw[cSem, thick] ({\a}:-0.26) -- ({\a}:0.26);
-        \foreach \s in {1,-1}{ \draw[cSem, semithick] ({\a}:0.17*\s) -- ++({\a+40*\s}:0.08); \draw[cSem, semithick] ({\a}:0.17*\s) -- ++({\a-40*\s}:0.08);}}
-    \end{scope}}\\[5pt]
-  \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}\\[3.5pt]
-  \adjustbox{max width=\linewidth}{$f_{\mathrm{ssl}}(x^i)=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}\\[3.5pt]
+        \draw[cEnt, line width=0.9pt] ({\a}:-0.26) -- ({\a}:0.26);
+        \foreach \s in {1,-1}{ \draw[cEnt, line width=0.7pt] ({\a}:0.17*\s) -- ++({\a+40*\s}:0.08); \draw[cEnt, line width=0.7pt] ({\a}:0.17*\s) -- ++({\a-40*\s}:0.08);}}
+    \end{scope}}\\[6pt]
+  \begin{minipage}{\linewidth}\centering\scriptsize\color{black}
+  \adjustbox{max width=\linewidth}{$\mathbf{h}_i^{(0)}=\mathrm{GELU}(\mathrm{LN}(W_e\mathbf{x}_i+b_e))$}\\[4.5pt]
+  \adjustbox{max width=\linewidth}{$f_{\mathrm{ssl}}(x^i)=[\mathbf{h}^{(3)};\mathbf{h}^{(4)};\mathbf{h}^{(5)}]_{\mathrm{inv}(i)}\in\mathbb{R}^{1088}$}\\[4.5pt]
   \adjustbox{max width=\linewidth}{$\hat{y}_i=\arg\max\left(W^{\top}f_{\mathrm{ssl}}(x^i)+b\right)$}
 \end{minipage}};
 
-%% ========== COLUMNA 3 (X=13.0): MODULO 4 (FUSION) ==========
-\node[align=center, anchor=north, text width=4.8cm] (M4h) at (13.0,5.6)
- {{\rule{0pt}{9pt}\scriptsize\bfseries\itshape \textcolor{cFus}{Fusión y agrupamiento en CPU}}};
+%% ========== COLUMNA 3 (X=14.5): MODULO 4 (FUSION) ==========
+\node[align=center, anchor=north, text width=4.9cm] (M4h) at (14.5,5.8)
+ {{\rule{0pt}{10pt}\scriptsize\bfseries\textcolor{cFus}{Fusión y agrupamiento en CPU}}};
 
 \node[tarj] (T1) at ($(M4h.south)+(0,-0.15)$)
- {\textbf{\textcircled{\scriptsize 1} Concatenación}\\[3pt]
-  \begin{minipage}{\linewidth}\centering
+ {\textcolor{cEnt}{\textbf{1. Concatenación}}\\[4pt]
+  \begin{minipage}{\linewidth}\centering\color{black}
   \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
-    \fill[cSem!35, draw=cSem] (0,0) rectangle (0.45,0.24);
-    \fill[cEnt!25, draw=cEnt] (0.45,0) rectangle (2.35,0.24);
-    \node[font=\tiny\bfseries, text=cEnt] at (0.22,0.12) {96};
-    \node[font=\tiny\bfseries, text=cEnt] at (1.40,0.12) {1088};
-    \fill[cSem!35, draw=cSem] (2.60,0) rectangle (3.00,0.24);
-    \fill[cGris!30, draw=cGris] (3.00,0) rectangle (3.15,0.24);
-    \node[font=\tiny, text=cGris] at (2.88,-0.15) {antes ($f_{\mathrm{geo}}$)};}}\\[3pt]
-  $F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]\in\mathbb{R}^{1184}$\\[3pt]
+    \fill[cEnc!30, draw=cEnt, line width=0.6pt] (0,0) rectangle (0.50,0.28);
+    \fill[cEnt!20, draw=cEnt, line width=0.6pt] (0.50,0) rectangle (2.60,0.28);
+    \node[font=\tiny\bfseries, text=cEnt] at (0.25,0.14) {96};
+    \node[font=\tiny\bfseries, text=cEnt] at (1.55,0.14) {1088};}}\\[4pt]
+  $F_i=\left[\,f_{\mathrm{sem}};\,f_{\mathrm{ssl}}\,\right]\in\mathbb{R}^{1184}$\\[3.5pt]
   \adjustbox{max width=\linewidth}{$F^{(r)}=\frac{1}{|r|}\sum_{i\in r}F_i$}\end{minipage}};
 
-\node[tarj] (T2) at ($(T1.south)+(0,-0.75)$)
- {\textbf{\textcircled{\scriptsize 2} Afinidad entre regiones}\\[3pt]
-  \begin{minipage}{\linewidth}\centering
-  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.82]
-    \fill[cSem!20, draw=cSem!70, rotate=20] (0.72,0.26) ellipse (0.80 and 0.34);
-    \fill[cEnt!18, draw=cEnt!70, rotate=-15] (1.42,0.52) ellipse (0.74 and 0.32);
-    \foreach \x/\y in {0.25/0.20, 0.72/0.46, 1.05/0.14, 1.55/0.40, 1.98/0.12, 1.62/0.70}
-      \fill[cEnt] (\x,\y) circle (0.05);\end{scope}}}\\[3pt]
-  \adjustbox{max width=\linewidth}{$S_g=\exp(-\lVert g^{(i)}-g^{(j)}\rVert^2/\tau)$}\\[3pt]
+\node[tarj] (T2) at ($(T1.south)+(0,-0.80)$)
+ {\textcolor{cEnt}{\textbf{2. Afinidad entre regiones}}\\[4pt]
+  \begin{minipage}{\linewidth}\centering\color{black}
+  \adjustbox{max width=\linewidth}{$S_g=\exp(-\lVert g^{(i)}-g^{(j)}\rVert^2/\tau)$}\\[4pt]
   $S_b=\alpha S_g+(1-\alpha)S_s$\end{minipage}};
 
-\node[tarj] (T3) at ($(T2.south)+(0,-0.75)$)
- {\textbf{\textcircled{\scriptsize 3} Hiperaristas ($M=8$ vecinos)}\\[3pt]
-  \begin{minipage}{\linewidth}\centering
+\node[tarj] (T3) at ($(T2.south)+(0,-0.80)$)
+ {\textcolor{cEnt}{\textbf{3. Hiperaristas ($M=8$ vecinos)}}\\[4pt]
+  \begin{minipage}{\linewidth}\centering\color{black}
   \adjustbox{max width=\linewidth}{$\hat F^{(r)}=\sum_{j\in\mathcal{N}_M(r)}\tilde S_{rj}F^{(j)}$}\end{minipage}};
 
-\node[tarj] (T4) at ($(T3.south)+(0,-0.75)$)
- {\textbf{\textcircled{\scriptsize 4} Prototipos y Sinkhorn--Knopp}\\[3pt]
-  \begin{minipage}{\linewidth}\centering
-  \adjustbox{max width=\linewidth}{\tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{\begin{scope}[scale=0.82]
-    \foreach \x/\y/\c in {0.222/0.339/cSem, 0.457/0.245/cSem, 0.212/0.293/cSem, 0.401/0.416/cSem, 0.234/0.177/cSem, 0.429/0.353/cSem, 1.343/0.558/cEnt, 1.069/0.463/cEnt, 1.179/0.624/cEnt, 1.092/0.570/cEnt, 1.267/0.602/cEnt, 1.005/0.562/cEnt, 1.651/0.120/cGris, 1.712/0.144/cGris, 1.999/0.117/cGris, 1.884/-0.012/cGris, 1.766/0.197/cGris, 1.811/0.011/cGris} \fill[\c!65] (\x,\y) circle (0.038);
-    \foreach \x/\y/\c in {0.35/0.30/cSem, 1.15/0.58/cEnt, 1.80/0.12/cGris}
-      \node[star, star points=5, star point ratio=2.2, draw=\c, fill=\c!35, inner sep=0.6pt] at (\x,\y) {};\end{scope}}}\\[3pt]
-  \adjustbox{max width=\linewidth}{$P_k=\frac{\sum_{i}s_{i,k}F_i}{\sum_{i}s_{i,k}}$}\\[3pt]
-  \adjustbox{max width=\linewidth}{$u\leftarrow\frac{1/B}{Qv},\;v\leftarrow\left(\frac{1/K}{Q^{\top}u}\right)^{\frac{\gamma}{\gamma+\epsilon_{\mathrm{sk}}}}$}\\[3pt]
+\node[tarj] (T4) at ($(T3.south)+(0,-0.80)$)
+ {\textcolor{cEnt}{\textbf{4. Prototipos y Sinkhorn--Knopp}}\\[4pt]
+  \begin{minipage}{\linewidth}\centering\color{black}
+  \adjustbox{max width=\linewidth}{$P_k=\frac{\sum_{i}s_{i,k}F_i}{\sum_{i}s_{i,k}}$}\\[4pt]
+  \adjustbox{max width=\linewidth}{$u\leftarrow\frac{1/B}{Qv},\quad v\leftarrow\left(\frac{1/K}{Q^{\top}u}\right)^{\frac{\gamma}{\gamma+\epsilon_{\mathrm{sk}}}}$}\\[4pt]
   \adjustbox{max width=\linewidth}{$Y = B\,\mathrm{diag}(u)\,Q\,\mathrm{diag}(v)$}\end{minipage}};
 
 \begin{pgfonlayer}{background}
-\node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, line width=1.1pt, fill=cFus!4,
-      rounded corners=3pt, inner sep=6.5pt] (M4) {};
+\node[fit=(M4h)(T1)(T2)(T3)(T4), draw=cFus, line width=1.2pt, fill=cEnt!4,
+      rounded corners=3pt, inner sep=7pt] (M4) {};
 \end{pgfonlayer}
 
-\draw[fl] (T1.south) -- (T2.north) node[midway, right=0.8mm, chico] {regiones de 0{,}75\,m};
-\draw[fl] (T2.south) -- (T3.north) node[midway, right=0.8mm, chico] {$S_b$ entre regiones};
-\draw[fl] (T3.south) -- (T4.north) node[midway, right=0.8mm, chico] {hipergrafo $\mathcal{H}$};
+\draw[fl] (T1.south) -- (T2.north) node[midway, right=1.2mm, chico] {regiones de 0{,}75\,m};
+\draw[fl] (T2.south) -- (T3.north) node[midway, right=1.2mm, chico] {$S_b$ entre regiones};
+\draw[fl] (T3.south) -- (T4.north) node[midway, right=1.2mm, chico] {hipergrafo $\mathcal{H}$};
 
-%% ========== COLUMNA 4 (DERECHA, CENTRADO): MODULO 5 ==========
-\node[mod, draw=cSal, fill=cSal!5, text width=4.4cm, anchor=center] (M5) at (19.3,0)
- {{\rule{0pt}{9pt}\scriptsize\bfseries\itshape \textcolor{cSal}{evaluación y plataforma}}\\[4pt]
+%% ========== COLUMNA 4 (DERECHA, CENTRADO, X=21.5): MODULO 5 ==========
+\node[mod, draw=cSal, text width=4.5cm, anchor=center] (M5) at (21.5,0)
+ {{\rule{0pt}{10pt}\scriptsize\bfseries\textcolor{cSal}{Evaluación y plataforma}}\\[5pt]
   \tikz[baseline=0, every node/.style={anchor=center, align=center, text width={}, minimum height=0pt, minimum width=0pt, inner sep=1pt}]{
-    \draw[cEnt!40] (0.34,0.23) rectangle (1.59,1.28);
-    \draw[cEnt!40] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
-    \foreach \x/\y/\c in {0.097/0.087/cGris, 0.089/0.121/cGris, 0.104/0.235/cSem, 0.139/0.278/cSem, 0.129/0.372/cSem, 0.135/0.448/cSem, 0.117/0.540/cSem, 0.159/0.598/cSem, 0.101/0.671/cSem, 0.118/0.750/cSem, 0.168/0.875/cSem, 0.139/0.944/cSem, 0.198/0.218/cSem, 0.215/0.297/cSem, 0.179/0.362/cSem, 0.150/0.427/cSem, 0.226/0.521/cSem, 0.187/0.597/cSem, 0.213/0.657/cSem, 0.204/0.736/cSem, 0.141/0.786/cSem, 0.197/0.904/cSem, 0.242/0.163/cGris, 0.241/0.260/cSem, 0.227/0.325/cSem, 0.231/0.430/cSem, 0.244/0.522/cSem, 0.255/0.623/cSem, 0.236/0.690/cSem, 0.227/0.767/cSem, 0.261/0.870/cSem, 0.300/0.122/cGris, 0.323/0.279/cSem, 0.298/0.354/cSem, 0.324/0.447/cSem, 0.315/0.539/cSem, 0.279/0.600/cSem, 0.297/0.694/cSem, 0.320/0.756/cSem, 0.317/0.867/cSem, 0.359/0.188/cGris, 0.374/0.282/cSem, 0.369/0.370/cSem, 0.368/0.456/cSem, 0.385/0.541/cSem, 0.374/0.634/cSem, 0.318/0.694/cSem, 0.377/0.801/cSem, 0.381/0.904/cSem, 0.418/0.197/cGris, 0.419/0.271/cSem, 0.429/0.386/cSem, 0.402/0.452/cSem, 0.438/0.555/cSem, 0.406/0.616/cSem, 0.455/0.737/cSem, 0.397/0.800/cSem, 0.467/0.912/cSem, 0.518/0.231/cGris, 0.485/0.291/cEnt, 0.485/0.372/cEnt, 0.479/0.455/cEnt, 0.472/0.551/cEnt, 0.447/0.624/cEnt, 0.462/0.722/cEnt, 0.499/0.821/cEnt, 0.499/0.926/cEnt, 0.546/0.262/cEnt, 0.537/0.358/cEnt, 0.551/0.443/cEnt, 0.528/0.506/cEnt, 0.499/0.594/cEnt, 0.518/0.683/cEnt, 0.549/0.791/cEnt, 0.511/0.855/cEnt, 0.574/0.987/cEnt, 0.590/0.219/cGris, 0.584/0.290/cEnt, 0.570/0.383/cEnt, 0.548/0.450/cEnt, 0.568/0.553/cEnt, 0.578/0.652/cEnt, 0.580/0.746/cEnt, 0.574/0.818/cEnt, 0.585/0.909/cEnt, 0.607/0.721/cEnt, 0.670/0.851/cEnt, 0.629/0.914/cEnt, 0.697/0.844/cEnt, 0.679/0.905/cEnt, 0.679/1.022/cEnt, 0.688/0.860/cEnt, 0.692/0.985/cEnt, 0.797/0.884/cEnt, 0.719/0.937/cEnt, 0.747/1.041/cEnt, 0.813/0.847/cEnt, 0.783/0.986/cEnt, 0.822/0.794/cEnt, 0.840/0.917/cEnt, 0.851/1.015/cEnt, 0.820/0.786/cEnt, 0.900/0.906/cEnt, 0.865/0.745/cEnt, 0.905/0.869/cEnt, 0.895/0.167/cGris, 0.945/0.285/cEnt, 0.893/0.349/cEnt, 0.895/0.428/cEnt, 0.949/0.554/cEnt, 0.931/0.626/cEnt, 0.902/0.703/cEnt, 0.927/0.804/cEnt, 0.922/0.876/cEnt, 0.974/0.185/cGris, 0.943/0.239/cEnt, 0.914/0.314/cEnt, 0.928/0.400/cEnt, 0.936/0.509/cEnt, 0.951/0.610/cEnt, 0.967/0.701/cEnt, 0.919/0.767/cEnt, 0.933/0.876/cEnt, 0.985/0.154/cGris, 0.955/0.221/cEnt, 0.991/0.353/cEnt, 0.962/0.477/cEnt, 0.949/0.583/cEnt, 0.980/0.674/cEnt, 0.952/0.763/cEnt, 0.984/0.849/cEnt, 0.964/0.115/cGris, 0.986/0.227/cSem, 1.003/0.313/cSem, 1.030/0.418/cSem, 0.999/0.503/cSem, 0.990/0.581/cSem, 0.963/0.650/cSem, 0.958/0.714/cSem, 0.987/0.828/cSem, 0.993/0.106/cGris, 0.989/0.198/cSem, 1.001/0.300/cSem, 1.001/0.379/cSem, 1.039/0.482/cSem, 0.989/0.532/cSem, 1.039/0.675/cSem, 1.045/0.760/cSem, 1.035/0.831/cSem, 1.056/0.111/cGris, 1.036/0.187/cSem, 1.066/0.293/cSem, 1.057/0.386/cSem, 1.039/0.460/cSem, 1.021/0.530/cSem, 1.055/0.643/cSem, 1.058/0.726/cSem, 1.037/0.809/cSem, 1.040/0.083/cGris, 1.037/0.163/cSem, 1.037/0.272/cSem, 1.080/0.364/cSem, 1.043/0.411/cSem, 1.062/0.530/cSem, 1.046/0.618/cSem, 1.102/0.737/cSem, 1.065/0.798/cSem, 1.079/0.066/cGris, 1.069/0.160/cSem, 1.073/0.245/cSem, 1.130/0.358/cSem, 1.117/0.465/cSem, 1.120/0.555/cSem, 1.087/0.599/cSem, 1.073/0.706/cSem, 1.069/0.788/cSem, 1.113/0.052/cGris, 1.137/0.177/cSem, 1.118/0.234/cSem, 1.093/0.327/cSem, 1.110/0.417/cSem, 1.108/0.494/cSem, 1.114/0.592/cSem, 1.123/0.697/cSem, 1.126/0.776/cSem} \fill[\c] (\x,\y) circle (0.015);
-    \draw[cEnt!70, semithick] (0,0) rectangle (1.25,1.05);}\\[5pt]
-  \begin{minipage}{\linewidth}\centering\scriptsize
-  \adjustbox{max width=\linewidth}{$\mathrm{IoU}_c=\frac{TP_c}{TP_c+FP_c+FN_c}$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$\mathrm{mIoU}(\mathcal{S})=\frac{1}{|\mathcal{S}|}\sum_{c\in\mathcal{S}}\mathrm{IoU}_c$}\\[4pt]
-  \adjustbox{max width=\linewidth}{$\sigma^{*}$ (emparejamiento 1 a 1)}\\[4pt]
-  \adjustbox{max width=\linewidth}{$\mathrm{ARI}\quad\mathrm{NMI}$}\\[4pt]
+    \draw[cEnt!55] (0.34,0.23) rectangle (1.59,1.28);
+    \draw[cEnt!55] (0,0) -- (0.34,0.23) (1.25,0) -- (1.59,0.23) (1.25,1.05) -- (1.59,1.28) (0,1.05) -- (0.34,1.28);
+    \foreach \x/\y/\c in {0.097/0.087/cGris, 0.104/0.235/cEnc, 0.129/0.372/cEnc, 0.117/0.540/cEnc, 0.101/0.671/cEnc, 0.168/0.875/cEnc, 0.198/0.218/cEnc, 0.179/0.362/cEnc, 0.226/0.521/cEnc, 0.213/0.657/cEnc, 0.141/0.786/cEnc, 0.242/0.163/cGris, 0.227/0.325/cEnc, 0.244/0.522/cEnc, 0.236/0.690/cEnc, 0.261/0.870/cEnc, 0.300/0.122/cGris, 0.298/0.354/cEnc, 0.315/0.539/cEnc, 0.297/0.694/cEnc, 0.317/0.867/cEnc, 0.359/0.188/cGris, 0.369/0.370/cEnc, 0.385/0.541/cEnc, 0.318/0.694/cEnc, 0.381/0.904/cEnc, 0.418/0.197/cGris, 0.429/0.386/cEnc, 0.438/0.555/cEnc, 0.455/0.737/cEnc, 0.467/0.912/cEnc, 0.518/0.231/cGris, 0.485/0.372/cEnt, 0.472/0.551/cEnt, 0.462/0.722/cEnt, 0.499/0.926/cEnt, 0.546/0.262/cEnt, 0.551/0.443/cEnt, 0.499/0.594/cEnt, 0.549/0.791/cEnt, 0.574/0.987/cEnt, 0.590/0.219/cGris, 0.570/0.383/cEnt, 0.568/0.553/cEnt, 0.580/0.746/cEnt, 0.585/0.909/cEnt, 0.670/0.851/cEnt, 0.697/0.844/cEnt, 0.679/1.022/cEnt, 0.688/0.860/cEnt, 0.719/0.937/cEnt, 0.813/0.847/cEnt, 0.840/0.917/cEnt, 0.900/0.906/cEnt, 0.905/0.869/cEnt, 0.945/0.285/cEnt, 0.895/0.428/cEnt, 0.931/0.626/cEnt, 0.927/0.804/cEnt, 0.917/0.963/cEnt, 0.974/0.185/cGris, 0.914/0.314/cEnt, 0.936/0.509/cEnt, 0.967/0.701/cEnt, 0.933/0.876/cEnt, 0.955/0.221/cEnt, 0.949/0.583/cEnt, 0.952/0.763/cEnt, 0.974/0.956/cEnt, 0.964/0.115/cGris, 1.003/0.313/cEnc, 0.999/0.503/cEnc, 0.963/0.650/cEnc, 0.987/0.828/cEnc, 0.989/0.198/cEnc, 1.001/0.379/cEnc, 0.989/0.532/cEnc, 1.045/0.760/cEnc, 0.989/0.882/cEnc, 1.056/0.111/cGris, 1.066/0.293/cEnc, 1.039/0.460/cEnc, 1.055/0.643/cEnc, 1.037/0.809/cEnc, 1.037/0.163/cEnc, 1.080/0.364/cEnc, 1.062/0.530/cEnc, 1.102/0.737/cEnc, 1.060/0.880/cEnc, 1.079/0.066/cGris, 1.073/0.245/cEnc, 1.117/0.465/cEnc, 1.087/0.599/cEnc, 1.069/0.788/cEnc, 1.137/0.177/cEnc, 1.093/0.327/cEnc, 1.108/0.494/cEnc, 1.123/0.697/cEnc, 1.126/0.856/cEnc} \fill[\c] (\x,\y) circle (0.018);
+    \draw[cEnt, line width=0.7pt] (0,0) rectangle (1.25,1.05);}\\[6pt]
+  \begin{minipage}{\linewidth}\centering\scriptsize\color{black}
+  \adjustbox{max width=\linewidth}{$\mathrm{IoU}_c=\frac{TP_c}{TP_c+FP_c+FN_c}$}\\[5pt]
+  \adjustbox{max width=\linewidth}{$\mathrm{mIoU}(\mathcal{S})=\frac{1}{|\mathcal{S}|}\sum_{c\in\mathcal{S}}\mathrm{IoU}_c$}\\[5pt]
+  \adjustbox{max width=\linewidth}{$\sigma^{*}$ (emparejamiento 1 a 1)}\\[5pt]
+  \adjustbox{max width=\linewidth}{$\mathrm{ARI}\qquad\mathrm{NMI}$}\\[5pt]
   \adjustbox{max width=\linewidth}{$\Delta\mathrm{mIoU}^{\mathrm{novel}}=\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{hib}}-\mathrm{mIoU}^{\mathrm{novel}}_{\mathrm{base}}$}
 \end{minipage}};
 
 %% ========== PESTANAS DE CADA MODULO ==========
-\node[tab, text width=4.2cm, fill=cEnt] (P1) at ($(M1.north)+(0,-0.2)$) {MÓDULO 1: PREPROCESAMIENTO};
-\node[tab, text width=5.0cm, fill=cSem] (P2) at ($(M2.north)+(0,-0.2)$) {MÓDULO 2: SEMÁNTICA};
-\node[tab, text width=5.0cm, fill=cEnc] (P3) at ($(M3.north)+(0,-0.2)$) {MÓDULO 3: ENCODER};
-\node[tab, text width=5.0cm, fill=cFus] (P4) at ($(M4.north)+(0,-0.2)$) {MÓDULO 4: FUSIÓN};
-\node[tab, text width=4.2cm, fill=cSal] (P5) at ($(M5.north)+(0,-0.2)$) {MÓDULO 5: SALIDA};
+\node[tab, text width=4.3cm, fill=cEnt] (P1) at ($(M1.north)+(0,-0.2)$) {MÓDULO 1: PREPROCESAMIENTO};
+\node[tab, text width=5.1cm, fill=cSem] (P2) at ($(M2.north)+(0,-0.2)$) {MÓDULO 2: SEMÁNTICA};
+\node[tab, text width=5.1cm, fill=cEnc] (P3) at ($(M3.north)+(0,-0.2)$) {MÓDULO 3: ENCODER};
+\node[tab, text width=5.2cm, fill=cFus] (P4) at ($(M4.north)+(0,-0.2)$) {MÓDULO 4: FUSIÓN};
+\node[tab, text width=4.3cm, fill=cSal] (P5) at ($(M5.north)+(0,-0.2)$) {MÓDULO 5: SALIDA};
 
-%% ========== FLECHAS HORIZONTALES (M1 -> M2 y M3 -> M4 -> M5) ==========
-\draw[fl] ($(P1.north)+(0,0.85)$) -- (P1.north)
-  node[pos=0, above=0.5mm, chico, align=center] {nube de puntos (.LAS)};
+%% ========== FLECHAS CON ETIQUETAS HORIZONTALES NITIDAS ==========
+\draw[fl] ($(P1.north)+(0,1.0)$) -- (P1.north)
+  node[pos=0, above=0.6mm, chico] {nube de puntos (.LAS)};
 
-\draw[fl] ($(M1.east)+(0,0.55)$) -- ($(M2.west)+(0,-0.3)$)
-  node[midway, sloped, above=0.8mm, chico] {$(x,y,z)$ de $S$};
+\draw[fl] ($(M1.east)+(0,0.7)$) -- ($(M2.west)+(0,-0.3)$)
+  node[midway, chico] {$(x,y,z)$ de $S$};
 
-\draw[fl] ($(M1.east)+(0,-0.55)$) -- ($(M3.west)+(0,0.3)$)
-  node[midway, sloped, below=0.8mm, chico] {$S$ (9 col.)};
+\draw[fl] ($(M1.east)+(0,-0.7)$) -- ($(M3.west)+(0,0.3)$)
+  node[midway, chico] {$S$ (9 col.)};
 
-\draw[fl] (M2.east) -- ($(M4.west)+(0,1.8)$)
-  node[midway, sloped, above=0.8mm, chico] {$f_{\mathrm{sem}}$ (96)};
+\draw[fl] (M2.east) -- ($(M4.west)+(0,1.9)$)
+  node[midway, chico] {$f_{\mathrm{sem}}$ (96)};
 
-\draw[fl] (M3.east) -- ($(M4.west)+(0,-1.8)$)
-  node[midway, sloped, below=0.8mm, chico] {$f_{\mathrm{ssl}}$ (1088)};
+\draw[fl] (M3.east) -- ($(M4.west)+(0,-1.9)$)
+  node[midway, chico] {$f_{\mathrm{ssl}}$ (1088)};
 
 \draw[fl] (M4.east |- M5.west) -- (M5.west)
-  node[midway, above=0.8mm, chico, align=center] {etiquetas\\$\hat{y}_i$};
+  node[midway, above=1.2mm, chico] {etiquetas $\hat{y}_i$};
 
 \end{tikzpicture}
 \end{document}
