@@ -112,60 +112,9 @@
 \caja{14}{308}{279}{250}{white}
 \seccion{14}{308}{279}{3}{Metodología y diseño del sistema}
 
-% Esquema metodologico general (E0 a E5, Cap. 3 de la tesis) en la parte superior
-\fill[tesela,draw=borde,line width=.3mm,rounded corners=1.4mm] (20,330) rectangle (287,390);
-\node[anchor=north west,inner sep=0,font=\tit\fs{12.2}{14.2},text=navy] at (24,333)
-  {Esquema metodológico general (etapas E0 a E5 y diseño experimental $2\times 2$)};
-
-% Nodos E0, E1, E2/E3 en paralelo, E4, E5
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (24,344) rectangle (66,386);
-\fill[navy,rounded corners=0.8mm] (24,344) rectangle (66,352);
-\node[font=\tit\fs{10.5}{12},text=white] at (45,348) {E0. Datos};
-\node[anchor=north,text width=39mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (45,354.5)
-  {\textbf{23 LAS} Catedral\\(589\,M pts, sin etiq.)\\Capilla etiquetada\\(1,14\,M pts, 5 clases)};
-
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (72,344) rectangle (116,386);
-\fill[navy,rounded corners=0.8mm] (72,344) rectangle (116,352);
-\node[font=\tit\fs{10.5}{12},text=white] at (94,348) {E1. Prep. (M1)};
-\node[anchor=north,text width=41mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (94,354.5)
-  {Centrado UTM\\Filtro SOR ($q=20$)\\Vóxel $\ell=5$\,cm\\Normales ($S\in\mathbb{R}^{N\times 9}$)};
-
-% E2 arriba y E3 abajo en paralelo
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (122,341) rectangle (184,363.5);
-\fill[navyMid,rounded corners=0.8mm] (122,341) rectangle (184,348);
-\node[font=\tit\fs{9.8}{11},text=white] at (153,344.5) {E2. Semántica (M2)};
-\node[anchor=north,text width=59mm,align=center,font=\fs{9.2}{10.8},text=tinta] at (153,349.5)
-  {Orig. SemPOSS \textbar\ Adap. \textbf{ArCH} (30 ép.)\\Extrae $f_{\mathrm{sem}}\in\mathbb{R}^{96}$};
-
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (122,365.5) rectangle (184,388);
-\fill[azul,rounded corners=0.8mm] (122,365.5) rectangle (184,372.5);
-\node[font=\tit\fs{9.8}{11},text=white] at (153,369) {E3. Auto-superv. (M3)};
-\node[anchor=north,text width=59mm,align=center,font=\fs{9.2}{10.8},text=tinta] at (153,374)
-  {Orig. Meta \textbar\ Adap. \textbf{Catedral} (21 LAS)\\Rejilla 2\,cm, \emph{up-cast} $f_{\mathrm{ssl}}\in\mathbb{R}^{1088}$};
-
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (190,344) rectangle (236,386);
-\fill[navy,rounded corners=0.8mm] (190,344) rectangle (236,352);
-\node[font=\tit\fs{10.5}{12},text=white] at (213,348) {E4. Fusión (M4)};
-\node[anchor=north,text width=43mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (213,354.5)
-  {Cruce $2\times 2$ en CPU\\Regiones 0{,}75\,m\\39 variantes de fusión\\Sinkhorn ($K=8$)};
-
-\filldraw[fill=white,draw=azul,line width=.35mm,rounded corners=1.1mm] (242,344) rectangle (284,386);
-\fill[navy,rounded corners=0.8mm] (242,344) rectangle (284,352);
-\node[font=\tit\fs{10.5}{12},text=white] at (263,348) {E5. Eval. (M5)};
-\node[anchor=north,text width=39mm,align=center,font=\fs{9.6}{11.5},text=tinta] at (263,354.5)
-  {Húngaro 1 a 1\\\mioun, NMI, ARI\\10 semillas, sonda\\lineal y umbral 70\,\%};
-
-% Flechas entre E0..E5
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (66,365) -- (72,365);
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (116,358) -- (122,352.5);
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (116,372) -- (122,376.5);
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (184,352.5) -- (190,358);
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (184,376.5) -- (190,372);
-\draw[-{Latex[length=1.8mm,width=1.4mm]},line width=.45mm,navy] (236,365) -- (242,365);
-
 % Diagrama completo de los 5 modulos de la tesis debajo del esquema E0-E5
-\node[anchor=center,inner sep=0] at (153.5,475)
-  {\includegraphics[width=271mm,height=158mm,keepaspectratio]{fig/diagrama_poster.pdf}};
+\node[anchor=center,inner sep=0] at (153.5,435)
+  {\includegraphics[width=275mm,height=225mm,keepaspectratio]{fig/diagrama_poster.pdf}};
 
 % --- Bloque 4: La capilla por metodo (y = 563 a 811 mm, h = 248 mm) ---------
 \caja{14}{563}{279}{248}{white}
